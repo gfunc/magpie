@@ -1503,6 +1503,16 @@ Anything with a base-URL setting can use it:
 | Anthropic   | `http://127.0.0.1:3425`    | `ANTHROPIC_BASE_URL`, `ANTHROPIC_API_KEY=magpie` |
 | Gemini      | `http://127.0.0.1:3425`    | `GOOGLE_GEMINI_BASE_URL`, `GEMINI_API_KEY=magpie` |
 
+A tool that imports a models.dev-shaped registry (kimi-code's `/provider`
+paste) takes the gateway whole from `GET /api.json`, gateway key and all:
+one registry entry per wire — `magpie-openai`, `magpie-anthropic`,
+`magpie-openai-responses` — holding the models the gateway passes through
+on it untranslated, and a `magpie-group` entry of the routing groups by
+bare id. Model ids keep their `provider/model` form; a window or price the
+gateway doesn't know is left out for the importer's own default, and the
+`api` base is `MAGPIE_PUBLIC_URL` when set, else the address the registry
+was fetched on.
+
 An optional `X-Magpie-Account: <account>` header (the account's email
 or login, or its id on the Routing page) pins a request to one account of a
 subscription with several: only it is tried, and an unknown account, one
