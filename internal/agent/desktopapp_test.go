@@ -97,9 +97,10 @@ func installApp(t *testing.T, dir, name, plist string) {
 // taken for it — and given with the CLI's, and alone where no CLI is on PATH.
 func TestCodexAppVersion(t *testing.T) {
 	apps, userApps := t.TempDir(), t.TempDir()
-	was := appFolders
+	was, wasStore := appFolders, windowsStorePackages
 	appFolders = func() []string { return []string{apps, userApps} }
-	t.Cleanup(func() { appFolders = was })
+	windowsStorePackages = func() []string { return nil }
+	t.Cleanup(func() { appFolders, windowsStorePackages = was, wasStore })
 	t.Setenv("PATH", t.TempDir()) // no codex CLI
 	codex := &Agent{ID: "codex", Name: "Codex", Bin: "codex"}
 
@@ -144,6 +145,38 @@ func TestCodexAppVersion(t *testing.T) {
 	// an agent with no app magpie knows, and Codex's twin in WSL, have none
 	if v := (&Agent{ID: "gemini", Bin: "gemini"}).AppVersion(); v != "" {
 		t.Fatalf("gemini: %q", v)
+	}
+	if v := (&Agent{ID: "codex@wsl:Ubuntu", WSL: "Ubuntu", Bin: "codex"}).AppVersion(); v != "" {
+		t.Fatalf("WSL twin: %q", v)
+	}
+}
+
+// TestCodexWindowsStoreAppVersion: on Windows the Codex app is the Microsoft
+// Store's OpenAI.Codex package (#1334, laacmilan: C:\Program Files\
+// WindowsApps\OpenAI.Codex_26.1002.7124.0_x64__2p2nqsd0c76g0), read from the
+// newest main package registered for the user.
+func TestCodexWindowsStoreAppVersion(t *testing.T) {
+	was, wasStore := appFolders, windowsStorePackages
+	appFolders = func() []string { return nil }
+	windowsStorePackages = func() []string {
+		return []string{
+			"OpenAI.Codex_not-a-version_x64__2p2nqsd0c76g0",
+			"OpenAI.Codex_26.928.2636.0_x64__2p2nqsd0c76g0",
+			"OpenAI.Codex_26.1002.7124.0_arm64__2p2nqsd0c76g0",
+			"OpenAI.Codex_99.0.0.0_x64__wrong-publisher",
+			// a resource package left behind, as the Windows box's registry
+			// keeps Clipchamp's after its main package moved on
+			"OpenAI.Codex_27.0.0.0_neutral_split.scale-125_2p2nqsd0c76g0",
+		}
+	}
+	t.Cleanup(func() { appFolders, windowsStorePackages = was, wasStore })
+
+	codex := &Agent{ID: "codex", Name: "Codex", Bin: "codex"}
+	if v := codex.AppVersion(); v != "26.1002.7124.0" {
+		t.Fatalf("Codex Store app: %q", v)
+	}
+	if !codex.HasApp() {
+		t.Fatal("Codex Store app not detected")
 	}
 	if v := (&Agent{ID: "codex@wsl:Ubuntu", WSL: "Ubuntu", Bin: "codex"}).AppVersion(); v != "" {
 		t.Fatalf("WSL twin: %q", v)

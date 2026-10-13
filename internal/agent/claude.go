@@ -664,7 +664,8 @@ func claudeIn(at place) *Agent {
 	// (settings.WorkingWindow) on magpie, unless settings.FullContext or the
 	// main model is one of Anthropic's Claude models: Anthropic runs a [1m]
 	// one to its whole 1M, so it gets its own window (Max on Discord: a
-	// [1m] model stopped at 272K)
+	// [1m] model stopped at 272K), or a routing group made only of
+	// them (provider.ClaudeGroup, #1741)
 	writeCompact := func() error {
 		if env(claudeCompactEnv) != "" && !compactOurs() {
 			forget(compactKey)
@@ -675,7 +676,7 @@ func claudeIn(at place) *Agent {
 		// model (settings.Compact), none under Full window
 		main := mainModel()
 		n := provider.CompactSet(main)
-		if s := settings.Load(); n == 0 && !claudeModel(main) {
+		if s := settings.Load(); n == 0 && !claudeModel(main) && !provider.ClaudeGroup(main) {
 			n = s.Compact()
 			// magpie's default gives way to an autoCompactWindow the user
 			// set in Claude Code (/autocompact, its settings), which the env
@@ -1455,7 +1456,8 @@ func claudeIn(at place) *Agent {
 		ID: "claude", Name: "Claude Code", Icon: "claudecode-color", Aliases: []string{"cc", "claude-code"},
 		UA:  []string{"claude-cli", "claude-code"},
 		Bin: "claude", Dir: filepath.Dir(path), Path: path,
-		Fields: fields,
+		Fields:       fields,
+		ModelAliases: claudeAliases,
 		// Claude Code as it was before magpie: its default puts it back as
 		// installed, on Anthropic's endpoint, where this brings back the
 		// endpoint, token and model the user had

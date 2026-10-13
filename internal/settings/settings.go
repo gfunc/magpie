@@ -91,8 +91,10 @@ type Settings struct {
 	// named caller keys. LANKey is retained for older Magpie versions.
 	LAN    bool   `json:"lan,omitempty"`
 	LANKey string `json:"lanKey,omitempty"`
-	// CORSOrigins are the web pages (scheme://host[:port]) whose scripts
-	// may call the gateway from a browser (#1051): a preflight from one is
+	// CORSOrigins are the web pages (scheme://host[:port]) and browser
+	// extensions (chrome-extension://<id>, moz-extension://<uuid>,
+	// safari-web-extension://<uuid>) whose scripts may call the gateway
+	// from a browser (#1051): a preflight from one is
 	// answered, and its calls carry the CORS headers that let it read the
 	// reply, each with an enabled gateway key. None by default: a page
 	// gets no CORS headers, as before.
@@ -340,6 +342,12 @@ type Settings struct {
 	// as Codex sends them, "off" answered by magpie with no title and sent
 	// nowhere, or a model's id (provider/model, group/<id>) that writes it.
 	CodexTitles string `json:"codexTitles,omitempty"`
+	// CodexDescriptions is where the request Codex makes for a thread's
+	// description (thread_description: its own hidden turn, on Codex's own
+	// model through its ChatGPT sign-in) goes: "" as Codex sends it, or a
+	// model's id (provider/model, group/<id>) that writes it. It is not
+	// CodexTitles: a description asks for {"description"} alone.
+	CodexDescriptions string `json:"codexDescriptions,omitempty"`
 	// CodexAutoReview is the model Codex's auto-review (approvals_reviewer
 	// = "auto_review": the guardian that decides an approval in the user's
 	// place) runs on (#938): a model's id (provider/model, group/<id>) put
@@ -422,6 +430,11 @@ type Settings struct {
 	// or a group's) taken out of an agent's lists one by one, by agent id,
 	// after Visible: a model not named here, a new one among them, is shown.
 	HiddenModels map[string][]string `json:"hiddenModels,omitempty"`
+	// DisabledModels are models turned off for every request through magpie
+	// (#1867), each an exact id or a glob ("*fable*"), matched ignoring case
+	// against "<provider>/<model>" and the bare model id: they are left out
+	// of every list, and the gateway refuses them on every route.
+	DisabledModels []string `json:"disabledModels,omitempty"`
 	// PickedModels, for an agent it names, are the only catalog entries its
 	// lists show, after Visible (#1337): the user switched the agent to
 	// "only models I pick", so a model that comes later, of a new provider
@@ -935,7 +948,7 @@ func CheckProxy(p string) error {
 	}
 	u, err := url.Parse(raw)
 	if err != nil || u.Host == "" || !slices.Contains([]string{"http", "https", "socks5", "socks5h"}, u.Scheme) {
-		return fmt.Errorf("proxy must look like http://127.0.0.1:7890 or socks5://127.0.0.1:1080, not %q", p)
+		return fmt.Errorf("proxy must look like http://127.0.0.1:7890 or socks5://127.0.0.1:1080")
 	}
 	return nil
 }
@@ -1079,6 +1092,10 @@ func save(s Settings, recording bool) error {
 	s.CodexTitles = strings.TrimSpace(s.CodexTitles)
 	if s.CodexTitles != "" && s.CodexTitles != "off" && !strings.Contains(s.CodexTitles, "/") {
 		return fmt.Errorf("the model for Codex's titles must be a model's id such as openai/gpt-5-mini, or off, not %q", s.CodexTitles)
+	}
+	s.CodexDescriptions = strings.TrimSpace(s.CodexDescriptions)
+	if s.CodexDescriptions != "" && !strings.Contains(s.CodexDescriptions, "/") {
+		return fmt.Errorf("the model for Codex's descriptions must be a model's id such as openai/gpt-5-mini, not %q", s.CodexDescriptions)
 	}
 	s.CodexAutoReview = strings.TrimSpace(s.CodexAutoReview)
 	if s.CodexAutoReview != "" && !strings.Contains(s.CodexAutoReview, "/") {

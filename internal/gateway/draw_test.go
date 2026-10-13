@@ -341,10 +341,11 @@ func TestCodexAccountDraws(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if ds := Drawers(*p); len(ds) != 2 || ds[0].ID != "gpt-image-2" || ds[1].ID != "gpt-image-2.5" {
+	// one: the backend picks the model itself (#1865)
+	if ds := Drawers(*p); len(ds) != 1 || ds[0].ID != "gpt-image-2" || ds[0].Name != "GPT Image" {
 		t.Fatalf("drawers %v", ds)
 	}
-	// Automatic asks for what Codex CLI asks for: a plan may be refused 2.5
+	// Automatic asks for what Codex CLI asks for
 	if m, ok := drawer(); !ok || m != "codex/gpt-image-2" {
 		t.Fatalf("drawer = %q %v", m, ok)
 	}
@@ -572,6 +573,58 @@ func TestGrokVendorFailuresAreSaid(t *testing.T) {
 		if code != c.code || !strings.Contains(raw, c.want) {
 			t.Errorf("%s: %d %s", c.prompt, code, raw)
 		}
+	}
+}
+
+// #1857: grok-imagine-image-2.0 named bare, as the vendor names it, drew
+// nothing ("magpie knows no model ... to draw with") while
+// grok/grok-imagine-image-2.0 drew: the bare name was looked up in
+// grokDrawers alone. Any grok-imagine-image* goes to the Grok subscription
+// now, as any grok-imagine-video* does for videos; a name of no image
+// family is still turned away.
+func TestGrokDrawsANewerModelByItsBareName(t *testing.T) {
+	grokSignedIn(t)
+	up := newGrokMedia(t)
+	s := New()
+	code, a, raw := postImages(t, s, "/v1/images/generations", "application/json", `{"model":"grok-imagine-image-2.0","prompt":"a red apple on a table","n":1,"size":"1024x1024"}`)
+	if code != 200 || len(a.Data) != 1 {
+		t.Fatalf("%d %s", code, raw)
+	}
+	if sent := up.body("/v1/images/generations", 0); !strings.Contains(sent, `"model":"grok-imagine-image-2.0"`) {
+		t.Fatalf("asked %s", sent)
+	}
+	code, _, raw = postImages(t, s, "/v1/images/generations", "application/json", `{"model":"grok-imagine-nothing","prompt":"a red apple"}`)
+	if code != 404 || !strings.Contains(raw, "knows no model") {
+		t.Fatalf("a name of no image family: %d %s", code, raw)
+	}
+}
+
+// The ChatGPT account's sibling of #1857: a gpt-image-* magpie doesn't list
+// yet, named bare, is asked of the account, not turned away by magpie.
+func TestCodexDrawsANewerModelByItsBareName(t *testing.T) {
+	codexSignedIn(t)
+	var mu sync.Mutex
+	var bodies []string
+	up := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		b, _ := io.ReadAll(r.Body)
+		mu.Lock()
+		bodies = append(bodies, string(b))
+		mu.Unlock()
+		w.Header().Set("Content-Type", "application/json")
+		io.WriteString(w, `{"created":1,"output_format":"png","data":[{"b64_json":"`+base64.StdEncoding.EncodeToString(pngBytes)+`"}]}`)
+	}))
+	defer up.Close()
+	was := provider.CodexBase
+	provider.CodexBase = up.URL + "/backend-api/codex"
+	defer func() { provider.CodexBase = was }()
+	code, a, raw := postImages(t, New(), "/v1/images/generations", "application/json", `{"model":"gpt-image-3","prompt":"a magpie"}`)
+	if code != 200 || len(a.Data) != 1 {
+		t.Fatalf("%d %s", code, raw)
+	}
+	mu.Lock()
+	defer mu.Unlock()
+	if len(bodies) != 1 || !strings.Contains(bodies[0], `"model":"gpt-image-3"`) {
+		t.Fatalf("asked %v", bodies)
 	}
 }
 

@@ -71,6 +71,10 @@ func (p Provider) available() []catalog.Model {
 			live = withoutCursorCapacity(collapseCursorModels(withCursorContexts(live)))
 		case "devin":
 			live = withDevinContexts(devinCollapse(live, devinCached(), p.Models))
+		case WorkBuddyAIID:
+			// a list saved before its GLM models were known to drop
+			// images says they take them (wbSite.textOnly)
+			live = wbAI.textOnly(live)
 		case "antigravity":
 			// after its names are filled in, and so that a family's
 			// levels aren't taken off by a known model of its id
@@ -138,10 +142,7 @@ func (p Provider) Listed() (time.Time, bool) {
 // onto it left its own last list under the same id. A preset with no list
 // ignores old fetched models too, unless a region or explicit URL lists them.
 func (p Provider) live() ([]catalog.Model, time.Time, bool) {
-	if p.IsPlugin() {
-		return nil, time.Time{}, false
-	}
-	if pr := Preset(p.Preset); p.Account == nil && pr != nil && pr.NoList && strings.TrimSpace(p.ModelsURL) == "" && !p.listRegion(pr) {
+	if !p.lists() {
 		return nil, time.Time{}, false
 	}
 	type live struct {
@@ -151,6 +152,30 @@ func (p Provider) live() ([]catalog.Model, time.Time, bool) {
 	}
 	l := heldOf("fetched:"+p.ID, func() live { ms, at, ok := catalog.Live(p.ID); return live{ms, at, ok} })
 	return l.ms, l.at, l.ok
+}
+
+// lists says whether the provider's fetched list is its own to read: not
+// a plugin's, nor a preset's that lists nothing (Preset.NoList).
+func (p Provider) lists() bool {
+	if p.IsPlugin() {
+		return false
+	}
+	pr := Preset(p.Preset)
+	return p.Account != nil || pr == nil || !pr.NoList || strings.TrimSpace(p.ModelsURL) != "" || p.listRegion(pr)
+}
+
+// liveAll is live with the models that draw or make videos too
+// (catalog.LiveAll): which of its keys serves one is said there alone.
+func (p Provider) liveAll() ([]catalog.Model, bool) {
+	if !p.lists() {
+		return nil, false
+	}
+	type live struct {
+		ms []catalog.Model
+		ok bool
+	}
+	l := heldOf("fetched-all:"+p.ID, func() live { ms, ok := catalog.LiveAll(p.ID); return live{ms, ok} })
+	return l.ms, l.ok
 }
 
 // Fetch asks the vendor which models it serves and remembers the answer.
@@ -784,9 +809,11 @@ func anyImageInput(a, b *bool) *bool {
 // vendor's lists say another of the provider's keys sees it and k doesn't.
 // A key no list marks — its own wasn't answered, or it was added since —
 // is unknown, and serves: a failed list is not an empty one (#1598, the
-// first of five keys left out of every request).
+// first of five keys left out of every request). The lists are read whole,
+// the models that draw or make videos among them: a text key never says
+// it serves an image model only another key lists (#1657).
 func (p Provider) Serves(k KeyAccount, model string) bool {
-	live, _, ok := p.live()
+	live, ok := p.liveAll()
 	if !ok {
 		return true
 	}
@@ -1162,8 +1189,15 @@ func (p Provider) cursorFastPrice(model string) (catalog.Price, bool) {
 // token, not what the model costs (#1370, maicent: the Usage page counted
 // 937K tokens of Kimi Code's kimi-for-coding at ¥0.000). No price is read
 // from them, so a call there is priced at its model's API price, as a
-// Claude or Codex account's is, or left unpriced when it has none.
-var membershipCatalogs = []string{"kimi-code-plan-global", "kimi-code-plan-cn"}
+// Claude or Codex account's is, or left unpriced when it has none. Xiaomi
+// MiMo's three Token Plan catalogs list all nine of its models at $0 too,
+// and stood before xiaomi's own prices, so a pay-as-you-go call was
+// counted at $0 (#1873, mengyianx).
+var membershipCatalogs = append(slices.Clone(kimiCodePlans), "xiaomi-token-plan-cn", "xiaomi-token-plan-sgp", "xiaomi-token-plan-ams")
+
+// kimiCodePlans are Kimi Code's membership catalogs, whose models are
+// priced as the Kimi API's (kimiCodeAPI).
+var kimiCodePlans = []string{"kimi-code-plan-global", "kimi-code-plan-cn"}
 
 // priceCatalogs are cs without the membershipCatalogs.
 func priceCatalogs(cs []string) []string {
@@ -1175,7 +1209,7 @@ var makerPriceCatalogs = sync.OnceValue(func() []string { return priceCatalogs(m
 // kimiCodeMember is whether p is served at a Kimi Code membership's
 // endpoints, by its catalog.
 func (p Provider) kimiCodeMember() bool {
-	return slices.ContainsFunc(p.Catalogs(), func(c string) bool { return slices.Contains(membershipCatalogs, c) })
+	return slices.ContainsFunc(p.Catalogs(), func(c string) bool { return slices.Contains(kimiCodePlans, c) })
 }
 
 // kimiCodeAPI is the Kimi API model a Kimi Code model id is, as Kimi
@@ -1520,7 +1554,10 @@ func providerEntries() []Entry {
 	return heldEntries(buildEntries)
 }
 
-func buildEntries() []Entry {
+func buildEntries() []Entry { return entriesOff(disabledNow()) }
+
+// entriesOff is the providers' catalog less the models off reports.
+func entriesOff(off func(pid, model string) bool) []Entry {
 	var out []Entry
 	s := settings.Load()
 	gone := retiredNow() // its vendor said it is retired (retired.go)
@@ -1529,6 +1566,9 @@ func buildEntries() []Entry {
 			continue
 		}
 		for _, m := range p.Exposed() {
+			if off(p.ID, m.ID) { // the user turned it off (#1867)
+				continue
+			}
 			if !p.isDecision(m) && !gone[p.ID+"/"+m.ID] {
 				out = append(out, entryFor(p, m, s))
 			}

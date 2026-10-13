@@ -554,6 +554,17 @@ var (
 	onChangeMu sync.Mutex
 )
 
+// telling counts the hooks told of a change that are still running, for
+// Told. It is a count, not a WaitGroup: a host can tell a change while
+// Told waits.
+var telling struct {
+	sync.Mutex
+	*sync.Cond
+	n int
+}
+
+func init() { telling.Cond = sync.NewCond(&telling.Mutex) }
+
 // OnChange registers f to be told when a plugin sign-in or the plugins
 // change (a sign-in saved or refreshed, a plugin added).
 func OnChange(f func()) {
@@ -581,8 +592,20 @@ func changed() {
 	onChangeMu.Lock()
 	fs := append([]func(){}, onChange...)
 	onChangeMu.Unlock()
+	telling.Lock()
+	telling.n += len(fs)
+	telling.Unlock()
 	for _, f := range fs {
-		go f()
+		go func() {
+			defer func() {
+				telling.Lock()
+				if telling.n--; telling.n == 0 {
+					telling.Broadcast()
+				}
+				telling.Unlock()
+			}()
+			f()
+		}()
 	}
 }
 
@@ -748,8 +771,14 @@ func start(ctx context.Context) (*host, error) {
 		return nil, err
 	}
 	h, crashed, err := startOn(ctx, bun)
+	if crashed {
+		err = whyDied(ctx, bun, err)
+	}
 	if err == nil || !crashed || os.Getenv("MAGPIE_BUN") != "" {
-		return h, err
+		// a Bun that can't be started at all isn't fallen back from: the
+		// one before is the same build for this system, and setting this
+		// one aside would mark a good version bad (#1877)
+		return h, cantStart(bun, err)
 	}
 	// the Bun magpie last took died starting the host: the one before it,
 	// and the new one set aside when that one starts it

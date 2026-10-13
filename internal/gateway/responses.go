@@ -481,6 +481,127 @@ func parseResponses(body []byte) (*Request, error) {
 	return r, nil
 }
 
+// toolCallItem is a Responses input item that makes a tool call, and
+// toolResultItem one that answers a call.
+func toolCallItem(t string) bool {
+	switch t {
+	case "function_call", "custom_tool_call", "tool_search_call":
+		return true
+	}
+	return false
+}
+
+func toolResultItem(t string) bool {
+	switch t {
+	case "function_call_output", "custom_tool_call_output", "tool_search_output":
+		return true
+	}
+	return false
+}
+
+// joinToolRuns moves an item that sits inside a run of tool calls and
+// results — after a result of the run and before the last result that
+// answers one of its calls — to the end of that run. An upstream that
+// checks the exchange, on the chat form it turns a relayed request into or
+// on the Responses input itself, reads the run as ended there and refuses
+// it: Volcengine's coding plan answers 400 "An assistant message with
+// 'tool_calls' must be followed by tool messages responding to each
+// 'tool_call_id'", the same refusal pairToolItems mends a missing result
+// for (#1341), and OpenCode Zen/Go answers "No tool output found for tool
+// call <id>". An agent writes an item between one batch's results itself:
+// Codex writes its <image_resize_notice> right after each result that held
+// an image it resized (image_preparation.rs, prepare_response_items), so a
+// batch of two calls has it between their results (#1752, #1822).
+//
+// An item that carries a call_id is part of an exchange and never moves,
+// whatever its type. Before the run's first result, what the model wrote
+// between its own calls (reasoning, its text, a hosted tool's call) is its
+// step and stays; anything else there (a subagent's agent_message, a note)
+// moves as it would between the results. A call opens the run only when a
+// result after it answers it: a call nothing answers is pairToolItems'
+// (#1341), and one answered before it is not waited on. An item between two
+// whole exchanges stays where it is, and a request with nothing inside a
+// run comes back byte for byte.
+func joinToolRuns(body []byte) []byte {
+	if !bytes.Contains(body, []byte(`_call"`)) {
+		return body
+	}
+	var q map[string]json.RawMessage
+	if decodeJSON(body, &q) != nil {
+		return body
+	}
+	var input []json.RawMessage
+	if decodeJSON(q["input"], &input) != nil {
+		return body
+	}
+	type item struct {
+		Type   string `json:"type"`
+		Role   string `json:"role"`
+		CallID string `json:"call_id"`
+	}
+	items := make([]item, len(input))
+	for i, raw := range input {
+		if decodeJSON(raw, &items[i]) != nil {
+			items[i] = item{}
+		}
+	}
+	result := func(it item) bool { return it.CallID != "" && strings.HasSuffix(it.Type, "_output") }
+	// answeredLater[i]: the call at i has a result after it
+	answeredLater := make([]bool, len(input))
+	ahead := map[string]bool{}
+	for i := len(items) - 1; i >= 0; i-- {
+		switch it := items[i]; {
+		case result(it):
+			ahead[it.CallID] = true
+		case it.CallID != "":
+			answeredLater[i] = ahead[it.CallID]
+		}
+	}
+	modelsOwn := func(it item) bool {
+		return it.Type == "reasoning" || it.Type == "message" && it.Role == "assistant" ||
+			strings.HasSuffix(it.Type, "_call")
+	}
+	out := make([]json.RawMessage, 0, len(input))
+	var held []json.RawMessage
+	moved := false
+	// open: calls of the run in progress whose result is still ahead;
+	// answering: a result of the run has come
+	open := map[string]bool{}
+	answering := false
+	for i, raw := range input {
+		it := items[i]
+		switch {
+		case result(it):
+			if open[it.CallID] {
+				delete(open, it.CallID)
+				answering = true
+			}
+		case it.CallID != "":
+			if answeredLater[i] {
+				open[it.CallID] = true
+			}
+		case len(open) > 0 && (answering || !modelsOwn(it)):
+			held, moved = append(held, raw), true
+			continue
+		}
+		out = append(out, raw)
+		if len(open) == 0 {
+			out = append(out, held...)
+			held, answering = nil, false
+		}
+	}
+	out = append(out, held...)
+	if !moved {
+		return body
+	}
+	q["input"], _ = marshalPlain(out)
+	encoded, err := marshalPlain(q)
+	if err != nil {
+		return body
+	}
+	return encoded
+}
+
 // orphanedToolOutputs turns a tool result with no call ID into a user message.
 // Codex uses standalone outputs for cross-thread notifications. Backends
 // requiring paired outputs still need the delivered text, without a fake call ID.
@@ -537,7 +658,7 @@ func orphanedToolOutputs(body []byte) []byte {
 			content = append(content, map[string]any{"type": "input_text", "text": text})
 		}
 		for _, image := range images {
-			content = append(content, map[string]any{"type": "input_image", "image_url": dataURL(image)})
+			content = append(content, map[string]any{"type": "input_image", "detail": "auto", "image_url": dataURL(image)})
 		}
 		if len(content) == 0 {
 			content = append(content, map[string]any{"type": "input_text", "text": "Tool result received."})
@@ -602,12 +723,7 @@ func pairToolItems(body []byte) []byte {
 		}
 	}
 	exchange := func(t string) bool {
-		switch t {
-		case "function_call", "custom_tool_call", "tool_search_call",
-			"function_call_output", "custom_tool_call_output", "tool_search_output":
-			return true
-		}
-		return false
+		return toolCallItem(t) || toolResultItem(t)
 	}
 	out := make([]json.RawMessage, 0, len(input)+1)
 	var synthetic []json.RawMessage // results owed by the run in progress
@@ -917,7 +1033,7 @@ func buildResponses(r *Request, model, host string, rejectTemp bool) []byte {
 				content = append(content, map[string]any{"type": t, "text": attachmentText(p)})
 			case Image:
 				if m.Role != "assistant" {
-					content = append(content, map[string]any{"type": "input_image", "image_url": dataURL(p)})
+					content = append(content, map[string]any{"type": "input_image", "detail": "auto", "image_url": dataURL(p)})
 				}
 			case Thinking:
 				if !replay && sealedReasoning(p) {
@@ -951,7 +1067,7 @@ func buildResponses(r *Request, model, host string, rejectTemp bool) []byte {
 						items = append(items, map[string]any{"type": "input_text", "text": p.Text})
 					}
 					for _, im := range p.Images {
-						items = append(items, map[string]any{"type": "input_image", "image_url": dataURL(im)})
+						items = append(items, map[string]any{"type": "input_image", "detail": "auto", "image_url": dataURL(im)})
 					}
 					output = items
 				}

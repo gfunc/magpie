@@ -232,11 +232,13 @@
     // the row it is put in says so (.with-agents), for its name's room:
     // Safari before 15.4 has no :has(). Every caller appends it at once.
     queueMicrotask(() => box.parentElement?.classList.contains("lib-row") && box.parentElement.classList.add("with-agents"));
-    for (const a of all) {
+    for (const [i, a] of all.entries()) {
       const always = opts.always?.(a) || "";
       const has = on.includes(a.id) || !!always;
       const c = el("button", "lib-ag" + (has ? " on" : "") + (always ? " always" : ""));
       c.dataset.agent = a.id;
+      // how many chips are to its right, how far it slides into the hand
+      c.style.setProperty("--k", all.length - 1 - i);
       c.append(agentIcon(a.icon));
       if (opts.names) c.append(el("span", "n", a.name));
       const problem = !always && opts.problems?.[a.id];
@@ -786,9 +788,7 @@
     const ttl = el("div", "lib-cardhead");
     // RTK's own mark (rtk-ai.app), drawn in the text's colour
     const logo = el("span", "lib-glyph lib-rtk-logo");
-    const m = el("span", "mask");
-    m.style.setProperty("--i", "url(icons/rtk.png)");
-    logo.append(m);
+    logo.append(maskSpan("icons/rtk.png"));
     ttl.append(logo, el("b", "", "RTK"), el("span", "grow"));
     if (rtk.path) {
       ttl.append(el("span", "note mono", rtk.version ? "v" + rtk.version : tilde(rtk.path)));
@@ -838,7 +838,7 @@
       // only some (#741); one rtk couldn't give says why
       const g = rtk.gain;
       const gain = el("p", "lib-rtk-gain", g
-        ? t("{saved} tokens saved over {n} commands — {pct}% on average", { saved: tokens(g.saved), n: g.commands.toLocaleString(), pct: Math.round(g.pct) })
+        ? t("{saved} tokens saved over {n} commands — {pct}% on average", { saved: tokens(g.saved), n: g.commands.toLocaleString(intlLang()), pct: Math.round(g.pct) })
         : rtk.gainErr
           ? t("magpie couldn't read what RTK saved: {why}", { why: rtk.gainErr })
           : t("Nothing saved yet: the agents' commands go through RTK once it's switched on and the agent is restarted."));
@@ -957,7 +957,7 @@
       bar.append(saved, kept);
       const when = step === 7 ? t("week of {label}", { label: short(b.day) }) : short(b.day);
       bar.title = b.commands
-        ? t("{when} · {saved} tokens saved over {n} commands — {pct}%", { when, saved: tokens(b.saved), n: b.commands.toLocaleString(), pct: b.input ? Math.round(100 * b.saved / b.input) : 0 })
+        ? t("{when} · {saved} tokens saved over {n} commands — {pct}%", { when, saved: tokens(b.saved), n: b.commands.toLocaleString(intlLang()), pct: b.input ? Math.round(100 * b.saved / b.input) : 0 })
         : t("{when} · nothing", { when });
       bars.append(bar);
       const end = i === k - 1 && (k - 1) % every >= every / 2;
@@ -967,7 +967,7 @@
     const key = (cls, text) => { const x = el("span", "lib-rtk-key"); x.append(el("i", cls), el("span", "", text)); return x; };
     foot.append(key("out", t("saved")), key("in", t("still sent")), el("span", "grow"),
       el("span", "", sum.commands
-        ? t("{saved} tokens saved over {n} commands — {pct}%", { saved: tokens(sum.saved), n: sum.commands.toLocaleString(), pct: sum.input ? Math.round(100 * sum.saved / sum.input) : 0 })
+        ? t("{saved} tokens saved over {n} commands — {pct}%", { saved: tokens(sum.saved), n: sum.commands.toLocaleString(intlLang()), pct: sum.input ? Math.round(100 * sum.saved / sum.input) : 0 })
         : t("Nothing run through RTK in this time")));
     chart.append(head, bars, labels, foot);
     return chart;
@@ -1350,8 +1350,10 @@
       // each server is checked once a session, and again only once it
       // changed; once the rows are on the page, for them to show it. One
       // that no agent and no project has is started for nobody, so it is
-      // checked only when the reader clicks its status (#1597, xiaozhu1337)
-      const unchecked = lib.servers.filter((s) => inUse(s) && health.get(s.name)?.key !== healthKey(s));
+      // checked only when the reader clicks its status (#1597, xiaozhu1337),
+      // and again once it changed after that: a sign-in since isn't left
+      // beside "needs sign-in" (新v学员 on Discord)
+      const unchecked = lib.servers.filter((s) => (inUse(s) || health.has(s.name)) && health.get(s.name)?.key !== healthKey(s));
       queueMicrotask(() => checkHealth(unchecked));
     }
     // an agent's own servers (Codex's node_repl, added each time it starts)
@@ -1407,8 +1409,19 @@
   const toolsOpen = new Set(); // the servers whose tools are shown
   const healthKey = (s) => JSON.stringify([s.transport, s.command, s.args, s.env, s.url, s.headers, s.signIn]);
   const toolList = (name) => { const h = health.get(name)?.h; return h?.state === "ok" ? h.toolList || [] : []; };
-  // whether any agent gets the server, here or in a project magpie keeps
-  const inUse = (s) => !!s.agents?.length || (lib.projects || []).some((p) => p.servers?.[s.name]?.length);
+  // whether an agent the page shows gets the server, here or in a project
+  // magpie keeps whose folder is there. The library keeps every agent it
+  // gave a server to, those the page leaves out too: one hidden on the
+  // Agents page, one no longer installed, one with no MCP of its own. A
+  // server on only for those has every chip off, and isn't started for
+  // them on its own (#1597, xiaozhu1337: ida-pro-mcp and windbg-mcp were)
+  const inUse = (s) => {
+    const shown = new Set(mcpAgents().map((a) => a.id)), inProjects = new Set(projectMCPAgents().map((a) => a.id));
+    return (s.agents || []).some((id) => shown.has(id))
+      || (lib.projects || []).some((p) => !p.missing && (p.servers?.[s.name] || []).some((id) => inProjects.has(id)));
+  };
+  // whether the library has it on for anyone at all, shown here or not
+  const onAnywhere = (s) => !!s.agents?.length || (lib.projects || []).some((p) => p.servers?.[s.name]?.length);
   // a click checks a server again, or for the first time one in no use;
   // not while it is being checked
   function recheck(name) {
@@ -1521,13 +1534,25 @@
     for (const [name, key] of keys) { health.set(name, { key, h: null }); paintHealth(name); }
     let got = {}, failed = null;
     try { got = (await api("library/mcp/check", { names: [...keys.keys()], fresh: !!fresh })).servers || {}; } catch (e) { failed = e.message; }
+    let signIns = false;
     for (const [name, key] of keys) {
       // a server changed while it was checked has been asked for again
       if (health.get(name)?.key !== key) continue;
       const h = got[name] || (failed ? { state: "error", why: "request", detail: failed } : null);
+      // the check found magpie's sign-in run out (the server refused even
+      // a renewed token): the row's tag says so, not "Signed in" beside
+      // "needs sign-in" (新v学员 on Discord)
+      const s = lib.servers.find((x) => x.name === name);
+      if (h?.signIn && s && (!!h.signIn.signedIn !== !!s.signIn?.signedIn || !!h.signIn.dead !== !!s.signIn?.dead)) {
+        s.signIn = h.signIn;
+        health.set(name, { key: healthKey(s), h });
+        signIns = true;
+        continue;
+      }
       if (h) health.set(name, { key, h }); else health.delete(name);
       paintHealth(name);
     }
+    if (signIns) render();
   }
   function healthWords(h, s) {
     if (h.state === "ok") return [h.tools === 1 ? t("1 tool") : t("{n} tools", { n: h.tools }), t("It started and listed its tools")];
@@ -1573,7 +1598,7 @@
         b.hidden = !s || inUse(s);
         b.className = "lib-health idle";
         b.replaceChildren(el("span", "", t("not checked")));
-        b.title = t("No agent has it, so it isn't checked on its own") + "\n" + t("Click to check it");
+        b.title = t(s && onAnywhere(s) ? "No agent shown here has it on, so it isn't checked on its own" : "No agent has it, so it isn't checked on its own") + "\n" + t("Click to check it");
         continue;
       }
       b.hidden = false;
@@ -1603,7 +1628,9 @@
   // name is the server as saved ("" for one being added); ready saves what
   // the editor shows when it isn't that (a URL changed to the one that
   // signs in, as Exa's ?login) and gives the name it's saved as, for the
-  // sign-in to be to the server the form shows
+  // sign-in to be to the server the form shows. ready.saves says it would
+  // save, and the button then says so; box.redraw draws it again as the
+  // form changes
   function signInBox(name, ready) {
     const box = el("div", "lib-signin");
     const draw = () => {
@@ -1622,7 +1649,7 @@
         line.append(tag(t("Signed in"), "lib-signed"), el("span", "note", t("The agents given it use magpie's sign-in")), el("span", "grow"), button(t("Sign out"), "", signOut));
       } else {
         if (cur.dead) line.append(tag(t("Sign-in ran out"), "warn"));
-        line.append(button(cur.dead ? t("Sign in again") : t("Sign in"), "action", start));
+        line.append(button(ready?.saves?.() ? t("Save and sign in") : cur.dead ? t("Sign in again") : t("Sign in"), "action", start));
       }
       box.append(line);
       if (sg?.state === "failed") box.append(el("div", "lib-signin-err", sg.error));
@@ -1649,6 +1676,7 @@
         // magpie's words in the reader's language, where it has them
         mcpSigning = { name, state: "failed", error: t(e.message) };
         draw();
+        ready?.failed?.(e.message);
       }
     }
     // followed with the dialog closed too, for the row to say it's signed in
@@ -1677,6 +1705,7 @@
         draw();
       } catch (e) { status(e.message, "err", 6000); }
     }
+    box.redraw = draw;
     draw();
     return box;
   }
@@ -1812,6 +1841,11 @@
   // refHint: how a value is read from a variable (#1250)
   const refHint = () => t("A value can name a variable, as {ref}: each agent is given it in its own way, so the token stays out of its settings", { ref: "${NAME}" });
 
+  // the start of mcpauth.ErrNoRegistration
+  const NO_REGISTRATION = "the server's sign-in doesn't let an app register itself";
+  // a server's own OAuth app, to tell a changed one: "" for none
+  const appOf = (x) => (x?.transport === "http" && x.oauth?.clientId ? JSON.stringify([x.oauth.clientId, x.oauth.clientSecret || "", x.oauth.callbackPort || 0]) : "");
+
   function editServer(s, prefill) {
     const all = mcpAgents();
     const d = prefill || (s ? structuredClone(s) : { name: "", transport: "stdio", command: "", args: [], env: {}, url: "", headers: {}, agents: all.map((a) => a.id) });
@@ -1824,7 +1858,50 @@
     ed.append(head);
     const err = el("div", "editor-error");
 
-    const name = field2(d.name, t("e.g. github"), (v) => { d.name = v.trim(); });
+    let signBox = null; // the sign-in's, for its button to say it saves
+    // a sign-in saves the form first only to sign in to another server than
+    // the saved one; see ready
+    ready.saves = () => !s || d.name !== s.name || d.transport !== s.transport || d.url !== (s.url || "") || appOf(d) !== appOf(s);
+    // a server whose sign-in doesn't let magpie register itself (GitHub's,
+    // 新v学员 on Discord): the fields for the user's own app open
+    ready.failed = (msg) => {
+      if (!msg.startsWith(NO_REGISTRATION) || !appBox) return;
+      appOpen = true;
+      drawApp();
+      appBox.querySelector("input")?.focus();
+    };
+    let appOpen = !!d.oauth?.clientId, appBox = null, appHint = null;
+    // the user's own OAuth app, by Claude Code's names (--client-id,
+    // --client-secret, --callback-port)
+    function drawApp() {
+      appBox.replaceChildren();
+      const hint = appHint;
+      if (!appOpen) {
+        appBox.append(button(t("Use your own OAuth app"), "lib-addpair", () => { appOpen = true; drawApp(); appBox.querySelector("input")?.focus(); }));
+        if (hint) hint.textContent = t("For a server whose sign-in doesn't let magpie register itself, as GitHub's");
+        return;
+      }
+      const a = () => (d.oauth ||= { clientId: "", clientSecret: "", callbackPort: 0 });
+      const id = field2(d.oauth?.clientId, t("Client ID"), (v) => { a().clientId = v.trim(); signBox?.redraw(); });
+      const secret = field2(d.oauth?.clientSecret, t("Client secret"), (v) => { a().clientSecret = v.trim(); signBox?.redraw(); });
+      secret.type = "password";
+      const port = field2(d.oauth?.callbackPort || "", t("Callback port"), (v) => {
+        port.value = v.replace(/\D/g, "").slice(0, 5);
+        a().callbackPort = Number(port.value) || 0;
+        signBox?.redraw();
+        if (hint) hint.textContent = callback();
+      });
+      port.inputMode = "numeric";
+      port.classList.add("port");
+      for (const [i, l] of [[id, t("Client ID")], [secret, t("Client secret")], [port, t("Callback port")]]) i.setAttribute("aria-label", l);
+      const x = button("", "lib-x", () => { d.oauth = s?.oauth ? null : undefined; appOpen = false; drawApp(); signBox?.redraw(); });
+      x.append(svg("M4.5 4.5l7 7M11.5 4.5l-7 7", 11, 1.6));
+      x.title = t("Remove");
+      appBox.append(id, secret, port, x);
+      if (hint) hint.textContent = callback();
+    }
+    const callback = () => t("Made with its vendor (GitHub's under Settings › Developer settings › OAuth Apps), with {url} as its callback URL", { url: "http://localhost" + (d.oauth?.callbackPort ? ":" + d.oauth.callbackPort : "") + "/callback" });
+    const name = field2(d.name, t("e.g. github"), (v) => { d.name = v.trim(); signBox?.redraw(); });
     ed.append(...field(t("Name"), name, t("Letters, digits, - and _ — what the agents call it")));
     const kindOf = () => segs([["stdio", t("Command")], ["http", "HTTP"], ["sse", "SSE"]], d.transport, (v) => { d.transport = v; draw(); });
     const kindBox = el("div");
@@ -1848,15 +1925,24 @@
         g.append(...field(t("Command"), line, t("The command and its arguments, as you'd type them")));
         g.append(...field(t("Environment"), pairs(d.env, "GITHUB_TOKEN", t("value"), (v) => { d.env = v; drawAgents(); }), refHint()));
       } else {
-        const url = field2(d.url, "https://example.com/mcp", (v) => { d.url = v.trim(); });
+        const url = field2(d.url, "https://example.com/mcp", (v) => { d.url = v.trim(); signBox?.redraw(); });
         url.classList.add("mono");
         g.append(...field("URL", url));
         g.append(...field(t("Headers"), pairs(d.headers, "Authorization", "Bearer …", (v) => { d.headers = v; drawAgents(); }), refHint()));
-        // Sign in saves the form first when it isn't what's saved, so a URL
-        // just changed (or a server just added) is the one signed in to
-        if (d.transport === "http") g.append(...field(t("Sign-in"), signInBox(s ? s.name : "", ready), t("For a server that asks you to sign in (OAuth): magpie signs in once, and every agent given it uses that sign-in")));
+        // Sign in saves the form first when it is of another server than
+        // the saved one, so a URL just changed (or a server just added) is
+        // the one signed in to
+        signBox = d.transport === "http" ? signInBox(s ? s.name : "", ready) : null;
+        if (signBox) {
+          appBox = el("div", "lib-app");
+          const f = field(t("OAuth app"), appBox, " ");
+          appHint = f[1].querySelector(".hint");
+          g.append(...f);
+          g.append(...field(t("Sign-in"), signBox, t("For a server that asks you to sign in (OAuth): magpie signs in once, and every agent given it uses that sign-in")));
+        } else appBox = null;
       }
       slot.append(g);
+      if (appBox) drawApp();
       // its own icon while it runs as it did; another way of running is another server
       head.firstChild.replaceWith(mark(s && d.transport === s.transport ? s.icon : "", d.transport === "stdio" ? GLYPH.cmd : GLYPH.web));
       drawAgents();
@@ -1875,7 +1961,7 @@
     const send = async () => {
       const body = { old: s ? s.name : "", server: { name: d.name, transport: d.transport, agents: d.agents } };
       if (d.transport === "stdio") Object.assign(body.server, { command: d.command, args: d.args, env: d.env });
-      else Object.assign(body.server, { url: d.url, headers: d.headers });
+      else Object.assign(body.server, { url: d.url, headers: d.headers, oauth: d.transport === "http" && d.oauth?.clientId ? d.oauth : null });
       take(await api("library/servers/save", body));
       const was = s;
       s = lib.servers.find((x) => x.name === d.name) || s;
@@ -1890,15 +1976,19 @@
         render();
       } catch (e) { err.textContent = e.message; }
     };
-    // before a sign-in: the form saved, the dialog left open, when it
-    // isn't the server as saved
-    const sorted = (h) => JSON.stringify(Object.entries(h || {}).sort());
+    // before a sign-in: the form saved, the dialog left open, only when
+    // the sign-in is to another server than the saved one (a new one, a
+    // name or URL changed). It never saves the rest of the form on its
+    // own: a header removed, then Sign in, then Cancel left the header
+    // removed (新v学员 on Discord). A save says so on the button ("Save and
+    // sign in"), and what it saved is what Cancel then keeps
     async function ready() {
-      if (s && d.name === s.name && d.transport === s.transport && d.url === (s.url || "") && sorted(d.headers) === sorted(s.headers)) return s.name;
+      if (!ready.saves()) return s.name;
       err.textContent = "";
       const was = await send();
       report(lib.result, was ? t("{name} saved", { name: d.name }) : "");
       ok.textContent = t("Save");
+      original = JSON.stringify(d);
       render();
       return s.name;
     }
@@ -1923,7 +2013,7 @@
         status(t("Filled in from what you pasted"), "ok");
       } else pasteMany(found, d.agents);
     });
-    const original = JSON.stringify(d);
+    let original = JSON.stringify(d);
     modal = { save, dirty: () => JSON.stringify(d) !== original };
     openLib(ed);
     if (!s) requestAnimationFrame(() => name.focus());
@@ -2174,12 +2264,12 @@
     if (!h) requestAnimationFrame(() => name.focus());
   }
 
-  function confirmRemoveEveryHook() {
-    const hooks = (lib.hooks || []).slice(), names = hooks.map((x) => x.name);
-    confirmRemoveEvery("hooks", names, t("Remove all {n} hooks?", { n: names.length }), [
+  function confirmRemoveEveryHook(some) {
+    const hooks = (some || lib.hooks || []).slice(), names = hooks.map((x) => x.name), n = names.length;
+    confirmRemoveEvery("hooks", names, !some ? t("Remove all {n} hooks?", { n }) : n === 1 ? t("Remove {name}?", { name: names[0] }) : t("Remove {n} hooks?", { n }), [
       takenFrom(hooks),
       t("Hooks your agents have that aren't in the library stay as they are, and so does one you changed in an agent's file."),
-    ]);
+    ], !!some);
   }
 
   // ---------- skills ----------
@@ -2197,6 +2287,7 @@
       const fresh = lib.skills.filter((s) => s.kind === "github" || s.origin);
       rh.append(el("span", "grow"));
       if (lib.skills.length > 1) rh.append(sortBy("libSkills", SKILL_SORTS(), () => { if (box.isConnected) drawSkills(box, all); }));
+      if (lib.skills.length > 1) rh.append(foldAllButton(box, all));
       // the groups traced again: a pack added a while ago is mostly older
       // copies its repository has edited since (White Immortal on Discord)
       if (lib.skills.length > 1 && lib.skills.some((s) => skillRepo(s))) {
@@ -2364,6 +2455,7 @@
   let picking = "";            // "skills" or "servers": that page's rows have a box each, to pick some (#791, #1027)
   let naming = false;          // the pick bar asks the name of a group to put them in
   const picked = new Set();    // the names picked
+  const pickErrs = new Map();  // name → why Remove left it, as the bar's Remove said (#1852)
   let skillQuery = "";         // what the filter over the skills holds
   let skillTimer = 0;          // the filter's redraw, waiting for typing to pause
   const unfiltered = new Set(); // groups folded while filtering, till the filter changes
@@ -2376,7 +2468,8 @@
   // checkout it's in), so a repository's skills are one group (White
   // Immortal on Discord). owner/repo on GitHub, host/path elsewhere.
   const skillRepo = (s) => s.repo || (s.kind === "github" ? repoOf(s.source) : s.origin ? repoOf(s.origin) : "");
-  const repoURL = (r) => (/^[^/]+\.[^/]+\//.test(r) ? "https://" + r : "https://github.com/" + r);
+  // a host's (with a path, or a site's kit of skills alone, #1862) or GitHub's
+  const repoURL = (r) => (/^[^/]+\.[^/]+(\/|$)/.test(r) ? "https://" + r : "https://github.com/" + r);
   const MANY = 40;   // a group bigger than this starts folded, and so do its parts
   const SPLIT = 8;   // a group bigger than this is split by folder, or by name
   // Heights the rows are held to (library.css): a list's room is known
@@ -2532,6 +2625,47 @@
     return f;
   }
 
+  // What a group shows: its skills the filter matches, and whether it's
+  // folded. While filtering a group is open unless folded since the filter
+  // changed; else as the user last left it, or folded when there are many.
+  const skillHits = (g, q) => (q ? g.skills.filter((s) => g.text.get(s).includes(q)) : g.skills);
+  const groupFolded = (g, q) => (q ? unfiltered.has(g.key) : folds[g.key] ?? lib.skills.length > MANY);
+
+  // Collapse all / Expand all (#1862, WardLu): every group the list shows
+  // folded, or opened, at once. Only how the list looks changes, never what
+  // an agent has. Not filtering, it is the groups' kept folds, as a click
+  // on each heading would leave them; while filtering, it folds or opens
+  // the groups the filter shows, till the filter changes, as a heading's
+  // click does then. A part inside a group keeps its own fold.
+  let foldAllBtn = null;
+  function foldAllButton(box, all) {
+    const b = button("", "lib-updall lib-foldall", () => {
+      const q = skillQuery.trim().toLowerCase();
+      const shown = skillGroups().filter((g) => skillHits(g, q).length);
+      if (shown.length < 2) return;
+      const fold = shown.some((g) => !groupFolded(g, q));
+      for (const g of shown) {
+        if (q) { if (fold) unfiltered.add(g.key); else unfiltered.delete(g.key); }
+        else folds[g.key] = fold;
+      }
+      if (!q) saveFolds();
+      if (box.isConnected) drawSkills(box, all);
+    });
+    b.hidden = true; // till the list is drawn, which says
+    foldAllBtn = b;
+    return b;
+  }
+  // the button as the groups drawn are: hidden with one group or none
+  function paintFoldAll(shown, q) {
+    const b = foldAllBtn;
+    if (!b) return;
+    b.hidden = shown.length < 2;
+    const fold = shown.some((g) => !groupFolded(g, q));
+    b.textContent = fold ? t("Collapse all") : t("Expand all");
+    b.title = q ? (fold ? t("Fold every group that matches the filter") : t("Open every group that matches the filter"))
+      : fold ? t("Fold every group") : t("Open every group");
+  }
+
   // The skills' lists as last drawn into a box: a group's list keeps its
   // rows through a filter or a fold, and draws only those it hasn't.
   let drawn = null; // { box, lists: Map group → window }
@@ -2539,15 +2673,16 @@
     const groups = skillGroups();
     const q = skillQuery.trim().toLowerCase();
     if (drawn?.box !== box) drawn = { box, lists: new Map() };
-    const hitsOf = (g) => (q ? g.skills.filter((s) => g.text.get(s).includes(q)) : g.skills);
+    const hitsOf = (g) => skillHits(g, q);
     const cards = [];
     const single = groups.length === 1;
-    const many = lib.skills.length > MANY;
     const redraw = () => { drawSkills(box, all); };
+    const shown = [];
     for (const g of groups) {
       const hits = hitsOf(g);
       if (!hits.length) continue;
-      const folded = !single && (q ? unfiltered.has(g.key) : folds[g.key] ?? many);
+      if (!single) shown.push(g);
+      const folded = !single && groupFolded(g, q);
       let w = drawn.lists.get(g.key);
       if (!folded) {
         if (!w) drawn.lists.set(g.key, (w = windowed()));
@@ -2563,6 +2698,7 @@
     }
     if (!cards.length) cards.push(el("div", "list lib-none", t("No skill matches “{q}”.", { q: skillQuery.trim() })));
     box.replaceChildren(...cards);
+    paintFoldAll(shown, q);
     if (box.isConnected) { syncLists(); if (picking) syncPicks(); } // the bar's All counts what the filter shows
   }
 
@@ -2629,8 +2765,18 @@
     const name = el("div", "name" + (g.repo ? " mono" : ""), title);
     who.append(name);
     const n = g.skills.length;
-    who.append(el("div", "sub", filtering && hits.length !== n ? t("{n} of {total} skills", { n: hits.length, total: n })
-      : n === 1 ? t("1 skill") : t("{n} skills", { n })));
+    const sub = el("div", "sub", filtering && hits.length !== n ? t("{n} of {total} skills", { n: hits.length, total: n })
+      : n === 1 ? t("1 skill") : t("{n} skills", { n }));
+    // those kept in ~/.agents/skills, which some agents read themselves:
+    // said on the heading, before its chips are clicked (#1862)
+    const shared = g.skills.filter((s) => all.some((a) => s.always?.includes(a.id)));
+    if (shared.length) {
+      const readers = all.filter((a) => shared.some((s) => s.always.includes(a.id))).map((a) => a.name).join(", ");
+      const note = el("span", "lib-itself", " · " + t("{n} in ~/.agents/skills", { n: shared.length }));
+      sub.title = t("{agents} read ~/.agents/skills themselves: they have these {n} whatever is ticked here, and turning the group off for them leaves those on", { agents: readers, n: shared.length });
+      sub.append(note);
+    }
+    who.append(sub);
     const tags = el("div", "lib-tags");
     // one changed here is updated from its own row, which asks first (#1449)
     const stale = g.skills.filter((s) => s.check?.status === "update" && !s.edited);
@@ -2687,35 +2833,64 @@
   // Servers picked (#1027) are the same, counted of those an agent can
   // reach: one given every server it can reach of them has them all, and
   // one that can reach none of them can't be given them.
+  // A skill kept in ~/.agents/skills is had by an agent that reads that
+  // folder itself whatever is ticked (alwaysFor): a group's chips count, and
+  // give or take, only the skills magpie decides for each agent (#1862,
+  // WardLu: the group's chip went off and its rows stayed lit). An agent
+  // that reads every one of them itself is lit and locked, as a row's chip
+  // is; one that reads some says how many, before the click and after it.
   function groupChips(skills, all, repo, kind = "skills") {
     const servers = kind === "servers", hooks = kind === "hooks";
     const n = skills.length, names = skills.map((s) => s.name);
-    const can = (s, a) => (servers ? !!reaches(s)(a) : hooks ? !hookBlocked(s)(a) : true);
+    const own = (s, a) => !s.always?.includes(a.id);
+    const can = (s, a) => (servers ? !!reaches(s)(a) : hooks ? !hookBlocked(s)(a) : own(s, a));
     const reach = (a) => skills.filter((s) => can(s, a)).length;
     const count = (a) => skills.filter((s) => can(s, a) && s.agents?.includes(a.id)).length;
+    const itself = (a) => (servers || hooks ? 0 : skills.filter((s) => !own(s, a)).length);
     const full = all.filter((a) => reach(a) && count(a) === reach(a)).map((a) => a.id);
+    // each agent is sent the names it can be given: a skill it reads
+    // itself is left as it is, so a group's agents may go in more than one
+    const send = async (ids, on) => {
+      const by = new Map();
+      for (const id of ids) {
+        const a = all.find((x) => x.id === id);
+        const ns = servers || hooks || !a ? names : skills.filter((s) => own(s, a)).map((s) => s.name);
+        const k = ns.join("\n");
+        if (!by.has(k)) by.set(k, { names: ns, agents: [] });
+        by.get(k).agents.push(id);
+      }
+      let v = null;
+      for (const g of by.values()) v = await api("library/" + kind + "/agents-some", { names: g.names, agents: g.agents, on });
+      return v;
+    };
     const box = agentChips(all, full, async (next) => {
       const on = next.filter((id) => !full.includes(id)), off = full.filter((id) => !next.includes(id));
       box.classList.add("busy");
       try {
         let v = null;
-        if (on.length) v = await api("library/" + kind + "/agents-some", { names, agents: on, on: true });
-        if (off.length) v = await api("library/" + kind + "/agents-some", { names, agents: off, on: false });
+        if (on.length) v = await send(on, true);
+        if (off.length) v = await send(off, false);
         if (!v) return;
         take(v);
         const who = (ids) => ids.map(nameOf).join(", ");
-        report(v.result, repo != null
+        // taken from an agent that still reads some of them itself: said so
+        const still = off.map((id) => all.find((x) => x.id === id)).filter((a) => a && itself(a));
+        const kept = still.length ? " — " + t("{agent} still reads {n} of them from ~/.agents/skills itself", { agent: still[0].name, n: itself(still[0]) })
+          + (still.length > 1 ? " " + t("(and {n} more)", { n: still.length - 1 }) : "") : "";
+        report(v.result, (repo != null
           ? (on.length ? t("{repo}'s skills are on for {agents}", { repo, agents: who(on) }) : t("{repo}'s skills are off for {agents}", { repo, agents: who(off) }))
           : n === 1 ? (on.length ? t("{name} is on for {agents}", { name: names[0], agents: who(on) }) : t("{name} is off for {agents}", { name: names[0], agents: who(off) }))
           : servers ? (on.length ? t("{n} servers are on for {agents}", { n, agents: who(on) }) : t("{n} servers are off for {agents}", { n, agents: who(off) }))
           : hooks ? (on.length ? t("{n} hooks are on for {agents}", { n, agents: who(on) }) : t("{n} hooks are off for {agents}", { n, agents: who(off) }))
-          : on.length ? t("{n} skills are on for {agents}", { n, agents: who(on) }) : t("{n} skills are off for {agents}", { n, agents: who(off) }));
+          : on.length ? t("{n} skills are on for {agents}", { n, agents: who(on) }) : t("{n} skills are off for {agents}", { n, agents: who(off) })) + kept);
       } catch (e) {
         status(e.message, "err", 6000);
       }
       render();
     }, { all: true, blocked: servers ? (a) => (reach(a) ? "" : n === 1 ? sseBlocked(skills[0])(a) : t("{agent} can reach none of these servers", { agent: a.name }))
-      : hooks ? (a) => (reach(a) ? "" : n === 1 ? hookBlocked(skills[0])(a) : t("{agent} can run none of these hooks", { agent: a.name })) : null });
+      : hooks ? (a) => (reach(a) ? "" : n === 1 ? hookBlocked(skills[0])(a) : t("{agent} can run none of these hooks", { agent: a.name })) : null,
+    always: servers || hooks || !n ? null : (a) => (reach(a) ? "" : n === 1 ? alwaysFor(skills[0])(a)
+      : t("{agent} reads ~/.agents/skills itself, where all of these are kept — it has them whatever is ticked here", { agent: a.name })) });
     box.classList.add("lib-groupchips");
     for (const c of box.querySelectorAll(".lib-ag[data-agent]")) {
       const a = all.find((x) => x.id === c.dataset.agent), k = count(a), m = reach(a);
@@ -2729,9 +2904,11 @@
         ? (k === m ? t("{agent} has all of these servers — click to take them away", { agent: a.name })
           : k ? t("{agent} has {n} of these servers — click to give it the rest", { agent: a.name, n: k })
           : t("Give {agent} all of these servers", { agent: a.name }))
-        : k === n ? t("{agent} has all of them — click to take them away", { agent: a.name })
+        : (k === m ? t("{agent} has all of them — click to take them away", { agent: a.name })
           : k ? t("{agent} has {n} of them — click to give it the rest", { agent: a.name, n: k })
-          : t("Give {agent} all of them", { agent: a.name });
+          : t("Give {agent} all of them", { agent: a.name }))
+          + (m < n ? "\n" + t("It reads {n} of them from ~/.agents/skills itself: a click here leaves those as they are", { n: n - m }) : "");
+      if (m < n) c.classList.add("partly");
     }
     const every = box.querySelector(".lib-ag.all");
     if (every) every.title = every.classList.contains("on")
@@ -2751,6 +2928,7 @@
     const b = button(picking ? t("Done") : t("Select"), "action lib-updall lib-select", () => {
       picking = picking ? "" : kind;
       picked.clear();
+      pickErrs.clear();
       render();
     });
     const skills = kind === "skills", hooks = kind === "hooks";
@@ -2762,8 +2940,9 @@
   // what's picked is a page's own: another page, or a list too short to
   // pick from, ends it, and a name no longer in the list isn't picked
   function pickingFor(kind, items) {
-    if (picking && (picking !== kind || items.length < 2)) { picking = ""; picked.clear(); }
+    if (picking && (picking !== kind || items.length < 2)) { picking = ""; picked.clear(); pickErrs.clear(); }
     for (const n of picked) if (!items.some((x) => x.name === n)) picked.delete(n);
+    for (const n of pickErrs.keys()) if (!items.some((x) => x.name === n)) pickErrs.delete(n);
   }
 
   // a row with a box, which its click ticks rather than opening it
@@ -2773,6 +2952,14 @@
     row.classList.toggle("picked", picked.has(name));
     row.onclick = () => box.click();
     row.title = t("Select {name}", { name });
+    // one the bar's Remove couldn't take out says why, under its name, in
+    // place of its line (a row's height is held, so it takes no more room)
+    const why = pickErrs.get(name), sub = why && row.querySelector(":scope > .who > .sub");
+    if (sub) {
+      row.classList.add("lib-pickfailed");
+      sub.className = "sub lib-pickerr";
+      sub.textContent = sub.title = t("Not removed: {error}", { error: why });
+    }
     return row;
   }
 
@@ -2844,11 +3031,18 @@
         }
       }
       if (servers && projectMCPAgents().length) bar.append(copyConfigButton(skills.map((x) => x.name)));
+      // the ones picked out of the library (#1852): asked first, as Remove
+      // all asks, and each taken out as its own row's Remove would. Its
+      // label holds still as the count changes (the count is beside it, and
+      // in the sheet), so a pick never rewraps the bar under the pointer
+      const rm = button(t("Remove…"), "action danger lib-updall lib-pickrm", () => servers ? confirmRemoveEveryServer(skills) : hooks ? confirmRemoveEveryHook(skills) : confirmRemoveEverySkill(skills));
+      rm.title = servers ? t("Take the servers picked out of the library") : hooks ? t("Take the hooks picked out of the library") : t("Take the skills picked out of the library");
+      bar.append(rm);
       const c = button(t("Clear"), "lib-updall lib-pickclear", () => { picked.clear(); syncPicks(); });
       c.title = t("Unpick them all");
       bar.append(c);
     }
-    bar.append(button(t("Done"), "action lib-updall lib-pickdone", () => { picking = ""; picked.clear(); render(); }));
+    bar.append(button(t("Done"), "action lib-updall lib-pickdone", () => { picking = ""; picked.clear(); pickErrs.clear(); render(); }));
     return bar;
   }
 
@@ -3641,15 +3835,17 @@
     return b;
   }
 
-  // the sheet asking first: its head and what it says, then Remove all n
-  function confirmRemoveEvery(kind, names, title, lines) {
+  // the sheet asking first: its head and what it says, then Remove all n,
+  // or Remove n when they are the ones picked (some)
+  function confirmRemoveEvery(kind, names, title, lines, some) {
     const ed = el("div", "editor lib-editor");
     const head = el("div", "ehead");
     head.append(glyph(GLYPH.trash), el("b", "", title));
     ed.append(head);
     for (const l of lines) if (l) ed.append(el("p", "lib-confirm", l));
     const bar = el("div", "bar");
-    const go = button(t("Remove all {n}", { n: names.length }), "primary danger-fill", async () => { go.disabled = true; if (await removeEvery(kind, names)) closeLibModal(true); else go.disabled = false; });
+    const label = !some ? t("Remove all {n}", { n: names.length }) : names.length === 1 ? t("Remove") : t("Remove {n}", { n: names.length });
+    const go = button(label, "primary danger-fill", async () => { go.disabled = true; if (await removeEvery(kind, names, some)) closeLibModal(true); else go.disabled = false; });
     bar.append(el("span", "grow"), button(t("Cancel"), "", closeLibModal), go);
     ed.append(bar);
     modal = { save: () => go.click() };
@@ -3662,45 +3858,70 @@
       : t("They are taken out of the library; no agent has any of them.");
   };
 
-  function confirmRemoveEverySkill() {
-    const skills = lib.skills.slice(), names = skills.map((s) => s.name), n = names.length;
+  // every skill, or those picked (#1852)
+  function confirmRemoveEverySkill(some) {
+    const skills = (some || lib.skills).slice(), names = skills.map((s) => s.name), n = names.length;
     const linked = skills.filter((s) => s.kind === "folder").length, kept = n - linked;
     const projects = (lib.projects || []).filter((p) => names.some((x) => p.skills?.[x]?.length)).length;
     const where = [];
     if (kept) where.push(t("{n} folders are moved to magpie's backups (Backups, at the top of the Library), not deleted.", { n: kept }));
     if (linked) where.push(t("{n} linked from folders of your own are only unlinked: those folders stay where they are.", { n: linked }));
-    confirmRemoveEvery("skills", names, t("Remove all {n} skills?", { n }), [
+    confirmRemoveEvery("skills", names, !some ? t("Remove all {n} skills?", { n }) : n === 1 ? t("Remove {name}?", { name: names[0] }) : t("Remove {n} skills?", { n }), [
       takenFrom(skills),
       projects && t("The skills magpie placed in {n} projects are taken away too.", { n: projects }),
       where.join(" "),
-    ]);
+    ], !!some);
   }
 
-  function confirmRemoveEveryServer() {
-    const servers = lib.servers.slice(), names = servers.map((s) => s.name), n = names.length;
+  function confirmRemoveEveryServer(some) {
+    const servers = (some || lib.servers).slice(), names = servers.map((s) => s.name), n = names.length;
     const projects = (lib.projects || []).filter((p) => names.some((x) => p.servers?.[x]?.length)).length;
     const signed = servers.filter((s) => s.signIn?.signedIn).length;
-    confirmRemoveEvery("servers", names, t("Remove all {n} servers?", { n }), [
+    confirmRemoveEvery("servers", names, !some ? t("Remove all {n} servers?", { n }) : n === 1 ? t("Remove {name}?", { name: names[0] }) : t("Remove {n} servers?", { n }), [
       takenFrom(servers),
       projects && t("The servers magpie placed in {n} projects are taken away too.", { n: projects }),
       signed && t("magpie's sign-in to {n} of them is forgotten too.", { n: signed }),
       t("Servers your agents have that aren't in the library stay as they are."),
-    ]);
+    ], !!some);
   }
 
-  async function removeEvery(kind, names) {
+  // Those picked (some, #1852): the ones taken out leave the list and the
+  // picks; one that couldn't be stays picked and says why on its row, and
+  // only those gone are counted as removed. Nothing removed at all (the
+  // change refused) leaves every one picked, the sheet open with why.
+  async function removeEvery(kind, names, some) {
+    const what = (p) => p.what.replace(/^(skill|mcp|hook):/, "");
     try {
       const v = await api("library/" + kind + "/remove-all", { names });
       take(v);
       const res = v.result || {}, no = res.unremoved || [];
+      if (some) {
+        pickErrs.clear();
+        for (const p of no) pickErrs.set(what(p), p.error);
+        const gone = names.filter((x) => !pickErrs.has(x));
+        for (const x of gone) picked.delete(x);
+        const done = gone.length === 1 ? t("{name} removed", { name: gone[0] })
+          : kind === "skills" ? t("{n} skills removed", { n: gone.length }) : kind === "hooks" ? t("{n} hooks removed", { n: gone.length }) : t("{n} servers removed", { n: gone.length });
+        if (no.length) status((gone.length ? done + " · " : "") + t("{name} wasn't removed: {error}", { name: what(no[0]), error: no[0].error }) + (no.length > 1 ? " " + t("(and {n} more)", { n: no.length - 1 }) : ""), "warn", 10000);
+        else report(res, done);
+        render();
+        return true;
+      }
       if (no.length) {
         const p = no[0];
-        status(t("{name} wasn't removed: {error}", { name: p.what.replace(/^(skill|mcp|hook):/, ""), error: p.error }) + (no.length > 1 ? " " + t("(and {n} more)", { n: no.length - 1 }) : ""), "warn", 8000);
+        status(t("{name} wasn't removed: {error}", { name: what(p), error: p.error }) + (no.length > 1 ? " " + t("(and {n} more)", { n: no.length - 1 }) : ""), "warn", 8000);
       } else report(res, kind === "skills" ? t("{n} skills removed", { n: names.length }) : kind === "hooks" ? t("{n} hooks removed", { n: names.length }) : t("{n} servers removed", { n: names.length }));
       render();
       return true;
     } catch (e) {
       status(e.message, "err", 6000);
+      // none went: every one stays picked, and one alone says why on its
+      // row too (the change names only the first reason of several)
+      if (some) {
+        pickErrs.clear();
+        if (names.length === 1) pickErrs.set(names[0], e.message);
+        render();
+      }
       return false;
     }
   }
@@ -3764,7 +3985,7 @@
     const l = c.limited;
     if (!l) return t(c.error);
     const d = l.until ? new Date(l.until) : null;
-    const time = d && !isNaN(d) ? d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
+    const time = d && !isNaN(d) ? d.toLocaleTimeString(intlLang(), { hour: "2-digit", minute: "2-digit" }) : "";
     if (l.token) return time ? t("GitHub's rate limit for your GitHub token is used up until {time}", { time })
       : t("GitHub's rate limit for your GitHub token is used up for now");
     return time ? t("GitHub allows 60 requests an hour without a token, used up until {time}. Add a GitHub token in Settings → Network and sharing to raise it to 5,000.", { time })
@@ -3773,7 +3994,7 @@
 
   // what a check found of a skill, for a tooltip: the last commit to it
   function checkLine(c) {
-    const when = c.date ? new Date(c.date).toLocaleDateString() : "";
+    const when = c.date ? new Date(c.date).toLocaleDateString(intlLang()) : "";
     return [c.message, [when, c.commit?.slice(0, 7)].filter(Boolean).join(" · ")].filter(Boolean).join("\n");
   }
 
@@ -4395,7 +4616,7 @@
     if (!x.featured || x.installs) {
       const n = el("span", "mk-installs");
       n.append(svg(GLYPH.down, 11, 1.5), el("span", "", compact(x.installs)));
-      n.title = t("{n} installs", { n: x.installs.toLocaleString() });
+      n.title = t("{n} installs", { n: x.installs.toLocaleString(intlLang()) });
       foot.append(n);
     }
     foot.append(el("span", "grow"), addButton(x, () => addSkill(x)));
