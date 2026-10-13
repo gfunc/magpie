@@ -26,7 +26,7 @@ func TestAPIJSONServesNativeBuckets(t *testing.T) {
 		t.Fatal(err)
 	}
 	if err := catalog.SaveLive("gx", up.URL+"/v1", []catalog.Model{
-		{ID: "m-any", Context: 128000, Output: 4096},
+		{ID: "m-any", Context: 128000, Output: 4096, Efforts: []string{"low", "high"}},
 		{ID: "m-chat", Context: 64000, APIs: []string{"chat"}},
 		{ID: "m-res", APIs: []string{"responses"}}, // the vendor's only API this provider doesn't speak: no bucket
 	}); err != nil {
@@ -92,6 +92,15 @@ func TestAPIJSONServesNativeBuckets(t *testing.T) {
 	}
 	if _, ok := group["group/daily"]; ok {
 		t.Errorf("group bucket carries the prefixed id group/daily: %v", group)
+	}
+	// the group's efforts come from the catalog's own computation over the
+	// members (the one member's levels here), like its limits do
+	if m := group["daily"]; m["support_efforts"] == nil {
+		t.Errorf("group daily carries no support_efforts: %v", m)
+	} else if got, ok := m["support_efforts"].([]any); !ok || len(got) != 2 || got[0] != "low" || got[1] != "high" {
+		t.Errorf("group daily: support_efforts %v, want [low high]", m["support_efforts"])
+	} else if m["id"] != "daily" {
+		t.Errorf("group daily: id %v, want the bare id its key has", m["id"])
 	}
 	if m := openai["gx/m-any"]; m == nil {
 		// covered above
