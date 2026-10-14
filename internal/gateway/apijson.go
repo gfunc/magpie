@@ -11,6 +11,15 @@ import (
 	"github.com/yetone/magpie/internal/settings"
 )
 
+// registryDefaultEffort is the thinking level MAGPIE_REGISTRY_DEFAULT_EFFORT
+// offers as every able model's default_effort in the registry ("max", say):
+// a client like kimi-code starts a model there instead of on the middle of
+// its levels. "" (unset) offers none, and a level the model doesn't take is
+// checked away by the caller.
+func registryDefaultEffort() string {
+	return strings.ToLower(strings.TrimSpace(os.Getenv("MAGPIE_REGISTRY_DEFAULT_EFFORT")))
+}
+
 // apiJSONBuckets are the registry's entries, one per wire the gateway can
 // be imported on: each becomes a [providers] entry of the client that
 // imports the gateway as a custom registry, a model appearing under a
@@ -110,6 +119,13 @@ func apiJSONModel(e provider.Entry, name string, price func(provider.Entry) (cat
 	}
 	if len(e.Efforts) > 0 {
 		m["support_efforts"] = e.Efforts
+		// kimi-code starts a model on default_effort, else the middle of
+		// support_efforts, else on; the registry's owner picks another
+		// level (max, say) through the environment, and it goes out only
+		// where the model takes it
+		if de := registryDefaultEffort(); slices.Contains(e.Efforts, de) {
+			m["default_effort"] = de
+		}
 	}
 	if in, out := e.Modalities(); in != nil || out != nil {
 		mod := map[string]any{}

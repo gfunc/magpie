@@ -133,3 +133,71 @@ func TestAPIJSONServesNativeBuckets(t *testing.T) {
 		}
 	}
 }
+
+// GET /api.json answers MAGPIE_REGISTRY_DEFAULT_EFFORT by offering that
+// thinking level as every able model's default_effort — the level a client
+// like kimi-code starts a model on instead of the middle of its levels —
+// on every bucket, and none on a model that doesn't take it.
+func TestAPIJSONDefaultEffort(t *testing.T) {
+	t.Setenv("MAGPIE_REGISTRY_DEFAULT_EFFORT", "max")
+	f := &fake{ctype: "application/json", reply: `{"id":"x","object":"chat.completion","choices":[{"index":0,"message":{"role":"assistant","content":"ok"},"finish_reason":"stop"}]}`}
+	up := setup(t, provider.Chat, f)
+	if err := provider.Save(provider.Provider{ID: "gx", Name: "GX", Key: "k",
+		Chat: up.URL + "/v1", Anthropic: up.URL,
+		Models: []string{"m-max", "m-nomax"}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := catalog.SaveLive("gx", up.URL+"/v1", []catalog.Model{
+		{ID: "m-max", Name: "Model Max", Efforts: []string{"low", "high", "max"}},
+		{ID: "m-nomax", Name: "Model NoMax", Efforts: []string{"low", "high"}},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	req := httptest.NewRequest("GET", "/api.json", nil)
+	rec := httptest.NewRecorder()
+	New().Handler().ServeHTTP(rec, req)
+	var out map[string]struct {
+		Models map[string]map[string]any `json:"models"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &out); err != nil {
+		t.Fatal(err)
+	}
+	if m := out["magpie-openai"].Models["gx/m-max"]; m["default_effort"] != "max" {
+		t.Errorf("gx/m-max: default_effort %v, want max", m["default_effort"])
+	}
+	if m := out["magpie-anthropic"].Models["gx/m-max"]; m["default_effort"] != "max" {
+		t.Errorf("anthropic bucket gx/m-max: default_effort %v, want max", m["default_effort"])
+	}
+	if m := out["magpie-openai"].Models["gx/m-nomax"]; m["default_effort"] != nil {
+		t.Errorf("gx/m-nomax: default_effort %v; it takes no max", m["default_effort"])
+	}
+}
+
+// GET /api.json says no default_effort while the environment is silent:
+// the client's own default (the middle of a model's levels) stands.
+func TestAPIJSONNoDefaultEffortWithoutEnv(t *testing.T) {
+	f := &fake{ctype: "application/json", reply: `{"id":"x","object":"chat.completion","choices":[{"index":0,"message":{"role":"assistant","content":"ok"},"finish_reason":"stop"}]}`}
+	up := setup(t, provider.Chat, f)
+	if err := provider.Save(provider.Provider{ID: "gx", Name: "GX", Key: "k",
+		Chat: up.URL + "/v1", Anthropic: up.URL,
+		Models: []string{"m-max"}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := catalog.SaveLive("gx", up.URL+"/v1", []catalog.Model{
+		{ID: "m-max", Name: "Model Max", Efforts: []string{"low", "high", "max"}},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	req := httptest.NewRequest("GET", "/api.json", nil)
+	rec := httptest.NewRecorder()
+	New().Handler().ServeHTTP(rec, req)
+	var out map[string]struct {
+		Models map[string]map[string]any `json:"models"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &out); err != nil {
+		t.Fatal(err)
+	}
+	if m := out["magpie-openai"].Models["gx/m-max"]; m["default_effort"] != nil {
+		t.Errorf("gx/m-max: default_effort %v with the environment unset", m["default_effort"])
+	}
+}
