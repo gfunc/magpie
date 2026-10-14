@@ -759,18 +759,22 @@ func grokWindowLabel(n int) string {
 
 // grokWindowed splits a requested id into the model Grok lists and the
 // window the id names: grok-4.7 is grok-4.7 at its default window (0, no
-// header), grok-4.7@500k is grok-4.7 at 500000 tokens.
+// header), grok-4.7@500k is grok-4.7 at 500000 tokens. A size no multiple
+// of 1000 is the window itself, as grokWindowLabel writes it (131072).
 func grokWindowed(id string) (string, int) {
 	model, size, ok := strings.Cut(id, "@")
 	if !ok {
 		return id, 0
 	}
-	k, ok := strings.CutSuffix(size, "k")
+	k, isK := strings.CutSuffix(size, "k")
 	n, err := strconv.Atoi(k)
-	if !ok || err != nil || n <= 0 || model == "" {
+	if err != nil || n <= 0 || model == "" {
 		return id, 0
 	}
-	return model, n * 1000
+	if isK {
+		n *= 1000
+	}
+	return model, n
 }
 
 // grokRefreshMargin is how close to its expiry a borrowed token has the CLI
@@ -961,7 +965,16 @@ func runCLISignIn(s *signInFlow, what string, env []string, using bool, failed f
 		cancel()
 		forgetAccountCaches()
 		if err == nil {
-			if user, plan, ok := identity(); ok {
+			// a second account's identity is its keeping (addGrokLogin):
+			// not once the sign-in is canceled
+			var user, plan string
+			if s.keep(func() error {
+				var ok bool
+				if user, plan, ok = identity(); !ok {
+					return fmt.Errorf("%s finished without an account", what)
+				}
+				return nil
+			}) == nil {
 				s.finish(SignInState{State: "done", User: user, Plan: plan, Using: using})
 				return
 			}

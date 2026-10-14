@@ -28,6 +28,7 @@ package provider
 // Only the Chinese build has the event: WorkBuddy AI ships with it off.
 
 import (
+	"cmp"
 	"context"
 	"encoding/json"
 	"errors"
@@ -206,7 +207,7 @@ func (c wbCheckiner) checkiner() checkiner {
 			if a.creds.UID != "" {
 				key = wbCheckinKey(a)
 			}
-			out = append(out, checkinAcct{User: a.User, On: a.On, key: key, do: func(ctx context.Context) WorkBuddyCheckin { return wbCheckin(ctx, a) }})
+			out = append(out, checkinAcct{User: a.User, On: a.On, key: key, provider: cmp.Or(a.card, a.site.id), do: func(ctx context.Context) WorkBuddyCheckin { return wbCheckin(ctx, a) }})
 		}
 		return out
 	}}
@@ -368,6 +369,7 @@ func markCheckins(qs []SubscriptionQuota, on []checkinCard, st map[string]WorkBu
 		return qs
 	}
 	out := slices.Clone(qs)
+	off := checkinOff()
 	for i, q := range out {
 		var mine []checkinCard
 		for _, a := range on {
@@ -386,7 +388,7 @@ func markCheckins(qs []SubscriptionQuota, on []checkinCard, st map[string]WorkBu
 		if a == nil {
 			continue
 		}
-		out[i].Checkins, out[i].CheckinBy = true, by
+		out[i].Checkins, out[i].CheckinBy, out[i].CheckinOff = true, by, off[a.key]
 		if r, ok := st[a.key]; ok {
 			r.User, r.By = a.User, by
 			out[i].Checkin = &r

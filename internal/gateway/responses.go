@@ -2,6 +2,7 @@ package gateway
 
 import (
 	"bytes"
+	"cmp"
 	"encoding/json"
 	"fmt"
 	"slices"
@@ -1295,6 +1296,11 @@ func (d *responsesDecoder) decode(data string, emit func(Event)) error {
 		Message string `json:"message"`
 	}
 	if err := decodeJSON([]byte(data), &ev); err != nil {
+		// an error in a shape of its own is still the reply's end (#1933)
+		if e, ok := carriedError(data); ok {
+			d.endCall(emit)
+			emit(e)
+		}
 		return nil
 	}
 	switch ev.Type {
@@ -1357,8 +1363,14 @@ func (d *responsesDecoder) decode(data string, emit func(Event)) error {
 		}
 	case "response.completed", "response.incomplete", "response.failed":
 		d.endCall(emit)
-		if ev.Response.Error != nil {
-			emit(Event{Kind: KError, Text: ev.Response.Error.Message, Code: refusedCode(data)})
+		if ev.Response.Error != nil || ev.Type == "response.failed" || ev.Response.Status == "failed" {
+			// a failed response is an error with or without the words
+			// for it, never a whole reply (#1933)
+			msg := ""
+			if ev.Response.Error != nil {
+				msg = ev.Response.Error.Message
+			}
+			emit(Event{Kind: KError, Text: cmp.Or(msg, streamErrorText(data)), Code: refusedCode(data)})
 			return nil
 		}
 		stop := "stop"
@@ -1383,9 +1395,9 @@ func (d *responsesDecoder) decode(data string, emit func(Event)) error {
 		d.endCall(emit)
 		msg := ev.Message
 		if ev.Error != nil {
-			msg = ev.Error.Message
+			msg = cmp.Or(ev.Error.Message, msg)
 		}
-		emit(Event{Kind: KError, Text: msg, Code: refusedCode(data)})
+		emit(Event{Kind: KError, Text: cmp.Or(msg, streamErrorText(data)), Code: refusedCode(data)})
 	}
 	return nil
 }
@@ -1608,6 +1620,17 @@ func (e *responsesEncoder) event(ev Event) {
 		e.send("response.output_item.added", map[string]any{"output_index": e.item, "item": raw})
 		e.send("response.output_item.done", map[string]any{"output_index": e.item, "item": raw})
 		e.output = append(e.output, raw)
+	case KSearch:
+		// A search arrives whole, after it ran. Tell the client its query
+		// and sources, as Anthropic's encoder does, without inventing
+		// earlier in-progress events or citation offsets in the answer.
+		e.closeItem()
+		e.item++
+		item := responsesSearchItem(ev.Text, ev.Hits)
+		e.send("response.output_item.added", map[string]any{"output_index": e.item, "item": item})
+		e.send("response.web_search_call.completed", map[string]any{"output_index": e.item, "item_id": item["id"]})
+		e.send("response.output_item.done", map[string]any{"output_index": e.item, "item": item})
+		e.output = append(e.output, item)
 	case KToolStart:
 		if ev.ID == "" {
 			ev.ID = "call_" + newID()
@@ -1668,6 +1691,21 @@ func (e *responsesEncoder) finish() {
 	e.send(typ, map[string]any{"response": e.response(status, extra)})
 }
 
+// responsesSearchItem keeps a completed search in both Responses reply forms.
+// Keep query for older clients and queries for clients using the current API.
+func responsesSearchItem(query string, hits []Hit) map[string]any {
+	sources := make([]map[string]any, 0, len(hits))
+	for _, h := range hits {
+		if h.URL != "" {
+			sources = append(sources, map[string]any{"type": "url", "url": h.URL})
+		}
+	}
+	return map[string]any{
+		"id": "ws_" + newID(), "type": "web_search_call", "status": "completed",
+		"action": map[string]any{"type": "search", "query": query, "queries": []string{query}, "sources": sources},
+	}
+}
+
 // renderResponses is the non-streaming reply.
 func renderResponses(res Result, model string, named map[string]nsTool) []byte {
 	output := []any{}
@@ -1699,6 +1737,8 @@ func renderResponses(res Result, model string, named map[string]nsTool) []byte {
 				"call_id": id, "arguments": argsString(p)}, p.Name, named)
 			item["id"] = itemPrefix(item) + newID()
 			output = append(output, item)
+		case Search:
+			output = append(output, responsesSearchItem(p.Text, p.Hits))
 		}
 	}
 	id := res.ID

@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"os/exec"
 	"runtime"
 	"slices"
 	"strings"
@@ -24,13 +23,14 @@ import (
 // `magpie accounts switch|forget <agent> <email>`,
 // `magpie accounts project <gemini|antigravity> <email> <project>`,
 // `magpie accounts alias <agent> <email> [<name>|--clear]`
+// `magpie accounts switch-only codex [on|off]`
 // — the subscriptions magpie remembers, how much of each one's allowance is
 // used, and switching the agent between them.
 func accountsCmd(args []string) error {
 	if len(args) > 1 && args[1] == "discovery" {
 		return accountsDiscoveryCmd(args[2:])
 	}
-	const usage = "usage: magpie accounts [claude|codex|grok|copilot|gemini|antigravity|zed|factory|mimo|<plugin>] [--json] | magpie accounts add <claude|codex|gemini|antigravity|zed|factory|mimo|<plugin>> | magpie accounts add copilot [--host <name>.ghe.com] | magpie accounts import <codex|claude|antigravity|factory> <file>... [--yes] | magpie accounts refresh [--json] | magpie accounts checkin [--json] | magpie accounts switch|forget <claude|codex|gemini|antigravity|zed|factory|mimo|<plugin>> <email> | magpie accounts switch|forget copilot <login>[@<name>.ghe.com] [--host <name>.ghe.com] | magpie accounts project <gemini|antigravity> <email> <gcp-project-id> | magpie accounts alias <agent|<plugin>> <email> [<name>|--clear]"
+	const usage = "usage: magpie accounts [claude|codex|grok|copilot|gemini|antigravity|zed|factory|mimo|<plugin>] [--json] | magpie accounts add <claude|codex|gemini|antigravity|zed|factory|mimo|<plugin>> | magpie accounts add copilot [--host <name>.ghe.com] | magpie accounts import <codex|claude|antigravity|factory> <file>... [--yes] | magpie accounts refresh [--json] | magpie accounts checkin [--json] | magpie accounts switch|forget <claude|codex|gemini|antigravity|zed|factory|mimo|<plugin>> <email> | magpie accounts switch|forget copilot <login>[@<name>.ghe.com] [--host <name>.ghe.com] | magpie accounts project <gemini|antigravity> <email> <gcp-project-id> | magpie accounts alias <agent|<plugin>> <email> [<name>|--clear] | magpie accounts switch-only codex [on|off]"
 	agentID := func(s string) (string, error) {
 		switch strings.ToLower(s) {
 		case "claude", "cc":
@@ -112,6 +112,9 @@ func accountsCmd(args []string) error {
 			fmt.Println(green.Render("✓"), user, "is now named", name)
 		}
 		return nil
+	}
+	if len(args) > 1 && args[1] == "switch-only" {
+		return switchOnlyCmd(args[2:])
 	}
 	if len(args) > 1 && args[1] == "import" {
 		return importAccounts(args[2:])
@@ -660,18 +663,10 @@ func importAccounts(args []string) error {
 var openInBrowser = openURLInBrowser
 
 func openURLInBrowser(url string) {
-	var cmd *exec.Cmd
-	switch runtime.GOOS {
-	case "darwin":
-		cmd = proc.Command("open", url)
-	case "windows":
-		cmd = proc.Command("rundll32", "url.dll,FileProtocolHandler", url)
-	case "android":
-		cmd = proc.Command("termux-open-url", url)
-	default:
-		cmd = proc.Command("xdg-open", url)
+	// the link is printed beside it, to open by hand when this fails (#2043)
+	if err := proc.OpenBrowser(url); err != nil {
+		fmt.Fprintln(os.Stderr, "magpie couldn't open the browser:", err)
 	}
-	_ = cmd.Start()
 }
 
 // refreshAccounts: `magpie accounts refresh` renews the sign-in of every
@@ -842,4 +837,42 @@ func accountNamed(agent, user string) (string, error) {
 		return "", fmt.Errorf("no saved %s accounts · add one: magpie accounts add %s", agent, agent)
 	}
 	return "", fmt.Errorf("no saved %s account %q · its accounts: %q", agent, user, names)
+}
+
+// switchOnlyCmd is `magpie accounts switch-only codex [on|off]`: magpie
+// only switches Codex's own sign-in to the next account with room, its
+// requests never sent through the gateway for account failover (#1907).
+// With no on or off it says which it is.
+func switchOnlyCmd(args []string) error {
+	const usage = "usage: magpie accounts switch-only codex [on|off]"
+	if len(args) < 1 || len(args) > 2 || !strings.EqualFold(args[0], "codex") {
+		return fmt.Errorf("%s", usage)
+	}
+	if len(args) == 1 {
+		if provider.SwitchOnly("codex") {
+			fmt.Println("on · magpie only switches Codex's sign-in; its requests go straight to OpenAI")
+		} else {
+			fmt.Println("off · with more of its accounts on, Codex's requests go through magpie to fail over between them")
+		}
+		return nil
+	}
+	var on bool
+	switch strings.ToLower(args[1]) {
+	case "on":
+		on = true
+	case "off":
+	default:
+		return fmt.Errorf("%s", usage)
+	}
+	if err := provider.SetSwitchOnly("codex", on); err != nil {
+		return err
+	}
+	// Codex's config.toml follows now, not at the next start
+	agent.SyncCatalog()
+	if on {
+		fmt.Println(green.Render("✓"), "magpie only switches Codex's sign-in to an account with room; its requests go straight to OpenAI. A Codex app or session already open stays on its account until it is opened again.")
+	} else {
+		fmt.Println(green.Render("✓"), "with more of its accounts on, Codex's requests go through magpie to fail over between them again")
+	}
+	return nil
 }

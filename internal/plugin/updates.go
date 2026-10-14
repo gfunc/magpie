@@ -11,6 +11,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -22,6 +23,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/yetone/magpie/internal/ghtoken"
 	"github.com/yetone/magpie/internal/settings"
 	"github.com/yetone/magpie/internal/steady"
 	"github.com/yetone/magpie/internal/update"
@@ -225,6 +227,36 @@ func CheckUpdates(ctx context.Context) (Updates, error) {
 	return u, nil
 }
 
+// InstallMissing installs again each plugin on the list whose package
+// isn't in plugins/ (a git one's too when package.json no longer names
+// it), as its spec says, and says how many it installed. Nothing else
+// does: an update skips a plugin with no version installed, and the host
+// says "no such plugin" for it at every start until the user takes it off
+// and adds it again (#2002, anganing: after an update every plugin
+// switched on said so, on Windows). One switched off is installed too, so
+// it loads when it is switched back on.
+func InstallMissing(ctx context.Context) (int, error) {
+	n := 0
+	var errs []error
+	for _, e := range Load().Plugins {
+		if IsPath(e.Spec) || Installed(e.Spec) != "" {
+			continue
+		}
+		if err := install(ctx, e.Spec); err != nil {
+			errs = append(errs, fmt.Errorf("%s: %w", e.Spec, err))
+			continue
+		}
+		if err := ensurePi(ctx, Target(e.Spec)); err != nil {
+			errs = append(errs, fmt.Errorf("%s: %w", e.Spec, err))
+		}
+		n++
+	}
+	if n > 0 {
+		Restart()
+	}
+	return n, errors.Join(errs...)
+}
+
 // KeepUpdated looks for plugin updates a little after magpie starts, then
 // every updateEvery, run by the magpie serving the gateway (one magpie,
 // never two at once).
@@ -239,6 +271,9 @@ func KeepUpdated(ctx context.Context) {
 		}
 		if len(Load().Plugins) > 0 {
 			cctx, cancel := context.WithTimeout(ctx, 10*time.Minute)
+			if n, err := InstallMissing(cctx); n > 0 || err != nil {
+				log.Printf("installed %d missing plugins again: %v", n, err)
+			}
 			_, _ = CheckUpdates(cctx)
 			cancel()
 		}
@@ -268,10 +303,21 @@ type VersionCheck struct {
 	// (it has no such package)
 	Why   string `json:"why,omitempty"`
 	Error string `json:"error,omitempty"`
+	// Limited is set when a git one's repository couldn't be asked
+	// because GitHub's rate limit was used up, for the page to say so in
+	// its own words, as the library's skills do (#1942)
+	Limited *GitHubLimit `json:"limited,omitempty"`
 	// Auto is whether magpie updates it by itself (the community's,
 	// unpinned, switched on), so an update found would come anyway
 	Auto bool `json:"auto"`
 	Off  bool `json:"off"`
+}
+
+// GitHubLimit is GitHub's rate limit used up: until when (RFC 3339, ""
+// when GitHub didn't say), and whether the request carried a GitHub token.
+type GitHubLimit struct {
+	Until string `json:"until,omitempty"`
+	Token bool   `json:"token,omitempty"`
 }
 
 // VersionChecks is what a check asked now found.
@@ -321,6 +367,13 @@ func CheckNow(ctx context.Context) VersionChecks {
 				cancel()
 				if err != nil {
 					c.Status, c.Why, c.Error = "unknown", whyNot(err), err.Error()
+					var l ghtoken.Limited
+					if errors.As(err, &l) {
+						c.Limited = &GitHubLimit{Token: l.Token}
+						if !l.Until.IsZero() {
+							c.Limited.Until = l.Until.UTC().Format(time.RFC3339)
+						}
+					}
 					return
 				}
 				c.Head, c.Status = short(head), "current"
@@ -403,7 +456,7 @@ func whyNot(err error) string {
 	switch {
 	case errors.Is(err, errNotFound):
 		return "missing"
-	case errors.As(err, &se) && se.Code == http.StatusTooManyRequests:
+	case errors.As(err, &se) && se.Code == http.StatusTooManyRequests, errors.As(err, new(ghtoken.Limited)):
 		return "limited"
 	case errors.As(err, &se):
 		return "registry"

@@ -16,6 +16,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -79,6 +80,9 @@ type cliSpec struct {
 	// latest is the newest version its own updater would install, for one
 	// not published on npm
 	latest func() string
+	// only are the systems (GOOS) its vendor builds it for, when not all:
+	// on any other its package installs nothing that runs
+	only []string
 }
 
 var cliSpecs = map[string]cliSpec{
@@ -102,6 +106,19 @@ var cliSpecs = map[string]cliSpec{
 			return nil
 		}},
 	"gemini": {npm: []string{"@google/gemini-cli"}, brew: []string{"gemini-cli"}},
+	// DevEco Code: npm's @deveco/deveco-code, or its own installer's
+	// ~/.local/bin/deveco → ~/.local/share/deveco/versions/<v>/deveco
+	// (install), deveco.exe in ~\.local\bin on Windows (install.ps1),
+	// both of which deveco upgrade replaces
+	// Its npm package carries macOS and Windows binaries only (and
+	// OpenHarmony's), none for Linux.
+	"deveco": {npm: []string{"@deveco/deveco-code"}, only: []string{"darwin", "windows"},
+		self: func(bin, real string) []string {
+			if strings.Contains(real, "/.local/share/deveco/versions/") || strings.HasSuffix(strings.ToLower(real), "/.local/bin/deveco.exe") {
+				return []string{bin, "upgrade"}
+			}
+			return nil
+		}},
 	"opencode": {npm: []string{"opencode-ai"}, brew: []string{"opencode"},
 		self: func(bin, real string) []string {
 			if strings.Contains(real, "/.opencode/bin/") {
@@ -113,19 +130,21 @@ var cliSpecs = map[string]cliSpec{
 	// ../downloads/grok-<platform>, and grok update to a new
 	// ../downloads/grok-<version>-<platform>; install.ps1 copies grok.exe
 	// into ~\.grok\bin itself, as grok update does again. grok is also
-	// Homebrew's regular-expression tool, hence at.
-	"grok": {at: ".grok/bin/grok", latest: grokLatest,
+	// Homebrew's regular-expression tool, hence at; its own cask, grok-build,
+	// links $HOMEBREW_PREFIX/bin/grok to Caskroom/grok-build/<v>/grok-<v>-<platform>
+	// (Will on Discord), which brew upgrade replaces (see cliBin).
+	"grok": {at: ".grok/bin/grok", latest: grokLatest, brew: []string{"grok-build"},
 		self: func(bin, real string) []string {
 			if l := strings.ToLower(real); strings.Contains(l, "/.grok/bin/") || strings.Contains(l, "/.grok/downloads/") {
 				return []string{bin, "update"}
 			}
 			return nil
 		}},
-	"pi":        {npm: []string{"@earendil-works/pi-coding-agent", "@mariozechner/pi-coding-agent"}},
+	"pi":        {npm: []string{"@earendil-works/pi-coding-agent", "@mariozechner/pi-coding-agent"}, brew: []string{"pi-coding-agent"}},
 	"omp":       {npm: []string{"@oh-my-pi/pi-coding-agent"}},
 	"copilot":   {npm: []string{"@github/copilot"}, brew: []string{"copilot-cli"}},
 	"crush":     {npm: []string{"@charmland/crush"}, brew: []string{"crush"}},
-	"cline":     {npm: []string{"cline"}},
+	"cline":     {npm: []string{"cline"}, brew: []string{"cline"}},
 	"dsh":       {npm: []string{"@deepseek-ai/dsh"}},
 	"codebuddy": {npm: []string{"@tencent-ai/codebuddy-code"}},
 	"goose":     {brew: []string{"block-goose-cli"}},
@@ -188,35 +207,93 @@ func howInstalled(spec cliSpec, bin string) *updater {
 			if len(spec.npm) > 0 {
 				pkg = spec.npm[0]
 			}
-			return &updater{via: "self", pkg: pkg, cmd: c, latest: spec.latest}
+			u := &updater{via: "self", pkg: pkg, cmd: c, latest: spec.latest}
+			u.path = selfPath(spec, bin, slash)
+			return u
 		}
 	}
-	// a package manager's before Homebrew's: npm under Homebrew's node
-	// is npm's
+	// a formula of the agent's own is Homebrew's, though a Node one keeps
+	// the npm package in its keg (Cellar/gemini-cli/<v>/libexec/lib/
+	// node_modules/@google/gemini-cli/…), where npm install -g --prefix
+	// would change the keg behind brew's back
+	m := brewPath.FindStringSubmatch(slash)
+	if m != nil && contains(spec.brew, m[2]) {
+		return fromBrew(slash, m)
+	}
+	// otherwise a package manager's before Homebrew's: npm under Homebrew's
+	// node (a keg-only node@20's Cellar/node@20/<v>/lib/node_modules) is npm's
 	for _, pkg := range spec.npm {
 		if u := fromNodeModules(pkg, bin, slash); u != nil {
 			return u
 		}
 	}
-	if m := brewPath.FindStringSubmatch(slash); m != nil {
-		if !contains(spec.brew, m[2]) {
+	return nil
+}
+
+// selfPath is the folder to put first on PATH for a CLI's own updater, when
+// a package manager installed it in a global node_modules: the updater runs
+// that manager by its bare name (omo update runs npm i -g), and magpie's
+// PATH can find another one first, a system node's in /usr/local/bin
+// before a version manager's, whose npm then installs into a folder only
+// root may change (#2021, ggbdpq). npm's global folder follows the node
+// that runs it, so the folder holds that node too.
+func selfPath(spec cliSpec, bin, real string) string {
+	for _, pkg := range spec.npm {
+		if u := fromNodeModules(pkg, bin, real); u != nil {
+			if u.via == "npm" {
+				return u.path
+			}
+			if u.via == "bun" || u.via == "pnpm" {
+				return filepath.Dir(u.cmd[0])
+			}
+			return ""
+		}
+	}
+	return ""
+}
+
+// fromBrew is the updater of the CLI at real (forward slashes), which m,
+// brewPath's match in it, says Homebrew's formula or cask m[2] installed.
+func fromBrew(real string, m []string) *updater {
+	prefix := real[:strings.Index(real, m[0])]
+	brew := filepath.FromSlash(prefix + "/bin/brew")
+	if !isFile(brew) {
+		var err error
+		if brew, err = proc.Look("brew"); err != nil {
 			return nil
 		}
-		prefix := slash[:strings.Index(slash, m[0])]
-		brew := filepath.FromSlash(prefix + "/bin/brew")
-		if !isFile(brew) {
-			if brew, err = proc.Look("brew"); err != nil {
-				return nil
-			}
-		}
-		u := &updater{via: "brew", pkg: m[2], cask: m[1] == "Caskroom", brew: brew}
-		u.cmd = []string{brew, "upgrade", m[2]}
-		if u.cask {
-			u.cmd = []string{brew, "upgrade", "--cask", m[2]}
-		}
-		return u
 	}
-	return nil
+	u := &updater{via: "brew", pkg: m[2], cask: m[1] == "Caskroom", brew: brew}
+	u.cmd = []string{brew, "upgrade", m[2]}
+	if u.cask {
+		u.cmd = []string{brew, "upgrade", "--cask", m[2]}
+	}
+	return u
+}
+
+// brewBin is the CLI of an agent with no Bin (spec.at's name) where PATH
+// has it, when Homebrew's formula or cask of the agent's put it there: a
+// command of that name that isn't one of the agent's is another tool's
+// (Homebrew's grok formula). "" otherwise.
+func brewBin(spec cliSpec) string {
+	if spec.at == "" || len(spec.brew) == 0 {
+		return ""
+	}
+	bin := binAt(path.Base(spec.at))
+	if bin == "" {
+		return ""
+	}
+	real, err := proc.RealPath(bin)
+	if err != nil {
+		return ""
+	}
+	if m := brewPath.FindStringSubmatch(filepath.ToSlash(real)); m == nil || !contains(spec.brew, m[2]) {
+		return ""
+	}
+	if abs, err := filepath.Abs(bin); err == nil {
+		bin = abs
+	}
+	return bin
 }
 
 // fromNodeModules is the updater of a CLI the package pkg installed in a
@@ -631,6 +708,11 @@ func (a *Agent) cliBin() (string, cliSpec) {
 		return "", spec
 	}
 	if a.Bin == "" {
+		// Homebrew's, where PATH has it: what a terminal runs, before a
+		// vendor install a brew one replaced
+		if bin := brewBin(spec); bin != "" {
+			return bin, spec
+		}
 		home, err := os.UserHomeDir()
 		if spec.at == "" || err != nil {
 			return "", spec

@@ -278,9 +278,12 @@ func (p Price) CostSplit(input, output, cacheRead, cacheWrite, cacheWrite1h int)
 }
 
 type mdProvider struct {
-	ID     string             `json:"id"`
-	Name   string             `json:"name"`
-	Env    []string           `json:"env"`
+	ID   string   `json:"id"`
+	Name string   `json:"name"`
+	Env  []string `json:"env"`
+	// API is the base URL models.dev says the provider serves its models
+	// at (AMD's https://developer.amd.com.cn/radeon/api/v1)
+	API    string             `json:"api"`
 	Models map[string]mdModel `json:"models"`
 }
 
@@ -844,17 +847,56 @@ func NameOf(id string) string {
 // knows it by (NameOf), so one model reads the same under every provider:
 // a GLM Coding Plan's glm-5-turbo, which Zhipu's catalog doesn't list, is
 // GLM-5-Turbo as ZCode's is. Its id, and where requests go, stay as they
-// are.
-func Named(ms []Model) []Model {
+// are. A supplemented name shared by different ids falls back to the id.
+// Already named models in reserved count toward collisions but stay as given.
+func Named(ms []Model, reserved ...Model) []Model {
 	out := slices.Clone(ms)
-	for i, m := range out {
+	fallback := make([]string, len(ms))
+	for i, m := range ms {
 		if m.Name == "" || m.Name == m.ID {
-			if n := NameOf(m.ID); n != "" {
-				out[i].Name = n
-			}
+			fallback[i] = NameOf(m.ID)
 		}
 	}
+	fillNames(out, fallback, reserved...)
 	return out
+}
+
+// fillNames applies catalog names without giving different ids the same
+// name. The ids are reserved too, so falling back to one cannot collide
+// with another model's supplemented name. The caller owns ms.
+func fillNames(ms []Model, fallback []string, reserved ...Model) {
+	owners := make(map[string]string)
+	collisions := make(map[string]bool)
+	claim := func(name, id string) {
+		if name == "" {
+			return
+		}
+		if owner, ok := owners[name]; ok && owner != id {
+			collisions[name] = true
+		}
+		owners[name] = id
+	}
+	for _, m := range reserved {
+		claim(m.ID, m.ID)
+		claim(m.Name, m.ID)
+	}
+	for i, m := range ms {
+		claim(m.ID, m.ID)
+		name := m.Name
+		if fallback[i] != "" {
+			name = fallback[i]
+		}
+		claim(name, m.ID)
+	}
+	for i, name := range fallback {
+		if name == "" {
+			continue
+		}
+		if collisions[name] {
+			name = ms[i].ID
+		}
+		ms[i].Name = name
+	}
 }
 
 // Knows reports whether models.dev lists a model of this id at all, under
@@ -1238,10 +1280,12 @@ func draws(m mdModel) bool {
 }
 
 // DrawsID is whether a model's id names one that makes images, for a model
-// the catalog doesn't know (one typed in, or a vendor's own list's).
+// the catalog doesn't know (one typed in, or a vendor's own list's). Banana
+// is the Nano Banana the Gemini image models are called on a relay, whatever
+// its spelling there (#2071).
 func DrawsID(id string) bool {
 	id = strings.ToLower(id)
-	for _, w := range []string{"image", "imagen", "imagine", "dall-e", "flux", "seedream", "cogview", "stable-diffusion", "sdxl", "wanx", "kolors", "hidream"} {
+	for _, w := range []string{"image", "imagen", "imagine", "dall-e", "flux", "seedream", "cogview", "stable-diffusion", "sdxl", "wanx", "kolors", "hidream", "banana"} {
 		if strings.Contains(id, w) {
 			return true
 		}
@@ -1249,9 +1293,9 @@ func DrawsID(id string) bool {
 	return false
 }
 
-// ImagesAPI is whether a model draws on an images API (/images/generations)
-// rather than answering in chat with pictures: gpt-image, dall-e, imagen,
-// flux, seedream… — not gemini-*-image or gpt-5-image, which chat.
+// ImagesAPI is whether a model draws on an images API rather than answering
+// in chat with pictures: gpt-image, dall-e, imagen, flux, seedream… — not
+// gemini-*-image or gpt-5-image, which chat.
 func ImagesAPI(id string) bool {
 	id = strings.ToLower(id)
 	for _, w := range []string{"gpt-image", "chatgpt-image", "dall-e", "imagen", "imagine", "qwen-image", "wanx", "wan2", "seedream", "cogview", "flux", "stable-diffusion", "sdxl", "kolors", "hidream"} {
@@ -1300,6 +1344,28 @@ func Drawers(id string) []Model {
 		return out[i].ID < out[j].ID
 	})
 	return out
+}
+
+// AtEndpoint are the models.dev providers whose models are served at base
+// (their "api"), in order: the catalog of a provider the user added by its
+// endpoint alone. A trailing slash and the case of the address don't count.
+func AtEndpoint(base string) []string {
+	want := endpointKey(base)
+	if want == "" {
+		return nil
+	}
+	var ids []string
+	for id, p := range load() {
+		if endpointKey(p.API) == want {
+			ids = append(ids, id)
+		}
+	}
+	slices.Sort(ids)
+	return ids
+}
+
+func endpointKey(u string) string {
+	return strings.ToLower(strings.TrimRight(strings.TrimSpace(u), "/"))
 }
 
 // Providers returns models.dev provider ids known to the catalog.

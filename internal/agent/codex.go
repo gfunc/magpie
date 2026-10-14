@@ -2,11 +2,10 @@ package agent
 
 import (
 	"cmp"
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -79,6 +78,110 @@ func codexStandIn(path string) string {
 }
 
 func codex(home string) *Agent { return codexIn(here(home)) }
+
+// The two notices magpie's multi-agent V1 setting (#141) can carry: Codex's
+// own features.multi_agent_v2 is on in the config magpie routes and takes the
+// V1 over, or magpie couldn't read that config to tell. magpie writes nothing
+// here — the setting is the user's own to turn off.
+var (
+	codexV1ConflictNotice  = newNotice("Codex's own multi_agent_v2 is on in the config magpie routes, which takes over the multi-agent V1 magpie's models ask for; turn it off in Codex's config to run subagents on magpie's models.")
+	codexV1ReadErrorNotice = newNotice("Codex's multi-agent V1 is on, but magpie couldn't read Codex's config to check its own multi_agent_v2.")
+)
+
+// multiAgentV2OnIn reads one [features] table for Codex's own multi_agent_v2,
+// read-only: the bare multi_agent_v2 boolean, or enabled in the
+// [features.multi_agent_v2] table, spelled as a table, an inline object or a
+// dotted key. set reports whether magpie recognizes the key as on or off. A
+// table whose enabled is left out, or any other value (a string "true"), is
+// not recognized, so magpie reads it as nothing and warns on nothing — Codex
+// itself rejects such a config at load (multi_agent_v2 is a bool or a table
+// there), so this is magpie's read of an invalid file, not Codex's default.
+func multiAgentV2OnIn(features map[string]any) (on, set bool) {
+	switch v := features["multi_agent_v2"].(type) {
+	case bool:
+		return v, true
+	case map[string]any:
+		enabled, ok := v["enabled"].(bool)
+		return enabled, ok
+	}
+	return false, false
+}
+
+// codexMultiAgentV2On reports whether a Codex config explicitly turns its own
+// features.multi_agent_v2 on: the bare multi_agent_v2 = true key, or enabled =
+// true in the [features.multi_agent_v2] table (a table, an inline object or a
+// dotted key), read at the top level and, on the legacy in-file profile shape,
+// in the profile the config selects. Codex 0.133.0 applied that overlay itself
+// (core/config/mod.rs: Features::from_sources with base = [features] and
+// profile = [profiles.<name>.features], the profile applied on top), and
+// magpie's own Check already reads profiles.<profile> the same way; that legacy
+// shape is what this mirrors. From 0.134 Codex dropped in-file profiles: an
+// in-file `profile` key is an error and `--profile` selects a separate
+// {profile}.config.toml layer, so this is not a claim about which profile a
+// modern Codex is running under — only about the same in-file shape magpie's
+// Check reads. The whole file is decoded (edit.Read + toml.Unmarshal, as
+// codexEnableEfforts does). A config magpie can't read is an error, never taken
+// for off.
+func codexMultiAgentV2On(path string) (bool, error) {
+	raw, err := edit.Read(path)
+	if err != nil {
+		return false, err
+	}
+	if raw == nil { // no config file: no key, nothing Codex turns V2 on with
+		return false, nil
+	}
+	var doc map[string]any
+	if err := toml.Unmarshal(raw, &doc); err != nil {
+		return false, err
+	}
+	top, _ := doc["features"].(map[string]any)
+	on, _ := multiAgentV2OnIn(top)
+	// the legacy in-file profile's features override the top level's, as Codex
+	// 0.133.0 applied them (base then profile) and as magpie's Check reads
+	// profiles.<profile>: take the profile's value when it sets one, else keep
+	// the top level's. Only the profile the config names counts.
+	if profile, _ := doc["profile"].(string); profile != "" {
+		profiles, _ := doc["profiles"].(map[string]any)
+		p, _ := profiles[profile].(map[string]any)
+		pf, _ := p["features"].(map[string]any)
+		if pon, set := multiAgentV2OnIn(pf); set {
+			on = pon
+		}
+	}
+	return on, nil
+}
+
+// codexSubAgentsV1Warning is the notice for the config Codex is routed
+// through (path, routed): settings.CodexAgentsV1 is on and Codex's own
+// multi_agent_v2 is explicitly on there, so Codex's V2 wins over the V1
+// magpie's own models ask for and a subagent on one can't read its task.
+// "" when the setting is off, Codex isn't routed through magpie here, or its
+// own multi_agent_v2 is off; a config magpie can't read is told, not taken
+// for off.
+func codexSubAgentsV1Warning(path string, routed bool) string {
+	if !codexcat.V1() || !routed {
+		return ""
+	}
+	on, err := codexMultiAgentV2On(path)
+	if err != nil {
+		return codexV1ReadErrorNotice.String()
+	}
+	if !on {
+		return ""
+	}
+	return codexV1ConflictNotice.String()
+}
+
+// CodexSubAgentsV1Warning is codexSubAgentsV1Warning for the Codex config
+// here, as the Settings row asks it (the page can't reach the config itself).
+// "" when there is no Codex, or no conflict.
+func CodexSubAgentsV1Warning() string {
+	a, err := Find("codex")
+	if err != nil || a.Routed == nil {
+		return ""
+	}
+	return codexSubAgentsV1Warning(a.Path, a.Routed())
+}
 
 // codexIn is Codex as it lives at a place: this machine's home, or a WSL
 // distro's (see wsl.go).
@@ -158,7 +261,10 @@ func codexIn(at place) *Agent {
 		}
 	}
 	asProvider := func() bool { return get("model_provider") == magpieID }
-	viaBase := func() bool { return isCodexGatewayOn(get("openai_base_url"), at.host()) }
+	viaBase := func() bool {
+		u := get("openai_base_url")
+		return isCodexGatewayOn(u, at.host()) || strings.TrimSuffix(u, "/") == at.codexURL()
+	}
 	routed := func() bool { return asProvider() || viaBase() }
 	// joined: connected by Join, on a model of Codex's own (its last pick)
 	// with magpie's beside it, by the base URL
@@ -1136,15 +1242,19 @@ func codexIn(at place) *Agent {
 		// luci). With no codex session on it magpie restarts it itself
 		// (codexDaemonNotice); with one, the user says when.
 		Notice: func() string {
+			var out []string
+			if w := codexSubAgentsV1Warning(path, routed()); w != "" {
+				out = append(out, w)
+			}
 			if at.spell == nil {
 				if n, ok := codexDaemonNotice(path); ok {
-					return n
+					return strings.Join(append(out, n), " ")
 				}
 			}
 			if codexRunning() {
-				return codexRestartAll
+				out = append(out, codexRestartAll)
 			}
-			return ""
+			return strings.Join(out, " ")
 		},
 		Fields: []Field{
 			{
@@ -1481,20 +1591,20 @@ func codexGatewayURL() string { return gateway.URL() + gateway.CodexPath }
 // address its config names when that is magpie's gateway on a host other
 // than this one's loopback (openai_base_url at the Codex path, or
 // [model_providers.magpie]'s base_url with magpie's key, that one first
-// while magpie is Codex's provider), else gateway.URL().
+// while magpie is Codex's provider), else gateway.URL(). It is http or
+// https, on any port or the scheme's own, and may have a path before
+// magpie's: a company's reverse proxy at https://ai.corp.example/magpie,
+// or one on this machine at http://127.0.0.1:8788/<route> (#1985).
 func codexKeptGateway(path string) string {
 	kept := func(u, suffix string) string {
-		u = strings.TrimSuffix(strings.TrimSpace(u), "/")
-		rest, ok := strings.CutPrefix(u, "http://")
-		if !ok || !strings.HasSuffix(rest, suffix) {
+		base, ok := strings.CutSuffix(strings.TrimSuffix(strings.TrimSpace(u), "/"), suffix)
+		if !ok || !onAnotherMachine(base) && !loopbackWithPath(base) {
 			return ""
 		}
-		hp := strings.TrimSuffix(rest, suffix)
-		h, _, err := net.SplitHostPort(hp)
-		if err != nil || h == "" || h == "127.0.0.1" || h == "localhost" || h == "::1" {
+		if p, err := url.Parse(base); err != nil || p.User != nil || p.RawQuery != "" || p.Fragment != "" {
 			return ""
 		}
-		return "http://" + hp
+		return base
 	}
 	base, _ := edit.GetTOMLTop(path, "openai_base_url")
 	var table string
@@ -1563,16 +1673,25 @@ func codexStaleCache(path, tag string) error {
 
 // codexUsedUp reports whether the ChatGPT account Codex is signed in to
 // is held by the Codex app, out of its allowance with no credits to go on
-// with (provider.CodexUsedUp). A var so tests can say.
+// with (provider.CodexUsedUpKnown). A var so tests can say.
+//
+// What is known is used, never a reading asked for here: this runs from
+// SyncCatalog, which a write's own request runs before it answers (a
+// routing group's Save), and asking waits on the vendor — 1.1s of a
+// user's Save. KeepOnAnAccountWithRoom asks on its own loop with the time
+// for it, and tells the catalog when the answer changes.
 var codexUsedUp = func() bool {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	return provider.CodexUsedUp(ctx)
+	return provider.CodexUsedUpKnown()
 }
 
 // codexFailover reports whether Codex is signed in to a ChatGPT account
-// with more of its accounts on in magpie, behind it.
+// with more of its accounts on in magpie, behind it, and the user hasn't
+// asked magpie to only switch its sign-in (provider.SwitchOnly).
 func codexFailover() bool {
+	// the user had magpie only switch Codex's own sign-in (#1907)
+	if provider.SwitchOnly("codex") {
+		return false
+	}
 	for _, p := range provider.Accounts() {
 		if p.Account != nil && p.Account.Agent == "codex" {
 			return len(p.AlsoOn()) > 0

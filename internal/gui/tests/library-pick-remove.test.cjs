@@ -16,6 +16,7 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 const { test } = require("node:test");
 const { chromium, webkit } = require("playwright");
+const { strings } = require("./strings.cjs");
 
 const assets = path.resolve(__dirname, "../assets");
 const HOME = "/Users/me";
@@ -31,8 +32,7 @@ const STUCK = "the folder couldn't be moved: permission denied";
 
 let I18N;
 async function loadI18N() {
-  const src = await fs.readFile(path.join(assets, "i18n.js"), "utf8");
-  I18N = new Function(src.slice(0, src.indexOf("\n};") + 3) + "; return I18N;")();
+  I18N = strings().I18N; // i18n.js's and the plugins'
 }
 // the words the page says in lang; a string missing from a language fails
 function tr(lang, key, vars = {}) {
@@ -151,8 +151,13 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
         const bar = v.locator(".lib-pickbar"), rm = bar.locator(".lib-pickrm");
         const sheet = page.locator("#modal .lib-editor");
 
-        // Select; the group's box picks its three skills
-        await press(page, v.locator(".lib-skillshead .lib-select"));
+        // Select; the group's box picks its three skills. Done is as wide
+        // as Select, so a heading on two lines doesn't carry it to the
+        // line above, from under the pointer
+        const selectAt = v.locator(".lib-skillshead .lib-select");
+        const wide = (await selectAt.boundingBox()).width;
+        await press(page, selectAt);
+        assert(Math.abs((await selectAt.boundingBox()).width - wide) < 0.5, `Select ${wide}px wide, Done ${(await selectAt.boundingBox()).width}px`);
         await bar.locator(".lib-pickn.none").waitFor();
         assert.equal(await rm.count(), 0, "Remove with nothing picked");
         await press(page, group.locator(".lib-grouphead .lib-pickbox"));
