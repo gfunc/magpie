@@ -49,45 +49,51 @@ func (s *Server) apiJSON(w http.ResponseWriter, r *http.Request) {
 	} else {
 		price = func(provider.Entry) (catalog.Price, bool) { return catalog.Price{}, false }
 	}
-	bucketModels := make([]map[string]any, len(apiJSONBuckets))
-	for i := range bucketModels {
-		bucketModels[i] = map[string]any{}
-	}
+	bucketEntries := make([][]provider.Entry, len(apiJSONBuckets))
 	for _, e := range catalogFor(r) {
 		if e.Group != "" {
-			// the registry's key and its id agree: the group's bare id
-			// (models.dev keeps a model's id equal to its key)
-			id := strings.TrimPrefix(e.ID, "group/")
-			e.ID = id
-			bucketModels[len(apiJSONBuckets)-1][id] = apiJSONModel(e, price)
+			bucketEntries[len(apiJSONBuckets)-1] = append(bucketEntries[len(apiJSONBuckets)-1], e)
 			continue
 		}
 		native := nativeEndpoints(e)
 		for i, b := range apiJSONBuckets {
 			if b.native != "" && slices.Contains(native, b.native) {
-				bucketModels[i][e.ID] = apiJSONModel(e, price)
+				bucketEntries[i] = append(bucketEntries[i], e)
 			}
 		}
 	}
 	out := map[string]any{}
 	for i, b := range apiJSONBuckets {
-		out[b.id] = map[string]any{"id": b.id, "name": b.name, "api": b.api(base), "type": b.typ, "models": bucketModels[i]}
+		models := map[string]any{}
+		labels := provider.Labels(bucketEntries[i])
+		for j, e := range bucketEntries[i] {
+			// the registry's key and its id agree: a group's bare id
+			// (models.dev keeps a model's id equal to its key)
+			if e.Group != "" {
+				e.ID = strings.TrimPrefix(e.ID, "group/")
+			}
+			models[e.ID] = apiJSONModel(e, labels[j], price)
+		}
+		out[b.id] = map[string]any{"id": b.id, "name": b.name, "api": b.api(base), "type": b.typ, "models": models}
 	}
 	writeJSON(w, 200, out)
 }
 
 // apiJSONModel is one model of the registry, in the shape the importer
-// reads: name, limit (context and output when known), tool_call, reasoning
-// and its efforts (a group's own: the catalog computes them over the live
+// reads: name (the agent-list label, its provider's after it, as Labels
+// names the models of an agent's own list — honoring the plain-names
+// settings, and disambiguating same-named models within the bucket),
+// limit (context and output when known), tool_call, reasoning and its
+// efforts (a group's own: the catalog computes them over the live
 // members, the intersection of their levels, a fixed member's level, or
 // the group's Levels, as the gateway serves them), the modalities as
-// magpie lists them, and cost when a price is known. Fields magpie doesn't
-// know are omitted, so the importer fills its own defaults instead of
-// trusting an invented number.
-func apiJSONModel(e provider.Entry, price func(provider.Entry) (catalog.Price, bool)) map[string]any {
+// magpie lists them, and cost when a price is known. Fields magpie
+// doesn't know are omitted, so the importer fills its own defaults
+// instead of trusting an invented number.
+func apiJSONModel(e provider.Entry, name string, price func(provider.Entry) (catalog.Price, bool)) map[string]any {
 	m := map[string]any{"id": e.ID, "tool_call": true}
-	if n := e.PlainName(); n != "" {
-		m["name"] = n
+	if name != "" {
+		m["name"] = name
 	}
 	limit := map[string]any{}
 	if e.Context > 0 {
