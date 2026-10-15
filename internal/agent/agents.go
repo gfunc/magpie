@@ -110,6 +110,7 @@ func builtins(home, cfg string) []*Agent {
 		vscode(home, cfg),
 		vscodeInsidersAgent(home, cfg),
 		vscodium(home, cfg),
+		vscodeServer(home),
 		copilotJetBrains(home),
 		air(home, cfg),
 		copilot(home),

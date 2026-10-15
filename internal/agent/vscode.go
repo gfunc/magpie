@@ -96,6 +96,11 @@ type vscodeKind struct {
 	// in home its extensions are installed in; extDir is where that is
 	// (vscodeOf), "" for a build whose chat is built in.
 	exts, extDir string
+	// server, for the VS Code Server kind, is where its installed
+	// generations are, ~/.vscode-server/cli/servers; the bundled Copilot
+	// Chat of the one in use says whether the Custom Endpoint floor is met
+	// (vscodeServerChat).
+	server string
 }
 
 var (
@@ -215,6 +220,11 @@ func vscodeKindAt(k vscodeKind, dir string) *Agent {
 			if isDir(dir) {
 				return true
 			}
+			// a kind with no bin (VS Code Server) is detected by its User
+			// folder alone
+			if k.bin == "" {
+				return false
+			}
 			bin, err := proc.Look(k.bin)
 			return err == nil && vscodeCodeBinary(bin)
 		},
@@ -222,6 +232,11 @@ func vscodeKindAt(k vscodeKind, dir string) *Agent {
 			if joined() {
 				if k.exts != "" {
 					return k.chat().notice(k.name)
+				}
+				// VS Code Server can be wired with a generation below the
+				// Custom Endpoint floor running: said so
+				if c := k.chat(); c.unsupported {
+					return c.notice(k.name)
 				}
 				return noticeVSCodeJoined.say("agent", k.name)
 			}
@@ -461,10 +476,14 @@ type vscodeChat struct {
 
 // chat is the Copilot Chat k runs: a build with one built in has the
 // Custom Endpoint provider; one without has the extension installed in its
-// extensions folder, whose package.json says which it registers. A folder
+// extensions folder, whose package.json says which it registers. VS Code
+// Server's chat is its generation's bundled one (vscodeserver.go). A folder
 // or file that can't be read is not taken as "none": the Custom Endpoint
 // group stays as magpie always wrote it.
 func (k vscodeKind) chat() vscodeChat {
+	if k.server != "" {
+		return vscodeServerChat(k.server)
+	}
 	if k.exts == "" {
 		return vscodeChat{vendor: vscodeEndpoint}
 	}
