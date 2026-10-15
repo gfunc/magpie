@@ -63,8 +63,9 @@ func trayWindows(q provider.SubscriptionQuota) []provider.QuotaWindow {
 
 // trayUsageText is the menu bar's text for a card and the tooltip that
 // spells it out: each window's use, or what is left of it (left), and when
-// it starts again.
-func trayUsageText(q provider.SubscriptionQuota, now time.Time, left bool) (label, tip string) {
+// it starts again. With pace (settings.TrayPace) each window's Pace number
+// follows its figure, in both, as the Usage page's cards show it.
+func trayUsageText(q provider.SubscriptionQuota, now time.Time, left, pace bool) (label, tip string) {
 	if strings.HasPrefix(q.Provider, trayTotal) {
 		return q.Balance, q.Name // trayTotalCard's: its rows, and its tooltip
 	}
@@ -79,6 +80,10 @@ func trayUsageText(q provider.SubscriptionQuota, now time.Time, left bool) (labe
 		}
 		return q.Balance, q.Name + " · " + q.Balance + trayAsOf(q)
 	}
+	readAt := now
+	if q.ReadAt != nil && !q.ReadAt.After(now) {
+		readAt = *q.ReadAt
+	}
 	var short, long []string
 	for _, w := range ws {
 		used := math.Max(0, math.Min(100, w.Used))
@@ -89,7 +94,12 @@ func trayUsageText(q provider.SubscriptionQuota, now time.Time, left bool) (labe
 			n, word = 100-n, "left"
 		}
 		pct := fmt.Sprintf("%d%%", n)
-		short = append(short, pct)
+		row, paceNote := pct, ""
+		if p, ok := w.Pace(readAt, now); pace && ok {
+			row = pct + " " + trayPace(p, left)
+			paceNote = " · pace " + trayPace(p, left)
+		}
+		short = append(short, row)
 		tipPct := pct
 		if used != math.Trunc(used) {
 			tipPct = fmt.Sprintf("%.1f%%", used)
@@ -98,6 +108,7 @@ func trayUsageText(q provider.SubscriptionQuota, now time.Time, left bool) (labe
 		if c := w.Count(left); c != "" {
 			line = w.Name + " " + c + " · " + tipPct + " " + word
 		}
+		line += paceNote
 		if at := resetAt(w, now); !at.IsZero() && at.After(now) {
 			line += " · resets in " + until(at.Sub(now))
 		}
@@ -107,6 +118,25 @@ func trayUsageText(q provider.SubscriptionQuota, now time.Time, left bool) (labe
 		short = short[:2]
 	}
 	return strings.Join(short, " · "), q.Name + "\n" + strings.Join(long, "\n") + trayAsOf(q)
+}
+
+// trayPace is a window's Pace number as the Usage page writes it
+// (paceNumber in app.js): "+12%", "−8%" with a true minus, "±0%". It
+// follows the figure beside it, so where what is left is shown (left) its
+// sign is turned: +12% left is twelve points more to spare than an even
+// pace would have.
+func trayPace(p float64, left bool) string {
+	if left {
+		p = -p
+	}
+	switch n := int(math.Round(p)); {
+	case n > 0:
+		return fmt.Sprintf("+%d%%", n)
+	case n < 0:
+		return fmt.Sprintf("−%d%%", -n)
+	default:
+		return "±0%"
+	}
 }
 
 // trayAsOf is the tooltip's word that a card stands in for one that
@@ -162,10 +192,7 @@ func trayUsageCards(ctx context.Context, ids []string) []provider.SubscriptionQu
 			continue
 		}
 		if currency == "" {
-			currency = settings.Load().Currency
-			if currency == "cny" {
-				rate = fx.Soon().CNYPerUSD // never waited for, as the Settings page's
-			}
+			currency, rate = trayCurrency()
 		}
 		cards = append(cards, trayTotalCard(id, trayTotalSum(p), currency, rate))
 	}
@@ -190,22 +217,31 @@ func trayTotalPeriod(id string) (usage.Period, bool) {
 	return usage.Period(p), true
 }
 
-// trayTotalSum is a period's sum as the Usage page's Overview has it (its
-// cached summary, without the sessions); a var for tests.
-var trayTotalSum = func(p usage.Period) usage.Totals { return usage.SummarizeTop(p, 0).Totals }
+// trayTotalSum is a period's sum as the Usage page's Requests tab and the
+// panel's Usage tab have it, the pages a click on it opens: the gateway's
+// requests and the calls the agents' session files record beside them,
+// from the ledger's cached index; a var for tests. The Overview's summary,
+// summed before, left those calls out (NextCommit on Discord).
+var trayTotalSum = func(p usage.Period) usage.Totals { return usage.QueryPage(p, usage.Filter{}, 0, 1).Sum }
 
-// trayTotalCard is a total as a card: its rows are the tokens in and out
-// (cache aside, as the Usage page counts them) over the cost, in the
-// currency Settings says, "+" when some calls had no known price; nothing
-// beneath the tokens when none had one. Its name is the tooltip, which
-// spells them out.
+// trayTotalCard is a total as a card: its rows are every token, the
+// cache's too, as the Requests tab's and the panel's Tokens count them,
+// marked Σ so it doesn't read as the input alone (NextCommit on Discord),
+// over the cost, in the currency Settings says, "+" when some calls had no
+// known price; nothing beneath the tokens when none had one. Its name is
+// the tooltip, which spells out the input, output and cache.
 func trayTotalCard(id string, t usage.Totals, currency string, rate float64) provider.SubscriptionQuota {
 	when := "Today"
 	if p, _ := trayTotalPeriod(id); p == usage.Week {
 		when = "Last 7 days"
 	}
-	rows := []string{trayCount(t.Tokens())}
-	tip := when + " in magpie\n" + trayCount(t.Tokens()) + " tokens (" + trayCount(t.Input) + " in · " + trayCount(t.Output) + " out)"
+	all := t.Tokens() + t.CacheRead + t.CacheWrite
+	rows := []string{"Σ" + trayCount(all)}
+	tip := when + " in magpie\n" + trayCount(all) + " tokens (" + trayCount(t.Input) + " in · " + trayCount(t.Output) + " out"
+	if cached := t.CacheRead + t.CacheWrite; cached > 0 {
+		tip += " · " + trayCount(cached) + " cached"
+	}
+	tip += ")"
 	if t.Cost > 0 {
 		c := usage.FormatCost(t.Cost, currency, rate)
 		if t.Unpriced > 0 {
@@ -219,6 +255,39 @@ func trayTotalCard(id string, t usage.Totals, currency string, rate float64) pro
 		tip += fmt.Sprintf(", %d with no known price", t.Unpriced)
 	}
 	return provider.SubscriptionQuota{Provider: id, Name: tip, Balance: strings.Join(rows, " · ")}
+}
+
+// trayCurrency is the currency Settings shows costs in, and the yuan's
+// rate when that is CNY.
+func trayCurrency() (currency string, rate float64) {
+	currency = settings.Load().Currency
+	if currency == "cny" {
+		rate = fx.Soon().CNYPerUSD // never waited for, as the Settings page's
+	}
+	return currency, rate
+}
+
+// trayIdleTip is the tooltip while the menu bar shows no cards: magpie's
+// name over a line of what went through it today, as the panel's Usage tab
+// counts it (ylorn on Discord: a Linux bar's tooltip said only "magpie").
+// The whole of today's total, spelled out, is the usage:today card's.
+func trayIdleTip(t usage.Totals, currency string, rate float64) string {
+	if t.Calls == 0 {
+		return "magpie\nToday: no requests yet"
+	}
+	line := "Today: " + trayCount(t.Tokens()+t.CacheRead+t.CacheWrite) + " tokens"
+	if t.Cost > 0 {
+		c := usage.FormatCost(t.Cost, currency, rate)
+		if t.Unpriced > 0 {
+			c += "+"
+		}
+		line += " · ≈" + c
+	}
+	n := "requests"
+	if t.Calls == 1 {
+		n = "request"
+	}
+	return fmt.Sprintf("magpie\n%s · %d %s", line, t.Calls, n)
 }
 
 // trayCount is a count as the Usage page says it in English: 133M, 1.2M,
@@ -352,10 +421,10 @@ func trayPlain(cells []trayCell) []trayCell {
 // trayUsageView is what the tray shows for the cards: a cell for each
 // that has a label, with its stable identity for clicks; labels joined by
 // " | " for a tray that shows text; and a tooltip spelling each out.
-func trayUsageView(cards []provider.SubscriptionQuota, now time.Time, left bool) (cells []trayCell, label, tip string) {
+func trayUsageView(cards []provider.SubscriptionQuota, now time.Time, left, pace bool) (cells []trayCell, label, tip string) {
 	var labels, tips []string
 	for _, q := range cards {
-		l, t := trayUsageText(q, now, left)
+		l, t := trayUsageText(q, now, left, pace)
 		if t != "" {
 			tips = append(tips, t)
 		}

@@ -90,6 +90,19 @@
   --tk-s: #98d8a4; --tk-k: #c4b5fd; --tk-f: #93c5fd; --tk-n: #f2b544; --tk-v: #67e8f9; --tk-o: #f0abfc; --tk-c: #8b8b94;
   --c1: #a5b4fc; --c2: #7dd3fc; --c3: #6ee7b7; --c4: #fcd34d; --c5: #f9a8d4; --c6: #c4b5fd; --c7: #94a3b8;
 }
+/* Okabe–Ito qualitative series (#2073): adjacent series stay apart in hue and
+   lightness in both light and dark themes */
+:root[data-colorblind="1"] {
+  --c1: #0072b2; --c2: #e69f00; --c3: #009e73; --c4: #d55e00; --c5: #cc79a7; --c6: #56b4e9; --c7: #64748b;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-colorblind="1"] {
+    --c1: #56b4e9; --c2: #fbbf24; --c3: #2dd4bf; --c4: #fb7185; --c5: #e879f9; --c6: #f0e442; --c7: #94a3b8;
+  }
+}
+:root[data-theme="dark"][data-colorblind="1"] {
+  --c1: #56b4e9; --c2: #fbbf24; --c3: #2dd4bf; --c4: #fb7185; --c5: #e879f9; --c6: #f0e442; --c7: #94a3b8;
+}
 /* Windows' own text faces, and Chinese in YaHei UI, its UI face for it, not
    the webview's fallback; the Mac's and Linux's stack is the one above */
 :root.win { --font: "Segoe UI Variable Text", "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei", system-ui, sans-serif; }
@@ -429,9 +442,15 @@ body:not(.side-nav) .side-toggle .st-pane { opacity: 0; }
 @media (prefers-reduced-motion: reduce) { .side-toggle .st-pane { transition: none; } }
 /* the two layouts trade places as one motion (app.js navMorph): the sidebar
    slides in from the window's edge or back to it, each page's tab flies to
-   its place in the other, and the page moves over, all on the spring the
-   sidebar's lists open on. Each piece is drawn at its own size, never
-   stretched, the old fading as the new comes in */
+   its place in the other, and the page moves over, together. Each piece is
+   drawn at its own size, never stretched, the old fading as the new comes
+   in. It sets off from rest and settles, as a Mac's sidebar does (its
+   ease-in-ease-out) in a third of a second: the frames a webview drops
+   as the pictures start to move fall where hardly anything moves yet. On
+   the spring the lists open on it left at speed, a twelfth of the way gone
+   in the first frame, and a dropped one there (WebView2's, most) read as a
+   jerk, then crept for a quarter second more (wangye1644294 on X) */
+:root { --morph-t: .32s; --morph-ease: cubic-bezier(.42, 0, .58, 1); }
 .nav-morph #side { view-transition-name: side; }
 .nav-morph .brand { view-transition-name: brand; }
 .nav-morph #sideToggle { view-transition-name: side-toggle; }
@@ -445,7 +464,7 @@ body:not(.side-nav) .side-toggle .st-pane { opacity: 0; }
 .nav-morph #nav button[data-view="gateway"] { view-transition-name: nav-gateway; }
 .nav-morph #nav button[data-view="usage"] { view-transition-name: nav-usage; }
 .nav-morph #nav button[data-view="plugins"] { view-transition-name: nav-plugins; }
-::view-transition-group(*) { z-index: 1; animation-duration: .5s; animation-timing-function: cubic-bezier(.32, .72, 0, 1); }
+::view-transition-group(*) { z-index: 1; animation-duration: var(--morph-t); animation-timing-function: var(--morph-ease); }
 ::view-transition-old(*), ::view-transition-new(*) { inline-size: auto; block-size: auto; }
 /* the sidebar's own panel under the tabs flying to it or from it, with the
    rest of the window (a fixed panel is drawn last otherwise, over them) */
@@ -456,8 +475,8 @@ body:not(.side-nav) .side-toggle .st-pane { opacity: 0; }
 ::view-transition-new(page) { animation: none; }
 /* the icons at the header's right stay against it */
 ::view-transition-old(actions), ::view-transition-new(actions) { inset-inline-start: auto; inset-inline-end: 0; }
-::view-transition-old(side):only-child { animation: side-out .5s cubic-bezier(.32, .72, 0, 1) both; }
-::view-transition-new(side):only-child { animation: side-in .5s cubic-bezier(.32, .72, 0, 1) both; }
+::view-transition-old(side):only-child { animation: side-out var(--morph-t) var(--morph-ease) both; }
+::view-transition-new(side):only-child { animation: side-in var(--morph-t) var(--morph-ease) both; }
 @keyframes side-in { from { transform: translateX(-100%); } }
 @keyframes side-out { to { transform: translateX(-100%); } }
 
@@ -495,6 +514,15 @@ body.mac :is(.view, .modal .dialog, .modal .editor.framed > .ebody)::-webkit-scr
    and scrolled sideways; the bar's room is always kept, out of the right
    padding, so the fields end where they did */
 body.mac .modal .editor.framed > .ebody { overflow-y: scroll; padding-right: 10px; }
+/* Usage and Routing keep their bar's room too, whether the page runs past
+   the window or not. Their square-celled grids (the year heatmap, Sessions'
+   calendar, the context waffle) grow taller as they grow wider, so near the
+   window's height WebKit could lay the page out at the full width under the
+   bar and, on each redraw (Requests' 5s refresh), 8px narrower for a few
+   frames: the head's refresh, interval and cost shook sideways with Today
+   picked (@LingYi_Stu on X). The other pages have no such grid and keep the
+   8px while short */
+body.window :is(#view-usage, #view-routing) { overflow-y: scroll; }
 .list { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; flex: none; }
 body.panel .list { border: 0; border-radius: 10px; box-shadow: var(--card-edge); }
 .row { display: flex; align-items: center; gap: 9px; min-height: 40px; padding: 5px 9px 5px 11px; }
@@ -822,6 +850,10 @@ body.window .field.solo { grid-column: auto; }
 .quota-windows.stacked .quota-n > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .quota-reset { display: flex; flex-wrap: wrap; column-gap: 4px; margin-top: 4px; font-size: 10px; color: var(--faint); font-variant-numeric: tabular-nums; }
 .quota-reset > span { white-space: nowrap; }
+/* a window's Pace number (fflake33): faint like its line, amber when more
+   is used than an even pace would have */
+.quota-reset .quota-pace { font-variant-numeric: tabular-nums; }
+.quota-reset .quota-pace.over { color: var(--amber); }
 /* a window's whole (WindowHolds): a line of its own under the reset */
 .quota-reset .quota-holds { flex-basis: 100%; display: flex; flex-wrap: wrap; column-gap: 4px; min-width: 0; }
 .quota-reset .quota-holds > span { white-space: nowrap; }
@@ -856,6 +888,8 @@ body.window .field.solo { grid-column: auto; }
 .quota-curve .qc-plot:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
 @media (prefers-reduced-motion: reduce) { .quota-curve .qc-plot { transition: none; } }
 .balance-curve .qc-range { color: var(--muted); }
+.quota-curve .qc-head > span:first-child { flex: none; }
+.quota-curve .qc-pace { font-size: 10px; color: var(--muted); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .balance-curve .bc-pace { color: var(--faint); }
 .qc-grid { stroke: var(--line); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .qc-line { fill: none; stroke-width: 1.5; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
@@ -871,6 +905,23 @@ body.window .field.solo { grid-column: auto; }
 .qc-key > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .qc-key i { flex: none; width: 7px; height: 7px; border-radius: 50%; }
 .qc-key b { color: var(--fg-2); font-weight: 600; font-variant-numeric: tabular-nums; }
+/* colorblind mode (#2073): each quota window's line keeps a dash of its own,
+   and its legend shows a sample of that line for the dot; the even paces go
+   dotted, so no window's dash reads as one. Only drawQuotaPlot and the
+   quota legend set data-series, so the balance curve keeps its solid line,
+   dashed fit and dot. */
+.qc-key .qc-sample { display: none; }
+.qc-sample line { stroke-width: 1.5; stroke-linecap: round; }
+:root[data-colorblind="1"] .qc-key[data-series] i { display: none; }
+:root[data-colorblind="1"] .qc-key[data-series] .qc-sample { display: block; flex: none; width: 22px; height: 6px; }
+:root[data-colorblind="1"] .qc-line.qc-short { stroke-width: 1.35; opacity: .85; }
+:root[data-colorblind="1"] .qc-even[data-series] { stroke-width: 1.4; stroke-dasharray: 0 4; stroke-linecap: round; opacity: .6; }
+:root[data-colorblind="1"] :is(.qc-line, .qc-dash)[data-series="1"] { stroke-dasharray: 8 4; }
+:root[data-colorblind="1"] :is(.qc-line, .qc-dash)[data-series="2"] { stroke-dasharray: 3.5 4; }
+:root[data-colorblind="1"] :is(.qc-line, .qc-dash)[data-series="3"] { stroke-dasharray: 12 4 3.5 4; }
+:root[data-colorblind="1"] :is(.qc-line, .qc-dash)[data-series="4"] { stroke-dasharray: 3.5 4 3.5 9; }
+:root[data-colorblind="1"] :is(.qc-line, .qc-dash)[data-series="5"] { stroke-dasharray: 16 4; }
+:root[data-colorblind="1"] :is(.qc-line, .qc-dash)[data-series="6"] { stroke-dasharray: 12 4 3.5 4 3.5 4; }
 .quota-resets { display: flex; align-items: center; gap: 8px; margin-top: 9px; font-size: 10.5px; font-variant-numeric: tabular-nums; }
 .quota-resets .text { margin-left: auto; flex: none; font-size: 11px; padding: 2px 7px; }
 .subscription-card.several .quota-resets:not([hidden]) + .subscription-account { margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--line); }
@@ -1266,7 +1317,10 @@ body.window .field.solo { grid-column: auto; }
 .led .price-reference { font-size: 10px; color: var(--muted); }
 .led .cost { color: var(--green); }
 .led .cost.faint { color: var(--faint); }
-.led .who { display: inline-flex; align-items: center; gap: 6px; }
+/* a block of its own, centred in the cell as the time and the model are: an
+   inline-flex box took its icon's foot as its baseline, which raised the
+   name ~2px over them (#2237) */
+.led .who { display: flex; align-items: center; gap: 6px; }
 .led .who .ic { width: 14px; height: 14px; flex: none; }
 .led .swap { display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; font-size: 10.5px; line-height: 16px; padding: 0 5px; border-radius: 5px; color: var(--amber); background: var(--amber-soft); }
 .led .st { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); }
@@ -1310,6 +1364,7 @@ body.window .field.solo { grid-column: auto; }
 .cx-role.user { color: var(--accent); background: var(--accent-soft); }
 .cx-role.assistant { color: var(--green); background: var(--green-soft); }
 .cx-name { font: var(--code-style, normal) var(--code-weight, 400) 11px var(--code-font, var(--code)); font-stretch: var(--code-stretch, 100%); color: var(--fg-2); }
+.cx-model { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--code-style, normal) var(--code-weight, 400) 10.5px var(--code-font, var(--code)); font-stretch: var(--code-stretch, 100%); color: var(--faint); }
 .cx-t { margin: 0; padding: 7px 9px; border-radius: 8px; background: var(--card); border: 1px solid var(--line-2); font: var(--code-style, normal) var(--code-weight, 400) 11.5px/1.5 var(--code-font, var(--code)); font-stretch: var(--code-stretch, 100%); color: var(--fg); white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; -webkit-user-select: text; }
 .cx-cut { color: var(--muted); font-style: normal; }
 .cx-part.clamp .cx-t { max-height: 176px; overflow: hidden; -webkit-mask-image: linear-gradient(#000 72%, transparent); mask-image: linear-gradient(#000 72%, transparent); }
@@ -1696,9 +1751,13 @@ body.panel .profiles #save { height: 25px; } /* the field's: the line keeps its 
 .pq-rn2 { display: flex; flex-direction: column; align-items: center; }
 .pq-rn2 > span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 /* the first window's current cycle, a thin line across the card (#651) */
-.pq-spark-box { grid-column: 1 / -1; display: block; height: 16px; }
-.pq-spark { display: block; width: 100%; height: 16px; overflow: hidden; }
-.pq-spark .qc-line { stroke-width: 1.2; }
+.pq-spark-box { grid-column: 1 / -1; display: block; height: 30px; }
+.pq-spark { display: block; width: 100%; height: 30px; overflow: hidden; }
+.pq-spark .qc-line { stroke-width: 1.4; }
+/* the gap to the even burn: ahead of it lasts, behind it runs out (#2079) */
+.pq-gap-ahead { fill: var(--green); opacity: .16; }
+.pq-gap-behind { fill: var(--amber); opacity: .22; }
+.pq-pace { color: var(--muted); }
 /* a Codex account's rate-limit resets, under a hairline across the card */
 .pq-resets { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin-top: 5px; padding-top: 7px; border-top: 1px solid var(--line-2); font-size: 11px; font-variant-numeric: tabular-nums; }
 .resets-words { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -1722,6 +1781,19 @@ body.panel .profiles #save { height: 25px; } /* the field's: the line keeps its 
 .ar-say { flex: 1; min-width: 0; line-height: 1.35; }
 .ar-say b { font-weight: 500; color: var(--fg-2); }
 .ar-used { display: block; margin-top: 2px; color: var(--faint); }
+/* its two times, each a line of its own with its switch (#2078): the
+   say on top, the lines under it, each switch at the line's end */
+.quota-autoreset.ar-split, .pq-autoreset.ar-split { flex-direction: column; align-items: stretch; gap: 3px; }
+.ar-cases { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.ar-case { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.ar-case-say { flex: 1; min-width: 0; line-height: 16px; }
+.ar-case.on .ar-case-say { color: var(--fg-2); }
+.ar-case .lib-switch { flex: none; }
+/* Settings › Usage: an account's two times, each with its Off/On */
+.ar-own-cases { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; min-width: 0; }
+.ar-own-case { display: flex; align-items: center; justify-content: flex-end; gap: 10px; min-width: 0; }
+.ar-own-say { min-width: 0; color: var(--muted); font-size: 12px; text-align: right; }
+.ar-own-case .segs { flex: none; }
 .lib-switch.auto-reset, .lib-switch.use-credits { width: 28px; height: 16px; padding: 0; border: 0; cursor: pointer; }
 .lib-switch.auto-reset i, .lib-switch.use-credits i { width: 12px; height: 12px; }
 .lib-switch.auto-reset.on i, .lib-switch.use-credits.on i { transform: translateX(12px); }
@@ -2431,10 +2503,19 @@ body.window .ag-sk-icon { width: 22px; height: 22px; border-radius: 6px; }
 #gatewayKeys .klf-used { display: flex; align-items: center; gap: 8px; min-width: 0; }
 #gatewayKeys .klf-used .key-limit { flex: 1 1 auto; }
 #gatewayKeys .klf-used .klf-reset { flex: none; }
+/* a key's several limits (#2227): one tab each, the editor is of one */
+#gatewayKeys .klf-which { display: flex; flex-wrap: wrap; gap: 4px; min-width: 0; }
+#gatewayKeys .klf-tab { height: 24px; padding: 0 10px; border-radius: 6px; font-size: 12px; color: var(--ctl-fg); white-space: nowrap; }
+#gatewayKeys .klf-tab:hover:not(.on) { color: var(--fg-2); }
+#gatewayKeys .klf-tab.on { color: var(--fg); background: var(--seg-thumb); box-shadow: var(--seg-edge); }
 @media (max-width: 520px) { #gatewayKeys .klf, #gatewayKeys .klf.with-days { grid-template-columns: 1fr; } #gatewayKeys .klf-used { flex-wrap: wrap; } }
 /* the models a key may use (#882): a long model's id is cut, and the
    badge gives way first on a narrow window */
 #gatewayKeys .amodels.key-models { display: inline-block; flex: 0 1 auto; min-width: 24px; max-width: 180px; line-height: 20px; overflow: hidden; text-overflow: ellipsis; }
+/* a key's quotas badge (#2216) takes no room until the row is hovered,
+   and gives way before the row runs past a narrow window */
+#gatewayKeys .amodels.key-quotas { display: inline-block; flex: 0 1 auto; min-width: 0; line-height: 20px; overflow: hidden; text-overflow: ellipsis; }
+#gatewayKeys .acc:not(:hover) > .key-quotas:not(.set):not(:focus) { max-width: 0; padding: 0; margin-left: -9px; box-shadow: none; }
 /* the Settings row's picker: the key row's badge, always shown */
 .row.pref .proto.pick { flex: none; margin-left: auto; display: inline-flex; align-items: center; gap: 3px; height: 24px; padding: 0 6px 0 9px; font: inherit; font-size: 12px; color: var(--fg-2); border: 0; border-radius: 7px; background: var(--pill); white-space: nowrap; cursor: default; transition: background .12s, color .12s; }
 .row.pref .proto.pick svg { opacity: .7; transition: transform .15s var(--ease); }
@@ -2733,7 +2814,7 @@ body.window .ag-sk-icon { width: 22px; height: 22px; border-radius: 6px; }
 .opt { position: relative; z-index: 1; white-space: nowrap; height: 22px; padding: 0 10px; border-radius: 5px; font-size: 12px; color: var(--muted); transition: color .18s var(--ease), transform .14s var(--ease); }
 .opt.on { color: var(--fg); }
 /* how often magpie checks for updates, while it doesn't by itself */
-.update-every-row.off .segs { opacity: .55; }
+.update-every-row.off .segs, .update-restart-row.off .segs { opacity: .55; }
 /* Command line: each shell's `magpie`, a dot for whether it runs this app */
 .cli-row .sub { overflow-wrap: anywhere; }
 .cli-shells { display: flex; flex-direction: column; gap: 3px; margin-top: 6px; }
@@ -2893,6 +2974,8 @@ body.window .ag-sk-icon { width: 22px; height: 22px; border-radius: 6px; }
 /* served with none picked: the vendor's list stands in for the picks. Drawn
    apart from a pick (no tick, no accent): a click picks it alone (#681) */
 .mchip.auto { border-style: dashed; border-color: var(--muted); }
+/* listed on none of the APIs the provider has a URL for: not offered (#2094) */
+.mchip.noapi { opacity: .5; }
 /* an image model in the editor: listed, not picked */
 .mchip.ro, .mchip.ro:hover { cursor: default; color: var(--muted); border-color: var(--line); }
 .mchip.ro:active { transform: none; }
@@ -3252,6 +3335,12 @@ body.panel .modal { padding: 16px 12px; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  /* what declares no transition of its own keeps none: its default is
+     `all 0s`, which the rule above made `all .01ms`, so a header tab's
+     label took a frame to come to its new size, the header was fitted to
+     the old one, and the page stayed a few pixels wider than the window
+     (#2142, #1864, #2023). No specificity: any transition declared wins. */
+  :where(*), :where(*)::before, :where(*)::after { transition-property: none; }
   .skeleton { animation: none !important; }
 }
 
@@ -3354,6 +3443,8 @@ body.panel .modal { padding: 16px 12px; }
   body.web .acc :is(.text.quiet, .proto, .amodels, .alane) { opacity: 1; }
   body.web .accts.keys .acc > :is(.amodels, .proto, .alane, .text.quiet) { max-width: none !important; padding: 0 7px !important; flex-shrink: 0 !important; }
   body.web .accts.keys .acc > .alane:not(.set) { margin-left: 0 !important; }
+  body.web #gatewayKeys .acc > .key-quotas { max-width: none !important; padding: 0 7px !important; margin-left: 0 !important; flex-shrink: 0; }
+  body.web #gatewayKeys .acc > .key-quotas:not(.set) { box-shadow: inset 0 0 0 1px var(--line) !important; }
 }
 
 /* Import from other apps: a checklist per app */
@@ -3653,6 +3744,9 @@ body.window .row.agent .who.with-models { flex-wrap: wrap; row-gap: 0; }
    (claude-direct.test.cjs); the page holds the reader itself */
 #view-agents { overflow-anchor: none; }
 body.window .row.agent > .ag-conn { margin-left: 12px; align-self: center; cursor: pointer; }
+/* a row whose CLI is gone (#2177) has no pickers: its switch, while it is
+   connected, sits at the row's end */
+body.window .row.agent.gone > .ag-conn { margin-left: auto; }
 .ag-conn-row { display: flex; align-items: center; gap: 8px; min-height: 28px; }
 .ag-conn-row .ag-conn-said { flex: 1; min-width: 0; font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ag-conn-row .lib-switch { cursor: pointer; }
@@ -3891,3 +3985,9 @@ input[type="checkbox"]:disabled { opacity: .45; }
 
 /* a disabled model's pattern, as typed (#1867): an id or a glob */
 .disabled-model .name { font-family: var(--code); font-size: 12px; overflow-wrap: anywhere; }
+/* Settings › Images: the way to the Magpie Image tool, under its words (#2091) */
+.image-gen-how .link { padding-left: 0; padding-right: 0; white-space: normal; text-align: start; }
+/* Settings › Proxy's Test result (#2076): under the row's text */
+.row.pref .sub.proxy-check { margin-top: 3px; white-space: normal; overflow-wrap: anywhere; }
+.proxy-check[hidden] { display: none; }
+.row.pref .sub.proxy-check.err { color: var(--red); }

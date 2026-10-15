@@ -202,7 +202,9 @@ func (s *Server) searchMCPRun(r *http.Request, query string) (string, error) {
 		}
 		return "", searchMCPError(msg)
 	}
-	return said, nil
+	// what was masked on the way out (maskedQuery, or the searcher's
+	// request) is the agent's own: it gets it back
+	return restored(said, false), nil
 }
 
 // readMCPBody reads a request body of at most limit bytes, answering 413

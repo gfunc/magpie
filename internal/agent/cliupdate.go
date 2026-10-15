@@ -16,6 +16,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -24,6 +25,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unicode/utf16"
 
 	"github.com/yetone/magpie/internal/edit"
 	"github.com/yetone/magpie/internal/netproxy"
@@ -140,8 +142,18 @@ var cliSpecs = map[string]cliSpec{
 			}
 			return nil
 		}},
-	"pi":        {npm: []string{"@earendil-works/pi-coding-agent", "@mariozechner/pi-coding-agent"}, brew: []string{"pi-coding-agent"}},
-	"omp":       {npm: []string{"@oh-my-pi/pi-coding-agent"}},
+	"pi": {npm: []string{"@earendil-works/pi-coding-agent", "@mariozechner/pi-coding-agent"}, brew: []string{"pi-coding-agent"}},
+	// omp: bun's global, or omp.sh's -Binary install, a binary of its own
+	// in ~/.local/bin (install, PI_INSTALL_DIR aside) or
+	// %LOCALAPPDATA%\omp (install.ps1), which omp update replaces with
+	// the release's, as the reporter of #2192 saw it do
+	"omp": {npm: []string{"@oh-my-pi/pi-coding-agent"},
+		self: func(bin, real string) []string {
+			if l := strings.ToLower(real); strings.HasSuffix(l, "/.local/bin/omp") || strings.HasSuffix(l, "/appdata/local/omp/omp.exe") {
+				return []string{bin, "update"}
+			}
+			return nil
+		}},
 	"copilot":   {npm: []string{"@github/copilot"}, brew: []string{"copilot-cli"}},
 	"crush":     {npm: []string{"@charmland/crush"}, brew: []string{"crush"}},
 	"cline":     {npm: []string{"cline"}, brew: []string{"cline"}},
@@ -309,12 +321,12 @@ func fromNodeModules(pkg, bin, real string) *updater {
 		if !isDir(filepath.Join(filepath.FromSlash(modules), filepath.FromSlash(pkg))) {
 			modules = "" // pnpm's shims name a store elsewhere
 		}
-	} else {
+	} else if !bunxNames(bin, pkg) {
 		return nil
 	}
 	lower := strings.ToLower(real + "|" + filepath.ToSlash(bin))
 	switch {
-	case strings.Contains(lower, "/.bun/"):
+	case strings.Contains(lower, "/.bun/") || modules == "" && bunxNames(bin, pkg):
 		bun := filepath.Join(filepath.Dir(bin), exe("bun"))
 		if !isFile(bun) {
 			var err error
@@ -366,6 +378,26 @@ func fromNodeModules(pkg, bin, real string) *updater {
 	}
 	u.cmd = []string{npm, "install", "-g", "--prefix", prefix, pkg + "@latest"}
 	return u
+}
+
+// bunxNames says whether bin is bun's Windows shim of pkg's program: a
+// small opencode.exe that runs what the opencode.bunx beside it names, in
+// UTF-16, from bun's folder: install\global\node_modules\opencode-ai\
+// bin\opencode.exe (bun 1.4.3, #2192). The .exe itself names no package.
+func bunxNames(bin, pkg string) bool {
+	if !strings.EqualFold(filepath.Ext(bin), ".exe") {
+		return false
+	}
+	b, err := os.ReadFile(strings.TrimSuffix(bin, filepath.Ext(bin)) + ".bunx")
+	if err != nil || len(b) > 64<<10 {
+		return false
+	}
+	u := make([]uint16, 0, len(b)/2)
+	for i := 0; i+1 < len(b); i += 2 {
+		u = append(u, uint16(b[i])|uint16(b[i+1])<<8)
+	}
+	named := strings.ReplaceAll(string(utf16.Decode(u)), `\`, "/")
+	return strings.Contains(named, "node_modules/"+pkg+"/")
 }
 
 // shimNames says whether bin is a small script naming pkg's folder.
@@ -701,7 +733,13 @@ func offPath(bin string, dirs []string) bool {
 }
 
 // cliBin is where the agent's CLI is, "" when it has none magpie knows or
-// it isn't on PATH.
+// none is installed. One not on magpie's PATH is looked for where a user's
+// tools are installed (proc.FindTool), on every system as on Windows: a
+// `magpie serve` or a service started with a PATH that lacks ~/.bun/bin, an
+// npm prefix or an nvm Node other than the default never found omp there,
+// so its version stayed unknown and its models offered xhigh in place of
+// max (whqtian on Discord: fixed on Windows and in WSL, still xhigh on
+// Ubuntu).
 func (a *Agent) cliBin() (string, cliSpec) {
 	spec, ok := cliSpecs[a.ID]
 	if !ok || a.WSL != "" {
@@ -723,6 +761,9 @@ func (a *Agent) cliBin() (string, cliSpec) {
 		return "", spec
 	}
 	bin := binAt(a.Bin)
+	if bin == "" {
+		bin = proc.FindTool(a.Bin)
+	}
 	if bin == "" {
 		return "", spec
 	}
@@ -874,7 +915,9 @@ func updateEnv(u *updater) []string {
 			}
 		}
 	}
-	return append(env, "NONINTERACTIVE=1", "HOMEBREW_NO_ENV_HINTS=1", "NO_COLOR=1")
+	// the --version run after an update starts Cline, which would otherwise
+	// check for (and schedule) an update of its own
+	return append(env, "NONINTERACTIVE=1", "HOMEBREW_NO_ENV_HINTS=1", "NO_COLOR=1", "CLINE_NO_AUTO_UPDATE=1")
 }
 
 // updateTimeout bounds an update: a download, or Homebrew updating itself first.
@@ -926,7 +969,96 @@ func (a *Agent) UpdateCLI() (CLI, error) {
 	if c.Update && c.Version == before {
 		return c, fmt.Errorf("%s is still %s after %s; %s is out", a.Name, c.Version, u.shown(), c.Latest)
 	}
+	// the package says its new version, but that isn't the CLI running: npm
+	// leaves out an optional dependency it couldn't fetch and still exits 0,
+	// and Claude Code without its native package is a stub that only says
+	// "claude native binary not installed" (#2128)
+	broken := runsBroken(ctx, bin, u)
+	if broken != "" && u.via == "npm" && !u.admin {
+		// once more, the version just installed with its optional
+		// packages: how the reporter's own install was mended
+		again := *u
+		again.cmd = append([]string{}, u.cmd...)
+		at := c.Version
+		if at == "" {
+			at = "latest"
+		}
+		again.cmd[len(again.cmd)-1] = u.pkg + "@" + at
+		again.cmd = append(again.cmd, "--include=optional")
+		if _, err := runUpdate(ctx, &again); err == nil {
+			versions.forget(real)
+			shimTargets.forget(bin)
+			c, _ = a.CLI()
+			broken = runsBroken(ctx, bin, u)
+		}
+	}
+	if broken != "" {
+		return c, fmt.Errorf("%s was updated, but %s --version fails: %s — %s", a.Name, filepath.Base(bin), broken, mendHint(u, c.Version))
+	}
 	return c, nil
+}
+
+// runsBroken is what bin --version says when it ran and failed without
+// saying a version, "" when it said one or what it is can't be told: it
+// didn't start, took too long, or its interpreter wasn't found (127), none
+// of which says the update broke it. It runs as the update did, its npm's
+// folder first on PATH, so a node CLI finds the node it was installed for.
+func runsBroken(ctx context.Context, bin string, u *updater) string {
+	ctx, cancel := context.WithTimeout(ctx, checkTimeout)
+	defer cancel()
+	out, code, err := runCheck(ctx, bin, updateEnv(u))
+	if err == nil || ctx.Err() != nil || code <= 0 || code == 127 || parseVersion(out) != "" {
+		return ""
+	}
+	if msg := lastLines(out, 2); msg != "" {
+		return msg
+	}
+	return fmt.Sprintf("exit status %d", code)
+}
+
+// checkTimeout bounds the run after an update: a busy machine's first start
+// of a CLI that was just written.
+var checkTimeout = 30 * time.Second
+
+// runCheck runs bin --version with nothing on its stdin, and says what it
+// printed and its exit code (-1 when it didn't run to one); a var so tests
+// can fake it.
+var runCheck = func(ctx context.Context, bin string, env []string) (string, int, error) {
+	cmd := proc.ProbeContext(ctx, bin, "--version")
+	cmd.Stdin = nil
+	cmd.Env = env
+	out, err := cmd.CombinedOutput()
+	code := -1
+	var ee *exec.ExitError
+	if errors.As(err, &ee) {
+		code = ee.ExitCode()
+	}
+	return string(out), code, err
+}
+
+// mendHint is how to put back a CLI an update left unable to run.
+func mendHint(u *updater, version string) string {
+	at := version
+	if at == "" {
+		at = "latest"
+	}
+	switch u.via {
+	case "npm":
+		prefix := u.prefix
+		if strings.ContainsAny(prefix, " \t") {
+			prefix = `"` + prefix + `"`
+		}
+		return fmt.Sprintf("its install is incomplete (npm can leave out a native package and still succeed); reinstall it with: npm install -g --prefix %s %s@%s --include=optional", prefix, u.pkg, at)
+	case "bun", "pnpm":
+		return fmt.Sprintf("its install is incomplete; reinstall it with: %s add -g %s@%s", u.via, u.pkg, at)
+	case "brew":
+		cask := ""
+		if u.cask {
+			cask = " --cask"
+		}
+		return fmt.Sprintf("reinstall it with: brew reinstall%s %s", cask, u.pkg)
+	}
+	return "run " + u.shown() + " again, or reinstall it the way you installed it"
 }
 
 var ansiRe = regexp.MustCompile(`\x1b\[[0-9;?]*[ -/]*[@-~]`)

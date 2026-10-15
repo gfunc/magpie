@@ -58,6 +58,10 @@ type candidate struct {
 	// it is in (weightedUnits), for affinity to charge the member that
 	// keeps a conversation (weightedKept)
 	seats []wrrSeat
+	// firstToken is the FirstToken of the innermost group of those the
+	// member is in that sets one (#2246): a group in a group times its own
+	// members' first tokens, the group asked for only those that set none
+	firstToken int
 }
 
 // capHold is how an account is held at its usage cap: the cap of the
@@ -337,7 +341,7 @@ func (s *Server) plan(p provider.Provider, model string, from provider.Protocol)
 		cs, wg := weigh(q, cs, m, from)
 		for i, c := range cs {
 			w := weighed(c, q, wg, fallback, from)
-			w.Turn = i == 0 && (q.Routing == provider.Rotate || q.Routing == provider.Weighted) && len(cs) > 1
+			w.Turn = i == 0 && goesRound(q.Routing) && len(cs) > 1
 			pl.order = append(pl.order, w)
 		}
 		pl.order = append(pl.order, asideOf(aside, q, fallback, from)...)
@@ -371,7 +375,9 @@ func (s *Server) plan(p provider.Provider, model string, from provider.Protocol)
 // alone, whatever the group's (#576): in order, in its place; else as
 // one, weighed with the rest by the one it would try first, and tried
 // whole where that one goes — the group's routing picks between its
-// groups, never within them. A member's fallbacks are not the group's.
+// groups, never within them. A group in the group sinks by its own Sink
+// too, within its own order (#2255), before g's Sink orders the whole.
+// A member's fallbacks are not the group's.
 func (s *Server) planGroup(g provider.Group, ms []provider.Member, from provider.Protocol) ([]candidate, planned) {
 	var pl planned
 	var asides []candidate
@@ -387,6 +393,17 @@ func (s *Server) planGroup(g provider.Group, ms []provider.Member, from provider
 	return restLast(out, pl)
 }
 
+// innerFirstToken is the FirstToken of the innermost group m is in
+// (m.Via, the outermost first) that sets one, 0 for none.
+func innerFirstToken(m provider.Member) int {
+	for i := len(m.Via) - 1; i >= 0; i-- {
+		if m.Via[i].FirstToken > 0 {
+			return m.Via[i].FirstToken
+		}
+	}
+	return 0
+}
+
 // planLevel orders the models ms of g, a group depth groups down from the
 // one asked for, adding to pl's order as it goes: those set aside and
 // those unlisted it gathers for planGroup to put last.
@@ -398,6 +415,7 @@ func planLevel(g provider.Group, ms []provider.Member, depth int, from provider.
 		for _, l := range [][]candidate{cs, aside, left, barred} {
 			for i := range l {
 				l[i].effort, l[i].fast = m.Effort, m.Fast
+				l[i].firstToken = innerFirstToken(m)
 			}
 		}
 		pl.left = append(pl.left, barredOf(barred, m.Provider, false, from, m.Groups())...)
@@ -415,7 +433,7 @@ func planLevel(g provider.Group, ms []provider.Member, depth int, from provider.
 		}
 		return cs
 	}
-	if g.Routing != provider.Ordered {
+	if routingOf(g.Routing) != provider.Ordered {
 		// what the group weighs: each of its models' keys or accounts,
 		// and each group in it as one — planned by its own routing, put
 		// where the one it would try first is, the rest of it after
@@ -427,7 +445,7 @@ func planLevel(g provider.Group, ms []provider.Member, depth int, from provider.
 		}
 		// a group routed by weight weighs its members, each whole: a
 		// model's keys in its provider's order, a group in it in its own
-		byWeight := g.Routing == provider.Weighted
+		byWeight := routingOf(g.Routing) == provider.Weighted
 		var units []unit
 		var heads []candidate
 		at := map[string][]int{} // a head's seat → its units, in turn
@@ -444,6 +462,7 @@ func planLevel(g provider.Group, ms []provider.Member, depth int, from provider.
 				}
 				var sub planned
 				cs := planLevel(m.Via[depth], ms[i:j], depth+1, from, &sub, asides, wAsides)
+				cs, sub.order = sinkOwn(m.Via[depth], cs, sub.order)
 				pl.left = append(pl.left, sub.left...)
 				pl.capped = append(pl.capped, sub.capped...)
 				if len(cs) > 0 {
@@ -461,7 +480,7 @@ func planLevel(g provider.Group, ms []provider.Member, depth int, from provider.
 				var order []Weighed
 				for k, c := range cs {
 					w := weighed(c, m.Provider, wg, false, from)
-					w.Turn = k == 0 && (m.Provider.Routing == provider.Rotate || m.Provider.Routing == provider.Weighted) && len(cs) > 1
+					w.Turn = k == 0 && goesRound(m.Provider.Routing) && len(cs) > 1
 					w.Via = m.Groups()
 					order = append(order, w)
 				}
@@ -515,7 +534,7 @@ func planLevel(g provider.Group, ms []provider.Member, depth int, from provider.
 			w := weighed(c, u.m.Provider, wg, false, from)
 			w.Routing, w.Via = g.Routing, u.m.Groups()
 			w.Sunk = nil // weighed as the group's, whose own Sink tells
-			w.Turn = i == 0 && g.Routing == provider.Rotate && len(weighedHeads) > 1
+			w.Turn = i == 0 && routingOf(g.Routing) == provider.Rotate && len(weighedHeads) > 1
 			pl.order = append(pl.order, w)
 			out = append(out, c)
 		}
@@ -525,19 +544,25 @@ func planLevel(g provider.Group, ms []provider.Member, depth int, from provider.
 	for i := 0; i < len(ms); {
 		m := ms[i]
 		if len(m.Path) > depth+1 {
-			// a group in g: its models, planned by its routing
+			// a group in g: its models, planned by its routing and
+			// sunk by its Sink
 			j := i + 1
 			for j < len(ms) && len(ms[j].Path) > depth+1 && ms[j].Path[depth] == m.Path[depth] {
 				j++
 			}
-			out = append(out, planLevel(m.Via[depth], ms[i:j], depth+1, from, pl, asides, wAsides)...)
+			at := len(pl.order)
+			cs := planLevel(m.Via[depth], ms[i:j], depth+1, from, pl, asides, wAsides)
+			var order []Weighed
+			cs, order = sinkOwn(m.Via[depth], cs, pl.order[at:])
+			pl.order = append(pl.order[:at], order...)
+			out = append(out, cs...)
 			i = j
 			continue
 		}
 		cs, wg := weigh(m.Provider, keys(m), m.Model, from)
 		for k, c := range cs {
 			w := weighed(c, m.Provider, wg, false, from)
-			w.Turn = k == 0 && (m.Provider.Routing == provider.Rotate || m.Provider.Routing == provider.Weighted) && len(cs) > 1
+			w.Turn = k == 0 && goesRound(m.Provider.Routing) && len(cs) > 1
 			w.Via = m.Groups()
 			pl.order = append(pl.order, w)
 		}
@@ -545,6 +570,19 @@ func planLevel(g provider.Group, ms []provider.Member, depth int, from provider.
 		i++
 	}
 	return out
+}
+
+// sinkOwn is cs, the keys and accounts of sub, a group in a group, as
+// planLevel planned them, with those that sank behind the others when
+// sub's own Sink is on, and order, what the trace says of each, kept with
+// them (#2255, ggbdpq): a nested group is planned by its own routing
+// (#576) and rules, and its Sink was left unread, only the group the
+// agent asked for sinking.
+func sinkOwn(sub provider.Group, cs []candidate, order []Weighed) ([]candidate, []Weighed) {
+	if !sinks(sub.Sink, sub.Routing) {
+		return cs, order
+	}
+	return sinkPlanned(cs, order)
 }
 
 // firstAwake is the first of cs that isn't resting, else the first: what
@@ -964,6 +1002,23 @@ func modelRefused(status int, body []byte) bool {
 	return unservedWords.Match(body) && !quotaWords.Match(body) && !refusedWords.Match(body)
 }
 
+// codeAssistModelMissing says a Google account's Code Assist — the
+// Antigravity or Gemini CLI built-in's — answered 404 NOT_FOUND
+// ("Requested entity was not found."). Its endpoint is the same for every
+// model, so what isn't there is the model: one fetchAvailableModels lists
+// that the account's plan doesn't serve (Packing1 on Discord: Argon on
+// Google AI Pro). Only that model rests, on that account; its others are
+// asked as before.
+func codeAssistModelMissing(p provider.Provider, status int, body []byte) bool {
+	if status != http.StatusNotFound || p.Account == nil || p.IsPlugin() {
+		return false
+	}
+	if p.Account.Agent != "antigravity" && p.Account.Agent != "gemini" {
+		return false
+	}
+	return bytes.Contains(body, []byte("NOT_FOUND")) || bytes.Contains(bytes.ToLower(body), []byte("not found"))
+}
+
 // retiredWords are how a vendor says the model is retired, though its
 // list may still name it: OpenCode Zen's 410 {"type":"error","error":
 // {"type":"ModelDeprecated","message":"Model exo-free has been
@@ -1158,9 +1213,11 @@ func tooLongUnsaid(p provider.Provider, model string, tokens, status int, body [
 }
 
 // windowOf is the tokens a provider's model takes, where known: the
-// user's (Provider.ContextOf), else its catalog entry's.
+// user's for the model, else its catalog entry's (Provider.WindowOf, where
+// the one set for all the provider's models is no larger than the model's
+// own, #2112), else the one set for all of them.
 func windowOf(p provider.Provider, model string) int {
-	if n := p.ContextOf(model); n > 0 {
+	if n := p.Contexts[model]; n > 0 {
 		return n
 	}
 	for _, e := range provider.Served() {
@@ -1168,7 +1225,7 @@ func windowOf(p provider.Provider, model string) int {
 			return e.Context
 		}
 	}
-	return 0
+	return p.ContextOf(model)
 }
 
 const (

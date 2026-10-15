@@ -158,8 +158,10 @@ func TestSettingsSaveKeepsWhatItDoesNotSend(t *testing.T) {
 		CodexPredictions:     "off",
 		CodexAutoReview:      "fake/m1",
 		CodexSubagentModel:   "codex/gpt-6-astra",
+		DesktopSubagentModel: "fake/m2",
 		ChinaMirror:          true,
 		CodexAutoReset:       []string{"me@example.com"},
+		CodexAutoResetOnly:   map[string]string{"me@example.com": "expiring"},
 		CodexNoCredits:       []string{"me@example.com"},
 		CodexWarmAtOf:        map[string]string{"me@example.com": "09:00"},
 		TextSize:             125,
@@ -174,6 +176,7 @@ func TestSettingsSaveKeepsWhatItDoesNotSend(t *testing.T) {
 		QuotaReads:           "asked",
 		NoAccountDiscovery:   true,
 	}
+	was.DesktopSubagentEffort = "high"
 	if err := settings.Save(was); err != nil {
 		t.Fatal(err)
 	}

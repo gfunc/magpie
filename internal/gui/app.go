@@ -41,7 +41,7 @@ var trayIcon []byte // black glyph, tinted by the macOS menu bar
 var trayFlap embed.FS
 
 //go:embed icon.png
-var appIcon []byte // coloured, for other trays
+var appIcon []byte // coloured, for Windows' tray
 
 // The app's own icon: the Mac's Dock (which it replaces the bundle's .icns
 // in, at up to 512pt), window icons and the about box. At 64px it was
@@ -347,7 +347,7 @@ func Run(version string, showMain bool, link string) error {
 		Name:           "magpie",
 		Description:    "one place to pick every agent's model",
 		Icon:           appIconFor(),
-		Assets:         application.AssetOptions{Handler: handler},
+		Assets:         application.AssetOptions{Handler: ownWindow(handler)},
 		Mac:            application.MacOptions{ActivationPolicy: dockPolicy(settings.Load().Dock)},
 		Windows:        windowsOptions(),
 		// the tray stays when lightweight mode has let both windows go
@@ -455,6 +455,14 @@ func Run(version string, showMain bool, link string) error {
 		})
 	}
 	updates.onWait = func() { application.InvokeSync(relabel) }
+	// Settings' AutoRestart: the window comes back only if it was up (#2096)
+	updates.autoRestart = func() bool {
+		if restartInto(false, h.MainShown(), "", true) {
+			h.app.Quit()
+			return true
+		}
+		return false
+	}
 	updates.start()
 	news.start()
 	// the library written into the agents again, once: one installed or
@@ -480,10 +488,16 @@ func Run(version string, showMain bool, link string) error {
 		go dropTrayName()
 	}
 	h.tray.SetTooltip("magpie")
-	if runtime.GOOS == "darwin" {
-		h.tray.SetTemplateIcon(trayIcon)
+	if icon, template := trayIconFor(runtime.GOOS, traySchemeLight()); template {
+		h.tray.SetTemplateIcon(icon)
 	} else {
-		h.tray.SetIcon(appIcon)
+		h.tray.SetIcon(icon)
+	}
+	if runtime.GOOS == "linux" {
+		go watchTrayScheme(func(light bool) {
+			icon, _ := trayIconFor("linux", light)
+			h.tray.SetIcon(icon)
+		})
 	}
 	h.tray.SetMenu(menu)
 	h.tray.AttachWindow(h.panel).WindowOffset(6)
@@ -657,6 +671,13 @@ func panelOptions(goos, theme string) application.WebviewWindowOptions {
 		Mac: application.MacWindow{
 			Backdrop:     application.MacBackdropTranslucent,
 			CornerRadius: 12,
+			// On every Space, a full-screen app's among them, as a menu
+			// bar extra's panel is: by default (FullScreenPrimary alone)
+			// it stayed on the desktop Space it was first shown on, and a
+			// click on the icon over a full-screen Chrome showed it there,
+			// out of sight, until the user swiped back (#2141).
+			CollectionBehavior: application.MacWindowCollectionBehaviorCanJoinAllSpaces |
+				application.MacWindowCollectionBehaviorFullScreenAuxiliary,
 		},
 		Windows: application.WindowsWindow{HiddenOnTaskbar: true},
 	}

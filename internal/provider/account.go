@@ -17,6 +17,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"maps"
 	"net/http"
 	"net/url"
@@ -608,7 +609,10 @@ func writeClaudeCredential(loc claudeCredentialLocation, c claudeCredentials) er
 		b = one.Bytes()
 	}
 	if !loc.keychain {
-		if err := os.WriteFile(loc.path, append(b, '\n'), 0o600); err != nil {
+		// Claude Code's own sign-in: never truncated in place, so a machine
+		// going down mid-write or a file held for a moment on Windows
+		// leaves the old one whole, not an empty file (#2239, #1505)
+		if err := writePrivate(loc.path, append(b, '\n')); err != nil {
 			return err
 		}
 	} else {
@@ -1024,9 +1028,17 @@ func codexToken(ctx context.Context, path string) (tok, accountID string, err er
 	if err != nil {
 		return "", "", err
 	}
-	// keep every other field of the file as Codex CLI wrote it
+	// keep every other field of the file as Codex CLI wrote it. The file
+	// is the user's own sign-in, which Codex CLI and the Codex app read:
+	// written beside it, flushed and renamed in, never truncated in place,
+	// so a machine going down mid-write leaves the old one whole and a
+	// file held for a moment on Windows is waited out (#2239, #1505). A
+	// write that still fails loses the rotation, said in the log; the
+	// fresh access token in hand still serves this request.
 	if out, err := json.MarshalIndent(raw, "", "  "); err == nil {
-		os.WriteFile(path, append(out, '\n'), 0o600)
+		if werr := writePrivate(path, append(out, '\n')); werr != nil {
+			log.Printf("codex: the refreshed sign-in didn't reach %s: %v", path, werr)
+		}
 	}
 	return tok, accountID, nil
 }
@@ -1039,6 +1051,18 @@ func codexRefresh(ctx context.Context, raw map[string]any) (string, error) {
 		toks = map[string]any{}
 	}
 	refresh, _ := toks["refresh_token"].(string)
+	// Once sent, a refresh is waited for even when whoever asked gives up
+	// (a request the agent cancelled, a usage read's or the keep-alive's
+	// deadline): OpenAI rotates the refresh token as it answers, and an
+	// answer dropped leaves magpie holding the spent one, which the next
+	// refresh is refused for (refresh_token_reused). The account then
+	// read as signed out while its access token still served (willz on
+	// Discord). The ChatGPT API's refresh waits so already (siwcFresh).
+	if err := ctx.Err(); err != nil {
+		return "", err
+	}
+	ctx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 30*time.Second)
+	defer cancel()
 	body, _ := json.Marshal(map[string]string{"client_id": codexClientID, "grant_type": "refresh_token",
 		"refresh_token": refresh, "scope": "openid profile email"})
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, codexTokenURL, bytes.NewReader(body))

@@ -90,6 +90,7 @@ func builtins(home, cfg string) []*Agent {
 	return append([]*Agent{
 		claude(home),
 		claudeDesktop(home),
+		claudeScience(),
 		codex(home),
 		gemini(home),
 		agy(home),
@@ -359,8 +360,11 @@ func magpieProviderJSONAt(shape, catalog, gw string) any {
 		ms := map[string]any{}
 		for _, m := range models {
 			e := map[string]any{"name": m.Name}
+			// modalities alone says a model takes images: OpenCode 1 takes
+			// its image input from them, and its attachment flag, which
+			// nothing of OpenCode 1.18 reads, is a legacy field OpenCode 2
+			// drops with a WARN per model on every load (#2209)
 			if m.Images {
-				e["attachment"] = true
 				e["modalities"] = map[string]any{"input": []string{"text", "image"}, "output": []string{"text"}}
 			}
 			// without it OpenCode doesn't know when to compact, and a
@@ -994,6 +998,8 @@ func piLikeKeyed(at place, id, name, dir string, key func() string) *Agent {
 	// the user's two files as they were before magpie's first write, put
 	// back byte for byte by Disconnect where it leaves them saying the same
 	before := beforeMagpie{at.key(id + ".before.absent"), []string{path, modelsPath}}
+	// the entries of enabledModels a sync took out (scope_gone.go)
+	gone := at.key(id + ".scope.gone")
 	return &Agent{
 		ID: id, Name: name, Icon: id, Bin: id, Dir: dir, Path: path, Spelled: prefixed,
 		Restore: before.restore,
@@ -1005,12 +1011,18 @@ func piLikeKeyed(at place, id, name, dir string, key func() string) *Agent {
 				"baseUrl", at.v1(), "apiKey", key())
 		},
 		Sync: func() error {
-			return syncJSON(modelsPath, "providers."+magpieID, block)
+			if err := syncJSON(modelsPath, "providers."+magpieID, block); err != nil {
+				return err
+			}
+			// an entry on a model magpie no longer gives Pi names nothing
+			// (#2055, scope_gone.go)
+			return piScopeSynced(path, modelsPath, gone)
 		},
 		// a provider renamed takes its magpie/<id>/ entries in enabledModels
 		// with it: an entry left on the old id names nothing, and Pi would
 		// leave that model out of Ctrl+P (#1919, #1828)
 		RenameRefs: func(from, to string) (bool, error) {
+			scopeGoneRename(gone, from, to)
 			next, ok := renameRefList(piScope(path), from, to)
 			if !ok {
 				return false, nil
@@ -1030,6 +1042,7 @@ func piLikeKeyed(at place, id, name, dir string, key func() string) *Agent {
 						if err := edit.DelJSON(modelsPath, "providers."+magpieID); err != nil {
 							return err
 						}
+						forget(gone)
 						return piScopeWithout(path)
 					}
 					if ref, ok := strings.CutPrefix(v, magpieID+"/"); ok && isMagpie(ref) {

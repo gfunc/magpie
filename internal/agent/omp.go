@@ -20,6 +20,7 @@ import (
 
 	"github.com/yetone/magpie/internal/appdir"
 	"github.com/yetone/magpie/internal/catalog"
+	"github.com/yetone/magpie/internal/dirent"
 	"github.com/yetone/magpie/internal/edit"
 	"github.com/yetone/magpie/internal/gateway"
 	"github.com/yetone/magpie/internal/provider"
@@ -163,7 +164,7 @@ func ompProfiles(home string) []*Agent {
 	var names []string
 	for _, e := range entries {
 		name := e.Name()
-		if !e.IsDir() || !ompProfileOK(name) {
+		if !dirent.IsFolder(filepath.Join(root, "profiles"), e) || !ompProfileOK(name) {
 			continue
 		}
 		if filepath.Join(root, "profiles", name, "agent") == cur {
@@ -209,6 +210,8 @@ func ompAt(at place, dir string, entry func() ompProviderEntry) *Agent {
 		return yml
 	}
 	path := pick("config")
+	// the entries of enabledModels a sync took out (scope_gone.go)
+	gone := at.key("omp.scope.gone")
 	roleGet := func(name string) func() string {
 		return func() string {
 			k := "modelRoles." + name
@@ -267,6 +270,7 @@ func ompAt(at place, dir string, entry func() ompProviderEntry) *Agent {
 		if err := ompScopeWithout(path); err != nil {
 			return err
 		}
+		forget(gone)
 		return edit.DelYAML(pick("models"), "providers."+magpieID)
 	}
 	// was are the stash's keys for the roles, one each
@@ -453,7 +457,12 @@ func ompAt(at place, dir string, entry func() ompProviderEntry) *Agent {
 		SplitSuffix: ompSplit,
 		Sync: func() error {
 			models := pick("models")
-			return syncYAML(models, "providers."+magpieID, func() any { return ompProvider(models) })
+			if err := syncYAML(models, "providers."+magpieID, func() any { return ompProvider(models) }); err != nil {
+				return err
+			}
+			// an entry on a model magpie no longer gives omp names nothing
+			// (#2055, scope_gone.go)
+			return ompScopeSynced(path, models, gone)
 		},
 		// a provider renamed takes its models' ids in models.yml with it; a
 		// name left on the old one omp would pass over, with a warning. So
@@ -480,6 +489,7 @@ func ompAt(at place, dir string, entry func() ompProviderEntry) *Agent {
 			if err := ompScopeOnce(path); err != nil {
 				return moved, err
 			}
+			scopeGoneRename(gone, from, to)
 			for _, w := range was {
 				s := stashLoad()[w]
 				ns := move(s)

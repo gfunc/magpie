@@ -50,6 +50,7 @@ type modelJSON struct {
 	RateWas    float64  `json:"rateWas,omitempty"`   // the rate before a discount running now
 	API        string   `json:"api,omitempty"`       // the one API the user said it is asked on
 	Auto       []string `json:"auto,omitempty"`      // the APIs its vendor's list says it is served on, what Auto asks it on
+	NoAPI      bool     `json:"noAPI,omitempty"`     // the provider has a URL for none of them: agents aren't offered it (provider.NoAPIFor, #2094)
 	Same       string   `json:"same,omitempty"`      // the model the user said it is the same as, for the groups magpie finds (#583)
 	Merge      string   `json:"merge,omitempty"`     // what those groups merge it by when the user says nothing
 	Kind       string   `json:"kind,omitempty"`      // what the user said it makes: image or video (#1399)
@@ -91,6 +92,11 @@ type providerJSON struct {
 	// on this machine or the local network, set to go unmasked by
 	// Settings' redaction (provider.Unredacted)
 	Unredacted bool `json:"unredacted"`
+	// Codex's compaction asked of it as Codex sent it, its sealed item
+	// back as it came (provider.NativeCompaction, #1099); CarriesCompaction: its
+	// wire can carry it, so the editor offers it
+	NativeCompaction  bool `json:"nativeCompaction"`
+	CarriesCompaction bool `json:"carriesCompaction,omitempty"`
 	// requests go with the agent's own User-Agent, not magpie's
 	// (provider.PassUserAgent, #1851); OwnClient: they go as a client of
 	// the vendor's own whatever is set (provider.OwnClient), so the
@@ -176,9 +182,13 @@ type providerJSON struct {
 	// AnonKey is the key Add another key adds when nothing is pasted
 	// (provider.AnonymousKey: OpenCode Zen's public, #1795), while the
 	// provider doesn't have it yet
-	AnonKey  string   `json:"anonKey,omitempty"`
-	Ready    bool     `json:"ready"`
-	Chosen   []string `json:"chosen"`   // the user's explicit picks, if any
+	AnonKey string   `json:"anonKey,omitempty"`
+	Ready   bool     `json:"ready"`
+	Chosen  []string `json:"chosen"` // the user's explicit picks, if any
+	// Speaks: the APIs a provider of keys has a URL for, which a model's
+	// own API set in the editor is checked against (NoAPI); none for a
+	// sign-in, whose models are never left out for it
+	Speaks   []string `json:"speaks,omitempty"`
 	Fallback []string `json:"fallback"` // where requests go when this one can't take them
 	Routing  string   `json:"routing"`  // how requests spread over its keys or accounts
 	Affinity string   `json:"affinity"` // how long a conversation stays with who answered it
@@ -534,7 +544,7 @@ func providerInfo(p provider.Provider, agents []agentUse) providerJSON {
 		ID: p.ID, Name: p.Name, Icon: p.Icon, Preset: p.Preset, Host: p.Host(),
 		Chat: p.Chat, Responses: p.Responses, Anthropic: p.Anthropic, Gemini: p.Gemini, Decide: p.Decide, BaseAPI: p.BaseAPI, ModelTest: p.ModelTest(), TestsAs: p.TestClients(), DecideTest: p.AsksDecideModels(), MarksKinds: p.MarksKinds(),
 		Catalog: p.Catalog, Website: p.Website, KeysURL: p.KeysURL,
-		Proxy: p.Proxy, AccountProxies: p.AccountProxies, AccountModels: p.AccountModels, AccountCaps: p.AccountCaps, AccountWindowCaps: p.AccountWindowCaps, AccountNames: p.AccountNames, Headers: p.Headers, ExtraBody: p.ExtraBody, Searches: p.Searches, Cline: p.ClinePinnable(), PinUpstream: p.PinUpstream, Unredacted: p.Unredacted, PassUserAgent: p.PassUserAgent, OwnClient: p.OwnClient(), AuthHeader: p.AuthHeader, BothAuth: p.BothAuth(), BalanceURL: p.BalanceURL, BalancePath: p.BalancePath, ModelsURL: p.ModelsURL,
+		Proxy: p.Proxy, AccountProxies: p.AccountProxies, AccountModels: p.AccountModels, AccountCaps: p.AccountCaps, AccountWindowCaps: p.AccountWindowCaps, AccountNames: p.AccountNames, Headers: p.Headers, ExtraBody: p.ExtraBody, Searches: p.Searches, Cline: p.ClinePinnable(), PinUpstream: p.PinUpstream, Unredacted: p.Unredacted, NativeCompaction: p.NativeCompaction, CarriesCompaction: p.CarriesCompaction(), PassUserAgent: p.PassUserAgent, OwnClient: p.OwnClient(), AuthHeader: p.AuthHeader, BothAuth: p.BothAuth(), BalanceURL: p.BalanceURL, BalancePath: p.BalancePath, ModelsURL: p.ModelsURL,
 		Ready: p.Ready(), Chosen: p.Picks(), Models: []modelJSON{}, Agents: []providerAgent{},
 		Fallback: p.Fallback, Routing: p.Routing, Sink: p.Sink, Affinity: p.Affinity, KeepLogin: p.KeepLogin, KeepLoginAs: p.KeepLoginAs, SwitchOnly: p.SwitchOnly, Unlisted: p.Unlisted, NoModels: p.ServesNone(), Off: p.Off, Contexts: p.Contexts,
 		MaxConcurrency: p.MaxConcurrency, PluginConcurrency: p.PluginConcurrency(), PriceRate: p.PriceRate,
@@ -553,6 +563,11 @@ func providerInfo(p provider.Provider, agents []agentUse) providerJSON {
 	}
 	if out.Fallback == nil {
 		out.Fallback = []string{}
+	}
+	if p.Account == nil {
+		for _, s := range p.Speaks() {
+			out.Speaks = append(out.Speaks, string(s))
+		}
 	}
 	if out.Chosen == nil {
 		out.Chosen = []string{}
@@ -685,6 +700,7 @@ func providerInfo(p provider.Provider, agents []agentUse) providerJSON {
 				j.Auto = append(j.Auto, string(a))
 			}
 		}
+		j.NoAPI = p.NoAPIFor(m.ID)
 		j.Same = sames[p.ID+"/"+m.ID]
 		j.Kind = p.ModelKind(m.ID)
 		j.Merge = provider.MergeName(m.ID)
@@ -1098,6 +1114,10 @@ func providerRoutes(mux *http.ServeMux, w Windows) {
 			// quota left goes to the back (provider.Provider.Sink); a
 			// save that leaves it out keeps it
 			Sink *bool `json:"sink"`
+			// NativeCompaction, for save: Codex's compaction asked of it
+			// as Codex sent it (provider.Provider.NativeCompaction); a save
+			// that leaves it out keeps it
+			NativeCompaction *bool `json:"nativeCompaction"`
 			// AuthHeader, for save: which header the key goes in on a
 			// third-party Anthropic API (provider.Provider.AuthHeader); a
 			// save that leaves it out keeps it, one learned too
@@ -1155,6 +1175,9 @@ func providerRoutes(mux *http.ServeMux, w Windows) {
 		}
 		if req.Sink != nil {
 			in.Sink = *req.Sink
+		}
+		if req.NativeCompaction != nil {
+			in.NativeCompaction = *req.NativeCompaction
 		}
 		if req.AuthHeader != nil {
 			in.AuthHeader = *req.AuthHeader
@@ -1236,6 +1259,7 @@ func providerRoutes(mux *http.ServeMux, w Windows) {
 				pr.Searches = in.Searches
 				pr.PinUpstream = in.PinUpstream
 				pr.Unredacted = in.Unredacted
+				pr.NativeCompaction = in.NativeCompaction
 				pr.PassUserAgent = in.PassUserAgent
 				pr.AuthHeader = in.AuthHeader
 				if in.Name != "" {
@@ -1312,6 +1336,10 @@ func providerRoutes(mux *http.ServeMux, w Windows) {
 			}
 			in.SecretAccessKey = strings.TrimSpace(in.SecretAccessKey)
 			var old *provider.Provider
+			if req.New && in.NativeCompaction && !in.CarriesCompaction() {
+				fail(rw, fmt.Errorf("%s can't carry Codex's native compaction: only a provider with a Responses API, a ChatGPT account or GitHub Copilot can", cmp.Or(in.Name, in.ID)))
+				return
+			}
 			if req.New {
 				// a second one of a preset, or a name already in use, is
 				// added beside the first under the next free id
@@ -1442,9 +1470,15 @@ func providerRoutes(mux *http.ServeMux, w Windows) {
 					if req.Sink == nil {
 						in.Sink = old.Sink
 					}
+					if req.NativeCompaction == nil {
+						in.NativeCompaction = old.NativeCompaction
+					}
 					if req.AuthHeader == nil {
 						in.AuthHeader = old.AuthHeader
 					}
+					// its list's schedule and rules are set on their own, from
+					// the CLI (#2135)
+					in.RefreshEvery, in.AutoInclude = old.RefreshEvery, old.AutoInclude
 					in.KeepLogin = old.KeepLogin // set on its own, with keeplogin
 					in.KeepLoginAs = old.KeepLoginAs
 					in.SwitchOnly = old.SwitchOnly
@@ -1475,6 +1509,12 @@ func providerRoutes(mux *http.ServeMux, w Windows) {
 				}
 				if in.Icon == "" && old != nil && in.Preset == "" {
 					in.Icon = old.Icon
+				}
+				// native compaction only where the wire carries it: a
+				// signed-in account is told by the one saved
+				if in.NativeCompaction && !in.CarriesCompaction() && (old == nil || old.Account == nil || !old.CarriesCompaction()) {
+					fail(rw, fmt.Errorf("%s can't carry Codex's native compaction: only a provider with a Responses API, a ChatGPT account or GitHub Copilot can", cmp.Or(in.Name, in.ID)))
+					return
 				}
 				if err := provider.Save(in); err != nil {
 					fail(rw, err)
@@ -1826,7 +1866,7 @@ func providerRoutes(mux *http.ServeMux, w Windows) {
 				Count    int          `json:"count"`
 				Dropped  []string     `json:"dropped,omitempty"`
 				Provider providerJSON `json:"provider"`
-			}{len(ms), dropped, providerInfo(*p, agentUses(agent.Detected(), provider.GroupFinder()))})
+			}{fetchedCount(*p, len(ms)), dropped, providerInfo(*p, agentUses(agent.Detected(), provider.GroupFinder()))})
 			return
 		default:
 			http.NotFound(rw, r)
@@ -2199,4 +2239,17 @@ func concurrencyOf(raw json.RawMessage) (n *int, keep bool, err error) {
 		return nil, false, fmt.Errorf("max concurrent requests must be from 0 to 1000, not %d", *n)
 	}
 	return n, false, nil
+}
+
+// fetchedCount is the number of models a refetch says it found: the
+// models the editor lists from it, not the vendor's ids. Antigravity lists
+// a model once per thinking level, which the editor shows as one model
+// with those levels (and Cursor and Devin fold theirs the same way), so
+// "Antigravity: 23 models" sat over 17 chips (#2069). The ids counted
+// stand when the provider offers none.
+func fetchedCount(p provider.Provider, ids int) int {
+	if n := len(p.Available()); n > 0 {
+		return n
+	}
+	return ids
 }
