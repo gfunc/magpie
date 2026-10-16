@@ -1,6 +1,7 @@
 package plugin
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -39,6 +40,17 @@ func (m Method) KeyTitle(name string) string {
 	return l
 }
 
+// Cost is a model's price as a plugin gives it: OpenCode's cost, in USD
+// per 1M tokens, 0 where it gives none.
+type Cost struct {
+	Input  float64 `json:"input"`
+	Output float64 `json:"output"`
+	Cache  struct {
+		Read  float64 `json:"read"`
+		Write float64 `json:"write"`
+	} `json:"cache"`
+}
+
 // Model is a model a plugin's provider serves, as OpenCode lists it.
 type Model struct {
 	ID        string   `json:"id"`
@@ -64,10 +76,9 @@ type Model struct {
 	// m.rateWas); 0 is none.
 	Rate    float64 `json:"rate"`
 	RateWas float64 `json:"rateWas"`
-	Cost    *struct {
-		Input  float64 `json:"input"`
-		Output float64 `json:"output"`
-	} `json:"cost"`
+	// Cost is the model's price as the plugin gives it (Devin's own list,
+	// 0.1.18)
+	Cost *Cost `json:"cost"`
 	// ImageSaid is whether the plugin (or models.dev) said if it takes
 	// images: Image false without it is not known
 	ImageSaid bool `json:"imageSaid"`
@@ -197,6 +208,9 @@ var (
 	// provEpoch counts the invalidations (forgetProviders), so a refresh
 	// that began before one doesn't put what it read over the newer state.
 	provEpoch uint64
+	// provSettling is set while Settle runs: no refresh starts, nor goes
+	// on to a newer invalidation, to start a host in a folder going away.
+	provSettling bool
 )
 
 func providersPath() string { return filepath.Join(settings.Dir(), "plugin-providers.json") }
@@ -248,12 +262,34 @@ func commitProviders(ps []Provider, epoch *uint64) []Provider {
 	}
 	ps = keepListed(ps, provCache)
 	ps = keepUnloaded(ps, provCache)
+	was := provCache
 	provCache, provGood, provTried = ps, true, true
 	provMu.Unlock()
-	if b, err := json.Marshal(ps); err == nil {
+	b, err := json.Marshal(ps)
+	if err == nil {
+		if was == nil {
+			// what an earlier run kept: a start that lists the same is no
+			// change
+			if kept, err := steady.ReadFile(providersPath()); err == nil {
+				_ = json.Unmarshal(kept, &was)
+			}
+		}
 		_ = writeWhole(providersPath(), b)
 	}
+	if err != nil || !sameList(was, b) {
+		listed()
+	}
 	return ps
+}
+
+// sameList reports whether the providers was and the list b marshals to
+// say the same.
+func sameList(was []Provider, b []byte) bool {
+	if was == nil {
+		return false
+	}
+	w, err := json.Marshal(was)
+	return err == nil && bytes.Equal(w, b)
 }
 
 // refreshDeadline bounds one providers RPC after host initialization: a plugin host
@@ -322,7 +358,7 @@ func refreshProvidersInBackground(ctx context.Context, epoch uint64) {
 		}
 		provMu.Lock()
 		provCancel()
-		if provEpoch != epoch && !provGood && !provTried {
+		if provEpoch != epoch && !provGood && !provTried && !provSettling {
 			epoch = provEpoch
 			ctx, provCancel = context.WithCancel(context.Background())
 			provTried = true
@@ -504,7 +540,20 @@ func Answered() bool {
 // the next test starts with nothing of this one's running or seen. Each
 // ask is bounded and the retries are few, so this waits a bounded time
 // even for a host that never answers.
+//
+// No refresh starts meanwhile: one a hook started after the last wait
+// went on once Settle had returned, and its host started in the test's
+// folder as it went, or in the next test's, while that one signed in
+// (#2449).
 func Settle() {
+	provMu.Lock()
+	provSettling = true
+	provMu.Unlock()
+	defer func() {
+		provMu.Lock()
+		provSettling = false
+		provMu.Unlock()
+	}()
 	refreshing.Wait()
 	Restart()
 	// what the host said of a sign-in is written before the folder goes
@@ -584,7 +633,7 @@ func Cached() []Provider {
 		// Whether one is already in flight is read and set under one lock,
 		// so two callers asking at once start one refresh, not two.
 		provMu.Lock()
-		start := !provBusy && !provGood && !provTried
+		start := !provBusy && !provGood && !provTried && !provSettling
 		var ctx context.Context
 		if start {
 			ctx, provCancel = context.WithCancel(context.Background())

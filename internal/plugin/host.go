@@ -499,6 +499,8 @@ type Loaded struct {
 	// serves, that plugin's spec: the host runs one plugin per provider
 	// id (Prefer)
 	ServedBy map[string]string `json:"servedBy,omitempty"`
+	// Tools are the tools its tool hook gives (tools.go)
+	Tools []Tool `json:"tools,omitempty"`
 }
 
 // Clash is a provider id more than one plugin signs in to. The host runs
@@ -552,6 +554,8 @@ var (
 	// onChange are told a sign-in or the plugins changed.
 	onChange   []func()
 	onChangeMu sync.Mutex
+	// onChangeNow are run before changed or listed returns (OnChangeNow)
+	onChangeNow []func()
 )
 
 // telling counts the hooks told of a change or of a sign-in (OnChange,
@@ -573,6 +577,19 @@ func OnChange(f func()) {
 	onChangeMu.Unlock()
 }
 
+// OnChangeNow registers f to be run at once when a plugin sign-in, the
+// plugins or their listing change, before anything after it is answered:
+// an "auth" event is read before the reply to the sign-in that saved it,
+// so a look made once the sign-in returns doesn't get what was built
+// before it (#2449). OnChange's are told in the background, where a busy
+// machine may run them after that look. f must be quick: the host's
+// replies wait for it.
+func OnChangeNow(f func()) {
+	onChangeMu.Lock()
+	onChangeNow = append(onChangeNow, f)
+	onChangeMu.Unlock()
+}
+
 var (
 	onSignInMu sync.Mutex
 	onSignIn   func(provider, account, said string)
@@ -587,13 +604,48 @@ func OnSignIn(f func(provider, account, said string)) {
 	onSignInMu.Unlock()
 }
 
+var (
+	onListedMu sync.Mutex
+	onListed   []func()
+)
+
+// OnListed registers f to be told when the plugins have listed their
+// providers and models anew and the list is another than the one kept
+// before: a plugin signed in to lists its account's models only once the
+// host has answered, after OnChange was told of the sign-in.
+func OnListed(f func()) {
+	onListedMu.Lock()
+	onListed = append(onListed, f)
+	onListedMu.Unlock()
+}
+
+func listed() {
+	changedNow()
+	onListedMu.Lock()
+	fs := append([]func(){}, onListed...)
+	onListedMu.Unlock()
+	for _, f := range fs {
+		tell(f)
+	}
+}
+
 func changed() {
 	forgetProviders()
+	changedNow()
 	onChangeMu.Lock()
 	fs := append([]func(){}, onChange...)
 	onChangeMu.Unlock()
 	for _, f := range fs {
 		tell(f)
+	}
+}
+
+func changedNow() {
+	onChangeMu.Lock()
+	fs := append([]func(){}, onChangeNow...)
+	onChangeMu.Unlock()
+	for _, f := range fs {
+		f()
 	}
 }
 
@@ -940,6 +992,7 @@ func startOn(ctx context.Context, bun string) (*host, bool, error) {
 		return nil, crashed, fmt.Errorf("starting plugins: %w", err)
 	}
 	h.loaded = res.Plugins
+	noteTools(res.Plugins)
 	for _, p := range res.Plugins {
 		if p.Error != "" {
 			log.Printf("plugin %s didn't load: %s", p.Spec, p.Error)

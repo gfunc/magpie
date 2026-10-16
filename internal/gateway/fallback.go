@@ -232,6 +232,7 @@ func perKeyBarred(p provider.Provider, model string, from provider.Protocol) (ou
 		return out, nil, left, barred
 	}
 	keys := p.KeysOn()
+	serves := p.Serving(model) // the lists read once, not once a key (@NetRozee on X)
 	var unlisted []candidate
 	var noURL provider.Protocol
 	for i, k := range keys {
@@ -250,7 +251,7 @@ func perKeyBarred(p provider.Provider, model string, from provider.Protocol) (ou
 			barred = append(barred, candidate{p: q, model: model, rest: rest, rank: i})
 			continue
 		}
-		if !p.Serves(k, model) {
+		if !serves(k) {
 			// the vendor lists the model to another key only
 			unlisted = append(unlisted, candidate{p: q, model: model, rest: rest, rank: i})
 			continue
@@ -651,7 +652,7 @@ func cappedError(model string, ws []Weighed, now time.Time) (string, time.Time) 
 			s = fmt.Sprintf("%s (%s) has used up a usage window and is set not to spend its credits", w.Name, w.Who)
 		}
 		if w.CapBack != nil {
-			s += ", until " + w.CapBack.Local().Format("Jan 2 15:04")
+			s += ", until " + heldClock(*w.CapBack, now)
 			if soonest.IsZero() || w.CapBack.Before(soonest) {
 				soonest = *w.CapBack
 			}
@@ -1078,12 +1079,29 @@ func promptRefused(status int, body []byte) bool {
 // for the model isn't one.
 var shapeWords = regexp.MustCompile(`(?i)failed to deserialize|unknown (item |content |input )?(type|variant|field|parameter)|unknown_parameter|unrecognized (request argument|field|parameter)|extra (inputs|fields) are not permitted|additional properties are not allowed|schema exceeds the maximum (nesting )?depth|schema[^"]{0,60}\bnesting depth\b`)
 
+// unsaidWords are Command Code's Provider API turning a request away with
+// nothing but a trace id: {"message":"invalid request error trace_id:
+// <hex>","type":"invalid_request_error"}, a 400 (a 422 before), no code,
+// no param (#2313, lqisgod). What it turns away is the request's size:
+// the reporter's A/B on one agent conversation (~748K tokens of history
+// and tools) answered 200 with max_completion_tokens 64000 and this 400
+// with 384000, the model's own listed max output, so the history and the
+// output asked for together are over a limit below the 1M context it
+// lists; its tracker has more of the kind (CommandCodeAI/command-code#960,
+// #976). The key and the account are fine, and another member, whose
+// model has room for it, may well take the same request: it is asked,
+// once, as for shapeWords, and Command Code doesn't rest. Its overflow
+// that says so names the model's context length before the trace id, and
+// isn't one. The message may come after a provider's name ("Command Code:
+// "), as magpie tells it on.
+var unsaidWords = regexp.MustCompile(`(?i)(^|"|\\"|: )invalid request error trace_id: [0-9a-f]{16,}(\\?"|\s*$)`)
+
 // shapeRefused says a request failed over its shape alone: the next
 // member is asked, and this one doesn't rest, as nothing is wrong with it.
 func shapeRefused(status int, body []byte) bool {
 	// the words are matched decoded, too (#1669)
 	body = wordsOf(body)
-	return (status == 400 || status == 422) && shapeWords.Match(body) &&
+	return (status == 400 || status == 422) && (shapeWords.Match(body) || unsaidWords.Match(body)) &&
 		!quotaWords.Match(body) && !unservedWords.Match(body) && !refusedWords.Match(body)
 }
 
@@ -1153,7 +1171,7 @@ func retryable(status int, body []byte) bool {
 		// in front of zcode.z.ai): another provider goes another way
 		return true
 	case status == 400, status == 422:
-		return quotaWords.Match(body) || unservedWords.Match(body) || refusedWords.Match(body) || shapeWords.Match(body) || regionWords.Match(body)
+		return quotaWords.Match(body) || unservedWords.Match(body) || refusedWords.Match(body) || shapeWords.Match(body) || unsaidWords.Match(body) || regionWords.Match(body)
 	}
 	return false
 }
@@ -1217,10 +1235,16 @@ func tooLongUnsaid(p provider.Provider, model string, tokens, status int, body [
 // the one set for all the provider's models is no larger than the model's
 // own, #2112), else the one set for all of them.
 func windowOf(p provider.Provider, model string) int {
+	return windowIn(provider.Served, p, model)
+}
+
+// windowIn is windowOf with the catalog read from served, for a caller
+// that weighs several models to read it once.
+func windowIn(served func() []provider.Entry, p provider.Provider, model string) int {
 	if n := p.Contexts[model]; n > 0 {
 		return n
 	}
-	for _, e := range provider.Served() {
+	for _, e := range served() {
 		if e.Group == "" && e.Provider.ID == p.ID && (e.Model == model || e.ID == model) && e.Context > 0 {
 			return e.Context
 		}
@@ -1275,12 +1299,81 @@ func withRoom(left []candidate, c candidate, tokens int) []candidate {
 		if x.p.ID == c.p.ID && x.model == c.model {
 			continue
 		}
-		if w := windowOf(x.p, x.model); w > 0 && tokens >= w {
+		if !holds(x, tokens) {
 			continue
 		}
 		out = append(out, x)
 	}
 	return out
+}
+
+// holds is whether c's model may hold a request of about tokens: its
+// window isn't known, or is larger.
+func holds(c candidate, tokens int) bool {
+	w := windowOf(c.p, c.model)
+	return w <= 0 || tokens < w
+}
+
+// roomy leaves out, before any is asked, the candidates whose model is
+// known to take less than the request (dgqyushen on Discord: OpenCode
+// Zen's free DeepSeek V4.1 Flash, 200K, first in a group with a 1M
+// subscription of it second). Asked, such a member only refuses it, a
+// request spent against its limits, and a refusal that doesn't say why,
+// for a request short of tooLongUnsaid's margin past the window, reached
+// the agent as the vendor's error while the next member had room. The
+// request's size is estimate's, which mostly counts low (four bytes a
+// token), so a member is passed over only when the request is past its
+// window by that count; one nearer may still be refused and falls over
+// (withRoom). A model whose window isn't known is kept, a
+// request that doesn't parse leaves every one, and so does one no
+// candidate holds: the first is asked, and the agent told it overflowed,
+// to compact.
+func roomy(cs []candidate, pl planned, from provider.Protocol, body []byte) ([]candidate, planned) {
+	if len(cs) < 2 {
+		return cs, pl
+	}
+	served := sync.OnceValue(provider.Served) // the catalog, read once
+	least, windows := 0, map[string]int{}
+	key := func(c candidate) string { return c.p.ID + "\x00" + c.model }
+	for _, c := range cs {
+		if _, ok := windows[key(c)]; ok {
+			continue
+		}
+		w := windowIn(served, c.p, c.model)
+		windows[key(c)] = w
+		if w > 0 && (least == 0 || w < least) {
+			least = w
+		}
+	}
+	// one model has nothing to choose between, and a body shorter than
+	// the least window can't estimate past it: neither is parsed
+	if len(windows) < 2 || least == 0 || len(body)/4 < least {
+		return cs, pl
+	}
+	req, err := parse(from, body)
+	if err != nil {
+		return cs, pl
+	}
+	tokens := estimate(req)
+	var out []candidate
+	var order []Weighed
+	parallel := len(pl.order) == len(cs)
+	for i, c := range cs {
+		if w := windows[key(c)]; w > 0 && tokens >= w {
+			continue
+		}
+		out = append(out, c)
+		if parallel {
+			order = append(order, pl.order[i])
+		}
+	}
+	if len(out) == 0 || len(out) == len(cs) {
+		return cs, pl
+	}
+	if parallel {
+		pl.order = order
+	}
+	return out, pl
 }
 
 // matesFirst puts first, of the candidates left, the other keys or
@@ -1442,6 +1535,22 @@ type holdWriter struct {
 	// reply is asked again instead of ended: the guard then reads the
 	// next try's afresh
 	reask func(loopTrip) bool
+	// reasked is how many times reask asked the reply again in place,
+	// tries of the request its route doesn't list (#2436)
+	reasked int
+	// reloop: a reply passed through, whose reasoning loops before it
+	// said anything, may be let go for the request to ask it again
+	// (loopReasks, #2436); relooped says it was
+	reloop, relooped bool
+
+	// wantWhole: a reply wanted only whole, a compaction's summary (#2274): its
+	// stream is held to its end, never let through at its first content,
+	// so an error or a cut anywhere in it is a failure the next candidate
+	// answers, and its account rests for, as one before any content is.
+	// Let through at its first content, Antigravity's "the reply ended
+	// before it was complete" and its 429 halfway went to the summary
+	// as the only answer, the next account never asked
+	wantWhole bool
 }
 
 // onLoop sets what is told of a loop before it ends the reply (reask),
@@ -1533,7 +1642,7 @@ func (h *holdWriter) Write(b []byte) (int, error) {
 	if h.slow {
 		return 0, errSlowStart
 	}
-	if h.looped != "" {
+	if h.looped != "" || h.relooped {
 		return 0, errLooped
 	}
 	if h.status == 0 {
@@ -1541,10 +1650,15 @@ func (h *holdWriter) Write(b []byte) (int, error) {
 	}
 	if h.loop != nil && !h.whole && h.status < 400 {
 		if t, ok := h.loop.feed(b); ok {
-			if h.reask == nil || !h.reask(t) {
+			switch {
+			case h.reask != nil && h.reask(t):
+				h.reasked++
+				h.loop = &loopGuard{}
+			case h.reask == nil && h.mayReloop(t):
+				return h.letGoLoop(b)
+			default:
 				return h.cutLoop(b, t)
 			}
-			h.loop = &loopGuard{}
 		}
 	}
 	h.see(b)
@@ -1599,9 +1713,57 @@ func (h *holdWriter) cutLoop(b []byte, t loopTrip) (int, error) {
 	if h.alive != nil {
 		proto = h.alive.proto
 	}
+	// what is appended begins after a blank line, as in passthrough: the
+	// reply's last write may have stopped mid-line, and an event joined
+	// onto it is one the client can't parse (TestLoopCutMidLine)
+	if h.atLine {
+		io.WriteString(h.w, "\n")
+	} else {
+		io.WriteString(h.w, "\n\n")
+	}
 	streamError(h.w, proto, http.StatusBadGateway, msg)
 	h.looped, h.ended = msg, true
 	h.flush()
+	if h.stop != nil {
+		h.stop()
+	}
+	return 0, errLooped
+}
+
+// mayReloop says whether a reply passed through, found stuck in a loop
+// (t), is let go for the request to ask it again (letGoLoop) rather than
+// ended: its reasoning looped before it said a text or a call, the
+// request has an ask left (reloop), and the next try's stream can follow
+// what the agent has. Nothing of it sent, any can; sent, only a Chat
+// stream, whose chunks are deltas the agent adds up: a second stream's
+// follow the first's as they would its own. An Anthropic or Responses
+// stream begun can't be followed by another's message_start or
+// response.created, so it ends with the loop's error, as before.
+func (h *holdWriter) mayReloop(t loopTrip) bool {
+	if !h.reloop || !t.reasoning || h.loop.spoke || h.alive == nil || h.ctx != nil && h.ctx.Err() != nil {
+		return false
+	}
+	return !h.passing || h.alive.proto == provider.Chat
+}
+
+// letGoLoop lets a reply go whose reasoning looped before it said a word
+// (mayReloop), for the request to ask it again: the vendor's request is
+// let go, and the try's writes after it fail. Held, none of it reaches
+// the agent; passing, its events go up to the end of the one the loop was
+// found in, for the next try's stream to begin on a whole event.
+func (h *holdWriter) letGoLoop(b []byte) (int, error) {
+	if h.passing {
+		b = b[:max(len(b)-len(h.loop.pending), 0)]
+		h.sent(b)
+		h.w.Write(b)
+		h.flush()
+		// the next try's stream follows this one: its 200 and headers
+		// are not sent again
+		h.alive.sent = true
+	} else {
+		h.held.Reset()
+	}
+	h.relooped = true
 	if h.stop != nil {
 		h.stop()
 	}
@@ -1731,23 +1893,36 @@ func (h *holdWriter) scan() {
 			h.buffered = true
 			continue
 		case eventThinking:
-			if h.thinkingShown {
+			if h.thinkingShown && !h.wantWhole {
 				h.flow()
 				return
 			}
 			h.thinking = true
 			continue
-		case eventError:
+		case eventError, eventRefusalError:
 			h.failure, h.failMsg = status, msg
+			h.refused = kind == eventRefusalError
 			if h.stop != nil {
 				h.stop()
 			}
 			return
 		case eventRefusal:
+			// A refusal's stop marker can still have usage and the
+			// protocol's terminator after it; an error above cannot.
 			h.failure, h.failMsg, h.refused = status, msg, true
 			return
 		}
+		if h.wantWhole {
+			if why, ok := endedIncomplete(rest[:end]); ok {
+				h.failure, h.failMsg = http.StatusBadGateway, why
+				return
+			}
+			continue // content, held with the rest (whole)
+		}
 		h.flow()
+		return
+	}
+	if h.wantWhole {
 		return
 	}
 	if h.alive.tooQuiet(0) {
@@ -1880,26 +2055,32 @@ func (h *holdWriter) sent(b []byte) {
 // is not (#248). What is read is kept only as far as the event it is in is
 // whole, as a write may end in the middle of one.
 func (h *holdWriter) refusalAfter(b []byte) {
-	if len(h.after) == 0 && !mayRefuse(b) {
-		return // most of a reply's events are content
+	// Every write is read, not only one that looks like a refusal: an
+	// event's name may come in one write and its data in the next (#2400).
+	// Only an unfinished event's bytes are kept.
+	buf := b
+	if len(h.after) > 0 {
+		h.after = append(h.after, b...)
+		buf = h.after
 	}
-	h.after = append(h.after, b...)
 	for {
-		end := eventEnd(h.after)
+		end := eventEnd(buf)
 		if end < 0 {
 			break
 		}
-		ev, rest := h.after[:end], h.after[end:]
-		h.after = rest
+		ev := buf[:end]
+		buf = buf[end:]
 		if mayRefuse(ev) {
-			if kind, _, _ := streamEvent(ev); kind == eventRefusal {
+			if kind, _, _ := streamEvent(ev); kind == eventRefusal || kind == eventRefusalError {
 				h.refusedAfter = true
 			}
 		}
 	}
-	if len(h.after) == 0 || len(h.after) > holdMost {
+	if len(buf) == 0 || len(buf) > holdMost {
 		h.after = nil
+		return
 	}
+	h.after = append([]byte(nil), buf...)
 }
 
 // mayRefuse is whether an event may be the safety filter's refusal, by the
@@ -1915,10 +2096,11 @@ func mayRefuse(ev []byte) bool {
 }
 
 // refusalSays are the words the events a vendor's filter refuses a reply
-// with carry: an error's code, a stop reason's, a finish reason's, a
-// Gemini block reason's.
+// with carry: an error's code, or its event's name (event: error, with
+// only a message for data), a stop reason's, a finish reason's, a Gemini
+// block reason's.
 var refusalSays = [][]byte{
-	[]byte(`"error"`), []byte(`failed`), []byte(`refusal`), []byte(`filter`),
+	[]byte(`error`), []byte(`failed`), []byte(`refusal`), []byte(`filter`),
 	[]byte(`incomplete`), []byte(`finishReason`), []byte(`blockReason`),
 }
 
@@ -1975,6 +2157,12 @@ func (h *holdWriter) settle() {
 		} else if msg, ok := policyRefusal(h.held.Bytes()); ok {
 			h.failure, h.failMsg, h.refused = refusedStatus, msg, true
 		}
+		return
+	}
+	if h.wantWhole && h.stream && h.status < 400 && !h.ended && (h.ctx == nil || h.ctx.Err() == nil) {
+		// a reply wanted whole that stopped before its last event, with
+		// no error said (#2274)
+		h.failure, h.failMsg = http.StatusBadGateway, errEndedShort.Error()
 		return
 	}
 	if !h.whole {
@@ -2189,13 +2377,13 @@ func (h *holdWriter) watch() func() {
 // comments only (keepAlive), none of the try, which another account may
 // still answer instead; passed, a comment goes between two lines of it.
 func (h *holdWriter) keepQuiet() {
-	if h.slow || h.ended || h.alive == nil || h.alive.proto == provider.Gemini || h.ctx != nil && h.ctx.Err() != nil {
+	if h.slow || h.relooped || h.ended || h.alive == nil || h.alive.proto == provider.Gemini || h.ctx != nil && h.ctx.Err() != nil {
 		return
 	}
 	if !h.heard.IsZero() && time.Since(h.heard) >= keepaliveLongest {
 		return // a stream stuck this long is left for a timeout to end
 	}
-	if !h.passing && h.stream && h.failure == 0 && !h.whole && h.held.Len() > 0 && h.alive.tooQuiet(0) {
+	if !h.passing && h.stream && h.failure == 0 && !h.whole && !h.wantWhole && h.held.Len() > 0 && h.alive.tooQuiet(0) {
 		// a stream held while its vendor is quiet: Codex would hang up
 		// before the next event let it through (agentQuietMost)
 		h.flow()
@@ -2228,6 +2416,46 @@ func (h *holdWriter) started() bool {
 	return h.first.first != 0 || h.passing || h.ended || h.failure != 0 || h.whole || h.status >= 400
 }
 
+// endedIncomplete says a Responses event ends its reply cut short —
+// response.incomplete, or a completed one whose status says so — and why:
+// for a reply wanted whole (wantWhole), no answer (#2274). A filter's
+// reason is a refusal, read before this (streamEvent).
+func endedIncomplete(ev []byte) (string, bool) {
+	if !bytes.Contains(ev, []byte("incomplete")) {
+		return "", false
+	}
+	var data []byte
+	for _, ln := range bytes.Split(ev, []byte("\n")) {
+		if ln = bytes.TrimRight(ln, "\r"); bytes.HasPrefix(ln, []byte("data:")) {
+			data = append(data, bytes.TrimSpace(ln[5:])...)
+		}
+	}
+	var v struct {
+		Type     string `json:"type"`
+		Response struct {
+			Status            string `json:"status"`
+			IncompleteDetails *struct {
+				Reason string `json:"reason"`
+			} `json:"incomplete_details"`
+		} `json:"response"`
+	}
+	if json.Unmarshal(data, &v) != nil {
+		return "", false
+	}
+	if v.Type != "response.incomplete" && (v.Type != "response.completed" || v.Response.Status != "incomplete") {
+		return "", false
+	}
+	why := "unknown"
+	if d := v.Response.IncompleteDetails; d != nil && d.Reason != "" {
+		why = d.Reason
+	}
+	return incompleteReply + " (" + why + ")", true
+}
+
+// incompleteReply opens what a reply wanted whole that ended incomplete
+// failed with (endedIncomplete).
+const incompleteReply = "the reply ended incomplete"
+
 // eventEnd is where the first whole event in b ends, or -1.
 func eventEnd(b []byte) int {
 	for i := 0; i+1 < len(b); i++ {
@@ -2248,9 +2476,10 @@ const (
 	eventContent = iota
 	eventLead    // what comes before a reply's content: a start, a ping
 	eventError
-	eventRefusal   // the reply's end, by the vendor's safety filter
-	eventBuffering // a lead saying the reply is held back for safety checks
-	eventThinking  // reasoning, before anything is said: a refusal may yet end it
+	eventRefusal      // the reply's end, by the vendor's safety filter
+	eventRefusalError // the filter's error event: canceled like eventError
+	eventBuffering    // a lead saying the reply is held back for safety checks
+	eventThinking     // reasoning, before anything is said: a refusal may yet end it
 )
 
 // refusedStatus is what a refusal with nothing said is answered as: a
@@ -2449,16 +2678,16 @@ func streamEvent(ev []byte) (kind, status int, msg string) {
 		if len(raw) == 0 || string(raw) == "null" {
 			// Responses' own error event: its code and message on it
 			if note, ok := policyRefusal(data); ok {
-				return eventRefusal, refusedStatus, note
+				return eventRefusalError, refusedStatus, note
 			}
 		}
 		if note, ok := policyRefusal(raw); ok {
-			return eventRefusal, refusedStatus, note
+			return eventRefusalError, refusedStatus, note
 		}
 		return errOf(raw)
 	case len(v.Error) > 0 && string(v.Error) != "null":
 		if note, ok := policyRefusal(v.Error); ok {
-			return eventRefusal, refusedStatus, note
+			return eventRefusalError, refusedStatus, note
 		}
 		return errOf(v.Error)
 	// reasoning, before a word of the reply: held with it, and longer, for
@@ -2713,9 +2942,19 @@ func policyRefusal(raw []byte) (string, bool) {
 		return note(c)
 	case c == "invalid_prompt" && flaggedWords.MatchString(msg):
 		return note(c)
+	case strings.TrimSpace(msg) == highRiskRefusal:
+		return note("high risk")
 	}
 	return "", false
 }
+
+// highRiskRefusal is an error's whole message that is a refusal with no
+// code beside it (#2400, Jichao: what the agent showed, the vendor not
+// known). It says the request was turned away, not the account, so it goes
+// to the next candidate as other refusals do and rests nobody. Only an
+// error's own message is matched, and only whole: an answer quoting it is
+// an answer.
+const highRiskRefusal = "The request was rejected because it was considered high risk"
 
 // refusedCode is the code of a stream's error event (its data) when it is
 // the vendor's safety filter refusing, for a translation of it to keep:

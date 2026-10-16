@@ -160,6 +160,12 @@ var cliSpecs = map[string]cliSpec{
 	"dsh":       {npm: []string{"@deepseek-ai/dsh"}},
 	"codebuddy": {npm: []string{"@tencent-ai/codebuddy-code"}},
 	"goose":     {brew: []string{"block-goose-cli"}},
+	// Cursor CLI: its own installer (cursor.com/install) links
+	// ~/.local/bin/cursor-agent to ~/.local/share/cursor-agent/versions/<v>/
+	// cursor-agent, and `cursor-agent --version` says the version
+	// ("2026.10.01-e373342"). Not on npm nor Homebrew, and it updates
+	// itself, so magpie shows its version only (@G_Z_Y on X saw none).
+	"cursor": {},
 	// AtomCode's installer chooses /usr/local/bin or ~/.local/bin by
 	// writability (`.local\bin\atomcode.exe` on Windows); `atomcode upgrade`
 	// exists, but its installed-binary update path is not exercised here, so
@@ -167,6 +173,9 @@ var cliSpecs = map[string]cliSpec{
 	"atomcode": {npm: []string{"@atomgit.com/atomcode"}, brew: []string{"atomcode"}},
 	// Snow CLI is published on npm alone (snow-ai)
 	"snow": {npm: []string{"snow-ai"}},
+	// MothX: its npm installer package, which brings the native binary
+	// for the platform as an optional dependency
+	"mothx": {npm: []string{"mothx-installer"}},
 	// omo update, however it was installed: OmO's own updater, which moves
 	// the engine it pins (senpi) with it
 	"omo": {npm: []string{"omo-ai"},

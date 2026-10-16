@@ -165,9 +165,18 @@ func (p Provider) lists() bool {
 	return p.Account != nil || pr == nil || !pr.NoList || strings.TrimSpace(p.ModelsURL) != "" || p.listRegion(pr)
 }
 
+// listsRead counts liveAll's reads (ListsRead).
+var listsRead atomic.Int64
+
+// ListsRead is how many times a provider's saved lists have been asked
+// for whole in this process: a test counts them to say a request reads
+// them once, not once a key (@NetRozee on X).
+func ListsRead() int64 { return listsRead.Load() }
+
 // liveAll is live with the models that draw or make videos too
 // (catalog.LiveAll): which of its keys serves one is said there alone.
 func (p Provider) liveAll() ([]catalog.Model, bool) {
+	listsRead.Add(1)
 	if !p.lists() {
 		return nil, false
 	}
@@ -615,7 +624,7 @@ func (p Provider) fetchOne(ctx context.Context) (fetched, error) {
 		if anthropic {
 			ctx = p.listAuth(ctx)
 		}
-		ms, err := catalog.FetchURL(ctx, u, p.Key, anthropic, p.listHeaders())
+		ms, err := catalog.FetchURL(ctx, u, p.Key, anthropic, p.listHeadersAt(u))
 		if err != nil {
 			return fetched{}, err
 		}
@@ -672,7 +681,7 @@ func (p Provider) fetchOne(ctx context.Context) (fetched, error) {
 			// listed as the Gemini API lists them, the key in its header,
 			// and merged like any other protocol's list (#1346)
 			asked[protoBase] = true
-			ms, _, err := catalog.FetchGemini(ctx, protoBase, p.Key, p.listHeaders())
+			ms, _, err := catalog.FetchGemini(ctx, protoBase, p.Key, p.listHeadersAt(protoBase))
 			if err != nil {
 				if !slices.Contains(errs, err.Error()) {
 					errs = append(errs, err.Error())
@@ -718,7 +727,7 @@ func (p Provider) fetchOne(ctx context.Context) (fetched, error) {
 			continue
 		}
 		asked[protoBase] = true
-		ms, u, err := catalog.FetchAtListed(lctx, protoBase, p.Key, proto == Anthropic, p.listHeaders(), listed)
+		ms, u, err := catalog.FetchAtListed(lctx, protoBase, p.Key, proto == Anthropic, p.listHeadersAt(protoBase), listed)
 		if err == nil && proto == Anthropic && HostOf(protoBase) == openRouterHost {
 			// the pages of the list are followed to its end, and what
 			// comes back is still not a list of models to serve
@@ -1151,6 +1160,10 @@ func (p Provider) fetchPerKey(ctx context.Context, keys []KeyAccount) ([]catalog
 	}
 	var deadKept []deadModel
 	at := map[string]int{}
+	// each model's keys as a set beside its list, and the models of the
+	// list before that each key saw: with a thousand keys, looking along
+	// the lists for every key and model took seconds (@NetRozee on X)
+	var has []map[string]bool
 	add := func(m catalog.Model, id string) int {
 		i, ok := at[m.ID]
 		if !ok {
@@ -1158,15 +1171,19 @@ func (p Provider) fetchPerKey(ctx context.Context, keys []KeyAccount) ([]catalog
 			at[m.ID], i = len(out), len(out)
 			out = append(out, m)
 			from = append(from, nil)
+			has = append(has, map[string]bool{})
 		} else {
 			out[i].ImageInput = sharedImageInput(out[i].ImageInput, m.ImageInput)
 			out[i].Images = out[i].Images && m.Images
 		}
-		if !slices.Contains(out[i].Keys, id) {
+		if !has[i][id] {
+			has[i][id] = true
 			out[i].Keys = append(out[i].Keys, id)
 		}
 		return i
 	}
+	var oldOf map[string][]int // a key's models in old, made when one fails
+	keptOld := map[int]bool{}  // the models of old kept for a key that failed
 	var base string
 	var lastErr error
 	for _, k := range keys {
@@ -1175,9 +1192,23 @@ func (p Provider) fetchPerKey(ctx context.Context, keys []KeyAccount) ([]catalog
 		l, err := q.fetchOne(ctx)
 		if err != nil {
 			lastErr = err
-			for _, m := range old {
-				if slices.Contains(m.Keys, id) {
-					deadKept = append(deadKept, deadModel{add(m, id), m.Keys})
+			if oldOf == nil {
+				oldOf = map[string][]int{}
+				for j, m := range old {
+					for _, kid := range m.Keys {
+						if js := oldOf[kid]; len(js) == 0 || js[len(js)-1] != j {
+							oldOf[kid] = append(js, j)
+						}
+					}
+				}
+			}
+			for _, j := range oldOf[id] {
+				i := add(old[j], id)
+				// each model kept once: its bases are worked out from
+				// its keys, the same whichever of them failed
+				if !keptOld[j] {
+					keptOld[j] = true
+					deadKept = append(deadKept, deadModel{i, old[j].Keys})
 				}
 			}
 			continue
@@ -1308,23 +1339,64 @@ func anyImageInput(a, b *bool) *bool {
 // first of five keys left out of every request). The lists are read whole,
 // the models that draw or make videos among them: a text key never says
 // it serves an image model only another key lists (#1657).
-func (p Provider) Serves(k KeyAccount, model string) bool {
-	live, ok := p.liveAll()
+func (p Provider) Serves(k KeyAccount, model string) bool { return p.Serving(model)(k) }
+
+// Serving is Serves for model, for each of the provider's keys in turn:
+// the lists are read once, not once a key. Read for every key of every
+// request, a provider of a thousand keys had its list's file looked at a
+// thousand times, and each model's thousand keys looked along, before a
+// request went out: a tenth of a second a request, seconds for five
+// thousand keys (@NetRozee on X).
+func (p Provider) Serving(model string) func(KeyAccount) bool {
+	x, ok := p.keyLists()
 	if !ok {
-		return true
+		return func(KeyAccount) bool { return true }
 	}
-	id := keyID(k.Key)
-	var keys []string
-	found, listed := false, false
+	keys, found := x.of[model]
+	return func(k KeyAccount) bool {
+		id := keyID(k.Key)
+		return !found || len(keys) == 0 || !x.listed[id] || keys[id]
+	}
+}
+
+// keyLists is which keys the provider's lists name: every key any model
+// is listed to, and each model's own, as sets. The last of a model listed
+// twice is its.
+type keyLists struct {
+	from   []catalog.Model // the lists they were made from
+	listed map[string]bool
+	of     map[string]map[string]bool
+}
+
+// keyListsMade is each provider's keyLists, made again when its lists are
+// read anew: a list read once is the same list until its file changes
+// (filememo), and is held here, so a new one is never at its address.
+var keyListsMade = struct {
+	sync.Mutex
+	m map[string]*keyLists
+}{m: map[string]*keyLists{}}
+
+func (p Provider) keyLists() (*keyLists, bool) {
+	live, ok := p.liveAll()
+	if !ok || len(live) == 0 {
+		return nil, false
+	}
+	keyListsMade.Lock()
+	defer keyListsMade.Unlock()
+	if x := keyListsMade.m[p.ID]; x != nil && len(x.from) == len(live) && &x.from[0] == &live[0] {
+		return x, true
+	}
+	x := &keyLists{from: live, listed: map[string]bool{}, of: make(map[string]map[string]bool, len(live))}
 	for _, m := range live {
-		if m.ID == model {
-			keys, found = m.Keys, true
+		set := make(map[string]bool, len(m.Keys))
+		for _, id := range m.Keys {
+			set[id] = true
+			x.listed[id] = true
 		}
-		if !listed && slices.Contains(m.Keys, id) {
-			listed = true
-		}
+		x.of[m.ID] = set
 	}
-	return !found || len(keys) == 0 || !listed || slices.Contains(keys, id)
+	keyListsMade.m[p.ID] = x
+	return x, true
 }
 
 // ServesNone is the user's Select none (NoModels) with nothing picked:
@@ -1639,7 +1711,9 @@ var makerCatalogs = sync.OnceValue(func() []string {
 // account, Copilot) or a relay with no models.dev id of its own is priced
 // at gpt-6-astra's or gemini-3.8-flash's maker's price, as a Claude
 // account is at Anthropic's. A remote magpie's is what that magpie counts
-// the model at, as its list says (remotePrice).
+// the model at, as its list says (remotePrice). A model no catalog prices
+// is at the price its plugin lists it at (pluginListPrice), else, when the
+// plugin says the plan serves it free, costs nothing (pluginFree).
 func (p Provider) ListPrice(model string) (catalog.Price, bool) {
 	if pr, ok := p.remotePrice(model); ok {
 		return pr, true
@@ -1652,6 +1726,9 @@ func (p Provider) ListPrice(model string) (catalog.Price, bool) {
 		return pr, true
 	}
 	if pr, ok := p.factoryFastPrice(model); ok {
+		return pr, true
+	}
+	if pr, ok := p.grokFastPrice(model); ok {
 		return pr, true
 	}
 	names := pricedNames(model)
@@ -1672,7 +1749,46 @@ func (p Provider) ListPrice(model string) (catalog.Price, bool) {
 			return pr, true
 		}
 	}
+	if pr, ok := p.pluginListPrice(model); ok {
+		return pr, true
+	}
+	if p.pluginFree(model) {
+		return catalog.Price{}, true
+	}
 	return catalog.Price{}, false
+}
+
+// pluginListPrice is the price the plugin serving p lists model at
+// (pluginPrice): Devin's own, from GetCliModelConfigs, for its SWE models
+// that no catalog has. Only where no catalog prices the model, as with
+// pluginFree, so no price a catalog gave changes.
+func (p Provider) pluginListPrice(model string) (catalog.Price, bool) {
+	pp, ok := PluginOf(p.ID)
+	if !ok {
+		return catalog.Price{}, false
+	}
+	m, ok := pluginModel(pp, model)
+	if !ok {
+		return catalog.Price{}, false
+	}
+	return pluginPrice(m)
+}
+
+// pluginFree is whether the plugin serving p lists model as one its plan
+// serves at no cost (plugin.Model.Free): Devin's SWE-2, which Devin gives
+// the "Free" cost tier and no allowance counts, Qoder's and WorkBuddy's
+// x0 models. Such a model is the vendor's own, sold per token nowhere, so
+// no catalog prices it, and without this its calls showed no cost at all
+// (太陽と向日葵 on Discord, on SWE-2 after Devin's quota was used up).
+// Only where no list price is known: a free model a catalog prices keeps
+// that price, as it did.
+func (p Provider) pluginFree(model string) bool {
+	pp, ok := PluginOf(p.ID)
+	if !ok {
+		return false
+	}
+	m, ok := pluginModel(pp, model)
+	return ok && m.Free
 }
 
 // EndpointCatalog is the models.dev catalog a provider the user added by
@@ -1757,6 +1873,50 @@ func (p Provider) cursorFastPrice(model string) (catalog.Price, bool) {
 		pr.Tiers = slices.Clone(pr.Tiers)
 	}
 	return pr, ok
+}
+
+// grokBuildFast is Grok Build's id of a Grok model's fast variant, as its
+// own model list offers it (grok-4.7-build-fast, and at a window of its
+// own, grok-4.7-build-fast@500k). m[1] is the model it is fast of.
+var grokBuildFast = regexp.MustCompile(`^(grok-[0-9][0-9.]*)-build-fast(?:@[0-9]+k?)?$`)
+
+// grokFastPrice is a Grok account's (the built-in's or the Grok plugin's)
+// price for its fast variant of a Grok model: twice the model's own, every
+// tier with it, as xAI says it sells it ("We also serve a fast variant
+// with twice the output speed at twice the price",
+// https://x.ai/news/grok-4-7, read 2026-10-15). No catalog lists
+// grok-4.7-build-fast, so every call a routing group of Cursor's and
+// Grok's Grok 4.7 fast sent to Grok was unpriced, and the group's cost
+// left out half its calls (TradingLife on Discord, after cbc96b599 priced
+// Cursor's half). Only on a Grok account: no other vendor serves the id.
+func (p Provider) grokFastPrice(model string) (catalog.Price, bool) {
+	if p.Account == nil || p.Account.Agent != "grok" && p.PluginProvider() != "grok" {
+		return catalog.Price{}, false
+	}
+	base, ok := GrokBuildFast(model)
+	if !ok {
+		return catalog.Price{}, false
+	}
+	pr, ok := p.ListPrice(base)
+	if !ok {
+		return catalog.Price{}, false
+	}
+	return pr.Times(GrokFastTimes), true
+}
+
+// GrokFastTimes is how many times its model's price xAI sells a Grok
+// model's fast variant at (grokFastPrice).
+const GrokFastTimes = 2
+
+// GrokBuildFast is the Grok model id is Grok Build's fast variant of
+// (grok-4.7-build-fast is grok-4.7's), and whether it is one: for a Grok
+// CLI session, which names it bare, priced as grokFastPrice prices it.
+func GrokBuildFast(id string) (string, bool) {
+	m := grokBuildFast.FindStringSubmatch(strings.ToLower(strings.TrimSpace(id)))
+	if m == nil {
+		return "", false
+	}
+	return m[1], true
 }
 
 // factoryFastTimes is how many times its base model's list price each
@@ -1856,10 +2016,26 @@ func MakerPrice(model string) (catalog.Price, bool) {
 	return catalog.Price{}, false
 }
 
+// SamePriceIn is the maker's list price of the model the user said
+// providerID's model is the same as (settings' ModelSameAs, #2344): for an
+// id of the provider's own that no list prices, as WorkBuddy's kimi-k3-1
+// or a plugin's qfmodel. It is the last place a price is looked for, after
+// the user's own, the provider's list and the model's maker's by its own
+// id, and is never another provider's tariff. MakerPrice reads the id as
+// any vendor spells it, with its prefix ("moonshotai/kimi-k3") or not.
+func SamePriceIn(s settings.Settings, providerID, model string) (catalog.Price, bool) {
+	same := strings.TrimSpace(s.ModelSameAs[providerID+"/"+model])
+	if same == "" {
+		return catalog.Price{}, false
+	}
+	return MakerPrice(same)
+}
+
 // EffectivePrice is what a call to a provider's model costs the user: the
 // price they set for that model, or for every model of that provider, or for
 // that model from any provider (settings' ModelPrices), else the provider's own list price, else its
-// maker's, either at the provider's price rate (PriceRate). The second return is false only when no price is known at all,
+// maker's, else the maker's of the model the user said it is the same as
+// (SamePriceIn), each at the provider's price rate (PriceRate). The second return is false only when no price is known at all,
 // which is not the same as a price of zero: that one is set, deliberately.
 //
 // A price here is the provider's tariff, not the model's: the same model
@@ -1904,11 +2080,17 @@ func priceOf(s settings.Settings, p Provider, known bool, model string) (catalog
 		}
 	}
 	if !known {
-		return MakerPrice(model)
+		if pr, ok := MakerPrice(model); ok {
+			return pr, true
+		}
+		return SamePriceIn(s, id, model)
 	}
 	pr, ok := p.ListPrice(model)
 	if !ok {
 		pr, ok = MakerPrice(model)
+	}
+	if !ok {
+		pr, ok = SamePriceIn(s, id, model)
 	}
 	// what the provider bills against it (#819)
 	if ok && p.PriceRate > 0 {
@@ -1992,7 +2174,8 @@ var grokWindow = regexp.MustCompile(`^((?:.*/)?grok-[0-9][^/@]*)@[0-9]+k?$`)
 // This is a list-price estimate, not evidence of a response's served model.
 // Other names without catalog prices stay unpriced here (grok-4.7-build,
 // grok-4.7-mini, grok-4.7-fast); a Cursor account's fast ids are priced at
-// Cursor's own fast rate (Provider.cursorFastPrice).
+// Cursor's own fast rate (Provider.cursorFastPrice), and a Grok account's
+// grok-4.7-build-fast at twice grok-4.7's (Provider.grokFastPrice).
 func pricedNames(model string) []string {
 	out := []string{model}
 	if model == "codex-auto-review" {
