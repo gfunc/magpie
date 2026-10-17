@@ -24,10 +24,11 @@ type serviceSearcher struct {
 }
 
 // serviceSearchers are the keyed services. A Kimi Code plan's search
-// service is the one; a DeepSeek provider's tools API and a Remote
-// magpie's web_search are to join here.
+// service and a DeepSeek provider's tools API are the two; a Remote
+// magpie's web_search is to join here.
 var serviceSearchers = []serviceSearcher{
 	{url: provider.KimiCodeSearch, search: (*Server).kimiSearch},
+	{url: DeepSeekSearch, search: (*Server).deepSeekSearch},
 }
 
 // serviceSearch is where p searches through its keyed service rather than

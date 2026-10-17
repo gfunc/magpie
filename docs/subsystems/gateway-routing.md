@@ -297,6 +297,52 @@ results. Covered by `TestWorkBuddySearchesForItsModels` (Claude Code's
 literal WebSearch request, the real service's reply bytes) and
 `TestWorkBuddyPluginSearches`.
 
+## DeepSeek's tools search
+
+A keyed DeepSeek provider — by its `deepseek` preset, or its Chat host
+`api.deepseek.com` for one added by hand — searches through its tools API
+rather than a model
+([`search_deepseek.go`](../../internal/gateway/search_deepseek.go)):
+`deepSeekSearch` POSTs the provider's Chat base URL with `/tools/search` a
+`{"query","count":10,"need_content":true}` with the key as a Bearer and
+magpie's search User-Agent, and maps the reply's `results` like the search
+APIs' are: a page without a URL is dropped, the title falls back to the
+URL, the text comes from `content`, then `summary`, then `snippet`,
+clipped to 1500 bytes at a rune, and `date` becomes the page's age;
+`site_name`, `site_icon`, `authority` and `rerank_score` are ignored and
+DeepSeek's order is kept. Up to 16 MiB of the reply is read, above the
+search APIs' 4 MiB, because ten results with content can be past it; a
+reply cut by the cap is no JSON any more and fails as an unexpected reply.
+
+The service is one of `serviceSearchers`
+([`search_service.go`](../../internal/gateway/search_service.go)), so it
+behaves as a Kimi Code plan's does: Settings › Web search offers it as a
+service choice with no model, naming it searches with it
+(`chosenSearcher` answers no model, `searcherSpent` passes), and its rank
+is the manual-only one. The exclusion lives where the rank is computed:
+`searchRank` returns -1 for a provider with a keyed service, so
+`autoSearcher` never picks it and the model-based DeepSeek searcher entry
+is gone — a setup whose only searcher is DeepSeek stops searching until
+the service is named. `searchesItself` and the host lists keep their
+answer, so an Anthropic- or Responses-protocol request to a DeepSeek model
+still passes its `web_search` tool through for DeepSeek to run
+(`TestDeepSeekPassThroughUnchanged`).
+
+The provider's keys are asked in turn (`KeysOn`), one request per key with
+no retry: a key the API refuses — 401, 402, 403, 429 — rests through the
+routing rest (`restAfterMarked`), so model requests pass it over too, and
+the next key on is asked; anything else (a 400's message, 408, 5xx, no
+answer in time) comes back as the failure it is, no key rested, and the
+search falls through like any searcher's. An empty result set is found
+nothing. A call that answers with pages records one usage row — kind
+`web_search_api`, the provider and the key used, no tokens, and $0.00075
+on the row's own-cost field, counted against the calling gateway key's
+limit; a failure or an empty result records nothing. Covered by
+`TestDeepSeekServiceSearches`, `TestDeepSeekServiceMapsResults`,
+`TestDeepSeekServiceManualOnly`, `TestDeepSeekSearchFailures`,
+`TestDeepSeekSearchUsageRow` and `TestDeepSeekPassThroughUnchanged` in
+[`search_deepseek_test.go`](../../internal/gateway/search_deepseek_test.go).
+
 ## Search results in translated Responses replies
 
 When a search is done for a model (`searchReply`), or a Responses provider's
@@ -522,8 +568,9 @@ Covered by `TestReadTavilyUsage`, `TestSearchKeysTakeTurnsRoundRobin`,
 ## Web search as an MCP server
 
 `SearchMCPPath`, `/mcp/magpie/web-search`, serves the same `webSearch` a
-model that can't search is given (the searcher's model, a Kimi Code plan's
-service, the search APIs, as Settings › Models › Web search orders them)
+model that can't search is given (the searcher's model, a keyed service —
+a Kimi Code plan's, a DeepSeek provider's tools API — the search APIs, as
+Settings › Models › Web search orders them)
 as an MCP server of its own, so Cursor, Claude Desktop or any agent can
 mount it as a `web_search` tool (Kayphoon on Discord). It speaks Streamable
 HTTP only: each POST of a JSON-RPC message or batch is answered with JSON

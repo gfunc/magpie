@@ -234,8 +234,13 @@ func searcher() (provider.Provider, string, bool) {
 // model that can't, -1 when it can't. A relay said to search is left out:
 // it would spend the relay's quota on other models' searches, and one that
 // serves only Claude Code refuses magpie's own request, which has no
-// metadata.user_id (#359).
+// metadata.user_id (#359). A provider with a keyed service (search_service.go)
+// is left out too: it searches through its service when Settings names it,
+// and never by a model of its own — magpie's pick or a fallback's.
 func searchRank(p provider.Provider) int {
+	if serviceSearch(p) != "" {
+		return -1
+	}
 	p.Searches = false
 	switch {
 	case p.Account != nil && p.Account.Agent == "claude":

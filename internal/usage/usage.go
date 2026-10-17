@@ -192,9 +192,11 @@ type Record struct {
 	// calls count in the totals and are told apart, and filtered, on the
 	// page.
 	Source string `json:"source,omitempty"`
-	// OwnCost is what such a client said the call cost, in USD. nil when it
-	// said nothing: the call is then priced at magpie's own prices, as the
-	// gateway's calls are, and priced again when those change.
+	// OwnCost is what such a client said the call cost, in USD — and what
+	// magpie's own per-request tool calls cost, which magpie records on
+	// the row itself (the DeepSeek tools APIs' search and fetch). nil when
+	// it said nothing: the call is then priced at magpie's own prices, as
+	// the gateway's calls are, and priced again when those change.
 	OwnCost *float64 `json:"cost,omitempty"`
 	// Credits is what the vendor said the call cost in its plan's own
 	// credits (WorkBuddy's usage.credit, #2512), nil when it said none
