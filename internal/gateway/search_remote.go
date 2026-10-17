@@ -94,3 +94,15 @@ func markSearching(ctx context.Context, req *http.Request) {
 func searchingFrom(r *http.Request) bool {
 	return strings.HasPrefix(r.Header.Get("User-Agent"), "magpie/") && r.Header.Get(SearchingHeader) != ""
 }
+
+// magpieSearchKey marks a search another magpie sent here (searchingFrom):
+// this magpie answers it, but never forwards it to a searcher of its own —
+// its keyed remote services refuse it (search_pass.go).
+type magpieSearchKey struct{}
+
+// searchFromMagpie is whether the search ctx is for came from another
+// magpie.
+func searchFromMagpie(ctx context.Context) bool {
+	v, _ := ctx.Value(magpieSearchKey{}).(bool)
+	return v
+}

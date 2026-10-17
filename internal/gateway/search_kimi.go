@@ -51,13 +51,15 @@ func canSearchFor(p provider.Provider) bool {
 
 // searchesOwn is whether p searches for its own models: by its Kimi Code
 // plan's or WorkBuddy plan's search service (#1798), or a Google sign-in's
-// own Gemini. Never with provider search Off in Settings (#1483), which
-// leaves the search APIs alone, nor with plugins/search off.
+// own Gemini. A remote magpie's service is never one: its own models search
+// as they do today, by the models its list says it searches for itself.
+// Never with provider search Off in Settings (#1483), which leaves the
+// search APIs alone, nor with plugins/search off.
 func searchesOwn(p provider.Provider) bool {
 	if !searchServed() || settings.Load().Searcher == "off" {
 		return false
 	}
-	return serviceSearch(p) != "" || wbSearches(p) || googleAccount(p) && searcherModel(p) != ""
+	return serviceSearch(p) != "" && !p.IsRemoteMagpie() || wbSearches(p) || googleAccount(p) && searcherModel(p) != ""
 }
 
 // searchingOn is ctx for the searches made for a model of p.
@@ -89,9 +91,10 @@ func (s *Server) ownSearch(ctx context.Context, p provider.Provider, query strin
 }
 
 // searchBy searches with one searcher: a keyed service by its search
-// service (search_service.go), any other by its model.
+// service (search_service.go) — a remote magpie named bare, whose service
+// searches with no model — any other by its model.
 func (s *Server) searchBy(ctx context.Context, p provider.Provider, model, query, effort string) (string, []Hit, error) {
-	if serviceSearch(p) != "" {
+	if serviceSearch(p) != "" && model == "" {
 		return s.serviceSearchBy(ctx, p, query)
 	}
 	return s.searchWith(ctx, p, model, query, effort)

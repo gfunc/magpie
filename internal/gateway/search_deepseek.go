@@ -9,12 +9,8 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"time"
 
-	"github.com/yetone/magpie/internal/access"
-	"github.com/yetone/magpie/internal/budget"
 	"github.com/yetone/magpie/internal/provider"
-	"github.com/yetone/magpie/internal/usage"
 )
 
 // A keyed DeepSeek provider searches the web with its tools API directly
@@ -181,7 +177,8 @@ func (s *Server) deepSeekSearchKey(ctx context.Context, p provider.Provider, at,
 		return "", nil, fmt.Errorf("%s %w", p.Name, errFoundNothing)
 	}
 	said, hits := pagesSaid(pages)
-	s.recordDeepSeekSearch(ctx, p, key)
+	cost := deepSeekSearchCost
+	s.recordServiceSearch(ctx, p, key, &cost)
 	return said, hits, nil
 }
 
@@ -194,20 +191,4 @@ func (s *Server) restSearchKey(p provider.Provider, status int, header http.Head
 		rest += "#" + provider.KeyID(p.Key)
 	}
 	s.restAfterMarked(candidate{p: p, rest: rest}, status, header, body, false)
-}
-
-// recordDeepSeekSearch records the tools call a search made: one row for
-// the caller's key, the provider and the key used, no tokens, the call's
-// price. A failure or an empty result never gets here.
-func (s *Server) recordDeepSeekSearch(ctx context.Context, p provider.Provider, key string) {
-	cost := deepSeekSearchCost
-	rec := usage.Record{Time: time.Now(), Kind: "web_search_api", Provider: p.ID, Host: p.Where(),
-		ProviderKeyID: provider.KeyID(key), Status: http.StatusOK, OwnCost: &cost}
-	if f := searchFor(ctx); f != nil {
-		rec.Agent = f.Agent
-	}
-	if who := access.Caller(ctx); who.KeyID != "" {
-		rec.CallerKeyID, rec.CallerKeyName = who.KeyID, who.KeyName
-	}
-	budget.Append(rec)
 }

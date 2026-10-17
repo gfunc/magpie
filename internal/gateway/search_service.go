@@ -3,8 +3,13 @@ package gateway
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"time"
 
+	"github.com/yetone/magpie/internal/access"
+	"github.com/yetone/magpie/internal/budget"
 	"github.com/yetone/magpie/internal/provider"
+	"github.com/yetone/magpie/internal/usage"
 )
 
 // A keyed service searches the web with a provider's own key rather than
@@ -24,11 +29,12 @@ type serviceSearcher struct {
 }
 
 // serviceSearchers are the keyed services. A Kimi Code plan's search
-// service and a DeepSeek provider's tools API are the two; a Remote
-// magpie's web_search is to join here.
+// service, a DeepSeek provider's tools API and a Remote magpie's web_search
+// are the three.
 var serviceSearchers = []serviceSearcher{
 	{url: provider.KimiCodeSearch, search: (*Server).kimiSearch},
 	{url: DeepSeekSearch, search: (*Server).deepSeekSearch},
+	{url: remoteMagpieService, search: (*Server).remoteMagpieSearch},
 }
 
 // serviceSearch is where p searches through its keyed service rather than
@@ -50,4 +56,21 @@ func (s *Server) serviceSearchBy(ctx context.Context, p provider.Provider, query
 		}
 	}
 	return "", nil, fmt.Errorf("%s: no search service", p.Name)
+}
+
+// recordServiceSearch records the call a keyed service search made: one row
+// for the caller's key, the provider and the key used, no tokens, the
+// service's price on OwnCost — nil for a pass-through, which costs nothing
+// here, the remote's own row carrying its spend. A failure or an empty
+// result never gets here.
+func (s *Server) recordServiceSearch(ctx context.Context, p provider.Provider, key string, cost *float64) {
+	rec := usage.Record{Time: time.Now(), Kind: "web_search_api", Provider: p.ID, Host: p.Where(),
+		ProviderKeyID: provider.KeyID(key), Status: http.StatusOK, OwnCost: cost}
+	if f := searchFor(ctx); f != nil {
+		rec.Agent = f.Agent
+	}
+	if who := access.Caller(ctx); who.KeyID != "" {
+		rec.CallerKeyID, rec.CallerKeyName = who.KeyID, who.KeyName
+	}
+	budget.Append(rec)
 }

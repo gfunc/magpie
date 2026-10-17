@@ -75,6 +75,7 @@ func withCaller(next http.Handler) http.Handler {
 		if searchingFrom(r) {
 			// another magpie's search: only the model itself searches
 			ctx = context.WithValue(ctx, searchingKey{}, true)
+			ctx = context.WithValue(ctx, magpieSearchKey{}, true)
 		}
 		r.Header.Del(AgentHeader)
 		r.Header.Del(ViaHeader)

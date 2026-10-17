@@ -235,10 +235,11 @@ func searcher() (provider.Provider, string, bool) {
 // it would spend the relay's quota on other models' searches, and one that
 // serves only Claude Code refuses magpie's own request, which has no
 // metadata.user_id (#359). A provider with a keyed service (search_service.go)
-// is left out too: it searches through its service when Settings names it,
-// and never by a model of its own — magpie's pick or a fallback's.
+// is left out too — it searches through its service when Settings names it,
+// and never by a model of its own — except a Remote magpie, whose
+// natively-searching models keep their place beside its web search service.
 func searchRank(p provider.Provider) int {
-	if serviceSearch(p) != "" {
+	if serviceSearch(p) != "" && !p.IsRemoteMagpie() {
 		return -1
 	}
 	p.Searches = false
@@ -344,8 +345,11 @@ func chosenSearcher() (*provider.Provider, string, string) {
 		return &p, "", SearcherOff
 	case r < 0:
 		return &p, "", SearcherCant
-	case serviceSearch(p) != "":
+	case serviceSearch(p) != "" && !p.IsRemoteMagpie():
 		// it searches with no model
+		return &p, "", ""
+	case serviceSearch(p) != "" && model == "":
+		// a remote magpie named bare: its web search, with no model
 		return &p, "", ""
 	}
 	if model != "" && slices.ContainsFunc(p.Available(), func(m catalog.Model) bool { return m.ID == model }) && searchableModel(p, model) {
@@ -366,11 +370,16 @@ func chosenSearcher() (*provider.Provider, string, string) {
 func Searchers() []SearcherChoice {
 	var out []SearcherChoice
 	for _, p := range provider.All() {
+		if p.On() && p.IsRemoteMagpie() && serviceSearch(p) != "" {
+			// its web search, manual-only, beside the models it searches
+			// for itself
+			out = append(out, SearcherChoice{Provider: p, rank: manualRelayRank, ManualOnly: true, Service: true})
+		}
 		r, manualOnly := namedSearcherRank(p)
 		if r < 0 || !p.On() {
 			continue
 		}
-		if serviceSearch(p) != "" {
+		if serviceSearch(p) != "" && !p.IsRemoteMagpie() {
 			out = append(out, SearcherChoice{Provider: p, rank: r, ManualOnly: manualOnly, Service: true})
 			continue
 		}
@@ -727,9 +736,10 @@ func SearcherFailed() (SearchFailure, bool) {
 
 // searcherSpent is why a searcher's model isn't asked: every account or
 // key of it is out of its allowance (spentModel). nil when it has
-// allowance, or searches with no model (a keyed service, search_service.go).
+// allowance, or searches with no model (a keyed service, search_service.go;
+// a remote magpie named with a model is checked like any other).
 func searcherSpent(p provider.Provider, model string) error {
-	if model == "" || serviceSearch(p) != "" {
+	if model == "" || serviceSearch(p) != "" && !p.IsRemoteMagpie() {
 		return nil
 	}
 	back, spent := spentModel(p, model, provider.Anthropic, time.Now())

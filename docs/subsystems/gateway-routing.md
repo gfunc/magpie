@@ -343,6 +343,44 @@ limit; a failure or an empty result records nothing. Covered by
 `TestDeepSeekSearchUsageRow` and `TestDeepSeekPassThroughUnchanged` in
 [`search_deepseek_test.go`](../../internal/gateway/search_deepseek_test.go).
 
+## A Remote magpie's web search
+
+A keyed Remote magpie searches through the web-search MCP server of its
+own ([`search_pass.go`](../../internal/gateway/search_pass.go)):
+`remoteMagpieSearch` POSTs the remote's base — its Chat base carries
+`/v1`, which is stripped — with `SearchMCPPath` one JSON-RPC `tools/call`
+for `web_search` of the masked query, with the provider's key as the
+gateway key and magpie's User-Agent. The remote's whole chain — its
+searcher, its Search APIs, its services — answers, and its answer text is
+the local search result whole, with no pages: no Sources list is added.
+
+Every pass-through carries the searching mark (`SearchingHeader`), so the
+remote runs no searcher of its own for it. A search another magpie sent
+here (`searchingFrom`, recorded as `searchFromMagpie`) is answered, but
+its named remote service is not asked — `remoteMagpieSearch` refuses it —
+so two magpies that name each other's services cannot loop. A transport
+failure, a timeout, an HTTP error or a remote tool error is the failure it
+is — a tool error surfaces the text the remote wrote — and the search
+falls through like any searcher's; nothing is retried.
+
+The service joins `serviceSearchers` like the others and is offered as a
+manual-only choice with no model — but unlike the other keyed services, a
+remote's natively-searching models keep their place beside it:
+`searchRank` skips the keyed-service exclusion for a remote, so a remote
+with native models keeps its rank and `Searchers` lists it twice, its web
+search and its models. Naming it bare searches through its service;
+naming it with a model searches by the model, marked, as today.
+`searchesOwn` never claims a remote's service, so its own models' searches
+are unchanged. A successful call records a zero-cost row — kind
+`web_search_api`, the remote as the provider with its key, no tokens, the
+calling gateway key and agent, and no own cost (the spend is the remote's,
+on its own usage); a failure records nothing. Covered by
+`TestRemoteMagpieServiceSearches`, `TestRemoteMagpieSearchMarksCall`,
+`TestRemoteMagpieSearchFailures`, `TestRemoteMagpieSearchRow` and
+`TestRemoteMagpieNativeModelsUnchanged` in
+[`search_pass_test.go`](../../internal/gateway/search_pass_test.go), with
+`TestRemoteMagpieSearches` left unmodified for the models.
+
 ## Search results in translated Responses replies
 
 When a search is done for a model (`searchReply`), or a Responses provider's
@@ -569,7 +607,8 @@ Covered by `TestReadTavilyUsage`, `TestSearchKeysTakeTurnsRoundRobin`,
 
 `SearchMCPPath`, `/mcp/magpie/web-search`, serves the same `webSearch` a
 model that can't search is given (the searcher's model, a keyed service —
-a Kimi Code plan's, a DeepSeek provider's tools API — the search APIs, as
+a Kimi Code plan's, a DeepSeek provider's tools API, a Remote magpie's web
+search — the search APIs, as
 Settings › Models › Web search orders them)
 as an MCP server of its own, so Cursor, Claude Desktop or any agent can
 mount it as a `web_search` tool (Kayphoon on Discord). It speaks Streamable
