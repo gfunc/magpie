@@ -4,12 +4,16 @@
 
 **Blocked by:** 11 (Prefactor the service-searcher seam).
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Write `TestDeepSeekServiceSearches` first and watch it fail: naming the service posts to the provider's tools/search with `count: 10`, `need_content: true`, the masked query and the provider key; no DeepSeek model request is made; the tool result is the numbered pages.
-- [ ] `TestDeepSeekServiceMapsResults`: text maps from content, then summary, then snippet; the 1500-byte clip lands at a rune boundary; `date` becomes the page age; empty URLs are dropped; DeepSeek's order is kept; site, authority and rerank are ignored.
-- [ ] `TestDeepSeekServiceManualOnly`: the settings JSON shows the entry with no model and it is never auto-picked, including when DeepSeek is the only searcher; the model-based entry is gone.
-- [ ] `TestDeepSeekSearchFailures`: empty results fall through to the next source; 401/402/403/429 rest the key; 400 surfaces its message; 408/5xx fall through; a reply past the 16 MiB read cap fails as an unexpected reply and falls through.
-- [ ] `TestDeepSeekSearchUsageRow`: one row per successful call — kind `web_search_api`, the provider and key used, zero tokens, the caller key and agent, $0.00075; failures and empty results record nothing.
-- [ ] `TestDeepSeekPassThroughUnchanged`: an Anthropic-protocol request to DeepSeek still passes the `web_search` tool through exactly as today.
-- [ ] The gateway routing reference's web-search section documents the service entry and its manual-only rank.
+- [x] Write `TestDeepSeekServiceSearches` first and watch it fail: naming the service posts to the provider's tools/search with `count: 10`, `need_content: true`, the masked query and the provider key; no DeepSeek model request is made; the tool result is the numbered pages.
+- [x] `TestDeepSeekServiceMapsResults`: text maps from content, then summary, then snippet; the 1500-byte clip lands at a rune boundary; `date` becomes the page age; empty URLs are dropped; DeepSeek's order is kept; site, authority and rerank are ignored.
+- [x] `TestDeepSeekServiceManualOnly`: the settings JSON shows the entry with no model and it is never auto-picked, including when DeepSeek is the only searcher; the model-based entry is gone.
+- [x] `TestDeepSeekSearchFailures`: empty results fall through to the next source; 401/402/403/429 rest the key; 400 surfaces its message; 408/5xx fall through; a reply past the 16 MiB read cap fails as an unexpected reply and falls through.
+- [x] `TestDeepSeekSearchUsageRow`: one row per successful call — kind `web_search_api`, the provider and key used, zero tokens, the caller key and agent, $0.00075; failures and empty results record nothing.
+- [x] `TestDeepSeekPassThroughUnchanged`: an Anthropic-protocol request to DeepSeek still passes the `web_search` tool through exactly as today.
+- [x] The gateway routing reference's web-search section documents the service entry and its manual-only rank.
+
+## Done
+
+Merged as `0ab7956f` on `deepseek-search-fetch`. All six named tests red→green at a fake DeepSeek site (negative control in `logs/12-red.log`); the pass-through guard passes as on base. Full gateway suite ok 359.8s, provider/settings/usage ok, vet clean (`logs/12.log`); wave-2 gate green (`logs/gate-12.log`, GATE_EXIT=0).
