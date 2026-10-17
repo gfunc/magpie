@@ -57,7 +57,7 @@ func searchesOwn(p provider.Provider) bool {
 	if !searchServed() || settings.Load().Searcher == "off" {
 		return false
 	}
-	return provider.KimiCodeSearch(p) != "" || wbSearches(p) || googleAccount(p) && searcherModel(p) != ""
+	return serviceSearch(p) != "" || wbSearches(p) || googleAccount(p) && searcherModel(p) != ""
 }
 
 // searchingOn is ctx for the searches made for a model of p.
@@ -77,8 +77,8 @@ func ownSearcher(ctx context.Context) (provider.Provider, bool) {
 
 // ownSearch searches with the conversation's own provider (ownSearcher).
 func (s *Server) ownSearch(ctx context.Context, p provider.Provider, query string) (string, []Hit, error) {
-	if provider.KimiCodeSearch(p) != "" {
-		return s.kimiSearch(ctx, p, query)
+	if serviceSearch(p) != "" {
+		return s.serviceSearchBy(ctx, p, query)
 	}
 	if wbSearches(p) {
 		return s.wbSearch(ctx, p, query)
@@ -88,11 +88,11 @@ func (s *Server) ownSearch(ctx context.Context, p provider.Provider, query strin
 	return s.searchWith(ctx, p, searcherModel(p), query, "")
 }
 
-// searchBy searches with one searcher: a Kimi Code plan by its search
-// service, any other by its model.
+// searchBy searches with one searcher: a keyed service by its search
+// service (search_service.go), any other by its model.
 func (s *Server) searchBy(ctx context.Context, p provider.Provider, model, query, effort string) (string, []Hit, error) {
-	if provider.KimiCodeSearch(p) != "" {
-		return s.kimiSearch(ctx, p, query)
+	if serviceSearch(p) != "" {
+		return s.serviceSearchBy(ctx, p, query)
 	}
 	return s.searchWith(ctx, p, model, query, effort)
 }

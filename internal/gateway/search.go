@@ -262,14 +262,15 @@ func searchRank(p provider.Provider) int {
 // itself: a relay said to search is offered only to be named (#359).
 const manualRelayRank = 6
 
-// namedSearcherRank is searchRank as Settings may name it: a Kimi Code
-// plan, by its search service, and a relay said to search on Anthropic's or
-// Responses' API come last, and only by hand.
+// namedSearcherRank is searchRank as Settings may name it: a keyed
+// service, by its search service (a Kimi Code plan's, search_service.go),
+// and a relay said to search on Anthropic's or Responses' API come last,
+// and only by hand.
 func namedSearcherRank(p provider.Provider) (int, bool) {
 	if r := searchRank(p); r >= 0 {
 		return r, false
 	}
-	if provider.KimiCodeSearch(p) != "" {
+	if serviceSearch(p) != "" {
 		return manualRelayRank, true
 	}
 	if p.Searches && (searchesItself(p, provider.Anthropic) || searchesItself(p, provider.Responses)) {
@@ -338,7 +339,7 @@ func chosenSearcher() (*provider.Provider, string, string) {
 		return &p, "", SearcherOff
 	case r < 0:
 		return &p, "", SearcherCant
-	case provider.KimiCodeSearch(p) != "":
+	case serviceSearch(p) != "":
 		// it searches with no model
 		return &p, "", ""
 	}
@@ -364,7 +365,7 @@ func Searchers() []SearcherChoice {
 		if r < 0 || !p.On() {
 			continue
 		}
-		if provider.KimiCodeSearch(p) != "" {
+		if serviceSearch(p) != "" {
 			out = append(out, SearcherChoice{Provider: p, rank: r, ManualOnly: manualOnly, Service: true})
 			continue
 		}
@@ -390,8 +391,9 @@ type SearcherChoice struct {
 	Models     []catalog.Model
 	rank       int
 	ManualOnly bool // a relay said to search, which only Settings may name
-	// Service is a Kimi Code plan, which searches by its search service,
-	// with no model (and no Small or Models)
+	// Service is a keyed service (a Kimi Code plan's, search_service.go),
+	// which searches by its search service, with no model (and no Small or
+	// Models)
 	Service bool
 	// Own is a Google sign-in, whose Gemini searches for the provider's
 	// own models first, whoever is named (ownSearcher)
@@ -720,9 +722,9 @@ func SearcherFailed() (SearchFailure, bool) {
 
 // searcherSpent is why a searcher's model isn't asked: every account or
 // key of it is out of its allowance (spentModel). nil when it has
-// allowance, or searches with no model (a Kimi Code plan's service).
+// allowance, or searches with no model (a keyed service, search_service.go).
 func searcherSpent(p provider.Provider, model string) error {
-	if model == "" || provider.KimiCodeSearch(p) != "" {
+	if model == "" || serviceSearch(p) != "" {
 		return nil
 	}
 	back, spent := spentModel(p, model, provider.Anthropic, time.Now())
