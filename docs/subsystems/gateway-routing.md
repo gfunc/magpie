@@ -610,6 +610,44 @@ default, at most 100000) from `offset`, and says the offset the rest starts
 at. Each call reserves the calling key's limit as a search does.
 `TestWebFetchReadsAPage` and `TestWebFetchOnlyPublic`.
 
+Which backend reads is the Settings' fetch value (settings.Fetch, the
+"Fetch pages with" picker in the Web search section, exposed beside the
+searcher's in the search state's `fetch` and `fetchChoices`): empty, the
+magpie's own downloader as above; a keyed DeepSeek provider's id, its
+tools fetch, below. One named that is gone, off or keyless warns in the
+row (`FetchUnused`, the searcher's reasons) and magpie's own downloader
+reads in its place. The reservation against the calling key runs before
+either backend is asked.
+
+## DeepSeek's tools fetch
+
+The same keyed DeepSeek provider that searches reads a page with its tools
+fetch ([`fetch_deepseek.go`](../../internal/gateway/fetch_deepseek.go)):
+`deepSeekFetch` POSTs the provider's Chat base URL with `/tools/fetch` a
+`{"url"}` with the key as a Bearer — the provider's first key on, the
+rotation's own order — and answers with the `title` and the Markdown
+`content` under the web_fetch tool's `offset` and `max_chars`; the `URL:`
+line names the URL that was asked for, DeepSeek not saying where its own
+redirects ended. Before anything is sent the URL is checked
+(`fetchDeepSeekURL`): a username or a password is refused, and so is a
+literal loopback, private or link-local address and `localhost` — DeepSeek
+is never asked to probe an inside target, and no name is resolved here,
+DeepSeek resolving the public host.
+
+A 408, 413, 429 or 5xx, a transport error or the client's timeout (30
+seconds, `deepSeekFetchTimeout`) is a `fetchTransient`, and magpie's own
+downloader reads the page in its place, both failing said together; a 402,
+403, 404 and any other 4xx surface DeepSeek's message as it is, with no
+fallback. A successful call records one usage row — kind `web_fetch`, the
+provider and the key used, no tokens, $0.00075 on the calling key's row,
+its cost counted toward that key's limit like token spend (a zero-token
+row's cost counts since `Totals.addFrom` stopped dropping it); a failure,
+and a fallback's success, record nothing. Covered by
+`TestDeepSeekFetchReadsPage`, `TestDeepSeekFetchRefusesURLs`,
+`TestDeepSeekFetchFallbacks`, `TestDeepSeekFetchUsageRow` and
+`TestFetchProviderGoneFallsBack` in
+[`fetch_deepseek_test.go`](../../internal/gateway/fetch_deepseek_test.go).
+
 A POST's body is read by `readMCPBody`, up to 1 MiB here and 32 MiB for
 vision and for a signed-in server's `/mcp/{name}`. A longer body is refused
 whole with 413, before any message in it runs or is passed on: the length is

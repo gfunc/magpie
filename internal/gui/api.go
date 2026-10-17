@@ -439,6 +439,11 @@ type settingsJSON struct {
 	SearchEfforts   []string `json:"searchEfforts,omitempty"`
 	SearchEffortNow string   `json:"searchEffortNow,omitempty"`
 	SearchRelays    []string `json:"searchRelays,omitempty"`
+	// the "Fetch pages with" picker: the keyed DeepSeek providers that may
+	// be named (gateway.Fetchers), and why the one named isn't used
+	// (gateway.FetchUnused) — magpie's own downloader reads in its place
+	FetchChoices []fetchChoiceJSON `json:"fetchChoices"`
+	FetchUnused  string            `json:"fetchUnused,omitempty"`
 	// the last search the one it names didn't make, since it last
 	// searched: no other provider searched in its place (Gearclickist on
 	// Discord)
@@ -521,6 +526,7 @@ type searchChoiceJSON struct {
 	Own bool `json:"own,omitempty"`
 }
 
+// searchVendorJSON is a search API that can be added.
 type searchVendorJSON struct {
 	ID      string `json:"id"`
 	Name    string `json:"name"`
@@ -530,6 +536,13 @@ type searchVendorJSON struct {
 	KeyOptional bool `json:"keyOptional,omitempty"`
 	// its own address, the one used while no base URL is set (#1580)
 	Base string `json:"base,omitempty"`
+}
+
+// fetchChoiceJSON is a provider the "Fetch pages with" picker may name.
+type fetchChoiceJSON struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Icon string `json:"icon,omitempty"`
 }
 
 func searchState(s *settingsJSON) {
@@ -567,6 +580,11 @@ func searchState(s *settingsJSON) {
 	for _, p := range gateway.RelaysSaidToSearch() {
 		s.SearchRelays = append(s.SearchRelays, p.Name)
 	}
+	s.FetchChoices = []fetchChoiceJSON{}
+	for _, p := range gateway.Fetchers() {
+		s.FetchChoices = append(s.FetchChoices, fetchChoiceJSON{ID: p.ID, Name: p.Name, Icon: p.Icon})
+	}
+	s.FetchUnused = gateway.FetchUnused()
 	for _, p := range provider.All() {
 		if p.On() && !slices.ContainsFunc(s.SearchChoices, func(c searchChoiceJSON) bool { return c.ID == p.ID }) && !slices.Contains(s.SearchRelays, p.Name) {
 			s.SearchLeftOut = append(s.SearchLeftOut, p.Name)

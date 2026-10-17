@@ -20742,6 +20742,7 @@ function renderSearch(s, keep) {
   const box = $("#searchList");
   box.replaceChildren();
   renderSearcher(s, keep, box);
+  renderFetcher(s, keep, box);
   // rows go into the box, or into a search API's own unit (its row and its
   // keys' row), which is dragged as one (#2286)
   let into = box;
@@ -21092,6 +21093,38 @@ function renderSearcher(s, keep, box) {
   val.append(b);
   if (!off) sideEffortChip(val, s.searchEfforts, s.searcherEffort || "", s.searchEffortNow, "searcher-effort",
     "none sent, the model's own", (e) => savePrefs({ ...keep, searcherEffort: e }));
+  r.append(who, val);
+  box.append(r);
+}
+
+// renderFetcher: the "Fetch pages with" row — who reads the pages
+// web_fetch is asked for: magpie's own downloader (the default), or a keyed
+// DeepSeek provider's page reader, which is billed per page. One named
+// that is gone, off or keyless is said in the row, and magpie's own
+// downloader reads in its place.
+function renderFetcher(s, keep, box) {
+  const choices = s.fetchChoices || [];
+  const v = s.fetch || "";
+  const named = (id) => choices.find((x) => x.id === id)?.name || id;
+  const r = el("div", "row pref fetcher-row");
+  const who = el("div", "who");
+  const sub = el("div", "sub", t("Who reads the pages web_fetch is asked for. magpie's own downloader reads only public addresses; a DeepSeek provider's page reader returns the page as Markdown and is billed per page read."));
+  if (v && s.fetchUnused) {
+    const why = { gone: t("it is no longer in magpie"), off: t("it is turned off"), cant: t("it has no key") }[s.fetchUnused] || s.fetchUnused;
+    sub.append(" · ", el("span", "warn fetcher-unused", t("{who} isn't used: {why}, so magpie fetches pages itself", { who: named(v), why })));
+  }
+  who.append(el("div", "name", t("Fetch pages with")), sub);
+  const b = el("button", "rt-cond on fetcher-pick");
+  b.type = "button";
+  b.setAttribute("aria-label", t("Fetch pages with"));
+  if (!v || s.fetchUnused) b.append(el("span", "", t("magpie's own")));
+  else b.append(icon(choices.find((x) => x.id === v)?.icon || "generic"), el("span", "", named(v)));
+  const options = [{ value: "", label: t("magpie's own"), note: t("the downloader magpie ships with"), reset: true }];
+  for (const c of choices) options.push({ value: c.id, label: c.name, icon: c.icon });
+  b.onclick = (ev) => openPicker({ id: "", name: "", fields: [] }, { key: "fetch", label: "model", value: v, options,
+    onPick: (id) => { if (id !== v) savePrefs({ ...keep, fetch: id }); } }, b, ev);
+  const val = el("div", "val");
+  val.append(b);
   r.append(who, val);
   box.append(r);
 }
@@ -22106,7 +22139,7 @@ function prefsKeep(s) {
     codexWarmAts: warmTimes(s.codexWarmAts, s.codexWarmAt), claudeWarmAts: warmTimes(s.claudeWarmAts, s.claudeWarmAt), workbuddyCheckin: !!s.workbuddyCheckin, traeCheckin: !!s.traeCheckin, minimaxCheckin: !!s.minimaxCheckin, qoderCheckin: !!s.qoderCheckin, noStats: !!s.noStats, noUsageStats: !!s.noUsageStats,
     memberModel: !!s.memberModel, noLoopGuard: !!s.noLoopGuard, claudeLeanPrompt: !!s.claudeLeanPrompt, refusalRetries: s.refusalRetries ?? null,
     noUpdatePill: !!s.noUpdatePill, noAutoUpdate: !!s.noAutoUpdate, updateEvery: s.updateEvery || 360, autoRestart: !!s.autoRestart, noAutoDownload: !!s.noAutoDownload,
-    trayUsage: s.trayUsage || "", trayUsageEvery: s.trayUsageEvery || 3, trayNoLogos: !!s.trayNoLogos, trayNoBird: !!s.trayNoBird, trayPace: !!s.trayPace, trayNoCost: !!s.trayNoCost, vision: s.vision || "", visionEffort: s.visionEffort || "", searcherEffort: s.searcherEffort || "", imageGen: s.imageGen || "", searcher: s.searcher || "", searchFirst: s.searchFirst || "", currency: s.currency || "usd",
+    trayUsage: s.trayUsage || "", trayUsageEvery: s.trayUsageEvery || 3, trayNoLogos: !!s.trayNoLogos, trayNoBird: !!s.trayNoBird, trayPace: !!s.trayPace, trayNoCost: !!s.trayNoCost, vision: s.vision || "", visionEffort: s.visionEffort || "", searcherEffort: s.searcherEffort || "", imageGen: s.imageGen || "", searcher: s.searcher || "", searchFirst: s.searchFirst || "", fetch: s.fetch || "", currency: s.currency || "usd",
     chineseUnits: !!s.chineseUnits, usageAlert: s.usageAlert || 0, balanceAlert: s.balanceAlert || 0, resetReminder: s.resetReminder || 0,
     turnDoneAlert: s.turnDoneAlert || 0 };
 }

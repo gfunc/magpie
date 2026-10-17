@@ -619,6 +619,12 @@ func (t *Totals) addFrom(row Row, price *catalog.Price) {
 		}
 	}
 	if r.Input+r.Output == 0 {
+		if r.OwnCost == nil {
+			return
+		}
+		// a per-request tools call (a web_search_api, a web_fetch) spends
+		// no tokens, but its cost still counts
+		t.Cost += *r.OwnCost
 		return
 	}
 	if price == nil {

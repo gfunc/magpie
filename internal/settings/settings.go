@@ -319,6 +319,11 @@ type Settings struct {
 	// SearchFirstAPI for the search APIs, the provider's search after them
 	// when they fail; empty for the provider first, as before.
 	SearchFirst string `json:"searchFirst,omitempty"`
+	// Fetch is the provider that reads the pages the web_fetch tool is
+	// asked for: a provider's id, or empty for magpie's own downloader
+	// (gateway.fetcher). One that is gone, off or has no key gives way to
+	// magpie's own.
+	Fetch string `json:"fetch,omitempty"`
 	// TrayUsages are the subscriptions and plans whose windows are shown
 	// beside the tray icon, in the order shown, each by its provider and
 	// account ("claude|a@b.c"); none when empty.
@@ -1287,6 +1292,7 @@ func save(s Settings, recording bool) error {
 		return fmt.Errorf("%q is not a reasoning effort for Claude Desktop's subagents", e)
 	}
 	s.Searcher = strings.TrimSpace(s.Searcher)
+	s.Fetch = strings.TrimSpace(s.Fetch)
 	for _, e := range []*string{&s.VisionEffort, &s.SearcherEffort} {
 		if *e = strings.ToLower(strings.TrimSpace(*e)); *e != "" && !slices.Contains(catalog.EffortRank, *e) {
 			return fmt.Errorf("a model's reasoning must be one of %s, or empty for the default, not %q", strings.Join(catalog.EffortRank, ", "), *e)

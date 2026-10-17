@@ -19,7 +19,6 @@ import (
 
 	"github.com/yetone/magpie/internal/access"
 	"github.com/yetone/magpie/internal/budget"
-	"github.com/yetone/magpie/internal/netproxy"
 )
 
 // The web search MCP server's second tool, web_fetch (#2286, blackrion):
@@ -62,7 +61,10 @@ type fetchArgs struct {
 }
 
 // fetchMCPRun reads the page a web_fetch names, held to the calling gateway
-// key's limit as a search is.
+// key's limit as a search is. The backend is the one Settings' fetch value
+// names while it can (chosenFetcher): a keyed DeepSeek provider's page
+// reader, with magpie's own downloader for the transient failures, or
+// magpie's own downloader alone when none is named or the one named can't.
 func (s *Server) fetchMCPRun(r *http.Request, a fetchArgs) (string, error) {
 	raw := strings.TrimSpace(a.URL)
 	if raw == "" {
@@ -80,18 +82,19 @@ func (s *Server) fetchMCPRun(r *http.Request, a fetchArgs) (string, error) {
 		limit = webFetchChars
 	}
 	limit = min(limit, webFetchMaxChars)
+	// the reservation runs before either backend is asked
 	release, refused := budget.Reserve(access.Caller(r.Context()), int64(len(raw)), "", limitClock())
 	if refused != nil {
 		return "", refused
 	}
 	defer release()
-	ctx, cancel := context.WithTimeout(netproxy.With(r.Context(), ""), webFetchTimeout)
-	defer cancel()
-	title, text, final, err := fetchPage(ctx, u)
-	if err != nil {
-		return "", searchMCPError("couldn't fetch " + u.Redacted() + ": " + err.Error())
+	// the call is the agent's MCP web_fetch, as a search through the same
+	// server is: the usage row says who called
+	ctx := context.WithValue(r.Context(), searchForKey{}, &CallFor{Agent: callerOf(r).agent, MCP: true})
+	if p := chosenFetcher(); p != nil {
+		return s.fetchByDeepSeek(ctx, *p, u, raw, a.Offset, limit)
 	}
-	return fetchPart(final, title, text, a.Offset, limit), nil
+	return s.fetchOwn(ctx, u, a.Offset, limit)
 }
 
 // fetchPart is what web_fetch answers: where the page was read from, its
