@@ -4,10 +4,11 @@ Repo: the magpie fork, integration branch `deepseek-search-fetch`. Work only in 
 
 ## Commands
 
-- Full gate (orchestrator runs this; tickets do not): `make test` — `go vet` + `go test` with the Linux tags (`production gtk3`).
-- Targeted test: `go test -tags 'production gtk3' ./internal/gateway/ -run 'TestName' -count=1`.
+- This machine has no GTK/WebKit dev packages: the `production gtk3`-tagged build cannot compile here. Use the nogui build everywhere.
+- Full gate (orchestrator runs this; tickets do not): `CGO_ENABLED=0 go vet -tags nogui ./... && CGO_ENABLED=0 go test -tags nogui ./...`.
+- Targeted test: `CGO_ENABLED=0 go test -tags nogui ./internal/gateway/ -run 'TestName' -count=1`.
 - GUI browser tests (only waves that touch `internal/gui/assets`): `make test-ui`.
-- Build check: `go build -tags 'production gtk3' ./...`.
+- Build check: `CGO_ENABLED=0 go build -tags nogui ./...`.
 - Long checks: tee output to `/home/jason/projects/magpie/.scratch/deepseek-search-fetch/logs/<ticket>.log` (absolute path from your worktree).
 
 ## Code standards that bite (docs/code-standards.md)
