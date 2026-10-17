@@ -125,7 +125,7 @@ func (d *deepSeekSite) log() (asked, searches []string) {
 // has it.
 func nameDeepSeekService(t *testing.T, d *deepSeekSite) {
 	t.Helper()
-	save(t, provider.Provider{ID: "ds", Name: "DeepSeek", Preset: "deepseek", Key: "sk-ds",
+	save(t, provider.Provider{ID: "ds", Name: "DeepSeek", Preset: "deepseek", Key: "sk-ds", KeyName: "Main",
 		Chat: d.URL + "/v1", Anthropic: d.URL + "/anthropic", Models: []string{"deepseek-chat"}})
 	st := settings.Load()
 	st.Searcher = "ds"
@@ -395,6 +395,33 @@ func TestDeepSeekSearchFailures(t *testing.T) {
 	}
 }
 
+// Every key on made for another protocol: WithKey narrows the provider's
+// Chat away for each, no key is asked, and the search says so naming the
+// provider instead of answering an empty success.
+func TestDeepSeekSearchKeysOfAnotherProtocol(t *testing.T) {
+	searchSandbox(t)
+	d := newDeepSeekSite(t)
+	save(t, provider.Provider{ID: "ds", Name: "DeepSeek", Preset: "deepseek", Key: "sk-ds",
+		KeyProtocol: provider.Anthropic, Chat: d.URL + "/v1", Anthropic: d.URL + "/anthropic",
+		Models: []string{"deepseek-chat"}})
+	st := settings.Load()
+	st.Searcher = "ds"
+	if err := settings.Save(st); err != nil {
+		t.Fatal(err)
+	}
+	p, err := provider.Find("ds")
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, _, err = New().deepSeekSearch(context.Background(), *p, "latest go")
+	if err == nil || !strings.Contains(err.Error(), "DeepSeek") {
+		t.Fatalf("no key of the ones on searches here: %v", err)
+	}
+	if _, searches := d.log(); len(searches) != 0 {
+		t.Fatalf("the tools API was asked: %q", searches)
+	}
+}
+
 // A successful search records one usage row — kind web_search_api, the
 // provider and key used, no tokens, the calling gateway key and agent,
 // $0.00075; a failure and an empty result record nothing.
@@ -416,6 +443,7 @@ func TestDeepSeekSearchUsageRow(t *testing.T) {
 	}
 	rec := recs[0]
 	if rec.Kind != "web_search_api" || rec.Provider != "ds" || rec.ProviderKeyID != provider.KeyID("sk-ds") ||
+		rec.ProviderKeyName != "Main" ||
 		rec.Input != 0 || rec.Output != 0 || rec.CallerKeyID != keys[0].ID || rec.Agent != "cursor-local" ||
 		rec.OwnCost == nil || *rec.OwnCost != 0.00075 {
 		t.Fatalf("row %+v", rec)

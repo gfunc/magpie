@@ -13,7 +13,7 @@ import (
 
 // The service-searcher seam: one answer, at every place that treats one
 // specially, to whether a provider searches through its own keyed service
-// rather than a model. The Kimi Code plan is the one service today; a
+// rather than a model. The Kimi Code plan is one of the services; a
 // provider on it is a service choice with no model, is named with no
 // model, passes the spent check, searches by its service when asked, and
 // is named only by hand. A plain keyed provider does none of that.

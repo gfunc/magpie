@@ -37,9 +37,11 @@ import (
 // reads in its place.
 //
 // A successful call costs the same $0.00075 as a tools search, one row on
-// the caller's key. The provider's first key on is asked (the rotation's
-// own order); a failure comes back for fetchMCPRun to fall back on
-// magpie's own downloader or surface as it is.
+// the caller's key. The provider's keys on are asked in turn, the
+// rotation's own order: a key the API refuses rests, and the next one is
+// asked; every key out, or a transient failure, hands the page to
+// fetchMCPRun's other reader — magpie's own downloader — and anything else
+// surfaces as it is.
 
 // deepSeekFetchTimeout is how long the tools/fetch call may take, the web
 // fetch's own 30 seconds. A var so a test can shrink it.
@@ -81,43 +83,45 @@ func Fetchers() []provider.Provider {
 	return out
 }
 
-// FetchUnused is why the fetch provider Settings names isn't used (one of
-// the Searcher* reasons), "" when it is or none is named: gone, turned
-// off, or without a key (a keyed DeepSeek or a keyed Remote magpie is what
-// reads here).
-func FetchUnused() string {
+// fetchNamed is the fetch provider Settings names, and why it isn't used —
+// one of the Searcher* reasons, "" when it is or none is named: gone, off,
+// or with no page reader (a keyed DeepSeek or a keyed Remote magpie is
+// what reads here — not one of those, or one without a key, can't).
+func fetchNamed() (*provider.Provider, string) {
 	v := strings.TrimSpace(settings.Load().Fetch)
 	if v == "" {
-		return ""
+		return nil, ""
 	}
 	i := slices.IndexFunc(provider.All(), func(p provider.Provider) bool { return p.ID == v })
 	if i < 0 {
-		return SearcherGone
+		return nil, SearcherGone
 	}
 	p := provider.All()[i]
 	if fetchService(p) == "" {
-		return SearcherCant
+		return &p, SearcherCant
 	}
 	if !p.On() {
-		return SearcherOff
+		return &p, SearcherOff
 	}
-	return ""
+	return &p, ""
+}
+
+// FetchUnused is why the fetch provider Settings names isn't used (one of
+// the Searcher* reasons), "" when it is or none is named. See fetchNamed.
+func FetchUnused() string {
+	_, why := fetchNamed()
+	return why
 }
 
 // chosenFetcher is the fetch provider Settings names while it can be used,
 // nil otherwise: none named, gone, off, or not a keyed DeepSeek or Remote
 // magpie. Whatever the reason, magpie's own downloader reads in its place.
 func chosenFetcher() *provider.Provider {
-	if FetchUnused() != "" {
+	p, why := fetchNamed()
+	if p == nil || why != "" {
 		return nil
 	}
-	v := strings.TrimSpace(settings.Load().Fetch)
-	i := slices.IndexFunc(provider.All(), func(p provider.Provider) bool { return p.ID == v })
-	if i < 0 {
-		return nil
-	}
-	p := provider.All()[i]
-	return &p
+	return p
 }
 
 // fetchDeepSeekURL checks u before it is sent to DeepSeek: a URL with a
@@ -141,23 +145,70 @@ func fetchDeepSeekURL(u *url.URL) error {
 }
 
 // fetchTransient is a keyed fetch's failure another reader — magpie's own
-// downloader here — may answer: a DeepSeek 408, 413, 429 or 5xx, a Remote
-// magpie that can't be reached or that doesn't answer in time (the two
-// magpieMCPCall wraps), a transport error or the client's timeout. Anything
-// else surfaces as it is.
+// downloader here — may answer: a DeepSeek 408, 413 or 5xx, every key of a
+// fetch provider refused (deepSeekFetch wraps the refusals), a Remote
+// magpie that can't be reached, doesn't answer in time, or answers an HTTP
+// 429 or 5xx (magpieMCPCall's wraps), a transport error or the client's
+// timeout. Anything else surfaces as it is.
 type fetchTransient struct{ err error }
 
 func (e fetchTransient) Error() string { return e.err.Error() }
 func (e fetchTransient) Unwrap() error { return e.err }
 
-// deepSeekFetch asks p's tools/fetch for the page at raw, with the
-// provider's first key on.
+// deepSeekFetch asks p's tools/fetch for the page at raw, over the
+// provider's keys in turn like its search: a key the API refuses rests,
+// and the next one on is asked. A transient failure comes back as it is
+// for fetchByDeepSeek to fall back on magpie's own downloader, and so does
+// every key refused — the keys ran out — while anything else surfaces.
 func (s *Server) deepSeekFetch(ctx context.Context, p provider.Provider, raw string) (title, text string, err error) {
 	keys := p.KeysOn()
 	if len(keys) == 0 {
 		return "", "", fmt.Errorf("%s: no key to fetch with", p.Name)
 	}
-	return s.deepSeekFetchKey(ctx, p.WithKey(keys[0]), DeepSeekFetch(p), raw, keys[0].Key)
+	// a key resting from an earlier refusal is asked last, when it is all
+	// the provider has on
+	var ready, resting []provider.KeyAccount
+	for _, k := range keys {
+		rest := p.ID
+		if len(keys) > 1 {
+			rest += "#" + provider.KeyID(k.Key)
+		}
+		if _, held := restOf(rest); held {
+			resting = append(resting, k)
+		} else {
+			ready = append(ready, k)
+		}
+	}
+	var errs []error
+	asked := 0
+	for i, k := range append(ready, resting...) {
+		one := p.WithKey(k)
+		at := DeepSeekFetch(one)
+		if at == "" {
+			// a key made for another protocol: its provider has no Chat
+			// endpoint to fetch on
+			continue
+		}
+		asked++
+		gotTitle, gotText, err := s.deepSeekFetchKey(ctx, one, at, raw, k.Key)
+		if err == nil {
+			return gotTitle, gotText, nil
+		}
+		var r searchRefused
+		if len(keys) > 1 {
+			err = fmt.Errorf("%s: %w", keyLabel(i, k.Key), err)
+		}
+		if !errors.As(err, &r) {
+			return "", "", err
+		}
+		errs = append(errs, err)
+	}
+	if asked == 0 {
+		return "", "", fmt.Errorf("%s: no key of the ones on reads here", p.Name)
+	}
+	// the keys ran out: magpie's own downloader reads in their place, the
+	// way a transient failure's does
+	return "", "", fetchTransient{errors.Join(errs...)}
 }
 
 // deepSeekFetchKey asks the tools API with one key, and records the call's
@@ -189,7 +240,12 @@ func (s *Server) deepSeekFetchKey(ctx context.Context, p provider.Provider, at, 
 		// an API that says the key back in its error doesn't get it into
 		// magpie's logs or the model's turn
 		msg := strings.ReplaceAll(provider.APIError(head, res.Status), key, provider.MaskSearchKey(key))
-		if res.StatusCode == 408 || res.StatusCode == 413 || res.StatusCode == 429 || res.StatusCode >= 500 {
+		if keyRefusal(res.StatusCode) {
+			// the key rests as a refusal of its would, and the next is asked
+			s.restSearchKey(p, res.StatusCode, res.Header, b)
+			return "", "", searchRefused{res.StatusCode, msg, res.Header.Get("Retry-After")}
+		}
+		if res.StatusCode == 408 || res.StatusCode == 413 || res.StatusCode >= 500 {
 			return "", "", fetchTransient{errors.New(p.Name + ": " + msg)}
 		}
 		return "", "", errors.New(p.Name + ": " + msg)
@@ -214,7 +270,7 @@ func (s *Server) deepSeekFetchKey(ctx context.Context, p provider.Provider, at, 
 func (s *Server) recordDeepSeekFetch(ctx context.Context, p provider.Provider, key string) {
 	cost := deepSeekSearchCost
 	rec := usage.Record{Time: time.Now(), Kind: "web_fetch", Provider: p.ID, Host: p.Where(),
-		ProviderKeyID: provider.KeyID(key), Status: http.StatusOK, OwnCost: &cost}
+		ProviderKeyID: provider.KeyID(key), ProviderKeyName: p.KeyName, Status: http.StatusOK, OwnCost: &cost}
 	if f := searchFor(ctx); f != nil {
 		rec.Agent = f.Agent
 	}
@@ -226,10 +282,10 @@ func (s *Server) recordDeepSeekFetch(ctx context.Context, p provider.Provider, k
 
 // fetchByDeepSeek reads the page through DeepSeek's tools/fetch, with the
 // tool's own offset and limit on its Markdown. A transient failure — a
-// 408, 413, 429 or 5xx, a transport error, the client's timeout — hands
-// the page to magpie's own downloader; both failing says both. Anything
-// else surfaces: a 402, 403 or 404 is DeepSeek's word on the account, the
-// policy or the page.
+// 408, 413 or 5xx, a transport error, the client's timeout, every key
+// refused — hands the page to magpie's own downloader; both failing says
+// both. Anything else surfaces: a 404 or 400 is DeepSeek's word on the
+// page or the request.
 func (s *Server) fetchByDeepSeek(ctx context.Context, p provider.Provider, u *url.URL, raw string, offset, limit int) (string, error) {
 	if err := fetchDeepSeekURL(u); err != nil {
 		return "", searchMCPError(p.Name + ": " + err.Error())

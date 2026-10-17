@@ -79,6 +79,7 @@ func (s *Server) deepSeekSearch(ctx context.Context, p provider.Provider, query 
 		}
 	}
 	var errs []error
+	asked := 0
 	for i, k := range append(ready, resting...) {
 		one := p.WithKey(k)
 		at := DeepSeekSearch(one)
@@ -87,6 +88,7 @@ func (s *Server) deepSeekSearch(ctx context.Context, p provider.Provider, query 
 			// endpoint to search on
 			continue
 		}
+		asked++
 		said, hits, err := s.deepSeekSearchKey(ctx, one, at, q, k.Key)
 		if err == nil {
 			return said, hits, nil
@@ -99,6 +101,11 @@ func (s *Server) deepSeekSearch(ctx context.Context, p provider.Provider, query 
 			return "", nil, err
 		}
 		errs = append(errs, err)
+	}
+	// every key was made for another protocol: no key of the ones on has a
+	// Chat endpoint to search on
+	if asked == 0 {
+		return "", nil, fmt.Errorf("%s: no key of the ones on searches here", p.Name)
 	}
 	return "", nil, errors.Join(errs...)
 }

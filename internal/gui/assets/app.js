@@ -21098,19 +21098,20 @@ function renderSearcher(s, keep, box) {
 }
 
 // renderFetcher: the "Fetch pages with" row — who reads the pages
-// web_fetch is asked for: magpie's own downloader (the default), or a keyed
-// DeepSeek provider's page reader, which is billed per page. One named
-// that is gone, off or keyless is said in the row, and magpie's own
-// downloader reads in its place.
+// web_fetch is asked for: magpie's own downloader (the default), or a
+// keyed provider's page reader (a DeepSeek provider's is billed per page,
+// a Remote magpie's is read on the remote). One named that is gone, off or
+// without a page reader is said in the row, and magpie's own downloader
+// reads in its place.
 function renderFetcher(s, keep, box) {
   const choices = s.fetchChoices || [];
   const v = s.fetch || "";
   const named = (id) => choices.find((x) => x.id === id)?.name || id;
   const r = el("div", "row pref fetcher-row");
   const who = el("div", "who");
-  const sub = el("div", "sub", t("Who reads the pages web_fetch is asked for. magpie's own downloader reads only public addresses; a DeepSeek provider's page reader returns the page as Markdown and is billed per page read."));
+  const sub = el("div", "sub", t("Who reads the pages web_fetch is asked for. magpie's own downloader reads the page itself, from public addresses only; a named provider's reader returns it as Markdown — DeepSeek's is billed per page read."));
   if (v && s.fetchUnused) {
-    const why = { gone: t("it is no longer in magpie"), off: t("it is turned off"), cant: t("it has no key") }[s.fetchUnused] || s.fetchUnused;
+    const why = { gone: t("it is no longer in magpie"), off: t("it is turned off"), cant: t("it has no page reader") }[s.fetchUnused] || s.fetchUnused;
     sub.append(" · ", el("span", "warn fetcher-unused", t("{who} isn't used: {why}, so magpie fetches pages itself", { who: named(v), why })));
   }
   who.append(el("div", "name", t("Fetch pages with")), sub);

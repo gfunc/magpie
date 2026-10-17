@@ -83,8 +83,8 @@ func (s *Server) remoteMagpieSearch(ctx context.Context, p provider.Provider, qu
 // transport failure, an HTTP error or a JSON-RPC error is the error alone,
 // which the caller treats as any failure of its own — the search falls
 // through, and the fetch pass-through falls back on magpie's own
-// downloader for the transport failures and timeouts (fetchTransient) and
-// surfaces the rest.
+// downloader for the transport failures, the timeouts, and an HTTP 429 or
+// 5xx (fetchTransient) and surfaces the rest.
 func (s *Server) magpieMCPCall(ctx context.Context, p provider.Provider, at, key, tool string, args map[string]any) (string, error) {
 	ctx, cancel := context.WithTimeout(s.metered(p.Via(ctx), p, ""), searchTimeout)
 	defer cancel()
@@ -116,6 +116,11 @@ func (s *Server) magpieMCPCall(ctx context.Context, p provider.Provider, at, key
 	if res.StatusCode >= 300 {
 		// an error that says the key back doesn't get it into magpie's logs
 		msg := strings.ReplaceAll(provider.APIError(head, res.Status), key, provider.MaskSearchKey(key))
+		if res.StatusCode == 429 || res.StatusCode >= 500 {
+			// a remote that is busy or failing says nothing about the page:
+			// the fetch pass-through falls back on magpie's own downloader
+			return "", fetchTransient{errors.New(p.Name + ": " + msg)}
+		}
 		return "", errors.New(p.Name + ": " + msg)
 	}
 	var out struct {
@@ -156,11 +161,12 @@ func (s *Server) magpieMCPCall(ctx context.Context, p provider.Provider, at, key
 // the url, max_chars and offset the tool received forwarded whole — the
 // remote applies them on the page it reads, its own downloader guarding its
 // own addresses — and its answer text comes back as-is, parts and all. A
-// transport failure or the timeout (magpieFetchTimeout) hands the page to
-// magpie's own downloader, both failing said together; the remote's own
-// error — its tool error, an HTTP error, a JSON-RPC error — surfaces with
-// no fallback: it is the remote's word on the page or the key. A
-// successful pass-through records the zero-cost row.
+// transport failure, the timeout (magpieFetchTimeout), or the remote
+// answering an HTTP 429 or 5xx hands the page to magpie's own downloader,
+// both failing said together; the remote's own error — its tool error, any
+// other HTTP error, a JSON-RPC error — surfaces with no fallback: it is
+// the remote's word on the page or the key. A successful pass-through
+// records the zero-cost row.
 func (s *Server) fetchByMagpie(ctx context.Context, p provider.Provider, u *url.URL, a fetchArgs, limit int) (string, error) {
 	rctx, cancel := context.WithTimeout(ctx, magpieFetchTimeout)
 	defer cancel()

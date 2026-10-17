@@ -30,9 +30,10 @@ import (
 // recorded under a lock: the handler runs on many goroutines.
 type deepSeekFetchSite struct {
 	*httptest.Server
-	mu      sync.Mutex
-	fetches []string // "auth | ua | url"
-	mode    string   // "", a status, "nocontent", "big", "long", "wide", "slow", "abort"
+	mu        sync.Mutex
+	fetches   []string // "auth | ua | url"
+	mode      string   // "", a status, "nocontent", "big", "long", "wide", "slow", "abort"
+	refuseKey string   // the only key the mode refuses, "" for all of them
 }
 
 func newDeepSeekFetchSite(t *testing.T) *deepSeekFetchSite {
@@ -53,8 +54,11 @@ func newDeepSeekFetchSite(t *testing.T) *deepSeekFetchSite {
 		d.fetches = append(d.fetches, strings.Join([]string{
 			r.Header.Get("Authorization"), r.Header.Get("User-Agent"), fmt.Sprint(q["url"]),
 		}, " | "))
-		mode := d.mode
+		mode, refuseKey := d.mode, d.refuseKey
 		d.mu.Unlock()
+		if refuseKey != "" && r.Header.Get("Authorization") != "Bearer "+refuseKey {
+			mode = ""
+		}
 		switch {
 		case mode == "slow":
 			time.Sleep(2 * time.Second)
@@ -105,7 +109,7 @@ func (d *deepSeekFetchSite) log() []string {
 // with" has it.
 func nameDeepSeekFetcher(t *testing.T, d *deepSeekFetchSite) {
 	t.Helper()
-	save(t, provider.Provider{ID: "ds", Name: "DeepSeek", Preset: "deepseek", Key: "sk-ds",
+	save(t, provider.Provider{ID: "ds", Name: "DeepSeek", Preset: "deepseek", Key: "sk-ds", KeyName: "Main",
 		Chat: d.URL + "/v1", Models: []string{"deepseek-chat"}})
 	st := settings.Load()
 	st.Fetch = "ds"
@@ -277,10 +281,12 @@ func TestDeepSeekFetchRefusesURLs(t *testing.T) {
 	}
 }
 
-// A 408, 413, 429 or 5xx, a dropped connection and a timed-out call hand
-// the page to magpie's own downloader; a 402, 403, 404 and any other 4xx
-// surface DeepSeek's message with no fallback; with both backends failing,
-// the error says both.
+// A key the tools API refuses rests and the next on is asked; with one key
+// on, a refusal — 402, 403, 429 — is the keys running out, and the page
+// goes to magpie's own downloader the way a transient failure's does. A
+// 408, 413 or 5xx, a dropped connection and a timed-out call hand the page
+// over too; a 404 and any other 4xx surface DeepSeek's message with no
+// fallback; with both backends failing, the error says both.
 func TestDeepSeekFetchFallbacks(t *testing.T) {
 	fresh(t)
 	d := newDeepSeekFetchSite(t)
@@ -295,7 +301,7 @@ func TestDeepSeekFetchFallbacks(t *testing.T) {
 		}
 		return got
 	}
-	for _, mode := range []string{"408", "413", "429", "500"} {
+	for _, mode := range []string{"402", "403", "408", "413", "429", "500"} {
 		d.set(mode)
 		if got := page(); !strings.Contains(got, fetchOwnSaid) {
 			t.Fatalf("%s did not fall back: %q", mode, got)
@@ -315,11 +321,10 @@ func TestDeepSeekFetchFallbacks(t *testing.T) {
 	deepSeekFetchTimeout = was
 	d.set("")
 
-	// 402, 403, 404 and the other 4xx surface DeepSeek's message, and
-	// magpie's own downloader reads nothing
+	// 404 and the other 4xx that are no refusal surface DeepSeek's
+	// message, and magpie's own downloader reads nothing
 	hits := ownHits()
 	for mode, words := range map[string]string{
-		"402": "Insufficient Balance", "403": "security policy",
 		"404": "No usable content", "400": "invalid request",
 	} {
 		d.set(mode)
@@ -341,6 +346,63 @@ func TestDeepSeekFetchFallbacks(t *testing.T) {
 	got, isErr := fetchText_(t, h, fetchCall(fetchPageURL, ""))
 	if !isErr || !strings.Contains(got, "internal error") || !strings.Contains(got, "connection refused") {
 		t.Fatalf("both failing: %v %q", isErr, got)
+	}
+}
+
+// A key the tools API refuses rests, and the provider's next key on is
+// asked: the page answers through DeepSeek on it, and magpie's own
+// downloader reads nothing.
+func TestDeepSeekFetchRotatesKeys(t *testing.T) {
+	fresh(t)
+	d := newDeepSeekFetchSite(t)
+	nameDeepSeekFetcher(t, d)
+	if err := provider.AddKey("ds", "Second", "sk-ds-2", ""); err != nil {
+		t.Fatal(err)
+	}
+	own, ownHits := ownSite(t)
+	readWithOwn(t, own)
+	h := lanGuard(New().Handler())
+
+	d.mu.Lock()
+	d.mode, d.refuseKey = "402", "sk-ds"
+	d.mu.Unlock()
+	got, isErr := fetchText_(t, h, fetchCall(fetchPageURL, ""))
+	if isErr || !strings.Contains(got, "Example Domain") {
+		t.Fatalf("the second key didn't answer: %v %q", isErr, got)
+	}
+	asked := d.log()
+	if len(asked) != 2 || !strings.Contains(asked[0], "Bearer sk-ds |") || !strings.Contains(asked[1], "Bearer sk-ds-2") {
+		t.Fatalf("the keys weren't asked in turn: %q", asked)
+	}
+	if hits := ownHits(); hits != 0 {
+		t.Fatal("magpie's own downloader read too")
+	}
+	// the refused key rests, the way a search's refusal rests it
+	if r, ok := restOf("ds#" + provider.KeyID("sk-ds")); !ok {
+		t.Fatalf("the refused key doesn't rest: %+v", r)
+	}
+}
+
+// Every key the tools API refuses: the keys ran out, and the page goes to
+// magpie's own downloader as any transient failure's does.
+func TestDeepSeekFetchKeysOutFallsBack(t *testing.T) {
+	fresh(t)
+	d := newDeepSeekFetchSite(t)
+	nameDeepSeekFetcher(t, d)
+	if err := provider.AddKey("ds", "Second", "sk-ds-2", ""); err != nil {
+		t.Fatal(err)
+	}
+	own, _ := ownSite(t)
+	readWithOwn(t, own)
+	h := lanGuard(New().Handler())
+
+	d.set("402")
+	got, isErr := fetchText_(t, h, fetchCall(fetchPageURL, ""))
+	if isErr || !strings.Contains(got, fetchOwnSaid) {
+		t.Fatalf("the keys ran out and nobody fell back: %v %q", isErr, got)
+	}
+	if asked := d.log(); len(asked) != 2 {
+		t.Fatalf("the keys weren't each asked: %q", asked)
 	}
 }
 
@@ -375,9 +437,9 @@ func TestDeepSeekFetchUsageRow(t *testing.T) {
 		t.Fatalf("a fallback recorded %+v", recs)
 	}
 	// a surfaced failure records nothing
-	d.set("403")
-	if m := call(); !m.Result.IsError || !strings.Contains(m.Result.Content[0].Text, "security policy") {
-		t.Fatalf("a 403: %+v", m)
+	d.set("404")
+	if m := call(); !m.Result.IsError || !strings.Contains(m.Result.Content[0].Text, "No usable content") {
+		t.Fatalf("a 404: %+v", m)
 	}
 	if recs := usage.Load(time.Time{}); len(recs) != 0 {
 		t.Fatalf("a failure recorded %+v", recs)
@@ -394,6 +456,7 @@ func TestDeepSeekFetchUsageRow(t *testing.T) {
 	}
 	rec := recs[0]
 	if rec.Kind != "web_fetch" || rec.Provider != "ds" || rec.ProviderKeyID != provider.KeyID("sk-ds") ||
+		rec.ProviderKeyName != "Main" ||
 		rec.Input != 0 || rec.Output != 0 || rec.CallerKeyID != keys[0].ID || rec.Agent != "cursor-local" ||
 		rec.OwnCost == nil || *rec.OwnCost != 0.00075 {
 		t.Fatalf("row %+v", rec)

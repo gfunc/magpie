@@ -55,6 +55,18 @@ func newRemoteMagpieSite(t *testing.T) *remoteMagpieSite {
 				case <-time.After(30 * time.Second):
 				case <-r.Context().Done():
 				}
+			case "502":
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusBadGateway)
+				io.WriteString(w, `{"error":{"message":"bad gateway"}}`)
+			case "429":
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusTooManyRequests)
+				io.WriteString(w, `{"error":{"message":"slow down"}}`)
+			case "401":
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusUnauthorized)
+				io.WriteString(w, `{"error":{"message":"the key is no good"}}`)
 			default:
 				io.WriteString(w, `{"jsonrpc":"2.0","id":1,"result":{"content":[{"type":"text","text":"`+text+`"}],"isError":false}}`)
 			}
@@ -89,7 +101,7 @@ func (s *remoteMagpieSite) log() []string {
 func saveRemoteMagpie(t *testing.T, id string, s *remoteMagpieSite) provider.Provider {
 	t.Helper()
 	if err := provider.Save(provider.Provider{ID: id, Name: "Office", Preset: provider.RemoteMagpiePreset,
-		Chat: strings.TrimPrefix(s.URL, "http://"), Key: "sk-" + id}); err != nil {
+		Chat: strings.TrimPrefix(s.URL, "http://"), Key: "sk-" + id, KeyName: "Main"}); err != nil {
 		t.Fatal(err)
 	}
 	p, err := provider.Find(id)
@@ -305,6 +317,7 @@ func TestRemoteMagpieSearchRow(t *testing.T) {
 	}
 	rec := recs[0]
 	if rec.Kind != "web_search_api" || rec.Provider != "office" || rec.ProviderKeyID != provider.KeyID("sk-office") ||
+		rec.ProviderKeyName != "Main" ||
 		rec.Input != 0 || rec.Output != 0 || rec.CallerKeyID != keys[0].ID || rec.Agent != "cursor-local" || rec.OwnCost != nil {
 		t.Fatalf("row %+v", rec)
 	}
@@ -454,6 +467,35 @@ func TestRemoteMagpieFetchFallbacks(t *testing.T) {
 	}
 }
 
+// A remote answering an HTTP 502 or 429 is failing or busy, not speaking
+// about the page: the fetch pass-through falls back on magpie's own
+// downloader. An HTTP 401 is the remote's word on the key, and surfaces.
+func TestRemoteMagpieFetchHTTPFallbacks(t *testing.T) {
+	searchSandbox(t)
+	s := newRemoteMagpieSite(t)
+	s.set("", remoteFetchSaid)
+	nameRemoteMagpieFetcher(t, s)
+	own, _ := ownSite(t)
+	readWithOwn(t, own)
+	h := lanGuard(New().Handler())
+
+	for _, mode := range []string{"502", "429"} {
+		s.set(mode, "")
+		got, isErr := fetchText_(t, h, fetchCall(fetchPageURL, ""))
+		if isErr || !strings.Contains(got, fetchOwnSaid) {
+			t.Fatalf("%s did not fall back: %v %q", mode, isErr, got)
+		}
+	}
+	if n := len(s.log()); n != 2 {
+		t.Fatalf("the remote was asked %d times: %q", n, s.log())
+	}
+	s.set("401", "")
+	got, isErr := fetchText_(t, h, fetchCall(fetchPageURL, ""))
+	if !isErr || !strings.Contains(got, "the key is no good") {
+		t.Fatalf("a 401: %v %q", isErr, got)
+	}
+}
+
 // A successful pass-through records one usage row — kind web_fetch, the
 // remote as the provider with its key, no tokens, the calling gateway key
 // and agent, and no cost: the remote's own row carries the spend. A failure
@@ -480,6 +522,7 @@ func TestRemoteMagpieFetchRow(t *testing.T) {
 	}
 	rec := recs[0]
 	if rec.Kind != "web_fetch" || rec.Provider != "office" || rec.ProviderKeyID != provider.KeyID("sk-office") ||
+		rec.ProviderKeyName != "Main" ||
 		rec.Input != 0 || rec.Output != 0 || rec.CallerKeyID != keys[0].ID || rec.Agent != "cursor-local" || rec.OwnCost != nil {
 		t.Fatalf("row %+v", rec)
 	}

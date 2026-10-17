@@ -19,7 +19,7 @@ import (
 // picked by itself — only named. Where a provider is on one is decided
 // here alone: a new keyed service joins serviceSearchers, and the sites
 // that treat one specially ask the seam (search_kimi.go holds the Kimi
-// Code plan, the one service today).
+// Code plan).
 
 // serviceSearcher is a keyed service: where a provider on it searches,
 // and how the service is asked.
@@ -66,7 +66,7 @@ func (s *Server) serviceSearchBy(ctx context.Context, p provider.Provider, query
 // failure or an empty result never gets here.
 func (s *Server) recordServiceSearch(ctx context.Context, p provider.Provider, key, kind string, cost *float64) {
 	rec := usage.Record{Time: time.Now(), Kind: kind, Provider: p.ID, Host: p.Where(),
-		ProviderKeyID: provider.KeyID(key), Status: http.StatusOK, OwnCost: cost}
+		ProviderKeyID: provider.KeyID(key), ProviderKeyName: p.KeyName, Status: http.StatusOK, OwnCost: cost}
 	if f := searchFor(ctx); f != nil {
 		rec.Agent = f.Agent
 	}

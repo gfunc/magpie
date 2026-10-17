@@ -693,8 +693,10 @@ against the calling key runs before either backend is asked.
 The same keyed DeepSeek provider that searches reads a page with its tools
 fetch ([`fetch_deepseek.go`](../../internal/gateway/fetch_deepseek.go)):
 `deepSeekFetch` POSTs the provider's Chat base URL with `/tools/fetch` a
-`{"url"}` with the key as a Bearer — the provider's first key on, the
-rotation's own order — and answers with the `title` and the Markdown
+`{"url"}` with the key as a Bearer — over the provider's keys on in turn,
+the rotation's own order, a key the API refuses resting while the next is
+asked, every key out handing the page to magpie's own downloader as a
+transient failure's — and answers with the `title` and the Markdown
 `content` under the web_fetch tool's `offset` and `max_chars`; the `URL:`
 line names the URL that was asked for, DeepSeek not saying where its own
 redirects ended. Before anything is sent the URL is checked
