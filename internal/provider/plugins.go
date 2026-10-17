@@ -175,6 +175,29 @@ func pluginModel(pp plugin.Provider, id string) (plugin.Model, bool) {
 	return plugin.Model{}, false
 }
 
+// PluginTiers are the service tiers p's plugin says its vendor serves
+// model at (m.serviceTiers, #2514): none for a provider not a plugin's, or
+// a model it doesn't list.
+func PluginTiers(p Provider, model string) []string {
+	if !p.IsPlugin() {
+		return nil
+	}
+	pp, ok := PluginOf(p.ID)
+	if !ok {
+		return nil
+	}
+	m, _ := pluginModel(pp, model)
+	return m.ServiceTiers
+}
+
+// pluginTierOn reports whether the plugin says its vendor serves m at tier,
+// on a Chat or Responses API, where the gateway sends it as service_tier
+// (forwardTranslated); a model on another API is sent no tier.
+func pluginTierOn(provider string, m plugin.Model, tier string) bool {
+	to := pluginProtocol(provider, m)
+	return (to == Chat || to == Responses) && slices.Contains(m.ServiceTiers, tier)
+}
+
 func pluginCatalog(pp plugin.Provider) []catalog.Model {
 	out := make([]catalog.Model, 0, len(pp.Models))
 	for _, m := range pp.Models {
@@ -186,6 +209,8 @@ func pluginCatalog(pp plugin.Provider) []catalog.Model {
 			// a decision model the plugin marked counts only where it
 			// serves a decision API (pp.Decide)
 			Decides: pp.Decide && m.Decides,
+			// the tiers it says its vendor serves the model at (#2514)
+			Tiers: m.ServiceTiers,
 		}
 		// a limit under catalog.LeastWindow (512, H20 on Discord) is none:
 		// the other one, or models.dev, answers (ListedWindow)

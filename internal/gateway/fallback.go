@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"regexp"
 	"slices"
@@ -43,8 +44,8 @@ type candidate struct {
 	// ("provider/model:low"); "" for one that follows the agent or the group
 	effort string
 	// fast is set on a member the group sends in its vendor's fast mode
-	// (Group.Fast)
-	fast bool
+	// (Group.Fast); ultra on an agent's fast pick sent Ultrafast (#1954)
+	fast, ultra bool
 	// rank is its place in its provider's own list of accounts or keys,
 	// the order the provider's page shows and a drag sets (#217)
 	rank int
@@ -62,6 +63,11 @@ type candidate struct {
 	// member is in that sets one (#2246): a group in a group times its own
 	// members' first tokens, the group asked for only those that set none
 	firstToken int
+	// patience is the Patience of the innermost group of those the member
+	// is in that sets one (#2410): a group in a group waits out its own
+	// members' busy failures, the group asked for only those that set none;
+	// 0 falls back to the asked group's Waits, PatienceOff skips replan
+	patience int
 }
 
 // capHold is how an account is held at its usage cap: the cap of the
@@ -351,6 +357,8 @@ func (s *Server) plan(p provider.Provider, model string, from provider.Protocol)
 			w := weighed(c, q, weighing{}, fallback, from)
 			w.Unlisted = true
 			pl.left = append(pl.left, w)
+			pl.unlisted = append(pl.unlisted, c)
+			pl.unlistedW = append(pl.unlistedW, w)
 		}
 		return cs
 	}
@@ -405,6 +413,18 @@ func innerFirstToken(m provider.Member) int {
 	return 0
 }
 
+// innerPatience is the Patience of the innermost group m is in (m.Via,
+// the outermost first) that sets one (#2410), 0 for none: PatienceOff
+// (-1) counts as set, so an inner Off stops replan for that member.
+func innerPatience(m provider.Member) int {
+	for i := len(m.Via) - 1; i >= 0; i-- {
+		if m.Via[i].Patience != 0 {
+			return m.Via[i].Patience
+		}
+	}
+	return 0
+}
+
 // planLevel orders the models ms of g, a group depth groups down from the
 // one asked for, adding to pl's order as it goes: those set aside and
 // those unlisted it gathers for planGroup to put last.
@@ -417,6 +437,7 @@ func planLevel(g provider.Group, ms []provider.Member, depth int, from provider.
 			for i := range l {
 				l[i].effort, l[i].fast = m.Effort, m.Fast
 				l[i].firstToken = innerFirstToken(m)
+				l[i].patience = innerPatience(m)
 			}
 		}
 		pl.left = append(pl.left, barredOf(barred, m.Provider, false, from, m.Groups())...)
@@ -431,6 +452,8 @@ func planLevel(g provider.Group, ms []provider.Member, depth int, from provider.
 			w := weighed(c, m.Provider, weighing{}, false, from)
 			w.Unlisted, w.Via = true, m.Groups()
 			pl.left = append(pl.left, w)
+			pl.unlisted = append(pl.unlisted, c)
+			pl.unlistedW = append(pl.unlistedW, w)
 		}
 		return cs
 	}
@@ -466,6 +489,8 @@ func planLevel(g provider.Group, ms []provider.Member, depth int, from provider.
 				cs, sub.order = sinkOwn(m.Via[depth], cs, sub.order)
 				pl.left = append(pl.left, sub.left...)
 				pl.capped = append(pl.capped, sub.capped...)
+				pl.unlisted = append(pl.unlisted, sub.unlisted...)
+				pl.unlistedW = append(pl.unlistedW, sub.unlistedW...)
 				if len(cs) > 0 {
 					add(unit{cs: cs, order: sub.order, member: m.Path[depth]}, firstAwake(cs))
 				}
@@ -640,9 +665,32 @@ func capHeld(p, acct provider.Provider, model string, now time.Time) *capHold {
 // that could take it is held at its usage cap, as the vendor's own refusal
 // would when all are used up; the soonest one is back is the wait.
 func cappedError(model string, ws []Weighed, now time.Time) (string, time.Time) {
+	held, soonest := heldReasons(ws, now)
+	capped, noCredits := heldBy(ws)
+	switch {
+	case !noCredits:
+		return fmt.Sprintf("usage cap reached: every account that serves %q is held at the usage cap set on it in magpie — %s. magpie uses it again once that window renews; %s", model, strings.Join(held, "; "), heldAdvice(capped, noCredits)), soonest
+	case !capped:
+		return fmt.Sprintf("usage limit reached: every account that serves %q has used up its allowance and is set in magpie not to spend its credits — %s. magpie uses it again once that window renews; %s", model, strings.Join(held, "; "), heldAdvice(capped, noCredits)), soonest
+	}
+	return fmt.Sprintf("usage limit reached: every account that serves %q is held by magpie — %s. magpie uses it again once that window renews; %s", model, strings.Join(held, "; "), heldAdvice(capped, noCredits)), soonest
+}
+
+// checkpointCappedError is cappedError for a request whose native
+// compaction only the account that sealed it can read (#1099), when that
+// one is held: the other accounts that serve model weren't tried for it,
+// not because they are held too (#2517).
+func checkpointCappedError(model string, cp checkpointWriter, ws []Weighed, now time.Time) (string, time.Time) {
+	held, soonest := heldReasons(ws, now)
+	capped, noCredits := heldBy(ws)
+	return fmt.Sprintf("usage limit reached on the one account this conversation can go to — %s. The conversation was compacted natively by %s, and only that key or account can read the compaction it sealed, so magpie doesn't send it to another account that serves %q, which would refuse it; the routing mode and how conversations stay don't change that. magpie uses it again once that window renews; %s, or start a new conversation", strings.Join(held, "; "), cp.Who, model, heldAdvice(capped, noCredits)), soonest
+}
+
+// heldReasons is what holds each account of ws held at a share, and the
+// soonest one is back.
+func heldReasons(ws []Weighed, now time.Time) ([]string, time.Time) {
 	var held []string
 	var soonest time.Time
-	capped, noCredits := heldBy(ws)
 	for _, w := range ws {
 		if w.Capped == 0 {
 			continue
@@ -659,13 +707,18 @@ func cappedError(model string, ws []Weighed, now time.Time) (string, time.Time) 
 		}
 		held = append(held, s)
 	}
+	return held, soonest
+}
+
+// heldAdvice is how to go on now past what heldBy says holds.
+func heldAdvice(capped, noCredits bool) string {
 	switch {
 	case !noCredits:
-		return fmt.Sprintf("usage cap reached: every account that serves %q is held at the usage cap set on it in magpie — %s. magpie uses it again once that window renews; raise or lift the cap in magpie (Providers → the account's cap, or magpie provider account-cap)", model, strings.Join(held, "; ")), soonest
+		return "raise or lift the cap in magpie (Providers → the account's cap, or magpie provider account-cap)"
 	case !capped:
-		return fmt.Sprintf("usage limit reached: every account that serves %q has used up its allowance and is set in magpie not to spend its credits — %s. magpie uses it again once that window renews; to go on now, if an account holds credits, let it spend them (Usage → the account's Use credits, or magpie quota credits <account> on)", model, strings.Join(held, "; ")), soonest
+		return "to go on now, if an account holds credits, let it spend them (Usage → the account's Use credits, or magpie quota credits <account> on)"
 	}
-	return fmt.Sprintf("usage limit reached: every account that serves %q is held by magpie — %s. magpie uses it again once that window renews; to go on now, raise or lift a cap (Providers → the account's cap, or magpie provider account-cap) or, if an account holds credits, let it spend them (Usage → the account's Use credits, or magpie quota credits <account> on)", model, strings.Join(held, "; ")), soonest
+	return "to go on now, raise or lift a cap (Providers → the account's cap, or magpie provider account-cap) or, if an account holds credits, let it spend them (Usage → the account's Use credits, or magpie quota credits <account> on)"
 }
 
 // heldBy says what holds the accounts of ws held at a share: a usage cap
@@ -677,6 +730,18 @@ func heldBy(ws []Weighed) (capped, noCredits bool) {
 		}
 	}
 	return capped, noCredits
+}
+
+// checkpointCappedRecord is the call's record of checkpointCappedError's
+// refusal, told apart as cappedRecord's.
+func checkpointCappedRecord(ws []Weighed) string {
+	switch capped, noCredits := heldBy(ws); {
+	case !noCredits:
+		return "native compaction's account at its usage cap"
+	case !capped:
+		return "native compaction's account held: set not to spend its credits"
+	}
+	return "native compaction's account held: at its usage cap or set not to spend its credits"
 }
 
 // cappedRecord is the call's record of the same refusal as cappedError,
@@ -1074,7 +1139,9 @@ func promptRefused(status int, body []byte) bool {
 // (#350), OpenAI's "Unknown parameter", and a limit of its own on a tool's
 // JSON schema: OpenCode Go's 400 "JSON schema exceeds the maximum nesting
 // depth of 10 levels" on muse-spark-1.3-contributor for Claude Code's MCP
-// tools (#1870), which another member's model may take as they are. A
+// tools (#1870), which another member's model may take as they are; and a
+// custom tool turned away (customToolRefusal, DeepSeek's "Unsupported
+// custom tool: 'exec'", #2656) where no translation took it in. A
 // request missing what every API requires ("field required") or too long
 // for the model isn't one.
 var shapeWords = regexp.MustCompile(`(?i)failed to deserialize|unknown (item |content |input )?(type|variant|field|parameter)|unknown_parameter|unrecognized (request argument|field|parameter)|extra (inputs|fields) are not permitted|additional properties are not allowed|schema exceeds the maximum (nesting )?depth|schema[^"]{0,60}\bnesting depth\b`)
@@ -1101,7 +1168,7 @@ var unsaidWords = regexp.MustCompile(`(?i)(^|"|\\"|: )invalid request error trac
 func shapeRefused(status int, body []byte) bool {
 	// the words are matched decoded, too (#1669)
 	body = wordsOf(body)
-	return (status == 400 || status == 422) && (shapeWords.Match(body) || unsaidWords.Match(body)) &&
+	return (status == 400 || status == 422) && (shapeWords.Match(body) || unsaidWords.Match(body) || customToolRefusal.Match(body)) &&
 		!quotaWords.Match(body) && !unservedWords.Match(body) && !refusedWords.Match(body)
 }
 
@@ -1271,6 +1338,8 @@ var retryPause = time.Second
 
 // passing says whether a failure is one that may be gone a moment later,
 // and how long to wait before trying the same one again, the again'th time.
+// An upstream that answered a stream request with a whole reply
+// (didNotStream) isn't one: it fails the same every time it is asked.
 func passing(status int, header http.Header, body []byte, again int) (time.Duration, bool) {
 	wait := retryPause << again
 	if d := retryAfter(header, time.Now()); d > 0 {
@@ -1280,6 +1349,9 @@ func passing(status int, header http.Header, body []byte, again int) (time.Durat
 	case wait > longestPause:
 		return 0, false
 	case status == 408, status == 500, status == 502, status == 503, status == 504, status == 529:
+		if strings.Contains(string(body), didNotStream) {
+			return 0, false
+		}
 		return wait, again < lastRetries
 	case status == 429:
 		// a relay's 429 often says nothing of when (#503: "负载已饱和，请稍
@@ -1978,6 +2050,9 @@ type keptAlive struct {
 	// it asked; streams, whether it asked for a stream
 	told    time.Time
 	streams bool
+	// Only opted-in Claude cache reporting can defer initial keepalives.
+	// Selection releases it before process startup; expiry keeps the stream alive.
+	cacheReportUntil time.Time
 }
 
 // agentQuietMost is the longest a streaming Responses agent goes with no
@@ -2011,6 +2086,15 @@ func (h *holdWriter) keepAlive() {
 		return
 	}
 	if !a.sent {
+		if !a.cacheReportUntil.IsZero() {
+			if time.Now().Before(a.cacheReportUntil) {
+				return
+			}
+			a.cacheReportUntil = time.Time{}
+			h.header.Del("X-Magpie-Cache-Marks-Dropped")
+			h.notes.Del("X-Magpie-Cache-Marks-Dropped")
+			log.Printf("claude: cache-mark report timed out before run selection; streaming without the dropped-mark header")
+		}
 		// the try's header is whole once it has its status (WriteHeader,
 		// under mu); before, the vendor's are still being copied into it
 		// from the try's goroutine, and only magpie's notes are read
@@ -2177,7 +2261,7 @@ func (h *holdWriter) settle() {
 		// stream's headers: it can't go as that stream, so it failed, as
 		// a translated reply that didn't stream does, for the next to
 		// answer
-		h.failure, h.failMsg = http.StatusBadGateway, "did not stream: "+provider.APIError(h.held.Bytes(), "unexpected reply")
+		h.failure, h.failMsg = http.StatusBadGateway, didNotStream+": "+provider.APIError(h.held.Bytes(), "unexpected reply")
 	}
 }
 
