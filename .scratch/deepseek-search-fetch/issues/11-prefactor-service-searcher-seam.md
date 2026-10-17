@@ -4,9 +4,13 @@
 
 **Blocked by:** None (can start immediately).
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Write the seam's test first: the Kimi plan still appears as a service choice with no model, naming it still returns no model, the spent check still passes it, the dispatch still calls its service, and its rank is still manual-only. Watch it pass against the current code, then refactor behind it.
-- [ ] The five special-case sites all answer through the one seam; no Kimi-specific branching remains outside the seam and the Kimi endpoint resolver.
-- [ ] The existing Kimi tests (`TestKimiCodePlanNamedToSearch`, `TestKimiCodeSearchAddress`, `TestKimiCodePlanSearchesForItsModels`) stay green and unmodified.
-- [ ] No behavior change anywhere: search results, the picker and the ranks behave exactly as before.
+- [x] Write the seam's test first: the Kimi plan still appears as a service choice with no model, naming it still returns no model, the spent check still passes it, the dispatch still calls its service, and its rank is still manual-only. Watch it pass against the current code, then refactor behind it.
+- [x] The five special-case sites all answer through the one seam; no Kimi-specific branching remains outside the seam and the Kimi endpoint resolver.
+- [x] The existing Kimi tests (`TestKimiCodePlanNamedToSearch`, `TestKimiCodeSearchAddress`, `TestKimiCodePlanSearchesForItsModels`) stay green and unmodified.
+- [x] No behavior change anywhere: search results, the picker and the ranks behave exactly as before.
+
+## Done
+
+Merged as `b88ded51` on `deepseek-search-fetch` (seam in `search_service.go`, characterization test `TestServiceSearcherSeam`, proven non-vacuous by two deliberate breaks). All four ceiling checks green (log `logs/11.log`); wave-1 gate green under the run's amended definition (full nogui suite minus the environment-sensitive `internal/agent`, `internal/gui`, `internal/library`, whose failures reproduce identically at the base commit — `logs/base-check.log`).

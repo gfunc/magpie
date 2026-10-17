@@ -5,7 +5,7 @@ Repo: the magpie fork, integration branch `deepseek-search-fetch`. Work only in 
 ## Commands
 
 - This machine has no GTK/WebKit dev packages: the `production gtk3`-tagged build cannot compile here. Use the nogui build everywhere.
-- Full gate (orchestrator runs this; tickets do not): `CGO_ENABLED=0 go vet -tags nogui ./... && CGO_ENABLED=0 go test -tags nogui ./...`.
+- Full gate (orchestrator runs this; tickets do not): `CGO_ENABLED=0 go vet -tags nogui ./... && CGO_ENABLED=0 go test -tags nogui $(go list ./... | grep -v -E 'internal/(agent|gui|library)$')`. `internal/agent`, `internal/gui` and `internal/library` hold machine-state-dependent tests (the running LAN-shared gateway, real agent configs, HTTP_PROXY) that fail on this machine at the base commit too — evidence in `logs/base-check.log`.
 - Targeted test: `CGO_ENABLED=0 go test -tags nogui ./internal/gateway/ -run 'TestName' -count=1`.
 - GUI browser tests (only waves that touch `internal/gui/assets`): `make test-ui`.
 - Build check: `CGO_ENABLED=0 go build -tags nogui ./...`.
