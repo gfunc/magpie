@@ -381,6 +381,35 @@ on its own usage); a failure records nothing. Covered by
 [`search_pass_test.go`](../../internal/gateway/search_pass_test.go), with
 `TestRemoteMagpieSearches` left unmodified for the models.
 
+## A Remote magpie's web fetch
+
+The same keyed Remote magpie reads a page with its own `web_fetch`
+([`search_pass.go`](../../internal/gateway/search_pass.go)):
+`fetchByMagpie` forwards the `url`, `max_chars` and `offset` the tool
+received to the remote's web-search MCP server — one JSON-RPC `tools/call`
+for `web_fetch` with the provider's key and the searching mark, like the
+search pass-through — and the remote applies them on the page it reads,
+its answer text coming back as-is, parts and all. The remote's own
+downloader guards its own addresses, so the URL is not checked here.
+
+A transport failure or the timeout (`magpieFetchTimeout`, the web fetch's
+own 30 seconds; `magpieMCPCall` wraps both as a `fetchTransient`) hands
+the page to magpie's own downloader, both failing said together; the
+remote's own error — its tool error, an HTTP error, a JSON-RPC error —
+surfaces with no fallback: it is the remote's word on the page or the
+key. A successful pass-through records a zero-cost row — kind
+`web_fetch`, the remote as the provider with its key, no tokens, the
+calling gateway key and agent, and no own cost; a failure, and a
+fallback's success, record nothing. The fetch picker offers the keyed
+Remote magpies beside the keyed DeepSeek providers (`gateway.Fetchers`
+through `fetchService`); one named that is gone, off or keyless is warned
+about (`FetchUnused`) and magpie's own downloader reads. Covered by
+`TestRemoteMagpieFetchForwardsArgs`, `TestRemoteMagpieFetchFallbacks`,
+`TestRemoteMagpieFetchRow` and `TestRemoteMagpieFetchUnused` in
+[`search_pass_test.go`](../../internal/gateway/search_pass_test.go), and
+by the remote's choices in `TestFetchSelectorDefaultsOwn` in
+[`search_fetch_test.go`](../../internal/gui/search_fetch_test.go).
+
 ## Search results in translated Responses replies
 
 When a search is done for a model (`searchReply`), or a Responses provider's
@@ -653,10 +682,11 @@ Which backend reads is the Settings' fetch value (settings.Fetch, the
 "Fetch pages with" picker in the Web search section, exposed beside the
 searcher's in the search state's `fetch` and `fetchChoices`): empty, the
 magpie's own downloader as above; a keyed DeepSeek provider's id, its
-tools fetch, below. One named that is gone, off or keyless warns in the
-row (`FetchUnused`, the searcher's reasons) and magpie's own downloader
-reads in its place. The reservation against the calling key runs before
-either backend is asked.
+tools fetch, below; a keyed Remote magpie's id, its own web_fetch, at [A
+Remote magpie's web fetch](#a-remote-magpies-web-fetch). One named that
+is gone, off or keyless warns in the row (`FetchUnused`, the searcher's
+reasons) and magpie's own downloader reads in its place. The reservation
+against the calling key runs before either backend is asked.
 
 ## DeepSeek's tools fetch
 

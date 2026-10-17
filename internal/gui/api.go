@@ -439,9 +439,10 @@ type settingsJSON struct {
 	SearchEfforts   []string `json:"searchEfforts,omitempty"`
 	SearchEffortNow string   `json:"searchEffortNow,omitempty"`
 	SearchRelays    []string `json:"searchRelays,omitempty"`
-	// the "Fetch pages with" picker: the keyed DeepSeek providers that may
-	// be named (gateway.Fetchers), and why the one named isn't used
-	// (gateway.FetchUnused) — magpie's own downloader reads in its place
+	// the "Fetch pages with" picker: the keyed DeepSeek providers and keyed
+	// Remote magpies that may be named (gateway.Fetchers), and why the one
+	// named isn't used (gateway.FetchUnused) — magpie's own downloader
+	// reads in its place
 	FetchChoices []fetchChoiceJSON `json:"fetchChoices"`
 	FetchUnused  string            `json:"fetchUnused,omitempty"`
 	// the last search the one it names didn't make, since it last

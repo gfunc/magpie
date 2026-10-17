@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/yetone/magpie/internal/provider"
@@ -29,12 +30,19 @@ import (
 // they do today. A transport failure or a timeout is a failed source like
 // any searcher's; a remote tool error surfaces the text the remote wrote.
 // A successful call records a zero-cost row: the spend is the remote's,
-// on its own usage.
+// on its own usage. The same server answers the fetch pass-through: a
+// keyed Remote magpie named under "Fetch pages with" has the url,
+// max_chars and offset forwarded to its web_fetch (fetchByMagpie below).
 
 // magpieSearchRead is how much of a reply the pass-through reads: the
 // remote's answer is one tool result, and 4 MiB is past any of them. A
 // reply cut by it is no JSON any more, and fails as an unexpected reply.
 const magpieSearchRead = 4 << 20
+
+// magpieFetchTimeout is how long the remote's web_fetch has to answer —
+// the web fetch's own 30 seconds, after which magpie's own downloader
+// reads. A var so a test can shrink it.
+var magpieFetchTimeout = webFetchTimeout
 
 // remoteMagpieService is where p's key searches through its own web-search
 // MCP server, "" for a provider that isn't a keyed remote magpie: the
@@ -65,7 +73,7 @@ func (s *Server) remoteMagpieSearch(ctx context.Context, p provider.Provider, qu
 	if text == "" {
 		return "", nil, fmt.Errorf("%s %w", p.Name, errFoundNothing)
 	}
-	s.recordServiceSearch(ctx, p, p.Key, nil)
+	s.recordServiceSearch(ctx, p, p.Key, "web_search_api", nil)
 	return text, nil, nil
 }
 
@@ -73,8 +81,10 @@ func (s *Server) remoteMagpieSearch(ctx context.Context, p provider.Provider, qu
 // one JSON-RPC tools/call for tool with args, and says the text its result
 // carried. A remote tool error is the error, carrying the remote's text; a
 // transport failure, an HTTP error or a JSON-RPC error is the error alone,
-// which the caller treats as any failure of its own. The fetch pass-through
-// asks it for web_fetch the same way.
+// which the caller treats as any failure of its own — the search falls
+// through, and the fetch pass-through falls back on magpie's own
+// downloader for the transport failures and timeouts (fetchTransient) and
+// surfaces the rest.
 func (s *Server) magpieMCPCall(ctx context.Context, p provider.Provider, at, key, tool string, args map[string]any) (string, error) {
 	ctx, cancel := context.WithTimeout(s.metered(p.Via(ctx), p, ""), searchTimeout)
 	defer cancel()
@@ -96,9 +106,9 @@ func (s *Server) magpieMCPCall(ctx context.Context, p provider.Provider, at, key
 	res, err := s.client.Do(r)
 	if err != nil {
 		if ctx.Err() != nil {
-			return "", fmt.Errorf("%s: no answer in time", p.Name)
+			return "", fetchTransient{fmt.Errorf("%s: no answer in time", p.Name)}
 		}
-		return "", fmt.Errorf("%s: %w", p.Name, err)
+		return "", fetchTransient{fmt.Errorf("%s: %w", p.Name, err)}
 	}
 	defer res.Body.Close()
 	b, _ := io.ReadAll(io.LimitReader(res.Body, magpieSearchRead))
@@ -140,4 +150,33 @@ func (s *Server) magpieMCPCall(ctx context.Context, p provider.Provider, at, key
 		return "", errors.New(text)
 	}
 	return text, nil
+}
+
+// fetchByMagpie reads the page through a keyed Remote magpie's web_fetch:
+// the url, max_chars and offset the tool received forwarded whole — the
+// remote applies them on the page it reads, its own downloader guarding its
+// own addresses — and its answer text comes back as-is, parts and all. A
+// transport failure or the timeout (magpieFetchTimeout) hands the page to
+// magpie's own downloader, both failing said together; the remote's own
+// error — its tool error, an HTTP error, a JSON-RPC error — surfaces with
+// no fallback: it is the remote's word on the page or the key. A
+// successful pass-through records the zero-cost row.
+func (s *Server) fetchByMagpie(ctx context.Context, p provider.Provider, u *url.URL, a fetchArgs, limit int) (string, error) {
+	rctx, cancel := context.WithTimeout(ctx, magpieFetchTimeout)
+	defer cancel()
+	text, err := s.magpieMCPCall(rctx, p, remoteMagpieService(p), p.Key, fetchMCPTool,
+		map[string]any{"url": strings.TrimSpace(a.URL), "max_chars": a.MaxChars, "offset": a.Offset})
+	if err == nil {
+		s.recordServiceSearch(ctx, p, p.Key, "web_fetch", nil)
+		return text, nil
+	}
+	var transient fetchTransient
+	if !errors.As(err, &transient) {
+		return "", searchMCPError(err.Error())
+	}
+	said, ferr := s.fetchOwn(ctx, u, a.Offset, limit)
+	if ferr != nil {
+		return "", searchMCPError("couldn't fetch " + u.Redacted() + ": " + err.Error() + "; " + ferr.Error())
+	}
+	return said, nil
 }

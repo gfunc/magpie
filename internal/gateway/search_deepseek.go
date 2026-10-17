@@ -178,7 +178,7 @@ func (s *Server) deepSeekSearchKey(ctx context.Context, p provider.Provider, at,
 	}
 	said, hits := pagesSaid(pages)
 	cost := deepSeekSearchCost
-	s.recordServiceSearch(ctx, p, key, &cost)
+	s.recordServiceSearch(ctx, p, key, "web_search_api", &cost)
 	return said, hits, nil
 }
 

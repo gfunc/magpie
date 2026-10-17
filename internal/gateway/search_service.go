@@ -58,13 +58,14 @@ func (s *Server) serviceSearchBy(ctx context.Context, p provider.Provider, query
 	return "", nil, fmt.Errorf("%s: no search service", p.Name)
 }
 
-// recordServiceSearch records the call a keyed service search made: one row
-// for the caller's key, the provider and the key used, no tokens, the
-// service's price on OwnCost — nil for a pass-through, which costs nothing
-// here, the remote's own row carrying its spend. A failure or an empty
-// result never gets here.
-func (s *Server) recordServiceSearch(ctx context.Context, p provider.Provider, key string, cost *float64) {
-	rec := usage.Record{Time: time.Now(), Kind: "web_search_api", Provider: p.ID, Host: p.Where(),
+// recordServiceSearch records the call a keyed service made: one row for
+// the caller's key, the provider and the key used, no tokens, kind the
+// service's — web_search_api for a search, web_fetch for a fetch
+// pass-through — and the service's price on OwnCost, nil for a pass-through,
+// which costs nothing here, the remote's own row carrying its spend. A
+// failure or an empty result never gets here.
+func (s *Server) recordServiceSearch(ctx context.Context, p provider.Provider, key, kind string, cost *float64) {
+	rec := usage.Record{Time: time.Now(), Kind: kind, Provider: p.ID, Host: p.Where(),
 		ProviderKeyID: provider.KeyID(key), Status: http.StatusOK, OwnCost: cost}
 	if f := searchFor(ctx); f != nil {
 		rec.Agent = f.Agent

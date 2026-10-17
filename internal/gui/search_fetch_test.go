@@ -112,4 +112,43 @@ func TestFetchSelectorDefaultsOwn(t *testing.T) {
 	if s.FetchUnused != "" || len(s.FetchChoices) != 1 {
 		t.Fatalf("used again: %q %+v", s.FetchUnused, s.FetchChoices)
 	}
+
+	// a keyed Remote magpie is offered beside the DeepSeek provider
+	if err := provider.Save(provider.Provider{ID: "office", Name: "Office", Preset: provider.RemoteMagpiePreset,
+		Chat: "office.example/v1", Key: "sk-office"}); err != nil {
+		t.Fatal(err)
+	}
+	s = state()
+	if len(s.FetchChoices) != 2 {
+		t.Fatalf("choices with the remote: %+v", s.FetchChoices)
+	}
+	office := fetchChoiceJSON{}
+	for _, c := range s.FetchChoices {
+		if c.ID == "office" {
+			office = c
+		}
+	}
+	if office.Name != "Office" {
+		t.Fatalf("the remote's choice: %+v", s.FetchChoices)
+	}
+	set("office")
+	s = state()
+	if s.Fetch != "office" || s.FetchUnused != "" {
+		t.Fatalf("named the remote: %q %q", s.Fetch, s.FetchUnused)
+	}
+
+	// a keyless Remote magpie is not offered, and named it can't
+	if err := provider.Save(provider.Provider{ID: "nkremote", Name: "Office, no key", Preset: provider.RemoteMagpiePreset,
+		Chat: "127.0.0.1:9/v1"}); err != nil {
+		t.Fatal(err)
+	}
+	s = state()
+	if len(s.FetchChoices) != 2 {
+		t.Fatalf("a keyless remote is offered: %+v", s.FetchChoices)
+	}
+	set("nkremote")
+	s = state()
+	if s.FetchUnused != gateway.SearcherCant {
+		t.Fatalf("keyless remote: unused %q", s.FetchUnused)
+	}
 }

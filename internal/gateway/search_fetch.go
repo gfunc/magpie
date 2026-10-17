@@ -30,7 +30,9 @@ import (
 // read for at most webFetchTimeout and webFetchRead bytes; an HTML page is
 // given as Markdown-like text, other text as it is, anything else refused.
 // A long page comes in parts of max_chars characters, offset naming where
-// the next starts.
+// the next starts. The backend is the one Settings' fetch value names while
+// it can: magpie's own downloader, a keyed DeepSeek provider's tools fetch,
+// or a keyed Remote magpie's own web_fetch, whose answer comes back as-is.
 
 const fetchMCPTool = "web_fetch"
 
@@ -63,8 +65,9 @@ type fetchArgs struct {
 // fetchMCPRun reads the page a web_fetch names, held to the calling gateway
 // key's limit as a search is. The backend is the one Settings' fetch value
 // names while it can (chosenFetcher): a keyed DeepSeek provider's page
-// reader, with magpie's own downloader for the transient failures, or
-// magpie's own downloader alone when none is named or the one named can't.
+// reader, or a keyed Remote magpie's own web_fetch — each with magpie's own
+// downloader for the transient failures — or magpie's own downloader alone
+// when none is named or the one named can't.
 func (s *Server) fetchMCPRun(r *http.Request, a fetchArgs) (string, error) {
 	raw := strings.TrimSpace(a.URL)
 	if raw == "" {
@@ -92,6 +95,9 @@ func (s *Server) fetchMCPRun(r *http.Request, a fetchArgs) (string, error) {
 	// server is: the usage row says who called
 	ctx := context.WithValue(r.Context(), searchForKey{}, &CallFor{Agent: callerOf(r).agent, MCP: true})
 	if p := chosenFetcher(); p != nil {
+		if remoteMagpieService(*p) != "" {
+			return s.fetchByMagpie(ctx, *p, u, a, limit)
+		}
 		return s.fetchByDeepSeek(ctx, *p, u, raw, a.Offset, limit)
 	}
 	return s.fetchOwn(ctx, u, a.Offset, limit)

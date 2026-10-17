@@ -319,6 +319,260 @@ func TestRemoteMagpieSearchRow(t *testing.T) {
 	}
 }
 
+// nameRemoteMagpieFetcher saves a keyed remote magpie on the fake and names
+// it in the fetch selector, as a user who picked it under "Fetch pages
+// with" has it.
+func nameRemoteMagpieFetcher(t *testing.T, s *remoteMagpieSite) {
+	t.Helper()
+	saveRemoteMagpie(t, "office", s)
+	st := settings.Load()
+	st.Fetch = "office"
+	if err := settings.Save(st); err != nil {
+		t.Fatal(err)
+	}
+}
+
+// remoteFetchSaid is a remote web_fetch's answer: the page as the remote's
+// own web_fetch words it (the URL:, Title: and the part it read), the JSON
+// escapes a tool result carries.
+const remoteFetchSaid = `URL: ` + fetchPageURL + `\nTitle: Example Domain\n\n# Example Domain\n\nThis domain is for use in illustrative examples in documents.`
+
+// remoteFetchText is remoteFetchSaid as the tool result's text.
+const remoteFetchText = "URL: " + fetchPageURL + "\nTitle: Example Domain\n\n# Example Domain\n\nThis domain is for use in illustrative examples in documents."
+
+// Naming a keyed remote magpie under "Fetch pages with" forwards the url,
+// max_chars and offset the tool received to the remote's web_fetch — one
+// JSON-RPC tools/call with the provider's key and the searching mark — and
+// its answer text comes back as the tool result whole: magpie's own
+// downloader reads nothing.
+func TestRemoteMagpieFetchForwardsArgs(t *testing.T) {
+	searchSandbox(t)
+	s := newRemoteMagpieSite(t)
+	s.set("", remoteFetchSaid)
+	nameRemoteMagpieFetcher(t, s)
+	own, ownHits := ownSite(t)
+	readWithOwn(t, own)
+
+	// the picker offers each keyed remote: Fetchers is what the search
+	// state's fetchChoices is built from
+	if !slices.ContainsFunc(Fetchers(), func(p provider.Provider) bool { return p.ID == "office" }) {
+		t.Fatalf("the remote is not offered: %+v", Fetchers())
+	}
+
+	got, isErr := fetchText_(t, lanGuard(New().Handler()), fetchCall(fetchPageURL, `,"max_chars":100,"offset":5`))
+	if isErr {
+		t.Fatalf("web_fetch: %q", got)
+	}
+	if got != remoteFetchText {
+		t.Fatalf("got\n%s\nwant\n%s", got, remoteFetchText)
+	}
+	asked := s.log()
+	if len(asked) != 1 || !strings.HasPrefix(asked[0], "POST /mcp/magpie/web-search | Bearer sk-office | ") {
+		t.Fatalf("the remote magpie was asked %q", asked)
+	}
+	parts := strings.SplitN(asked[0], " | ", 5)
+	if parts[3] != "1" || !strings.HasPrefix(parts[2], "magpie/") {
+		t.Fatalf("the pass-through carried ua %q, mark %q", parts[2], parts[3])
+	}
+	var msg struct {
+		JSONRPC string `json:"jsonrpc"`
+		ID      int    `json:"id"`
+		Method  string `json:"method"`
+		Params  struct {
+			Name      string `json:"name"`
+			Arguments struct {
+				URL      string `json:"url"`
+				MaxChars int    `json:"max_chars"`
+				Offset   int    `json:"offset"`
+			} `json:"arguments"`
+		} `json:"params"`
+	}
+	if err := json.Unmarshal([]byte(parts[4]), &msg); err != nil {
+		t.Fatalf("the body wasn't JSON-RPC: %v", err)
+	}
+	if msg.JSONRPC != "2.0" || msg.ID != 1 || msg.Method != "tools/call" || msg.Params.Name != "web_fetch" ||
+		msg.Params.Arguments.URL != fetchPageURL || msg.Params.Arguments.MaxChars != 100 || msg.Params.Arguments.Offset != 5 {
+		t.Fatalf("the tools/call was %s %d %s %s %+v", msg.JSONRPC, msg.ID, msg.Method, msg.Params.Name, msg.Params.Arguments)
+	}
+	if hits := ownHits(); hits != 0 {
+		t.Fatal("magpie's own downloader read too")
+	}
+}
+
+// A remote that can't be reached, or that doesn't answer in time, hands the
+// page to magpie's own downloader; a remote tool error surfaces the text
+// the remote wrote, and magpie's own downloader is not asked in its place.
+func TestRemoteMagpieFetchFallbacks(t *testing.T) {
+	searchSandbox(t)
+	s := newRemoteMagpieSite(t)
+	s.set("", remoteFetchSaid)
+	nameRemoteMagpieFetcher(t, s)
+	own, ownHits := ownSite(t)
+	readWithOwn(t, own)
+	h := lanGuard(New().Handler())
+	page := func() string {
+		got, isErr := fetchText_(t, h, fetchCall(fetchPageURL, ""))
+		if isErr {
+			t.Fatalf("web_fetch: %q", got)
+		}
+		return got
+	}
+
+	// the remote answers: its text as-is
+	if got := page(); got != remoteFetchText {
+		t.Fatalf("the remote's answer: %q", got)
+	}
+
+	// the remote gone: a transport failure, magpie's own downloader reads
+	s.Server.Close()
+	if got := page(); !strings.Contains(got, fetchOwnSaid) {
+		t.Fatalf("a dead remote did not fall back: %q", got)
+	}
+
+	// the remote silent past the timeout (shrunk here): magpie's own
+	// downloader reads
+	fresh := newRemoteMagpieSite(t)
+	saveRemoteMagpie(t, "office", fresh)
+	fresh.set("hang", "")
+	was := magpieFetchTimeout
+	magpieFetchTimeout = 250 * time.Millisecond
+	if got := page(); !strings.Contains(got, fetchOwnSaid) {
+		t.Fatalf("a silent remote did not fall back: %q", got)
+	}
+	magpieFetchTimeout = was
+
+	// a remote tool error surfaces the text the remote wrote, and
+	// magpie's own downloader is not asked in its place
+	hits := ownHits()
+	fresh.set("toolerr", "its fetch found no page there")
+	got, isErr := fetchText_(t, h, fetchCall(fetchPageURL, ""))
+	if !isErr || !strings.Contains(got, "its fetch found no page there") {
+		t.Fatalf("a remote tool error: %v %q", isErr, got)
+	}
+	if ownHits() != hits {
+		t.Fatal("a remote tool error fell back to magpie's own downloader")
+	}
+}
+
+// A successful pass-through records one usage row — kind web_fetch, the
+// remote as the provider with its key, no tokens, the calling gateway key
+// and agent, and no cost: the remote's own row carries the spend. A failure
+// records nothing.
+func TestRemoteMagpieFetchRow(t *testing.T) {
+	searchSandbox(t)
+	s := newRemoteMagpieSite(t)
+	s.set("", remoteFetchSaid)
+	nameRemoteMagpieFetcher(t, s)
+	own, _ := ownSite(t)
+	readWithOwn(t, own)
+	keys, secrets := newCaller(t, "Laptop")
+	h := lanGuard(New().Handler())
+	call := func() mcpReply {
+		return readMCP(t, mcpPost(h, "127.0.0.1:50000", fetchCall(fetchPageURL, ""),
+			"User-Agent", "Cursor/1.7", "Authorization", "Bearer "+secrets[0]))
+	}
+	if call().Result.IsError {
+		t.Fatal("the fetch failed")
+	}
+	recs := usage.Load(time.Time{})
+	if len(recs) != 1 {
+		t.Fatalf("rows %+v", recs)
+	}
+	rec := recs[0]
+	if rec.Kind != "web_fetch" || rec.Provider != "office" || rec.ProviderKeyID != provider.KeyID("sk-office") ||
+		rec.Input != 0 || rec.Output != 0 || rec.CallerKeyID != keys[0].ID || rec.Agent != "cursor-local" || rec.OwnCost != nil {
+		t.Fatalf("row %+v", rec)
+	}
+
+	// a remote tool error records nothing
+	s.set("toolerr", "its fetch found no page there")
+	if !call().Result.IsError {
+		t.Fatal("a remote tool error answered")
+	}
+	if recs = usage.Load(time.Time{}); len(recs) != 1 {
+		t.Fatalf("rows after the failure %+v", recs)
+	}
+}
+
+// A fetch provider that is a Remote magpie is warned about and set aside
+// like a DeepSeek one when it is gone, off or keyless: FetchUnused says why
+// it isn't used, magpie's own downloader reads, and the remote is asked
+// nothing.
+func TestRemoteMagpieFetchUnused(t *testing.T) {
+	fresh(t)
+	s := newRemoteMagpieSite(t)
+	s.set("", remoteFetchSaid)
+	own, _ := ownSite(t)
+	readWithOwn(t, own)
+	saveRemoteMagpie(t, "office", s)
+	if err := provider.Save(provider.Provider{ID: "nk", Name: "Office, no key", Preset: provider.RemoteMagpiePreset,
+		Chat: "127.0.0.1:9/v1"}); err != nil {
+		t.Fatal(err)
+	}
+	h := lanGuard(New().Handler())
+	read := func() string {
+		got, isErr := fetchText_(t, h, fetchCall("http://example.com/page", ""))
+		if isErr {
+			t.Fatalf("web_fetch: %q", got)
+		}
+		return got
+	}
+	name := func(v string) {
+		st := settings.Load()
+		st.Fetch = v
+		if err := settings.Save(st); err != nil {
+			t.Fatal(err)
+		}
+	}
+	name("office")
+	if got := read(); got != remoteFetchText || len(s.log()) != 1 {
+		t.Fatalf("named: %q %q", got, s.log())
+	}
+	if FetchUnused() != "" {
+		t.Fatalf("unused %q", FetchUnused())
+	}
+	if !slices.ContainsFunc(Fetchers(), func(p provider.Provider) bool { return p.ID == "office" }) ||
+		slices.ContainsFunc(Fetchers(), func(p provider.Provider) bool { return p.ID == "nk" }) {
+		t.Fatalf("the picker's choices: %+v", Fetchers())
+	}
+	asked := len(s.log())
+
+	// off: the warning, and magpie's own downloader reads
+	if err := provider.Save(provider.Provider{ID: "office", Name: "Office", Preset: provider.RemoteMagpiePreset,
+		Chat: strings.TrimPrefix(s.URL, "http://"), Key: "sk-office", Off: true}); err != nil {
+		t.Fatal(err)
+	}
+	if FetchUnused() != SearcherOff {
+		t.Fatalf("off: unused %q", FetchUnused())
+	}
+	if got := read(); !strings.Contains(got, fetchOwnSaid) || len(s.log()) != asked {
+		t.Fatalf("off: %q %q", got, s.log())
+	}
+	if slices.ContainsFunc(Fetchers(), func(p provider.Provider) bool { return p.ID == "office" }) {
+		t.Fatalf("an off remote is offered: %+v", Fetchers())
+	}
+
+	// keyless
+	name("nk")
+	if FetchUnused() != SearcherCant {
+		t.Fatalf("keyless: unused %q", FetchUnused())
+	}
+	if got := read(); !strings.Contains(got, fetchOwnSaid) || len(s.log()) != asked {
+		t.Fatalf("keyless: %q %q", got, s.log())
+	}
+
+	// gone
+	if err := provider.Delete("nk"); err != nil {
+		t.Fatal(err)
+	}
+	if FetchUnused() != SearcherGone {
+		t.Fatalf("gone: unused %q", FetchUnused())
+	}
+	if got := read(); !strings.Contains(got, fetchOwnSaid) || len(s.log()) != asked {
+		t.Fatalf("gone: %q %q", got, s.log())
+	}
+}
+
 // A keyed remote magpie's natively-searching models keep working as
 // searchers exactly as today, beside its web search service: the list offers
 // both, the model searches through a marked request to the remote, and the

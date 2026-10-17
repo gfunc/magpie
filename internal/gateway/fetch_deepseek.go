@@ -57,12 +57,24 @@ func DeepSeekFetch(p provider.Provider) string {
 	return strings.TrimSuffix(p.Chat, "/") + "/tools/fetch"
 }
 
+// fetchService is where p reads a page as the fetch backend, "" for a
+// provider that doesn't read here: a keyed DeepSeek's tools fetch, or a
+// keyed Remote magpie's web-search MCP server, whose own web_fetch
+// answers. The fetch picker's choices, the warning and the chosen backend
+// all go by it.
+func fetchService(p provider.Provider) string {
+	if u := DeepSeekFetch(p); u != "" {
+		return u
+	}
+	return remoteMagpieService(p)
+}
+
 // Fetchers are the providers the "Fetch pages with" picker may name: the
-// keyed DeepSeek providers that are on.
+// keyed DeepSeek providers and keyed Remote magpies that are on.
 func Fetchers() []provider.Provider {
 	var out []provider.Provider
 	for _, p := range provider.All() {
-		if p.On() && DeepSeekFetch(p) != "" {
+		if p.On() && fetchService(p) != "" {
 			out = append(out, p)
 		}
 	}
@@ -71,7 +83,8 @@ func Fetchers() []provider.Provider {
 
 // FetchUnused is why the fetch provider Settings names isn't used (one of
 // the Searcher* reasons), "" when it is or none is named: gone, turned
-// off, or without a key (a keyed DeepSeek is what reads here).
+// off, or without a key (a keyed DeepSeek or a keyed Remote magpie is what
+// reads here).
 func FetchUnused() string {
 	v := strings.TrimSpace(settings.Load().Fetch)
 	if v == "" {
@@ -82,7 +95,7 @@ func FetchUnused() string {
 		return SearcherGone
 	}
 	p := provider.All()[i]
-	if DeepSeekFetch(p) == "" {
+	if fetchService(p) == "" {
 		return SearcherCant
 	}
 	if !p.On() {
@@ -92,8 +105,8 @@ func FetchUnused() string {
 }
 
 // chosenFetcher is the fetch provider Settings names while it can be used,
-// nil otherwise: none named, gone, off, or not a keyed DeepSeek. Whatever
-// the reason, magpie's own downloader reads in its place.
+// nil otherwise: none named, gone, off, or not a keyed DeepSeek or Remote
+// magpie. Whatever the reason, magpie's own downloader reads in its place.
 func chosenFetcher() *provider.Provider {
 	if FetchUnused() != "" {
 		return nil
@@ -127,9 +140,11 @@ func fetchDeepSeekURL(u *url.URL) error {
 	return nil
 }
 
-// fetchTransient is a DeepSeek fetch failure another reader — magpie's own
-// downloader here — may answer: 408, 413, 429, a 5xx, a transport error or
-// the client's timeout. Anything else surfaces as it is.
+// fetchTransient is a keyed fetch's failure another reader — magpie's own
+// downloader here — may answer: a DeepSeek 408, 413, 429 or 5xx, a Remote
+// magpie that can't be reached or that doesn't answer in time (the two
+// magpieMCPCall wraps), a transport error or the client's timeout. Anything
+// else surfaces as it is.
 type fetchTransient struct{ err error }
 
 func (e fetchTransient) Error() string { return e.err.Error() }
