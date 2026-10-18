@@ -486,3 +486,37 @@ func TestDeepSeekPassThroughUnchanged(t *testing.T) {
 		t.Fatalf("asked %q, searched %q", asked, searches)
 	}
 }
+
+// A keyed DeepSeek provider's own model is not auto-billed: its searches go
+// through the normal chain — the search APIs, the named or auto-picked
+// searcher — never through the provider's tools API, which runs only when
+// the service is named in Settings (the per-call charge it carries).
+func TestDeepSeekOwnModelSearchIsNotAutoBilled(t *testing.T) {
+	searchSandbox(t)
+	d := newDeepSeekSite(t)
+	save(t, provider.Provider{ID: "ds", Name: "DeepSeek", Preset: "deepseek", Key: "sk-ds",
+		Chat: d.URL + "/v1", Models: []string{"deepseek-chat"}})
+	var apiAsked int
+	api := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		apiAsked++
+		w.Write([]byte(`{"results":[{"title":"Go downloads","url":"https://go.dev/dl/","content":"go1.27.1 is out."}]}`))
+	}))
+	t.Cleanup(api.Close)
+	if err := provider.SetSearchAPI(provider.SearchAPI{Vendor: "tavily", Key: "tvly-x", URL: api.URL}); err != nil {
+		t.Fatal(err)
+	}
+	p, err := provider.Find("ds")
+	if err != nil {
+		t.Fatal(err)
+	}
+	said, _, err := New().webSearch(searchingOn(context.Background(), *p), "latest go")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, searches := d.log(); len(searches) != 0 {
+		t.Fatalf("the tools API was asked for the provider's own model: %q", searches)
+	}
+	if apiAsked == 0 || !strings.Contains(said, "go1.27.1") {
+		t.Fatalf("the search API didn't answer in the tools API's place: asked %d, said %q", apiAsked, said)
+	}
+}

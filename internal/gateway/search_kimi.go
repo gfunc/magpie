@@ -51,15 +51,16 @@ func canSearchFor(p provider.Provider) bool {
 
 // searchesOwn is whether p searches for its own models: by its Kimi Code
 // plan's or WorkBuddy plan's search service (#1798), or a Google sign-in's
-// own Gemini. A remote magpie's service is never one: its own models search
-// as they do today, by the models its list says it searches for itself.
+// own Gemini — a search the provider already carries. A service billed per
+// call is never one: DeepSeek's tools API, and a remote magpie's, run only
+// when named in Settings, so their own models search as they did before.
 // Never with provider search Off in Settings (#1483), which leaves the
 // search APIs alone, nor with plugins/search off.
 func searchesOwn(p provider.Provider) bool {
 	if !searchServed() || settings.Load().Searcher == "off" {
 		return false
 	}
-	return serviceSearch(p) != "" && !p.IsRemoteMagpie() || wbSearches(p) || googleAccount(p) && searcherModel(p) != ""
+	return provider.KimiCodeSearch(p) != "" || wbSearches(p) || googleAccount(p) && searcherModel(p) != ""
 }
 
 // searchingOn is ctx for the searches made for a model of p.
