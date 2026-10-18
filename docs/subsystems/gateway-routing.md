@@ -329,15 +329,20 @@ still passes its `web_search` tool through for DeepSeek to run
 (`TestDeepSeekPassThroughUnchanged`).
 
 The provider's keys are asked in turn (`KeysOn`), one request per key with
-no retry: a key the API refuses — 401, 402, 403, 429 — rests through the
-routing rest (`restAfterMarked`), so model requests pass it over too, and
-the next key on is asked; anything else (a 400's message, 408, 5xx, no
-answer in time) comes back as the failure it is, no key rested, and the
-search falls through like any searcher's. An empty result set is found
-nothing. A call that answers with pages records one usage row — kind
-`web_search_api`, the provider and the key used, no tokens, and $0.00075
-on the row's own-cost field, counted against the calling gateway key's
-limit; a failure or an empty result records nothing. Covered by
+no retry: a key the API refuses — 401, 402, 403, 429 — rests for the
+service alone (`serviceRest`: the provider's id scoped to its tools
+service, so a refusal of the tools API benches no model request — a page
+DeepSeek won't read is no word on the key's chats), and the next key on is
+asked; anything else (a 400's message, 408, 5xx, no answer in time) comes
+back as the failure it is, no key rested, and the search falls through
+like any searcher's. An empty result set is found nothing. A call that
+answers with pages records one usage row — kind `web_search_api`, the
+provider and the key used, no tokens, and $0.00075 on the row's own-cost
+field, counted against the calling gateway key's limit; a failure or an
+empty result records nothing. A DeepSeek model's own searches never come
+here unnamed: a service billed per call is never an own-searcher
+(`searchesOwn`), so they run the normal chain
+(`TestDeepSeekOwnModelSearchIsNotAutoBilled`). Covered by
 `TestDeepSeekServiceSearches`, `TestDeepSeekServiceMapsResults`,
 `TestDeepSeekServiceManualOnly`, `TestDeepSeekSearchFailures`,
 `TestDeepSeekSearchUsageRow` and `TestDeepSeekPassThroughUnchanged` in
@@ -705,18 +710,21 @@ literal loopback, private or link-local address and `localhost` — DeepSeek
 is never asked to probe an inside target, and no name is resolved here,
 DeepSeek resolving the public host.
 
-A 408, 413, 429 or 5xx, a transport error or the client's timeout (30
-seconds, `deepSeekFetchTimeout`) is a `fetchTransient`, and magpie's own
-downloader reads the page in its place, both failing said together; a 402,
-403, 404 and any other 4xx surface DeepSeek's message as it is, with no
-fallback. A successful call records one usage row — kind `web_fetch`, the
-provider and the key used, no tokens, $0.00075 on the calling key's row,
-its cost counted toward that key's limit like token spend (a zero-token
-row's cost counts since `Totals.addFrom` stopped dropping it); a failure,
-and a fallback's success, record nothing. Covered by
-`TestDeepSeekFetchReadsPage`, `TestDeepSeekFetchRefusesURLs`,
-`TestDeepSeekFetchFallbacks`, `TestDeepSeekFetchUsageRow` and
-`TestFetchProviderGoneFallsBack` in
+A key the API refuses — 401, 402, 403, 429, 432, 433 — rests for the
+service alone (`serviceRest`, as the tools search's does) while the next
+key on is asked, and every key out hands the page to magpie's own
+downloader, as a transient failure's does. A 408, 413 or 5xx, a transport
+error or the client's timeout (30 seconds, `deepSeekFetchTimeout`) is a
+`fetchTransient` of itself, and magpie's own downloader reads the page in
+its place, both failing said together; a 404, a 400 and any other 4xx
+surface DeepSeek's message as it is, with no fallback. A successful call
+records one usage row — kind `web_fetch`, the provider and the key used,
+no tokens, $0.00075 on the calling key's row, its cost counted toward that
+key's limit like token spend (a zero-token row's cost counts since
+`Totals.addFrom` stopped dropping it); a failure, and a fallback's
+success, record nothing. Covered by `TestDeepSeekFetchReadsPage`,
+`TestDeepSeekFetchRefusesURLs`, `TestDeepSeekFetchFallbacks`,
+`TestDeepSeekFetchUsageRow` and `TestFetchProviderGoneFallsBack` in
 [`fetch_deepseek_test.go`](../../internal/gateway/fetch_deepseek_test.go).
 
 A POST's body is read by `readMCPBody`, up to 1 MiB here and 32 MiB for

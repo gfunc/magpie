@@ -169,11 +169,7 @@ func (s *Server) deepSeekFetch(ctx context.Context, p provider.Provider, raw str
 	// the provider has on
 	var ready, resting []provider.KeyAccount
 	for _, k := range keys {
-		rest := p.ID
-		if len(keys) > 1 {
-			rest += "#" + provider.KeyID(k.Key)
-		}
-		if _, held := restOf(rest); held {
+		if _, held := restOf(serviceRest(p, k.Key, len(keys))); held {
 			resting = append(resting, k)
 		} else {
 			ready = append(ready, k)

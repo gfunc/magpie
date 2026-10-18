@@ -277,7 +277,16 @@ func TestDeepSeekSearchFailures(t *testing.T) {
 		_, _, err := s.webSearch(context.Background(), "latest go")
 		return err
 	}
-	unrest := func() { s.UnrestAll("ds") }
+	unrest := func() { // every rest of the provider's, the service's too
+		restingUntil.Lock()
+		defer restingUntil.Unlock()
+		for k := range restingUntil.m {
+			if strings.HasPrefix(k, "ds") {
+				delete(restingUntil.m, k)
+				delete(restingUntil.note, k)
+			}
+		}
+	}
 	tavily := func() int { return len(apis.asked) }
 
 	// empty results: found nothing, the key doesn't rest, the search
@@ -293,11 +302,12 @@ func TestDeepSeekSearchFailures(t *testing.T) {
 	if tavily() != before+1 {
 		t.Fatal("empty results did not fall through")
 	}
-	if _, ok := restOf("ds"); ok {
+	if _, ok := restOf("ds#svc"); ok {
 		t.Fatal("an empty result rested the key")
 	}
 
-	// 401/402/403/429: the key rests, the search falls through
+	// 401/402/403/429: the key rests for the service alone — the model
+	// routing's own id never does — and the search falls through
 	for _, mode := range []string{"401", "402", "403", "429"} {
 		unrest()
 		d.set(mode, "")
@@ -313,9 +323,12 @@ func TestDeepSeekSearchFailures(t *testing.T) {
 		if tavily() != before+1 {
 			t.Fatalf("%s did not fall through", mode)
 		}
-		r, ok := restOf("ds")
+		r, ok := restOf("ds#svc")
 		if !ok || r.Status != map[string]int{"401": 401, "402": 402, "403": 403, "429": 429}[mode] {
-			t.Fatalf("%s: the key did not rest: %+v", mode, r)
+			t.Fatalf("%s: the key did not rest for the service: %+v", mode, r)
+		}
+		if _, ok := restOf("ds"); ok {
+			t.Fatalf("%s: a service refusal rested the key for its models too", mode)
 		}
 	}
 
@@ -332,7 +345,7 @@ func TestDeepSeekSearchFailures(t *testing.T) {
 	if tavily() != before+1 {
 		t.Fatal("400 did not fall through")
 	}
-	if _, ok := restOf("ds"); ok {
+	if _, ok := restOf("ds#svc"); ok {
 		t.Fatal("a 400 rested the key")
 	}
 
@@ -351,7 +364,7 @@ func TestDeepSeekSearchFailures(t *testing.T) {
 		if tavily() != before+1 {
 			t.Fatalf("%s did not fall through", mode)
 		}
-		if _, ok := restOf("ds"); ok {
+		if _, ok := restOf("ds#svc"); ok {
 			t.Fatalf("%s rested the key", mode)
 		}
 	}

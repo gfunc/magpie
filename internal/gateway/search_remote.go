@@ -100,8 +100,7 @@ func searchingFrom(r *http.Request) bool {
 // its keyed remote services refuse it (search_pass.go).
 type magpieSearchKey struct{}
 
-// searchFromMagpie is whether the search ctx is for came from another
-// magpie.
+// searchFromMagpie is whether the search came from another magpie.
 func searchFromMagpie(ctx context.Context) bool {
 	v, _ := ctx.Value(magpieSearchKey{}).(bool)
 	return v

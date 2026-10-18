@@ -377,9 +377,13 @@ func TestDeepSeekFetchRotatesKeys(t *testing.T) {
 	if hits := ownHits(); hits != 0 {
 		t.Fatal("magpie's own downloader read too")
 	}
-	// the refused key rests, the way a search's refusal rests it
-	if r, ok := restOf("ds#" + provider.KeyID("sk-ds")); !ok {
+	// the refused key rests for the service alone, the way a search's
+	// refusal rests it: the key's own model requests are unaffected
+	if r, ok := restOf("ds#svc#" + provider.KeyID("sk-ds")); !ok {
 		t.Fatalf("the refused key doesn't rest: %+v", r)
+	}
+	if _, ok := restOf("ds#" + provider.KeyID("sk-ds")); ok {
+		t.Fatal("a service refusal rested the key for its models too")
 	}
 }
 

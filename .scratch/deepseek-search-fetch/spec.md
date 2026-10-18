@@ -200,3 +200,22 @@ The same two selectors also take a **Remote magpie**: each remote's `web_search`
 - The existing DeepSeek searcher entry is model-based and spends tokens, and today a DeepSeek-only setup can auto-pick it. This spec replaces it with a manual-only service; that auto-pick stops.
 - A Remote magpie answers pass-through calls with the provider's key as its gateway key; the remote must be reachable and, from another machine, shared with that key.
 - The effort's map and decision tickets live under `.scratch/deepseek-search-fetch/`.
+
+## Review Resolutions (2026-10-18)
+
+Reviewed against `main` after ticket 15; two places where code and this
+spec disagreed were settled, one each way:
+
+- **Own-models auto-pick removed** (spec stands): the first cut of
+  `searchesOwn` treated any keyed DeepSeek provider as an own-searcher,
+  auto-billing $0.00075/search for its own models with no setting naming
+  it. Reverted in d1c15c1f — a service billed per call is never an
+  own-searcher; it runs only when named in Settings.
+  `TestDeepSeekOwnModelSearchIsNotAutoBilled` pins it.
+- **Fetch 402/403 keep their fallback** (code stands): a key refusal on
+  the tools fetch rests the key and asks the next, and every key out hands
+  the page to magpie's own downloader — the spec's "surface with no
+  fallback" line was narrowed to 404/400 and other non-refusal 4xx. The
+  rest is scoped to the service (`serviceRest`, the provider's id +
+  `#svc`), so a page DeepSeek won't read benches the key for the tools
+  service alone, never for the key's own model requests.

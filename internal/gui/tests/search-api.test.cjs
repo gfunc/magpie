@@ -15,7 +15,7 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 const { test } = require("node:test");
 const { chromium, webkit } = require("playwright");
-const { watchSettingsReads, settingsDrawn } = require("./reader.cjs");
+const { watchSettingsReads, settingsDrawn, reach } = require("./reader.cjs");
 
 const assets = path.resolve(__dirname, "../assets");
 const vendors = [
@@ -112,6 +112,9 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
 
       const where = () => page.evaluate(() => [scrollX, scrollY, document.scrollingElement.scrollTop]);
       const click = async (loc) => {
+        // the rows run past the window's foot at 420: wheel the view until
+        // the control is clear in sight, then press where it lies
+        await reach(page, loc);
         const b = await loc.boundingBox();
         await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2);
       };

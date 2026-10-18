@@ -197,8 +197,10 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
       delete st.leftOut;
       await page.evaluate(() => fetch("/api/settings").then((r) => r.json()).then((s) => { prefs = s; state.settings = s; renderSettings(); }));
       await page.waitForFunction(() => document.querySelector("#searchList .searcher-left-out")?.innerText.includes("MiniMax"));
-      // the Search APIs come after it
-      assert.equal(await page.locator("#searchList .row").nth(1).evaluate((e) => e.classList.contains("search-add")), true);
+      // the page fetcher's row, then the Search APIs come after it
+      const rows = page.locator("#searchList .row");
+      assert.equal(await rows.nth(1).evaluate((e) => e.classList.contains("fetcher-row")), true);
+      assert.equal(await rows.nth(2).evaluate((e) => e.classList.contains("search-add")), true);
 
       const where = () => page.evaluate(() => [scrollX, scrollY, document.scrollingElement.scrollTop, document.querySelector("main")?.scrollTop ?? 0]);
       const click = async (loc) => {
@@ -300,6 +302,7 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
       await page.evaluate(() => savePrefs({ ...prefsKeep(prefs), noStats: true }));
       assert.equal(posted.at(-1).searcher, "off");
       await page.reload();
+      await settingsDrawn(page); // rows found are the ones that stay (#1659)
       await row.waitFor();
       await row.scrollIntoViewIfNeeded();
       assert.equal(await row.locator("button.searcher-pick").innerText(), w.off);

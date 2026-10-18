@@ -68,11 +68,7 @@ func (s *Server) deepSeekSearch(ctx context.Context, p provider.Provider, query 
 	// the provider has on
 	var ready, resting []provider.KeyAccount
 	for _, k := range keys {
-		rest := p.ID
-		if len(keys) > 1 {
-			rest += "#" + provider.KeyID(k.Key)
-		}
-		if _, held := restOf(rest); held {
+		if _, held := restOf(serviceRest(p, k.Key, len(keys))); held {
 			resting = append(resting, k)
 		} else {
 			ready = append(ready, k)
@@ -189,13 +185,23 @@ func (s *Server) deepSeekSearchKey(ctx context.Context, p provider.Provider, at,
 	return said, hits, nil
 }
 
-// restSearchKey rests the key p was asked with, as a refusal of any other
-// request of its would: routing passes it over until the rest is up.
-func (s *Server) restSearchKey(p provider.Provider, status int, header http.Header, body []byte) {
-	keys := p.KeysOn()
-	rest := p.ID
-	if len(keys) > 1 {
-		rest += "#" + provider.KeyID(p.Key)
+// serviceRest is what a keyed service's refusal rests under: the
+// provider's id scoped to its tools service, per key when several are on —
+// never the bare id a model's own request rests by, so a page DeepSeek
+// won't read, or the tools API's own limit, benches the key for the
+// service alone. A key a model's request finds refused rests by that
+// request's own path.
+func serviceRest(p provider.Provider, key string, keys int) string {
+	rest := p.ID + "#svc"
+	if keys > 1 {
+		rest += "#" + provider.KeyID(key)
 	}
-	s.restAfterMarked(candidate{p: p, rest: rest}, status, header, body, false)
+	return rest
+}
+
+// restSearchKey rests the key p was asked with for the service alone
+// (serviceRest): the service's other keys are asked first until the rest
+// is up, and the key's own model requests are unaffected.
+func (s *Server) restSearchKey(p provider.Provider, status int, header http.Header, body []byte) {
+	s.restAfterMarked(candidate{p: p, rest: serviceRest(p, p.Key, len(p.KeysOn()))}, status, header, body, false)
 }

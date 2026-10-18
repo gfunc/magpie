@@ -158,6 +158,26 @@ func TestSummarizeTimesFirstTokens(t *testing.T) {
 	}
 }
 
+// A per-request tools call (a web_search_api, a web_fetch) spends no
+// tokens: its own cost still counts in the totals, a zero-token row that
+// carries none adds none, and a token row is priced as before.
+func TestTotalsCountAZeroTokenRowsOwnCost(t *testing.T) {
+	cost := 0.00075
+	var tt Totals
+	tt.add(Record{Kind: "web_fetch", Status: 200, OwnCost: &cost}, nil)
+	if tt.Cost != cost {
+		t.Fatalf("a zero-token row's own cost dropped: %+v", tt)
+	}
+	tt.add(Record{Kind: "web_search_api", Status: 200}, nil)
+	if tt.Cost != cost {
+		t.Fatalf("a zero-token row with no own cost added cost: %+v", tt)
+	}
+	tt.add(Record{Input: 100, Status: 200}, nil)
+	if tt.Unpriced != 1 || tt.Cost != cost {
+		t.Fatalf("a token row: %+v", tt)
+	}
+}
+
 // A reply that came in one burst at its end tells no speed (#731): the
 // reporter's Gemini turn, one write tool call of 8264 tokens whose first
 // content came 1 ms before the end, read 8,264,000 tok/s and lifted the
