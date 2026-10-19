@@ -28,6 +28,7 @@ import (
 	"regexp"
 	"slices"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/yetone/magpie/internal/catalog"
@@ -351,7 +352,50 @@ func Groups() []Group {
 	return groupsIn(providerEntries())
 }
 
+// groupsIn is the groups among entries (Groups), built once while a
+// request holds the catalog: a request looked its group up by building
+// every group again, matching each pattern and finding the automatic
+// groups over every model (FindGroup, then the groups' entries). Each
+// caller gets a copy of its own to change.
 func groupsIn(entries []Entry) []Group {
+	return cloneGroups(heldFrom("groups", entries, buildGroupsIn))
+}
+
+// cloneGroups is gs with nothing shared with it: no slice, map or pointer
+// of a group or its rules.
+func cloneGroups(gs []Group) []Group {
+	if gs == nil {
+		return nil
+	}
+	out := make([]Group, len(gs))
+	for i, g := range gs {
+		g.Members, g.Match, g.Matched = slices.Clone(g.Members), slices.Clone(g.Match), slices.Clone(g.Matched)
+		g.Off, g.Levels, g.Fast = slices.Clone(g.Off), slices.Clone(g.Levels), slices.Clone(g.Fast)
+		g.Weights = maps.Clone(g.Weights)
+		if g.Rules != nil {
+			rs := make([]Rule, len(g.Rules))
+			for j, r := range g.Rules {
+				r.Agents, r.Folders, r.ExceptFolders = slices.Clone(r.Agents), slices.Clone(r.Folders), slices.Clone(r.ExceptFolders)
+				if r.Time != nil {
+					t := *r.Time
+					t.Days = slices.Clone(t.Days)
+					r.Time = &t
+				}
+				rs[j] = r
+			}
+			g.Rules = rs
+		}
+		out[i] = g
+	}
+	return out
+}
+
+// groupsBuilt counts buildGroupsIn, for the test that a held request
+// builds the groups once.
+var groupsBuilt atomic.Int64
+
+func buildGroupsIn(entries []Entry) []Group {
+	groupsBuilt.Add(1)
 	f := heldOf("file", load)
 	var out []Group
 	hidden := map[string]bool{}
@@ -868,10 +912,34 @@ func membersOff(entries []Entry, all []Group, g Group, off func(pid, model strin
 // every member fixed, the group offers the levels they are fixed at, so
 // that an agent still asks it to reason. A group that names its own
 // levels (Group.Levels) offers those, and so does a group in it for its
-// models.
+// models. Held while a request holds the catalog (heldFrom).
 func groupEntries(entries []Entry) []Entry {
+	return heldFrom("group entries", entries, buildGroupEntries)
+}
+
+// entryOf is where in entries the last entry of provider pid's model is,
+// -1 when none is.
+type entryOf func(pid, model string) int
+
+// entriesBy is entryOf for entries, looked up in a map built once rather
+// than by a pass over every entry for each member of each group.
+func entriesBy(entries []Entry) entryOf {
+	at := make(map[[2]string]int, len(entries))
+	for i := range entries {
+		at[[2]string{entries[i].Provider.ID, entries[i].Model}] = i
+	}
+	return func(pid, model string) int {
+		if i, ok := at[[2]string{pid, model}]; ok {
+			return i
+		}
+		return -1
+	}
+}
+
+func buildGroupEntries(entries []Entry) []Entry {
 	var out []Entry
 	all := groupsIn(entries)
+	find := entriesBy(entries)
 	for _, g := range all {
 		if g.Hidden || g.Disabled {
 			continue
@@ -899,11 +967,10 @@ func groupEntries(entries []Entry) []Entry {
 			images, thinks, ctx, output := false, false, 0, 0
 			var imageInput *bool
 			unknown, reasonless := false, false
-			for _, x := range entries {
-				if x.Provider.ID == m.Provider.ID && x.Model == m.Model {
-					efforts, images, thinks, ctx, output, imageInput = x.Efforts, x.Images, x.Reasoning, x.Context, x.Output, x.ImageInput
-					unknown, reasonless = levelsUnknown(x), x.Reasonless
-				}
+			if j := find(m.Provider.ID, m.Model); j >= 0 {
+				x := &entries[j]
+				efforts, images, thinks, ctx, output, imageInput = x.Efforts, x.Images, x.Reasoning, x.Context, x.Output, x.ImageInput
+				unknown, reasonless = levelsUnknown(*x), x.Reasonless
 			}
 			// it reasons when a member does: the gateway sends the
 			// effort to the members that take it, and a member known not
@@ -1011,8 +1078,13 @@ func groupEntries(entries []Entry) []Entry {
 		ruledEntry(&e, g.Live(), ms, entries)
 		if g.Context > 0 {
 			e.Context, e.WindowSet = g.Context, true
-		} else if smallest, typed := smallestWindow(entries, ms); g.Context == ContextSmallest && smallest > 0 {
-			e.Context, e.WindowSet = smallest, typed
+		} else if g.Context == ContextSmallest {
+			// only for a group that follows its smallest member: run for
+			// every group, it was another pass over the catalog for each
+			// member of each (8f4d091c6)
+			if smallest, typed := smallestWindowBy(entries, find, ms); smallest > 0 {
+				e.Context, e.WindowSet = smallest, typed
+			}
 		}
 		e.Family = g.Family
 		out = append(out, e)
@@ -1029,12 +1101,14 @@ func groupEntries(entries []Entry) []Entry {
 // group set to 500K itself wasn't). A tie counts as typed: the window is
 // the user's either way.
 func smallestWindow(entries []Entry, ms []Member) (n int, typed bool) {
+	return smallestWindowBy(entries, entriesBy(entries), ms)
+}
+
+func smallestWindowBy(entries []Entry, find entryOf, ms []Member) (n int, typed bool) {
 	for _, m := range ms {
 		ctx, set := 0, false
-		for _, x := range entries {
-			if x.Provider.ID == m.Provider.ID && x.Model == m.Model {
-				ctx, set = x.Context, x.WindowSet
-			}
+		if j := find(m.Provider.ID, m.Model); j >= 0 {
+			ctx, set = entries[j].Context, entries[j].WindowSet
 		}
 		switch {
 		case ctx <= 0:

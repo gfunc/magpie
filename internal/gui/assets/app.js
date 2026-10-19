@@ -421,7 +421,7 @@ function renderAgents() {
     // a small model with none to pick (Snow CLI's, on a profile of the
     // user's own)
     // nor Aside's account with one account only (#1499)
-    const none = (f) => (f.key === "effort" || f.key === "ultracode" || f.label === "subagents" || f.label === SUB_EFFORT || f.label === SUB_MODEL || f.label === MEMORIES || f.label === "sign-in" || f.key === "small" || asideAccount(a, f)) && !f.options.length && !f.value;
+    const none = (f) => (f.key === "effort" || f.key === "ultracode" || f.label === "subagents" || f.label === SUB_EFFORT || f.label === SUB_MODEL || f.label === AUTO_MODE || f.label === MEMORIES || f.label === "sign-in" || f.key === "small" || asideAccount(a, f)) && !f.options.length && !f.value;
     const shownFields = a.fields.filter((f) => !grouped(a, f) && !none(f));
     const tiers = tierMenu(a);
     if (tiers) shownFields.push(tiers);
@@ -618,9 +618,10 @@ function renderAgents() {
     // picks among magpie's models itself
     const sw = connectable(a) ? connectSwitch(a) : null;
     if (kind) {
-      // Claude Code's tiers and subagents have rows of their own when opened
+      // Claude Code's tiers, subagents and auto mode have rows of their own
+      // when opened
       if (a.id === "claude") {
-        for (const f of a.fields.filter((f) => TIERS.includes(f.label) || f.label === "subagents")) extras.querySelector(`[data-key="${CSS.escape(f.key)}"]`)?.remove();
+        for (const f of a.fields.filter((f) => TIERS.includes(f.label) || f.label === "subagents" || f.label === AUTO_MODE)) extras.querySelector(`[data-key="${CSS.escape(f.key)}"]`)?.remove();
         extras.querySelector('[data-key="tiers"]')?.remove();
       }
       row.append(agentHandle(a, row, inFold), who);
@@ -1905,6 +1906,9 @@ function connectPanel(a, { fields, fieldBtn }) {
     });
     const sub = a.fields.find((f) => f.label === "subagents" && (f.options.length || f.value));
     if (sub) rows.push(line(el("span", "ag-tier", t("Subagents")), fieldBtn(sub, "ag-pick")));
+    // the model its auto mode classifier runs on; unset, Claude Code's own
+    const auto = a.fields.find((f) => f.label === AUTO_MODE && (f.options.length || f.value));
+    if (auto) rows.push(line(el("span", "ag-tier", t("Auto mode")), fieldBtn(auto, "ag-pick"), el("span", "ag-hint", t("the model that checks each action in auto mode"))));
     if (rows.length) kv(t("Tiers"), ...rows);
     const main = a.fields.find((f) => f.key === "model");
     const hasSub = main?.options.some((o) => (o.ref || "").startsWith("claude/"));
@@ -3675,9 +3679,14 @@ const SUB_MODEL = "subagent model";
 // the model: the lead may name another, and GPT-6.1-Sol's spawned GPT-6-Astra
 // (willz on Discord). So it says the lead picks, and points at the subagent
 // model square, which holds every subagent to one.
+// Claude Code's auto mode square: the model its client-side auto mode
+// classifier runs on (CLAUDE_CODE_AUTO_MODE_MODEL); unset, Claude Code's own
+// pick, not the model's
+const AUTO_MODE = "auto mode";
+const AUTO_MODE_UNSET = "Claude Code's own pick";
 const leadPicks = (a, f) => f.label === "subagents" && a.id.split("@wsl:")[0] === "codex";
 const LEAD_PICKS = "Codex's lead may name another model for a subagent; set the subagent model to hold every subagent to one";
-const extra = (f) => f.key === "tiers" || FOLLOWS_MODEL.includes(f.label) || f.label === "sign-in" || f.key === "ultracode" || f.label === SUB_EFFORT || f.label === SUB_MODEL || f.label === MEMORIES;
+const extra = (f) => f.key === "tiers" || FOLLOWS_MODEL.includes(f.label) || f.label === "sign-in" || f.key === "ultracode" || f.label === SUB_EFFORT || f.label === SUB_MODEL || f.label === AUTO_MODE || f.label === MEMORIES;
 const EXTRA_GLYPH = {
   subagents: "M4.5 2.75v10.5M4.5 9.25c0-2.2 1.6-3.75 3.9-3.75h3.35M9.9 3.6l1.9 1.9-1.9 1.9",
   // a feather for omp's smol role, an hourglass for its slow one
@@ -3690,6 +3699,8 @@ const EXTRA_GLYPH = {
   [SUB_EFFORT]: "M3.25 2.75v10.5M3.25 9.25c0-2.2 1.6-3.75 3.9-3.75h.6M9.25 13.25v-2M11.5 13.25v-4M13.75 13.25v-6",
   // the subagents' branch, ending on a pin: their model, set by magpie
   [SUB_MODEL]: "M4 2.75v10.5M4 9.25c0-2.2 1.6-3.75 3.9-3.75h1.1M11.75 3.25a2.25 2.25 0 1 1 0 4.5 2.25 2.25 0 0 1 0-4.5zM11.75 7.75v4",
+  // a shield with a tick: the auto mode classifier, which lets an action through
+  [AUTO_MODE]: "M8 2.25 3.25 4v3.75c0 2.9 2 5 4.75 6 2.75-1 4.75-3.1 4.75-6V4zM5.75 8l1.6 1.6 2.9-3",
   // a notebook: Codex's memories
   [MEMORIES]: "M4.25 2.75h7.5v10.5h-7.5zM6.25 2.75v10.5M8.25 5.75h1.75M8.25 8h1.75",
 };
@@ -3703,7 +3714,7 @@ function extraField(a, f) {
   b.append(svg(EXTRA_GLYPH[f.label] || EXTRA_GLYPH.tiers, 13, 1.5));
   const opt = optionFor(f, f.value);
   b.title = f.label === SUB_EFFORT ? subEffortTitle(a, f, opt) : f.menu ? menuTitle(f)
-    : t("{label}: {value}", { label: f.label === MEMORIES ? t("Codex memories model") : t(f.label), value: t(opt?.label || f.value || (f.label === MEMORIES ? MEMORIES_DEFAULT : f.label === SUB_MODEL ? "the model the lead asks for" : leadPicks(a, f) ? "the lead's pick, else same as model" : "same as model")) }) + (opt?.note && !FOLLOWS_MODEL.includes(f.label) ? "\n" + t(opt.note) : "") + (leadPicks(a, f) ? "\n" + t(LEAD_PICKS) : "");
+    : t("{label}: {value}", { label: f.label === MEMORIES ? t("Codex memories model") : t(f.label), value: t(opt?.label || f.value || (f.label === MEMORIES ? MEMORIES_DEFAULT : f.label === SUB_MODEL ? "the model the lead asks for" : f.label === AUTO_MODE ? AUTO_MODE_UNSET : leadPicks(a, f) ? "the lead's pick, else same as model" : "same as model")) }) + (opt?.note && !FOLLOWS_MODEL.includes(f.label) ? "\n" + t(opt.note) : "") + (leadPicks(a, f) ? "\n" + t(LEAD_PICKS) : "");
   b.setAttribute("aria-label", b.title);
   b.dataset.key = f.key;
   b.onclick = (ev) => openPicker(a, f, b, ev);
@@ -4557,6 +4568,7 @@ function openPicker(agent, field, anchor, ev, only) {
       : PICKS_ITSELF.includes(agent.id) && field.key === "model" ? "clears the default model; {agent} picks one on its own"
       : field.label === MEMORIES ? MEMORIES_DEFAULT
       : field.label === SUB_MODEL ? "each subagent on the model {agent}'s lead asks for"
+      : field.label === AUTO_MODE ? "the model {agent} picks for its auto mode classifier"
       : ompAgent(agent) && OMP_OWN_PICK.includes(field.label) ? OMP_UNSET[field.label]
       : asideAccount(agent, field) ? "the account active in {agent}"
       : "what {agent} ships with";
@@ -4568,7 +4580,7 @@ function openPicker(agent, field, anchor, ev, only) {
     const at = options.findIndex((o) => !o.reset);
     options.splice(at < 0 ? options.length : at, 0, { value: "\0disconnect", label: t("Disconnect from magpie"), note: t("put back what {agent} had before magpie", { agent: agent.name }), svg: UNPLUG, reset: true, run: () => askDisconnect(agent) });
   }
-  const modelPicker = ["model", "small", "large", MEMORIES, SUB_MODEL, "executor", "planner", ...ROLE_MODELS].includes(field.label) && !only;
+  const modelPicker = ["model", "small", "large", MEMORIES, SUB_MODEL, AUTO_MODE, "executor", "planner", ...ROLE_MODELS].includes(field.label) && !only;
   pick = { agent, field, options, groups, anchor, cursor: 0, free: !only && !field.menu, modelPicker, effortPicker, groupFilter: "all" };
   anchor.classList.add("open");
   const pop = $("#pop");
@@ -7235,13 +7247,19 @@ async function openPlugins(q) {
 }
 
 // pluginSignIn: a plugin's provider signed in to as every subscription is,
-// in the Providers add sheet
-async function pluginSignIn(id) {
+// in the Providers add sheet. Its sign-in is drawn at the sheet's foot,
+// under every tile: the click that asked for it, on the Plugins page, takes
+// the reader there, with room around it for what the sign-in asks next.
+async function pluginSignIn(id, e) {
+  const go = scrollOnPurpose(e, 3000);
   if (!await show("providers")) return;
   closeModal();
   adding = true; editing = null; draft = null; presetQuery = "";
   renderProviders();
   startSignIn(id);
+  if (!go) return;
+  $("#addSheet .signing")?.scrollIntoView({ block: "center" });
+  arrived($("#view-providers"));
 }
 
 // openProvider: a provider opened in the Providers tab
@@ -11842,7 +11860,7 @@ async function followSignIn(id) {
     if (signing?.id !== id) continue;
     if (st.state === "waiting" || st.state === "installing") {
       // the CLI it needed is in: now the vendor's page can open
-      if (signing.state === "installing" && st.state === "waiting" && st.url) {
+      if (signing.state === "installing" && st.state === "waiting" && st.url && !st.opened) {
         api("open", { url: st.url }).catch((e) => {
           if (signing?.id === id) { signing = { ...signing, openError: e.message }; renderProviders(); }
         });
@@ -11927,7 +11945,8 @@ async function startPluginSignIn(sub, method, inputs = {}, o = {}) {
     if (o.user) body.user = o.user;
     if (o.proxy != null) body.proxy = o.proxy;
     signing = { ...(await api("plugin-signin", body)), ...keep };
-    if (web && signing.url) api("open", { url: signing.url });
+    // opened: the plugin's own CLI opened the page already (Grok Build's)
+    if (web && signing.url && !signing.opened) api("open", { url: signing.url });
     renderProviders();
     followSignIn(signing.id);
   } catch (e) {
@@ -13120,6 +13139,8 @@ function balanceError(err) {
   if (/takes the API key, not the access token/.test(err)) return t("The Balance URL …/api/usage/token takes the API key, not the access token — set it to …/api/user/self in the provider's settings");
   if (/takes the API key, not the login token/.test(err)) return t("The Balance URL …/v1/usage takes the API key, not the login token — set it to …/api/v1/user/profile in the provider's settings");
   if (/New-Api-User/i.test(err)) return t("Add the header New-Api-User = your user ID (shown in the site's personal settings) to the provider's Headers");
+  // errOpenCodeNoBalance: not a reading that failed
+  if (/^OpenCode tells no API key its balance/.test(err)) return t("OpenCode doesn't tell an API key its balance — see Zen's credits in the OpenCode console, Overview → Credits");
   return "";
 }
 
@@ -17793,12 +17814,13 @@ function quotaWindows(sub) {
     e.title = sub.error;
     // read again from here too: a failed reading is the one most wanted
     e.prepend(quotaRefresh(sub));
-    // a plan that needs the access key the provider hasn't: the way to
-    // give it, one click away (#1821)
-    if (sub.needsAccessKey && sub.provider) {
-      const go = el("button", "quota-fix", t("Open settings"));
+    // one click away: the access key a plan needs (#1821), or the
+    // vendor's page for a balance it tells no key (seeAt, Zen's console)
+    const key = sub.needsAccessKey && sub.provider;
+    if (key || sub.seeAt) {
+      const go = el("button", "quota-fix", t(key ? "Open settings" : "Open the console ↗"));
       go.type = "button";
-      go.onclick = (ev) => { ev.stopPropagation(); openProvider(sub.provider); };
+      go.onclick = (ev) => { ev.stopPropagation(); key ? openProvider(sub.provider) : api("open", { url: sub.seeAt }).catch(() => {}); };
       e.append(" ", go);
     }
     return e;
@@ -22273,6 +22295,13 @@ function scrollOnPurpose(e, ms = 1000) {
   readerScrolls(ms);
   return true;
 }
+// arrived: a scroll asked for is done. Where it left v is where the reader
+// is now, and what redraws after it (a load come in, which WebKit lets pull
+// the view up while it is drawn) is put back there, not taken as theirs.
+function arrived(v) {
+  readerLeaves(v);
+  purposeUntil = performance.now();
+}
 const SCROLL_KEYS = new Set(["PageUp", "PageDown", "Home", "End", "ArrowUp", "ArrowDown", " "]);
 // Enter/Space can move focus to another field (opening a form, or validation).
 // Reveal that field only when the keyboard action moved it out of sight.
@@ -23417,7 +23446,18 @@ if (mode === "window") {
   setTimeout(() => { sideGwRead.due = true; sideGwRead(); }, 1500);
 }
 
-document.addEventListener("visibilitychange", () => { if (!document.hidden) { load(true); wag(); } });
+// loadBack: a window shown again hears visibilitychange and focus together;
+// one read for both. A read asked over a second ago gets one more after it.
+function loadBack() {
+  const f = loadBack.flight;
+  if (f && performance.now() - f.at < 1000) return f.done;
+  if (f) return (f.next ||= f.done.then(() => loadBack()));
+  const flight = { at: performance.now() };
+  flight.done = load(true).finally(() => { if (loadBack.flight === flight) loadBack.flight = null; });
+  loadBack.flight = flight;
+  return flight.done;
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden) { loadBack(); wag(); } });
 // an agent's config can be rewritten, or the agent run round magpie, while the
 // window is up: ask what drifted now and then, and redraw only on a change —
 // never under an open menu
@@ -23467,7 +23507,7 @@ setInterval(async () => {
   ro.observe($("#usageCost"));
   new MutationObserver(later).observe(head, { childList: true, subtree: true, characterData: true });
 }
-window.addEventListener("focus", () => load(true));
+window.addEventListener("focus", () => loadBack());
 setInterval(renderUpdateBadge, 15 * 60 * 1000); // a window left open still hears of a new version
 // renderPluginDot puts a dot on Plugins while a plugin's update waits for
 // the reader (someone else's plugin, or one pinned; the community's update

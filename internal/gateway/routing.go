@@ -221,6 +221,10 @@ const (
 	// failOverflow: the conversation is too long for the member's model
 	// (#700) — another member, with room for it, is asked, and nobody rests
 	failOverflow = "overflow"
+	// failRoom: the window held the prompt but not the reply asked for
+	// with it — the same one is asked again for the reply the window has
+	// left, and nobody rests
+	failRoom = "room"
 	// failSlow: the member hadn't begun its reply when its group's
 	// FirstToken ran out, nothing of it sent — the next is asked, and
 	// nobody rests, as a long prompt is slow anywhere
@@ -297,14 +301,14 @@ func failure(status int, body []byte) string {
 		// Kimi's "exceeded model token limit" is the conversation's
 		// length, not the plan's
 		return failOther
-	case status == 402 && usedUpWords.Match(body) && !creditWords.Match(body) && !strings.Contains(string(body), "insufficient_quota"):
+	case status == 402 && usedUpWords.Match(body) && !creditWords.Match(body) && !bytes.Contains(body, []byte("insufficient_quota")):
 		// a 402 that says a usage limit and nothing of money is out of
 		// quota, not of credit: Factory's "You've reached your weekly
 		// standard usage limit (resets in …). Switch to Droid Core …" is
 		// Standard's pool, which counts some models only, and read as the
 		// account out of credit it rested Droid Core with it (#1979)
 		return failQuota
-	case status == 402, creditWords.Match(body) && (status != 429 || brokeWords.Match(body)) || strings.Contains(string(body), "insufficient_quota"):
+	case status == 402, creditWords.Match(body) && (status != 429 || brokeWords.Match(body)) || bytes.Contains(body, []byte("insufficient_quota")):
 		return failCredit
 	case status == 429 && resetsWhen.Match(body):
 		// out until the time it names, in whichever language it said so:
