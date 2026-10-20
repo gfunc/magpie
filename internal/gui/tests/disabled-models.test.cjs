@@ -112,7 +112,9 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
       // Enable takes one off, the rest kept
       const en = fable.locator("button", { hasText: w.enable });
       // wheeled down to it as a reader does: the row *opus* adds, under
-      // Replies' rows, puts it past the window's foot at 420 in German
+      // Replies' rows, puts it past the window's foot at 420 in German, and
+      // under it at 1100 in Chinese with Image generation timeout drawn
+      // above: reach wheels until nothing is over it
       await reach(page, en);
       const eb = await en.boundingBox();
       const at = await page.evaluate(() => [scrollX, scrollY, document.scrollingElement.scrollTop]);

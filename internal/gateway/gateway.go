@@ -190,7 +190,7 @@ func claudeTierStandIn(r *http.Request, agent, asked string) string {
 // session that started before it was switched off still asks for the model
 // its agent was then on, and the agent has been moved since (#200).
 func unserved(asked string) bool {
-	if asked == "" || strings.HasPrefix(asked, provider.GroupPrefix) {
+	if asked == "" || provider.IsGroupRef(asked) {
 		return false
 	}
 	if _, ok := provider.GroupFor(asked); ok {
@@ -242,6 +242,11 @@ func URL() string {
 // not magpie serve, which has none. Set by the gui.
 var Window bool
 
+// Serves says how this process was started (app, tray, web, serve or tui):
+// the Routing page of another magpie on this computer, which shows this
+// one's routing, names it (#2606). Set by the cli.
+var Serves = "app"
+
 // Running reports whether a gateway answers at the address.
 func Running() bool {
 	running, _ := Serving()
@@ -262,6 +267,8 @@ type Served struct {
 	Running bool   // a magpie gateway answers
 	Window  bool   // its routing can be watched in its window (#110)
 	Version string // its version; "" from one that doesn't say
+	Pid     int    // its process id; 0 from one that doesn't say
+	Serves  string // how it was started: app, tray, web, serve or tui; "" from one that doesn't say
 }
 
 // ServedBy asks the address which magpie answers there. Another magpie can
@@ -282,11 +289,13 @@ func ServedBy() Served {
 		Name    string `json:"name"`
 		Version string `json:"version"`
 		Window  bool   `json:"window"`
+		Pid     int    `json:"pid"`
+		Serves  string `json:"serves"`
 	}
 	if decodeJSON(b, &info) != nil || info.Name != "magpie" {
 		return Served{Running: bytes.Contains(b, []byte(`"magpie"`)), Window: bytes.Contains(b, []byte(`"window":true`))}
 	}
-	return Served{Running: true, Window: info.Window, Version: info.Version}
+	return Served{Running: true, Window: info.Window, Version: info.Version, Pid: info.Pid, Serves: info.Serves}
 }
 
 // Taken reports whether anything accepts connections at the gateway's
@@ -629,6 +638,11 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("GET /api/hello", func(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 200, map[string]any{"name": "magpie", "version": Version})
 	})
+	// the Ollama API's model routes, for a client that takes a custom
+	// endpoint only as an Ollama server (ollama.go)
+	mux.HandleFunc("GET /api/version", s.ollamaVersion)
+	mux.HandleFunc("GET /api/tags", s.ollamaTags)
+	mux.HandleFunc("POST /api/show", s.ollamaShow)
 	mux.HandleFunc("GET /v1/magpie/quotas", s.quotas)
 	mux.HandleFunc("GET /v1/magpie/usage", s.usageSummary)
 	mux.HandleFunc("GET /v1/magpie/usage/requests", s.usageRequests)
@@ -637,6 +651,7 @@ func (s *Server) Handler() http.Handler {
 	mux.HandleFunc("GET "+provider.RemoteCardsPath, s.quotaCards)
 	mux.HandleFunc("POST "+provider.RemoteRefreshPath, s.quotaCardsRefresh)
 	mux.HandleFunc("GET /v1/magpie/route", s.sessionRoute)
+	mux.HandleFunc("GET /v1/magpie/trace", s.gatewayTrace)
 	mux.HandleFunc("GET /v1/magpie/concurrency", s.concurrency)
 	mux.HandleFunc("GET /v1/magpie/limit", s.keyLimit)
 	// a heap profile of this process, for magpie heap (loopback only)
@@ -709,8 +724,14 @@ func responsesOverHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) info(w http.ResponseWriter, r *http.Request) {
-	writeJSON(w, 200, map[string]any{"name": "magpie", "version": Version, "models": len(provider.Catalog()), "window": Window,
-		"apis": []string{"/v1/chat/completions", "/v1/responses", "/v1/messages", "/v1/systemone", "/v1beta/models/{model}:generateContent", "/v1/images/generations", "/v1/images/edits", "/v1/videos", "/v1/embeddings", "/v1/rerank", "/v1/audio/transcriptions", "/v1/audio/translations", "/api.json", "/v1/magpie/quotas", "/v1/magpie/quotas/history", "/v1/magpie/usage", "/v1/magpie/usage/requests", "/v1/magpie/route", SearchMCPPath, VisionMCPPath, ToolsMCPPath}})
+	out := map[string]any{"name": "magpie", "version": Version, "models": len(provider.Catalog()), "window": Window,
+		"apis": []string{"/v1/chat/completions", "/v1/responses", "/v1/messages", "/v1/systemone", "/v1beta/models/{model}:generateContent", "/v1/images/generations", "/v1/images/edits", "/v1/videos", "/v1/embeddings", "/v1/rerank", "/v1/audio/transcriptions", "/v1/audio/translations", "/api.json", "/v1/magpie/quotas", "/v1/magpie/quotas/history", "/v1/magpie/usage", "/v1/magpie/usage/requests", "/v1/magpie/route", "/v1/magpie/trace", SearchMCPPath, VisionMCPPath, ToolsMCPPath}}
+	// which process serves, for another magpie on this computer to name it
+	// on its Routing page (#2606); not told to another machine
+	if local(r) {
+		out["pid"], out["serves"] = os.Getpid(), Serves
+	}
+	writeJSON(w, 200, out)
 }
 
 // quotas is what is left of every subscription, plan and key magpie has,
@@ -1121,7 +1142,7 @@ func (s *Server) model(w http.ResponseWriter, r *http.Request) {
 	id := unprefixed(r.PathValue("id"))
 	shown := keyAllowed(r, provider.Catalog())
 	for _, e := range shown {
-		if e.ID == id {
+		if e.ID == id || e.Group != "" && provider.SameRef(e.ID, id) {
 			if agentOf(r) == ScienceID {
 				// by the alias it asked by, which it keeps what it reads
 				// under
@@ -1957,6 +1978,11 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 		}
 	} else {
 		cands, pl = s.plan(p, model, from)
+		if handedOnOf(r) != nil {
+			// Codex's own sign-in, asked as often as it is asked: only
+			// the fallbacks are left (codexFallBack)
+			cands, pl = fallbacksOnly(cands, pl, p.ID, model)
+		}
 		if provider.IsFastPick(agent, p.ID+"/"+model) {
 			// the agent's pick of it is sent in its vendor's fast mode
 			// (#954), as a group's member may be; its fallbacks, other
@@ -2254,9 +2280,14 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 	// the key or subscription account the last try went to (#557)
 	providerKeyID, providerKeyName, providerAccount := "", "", ""
 	var other *Try                 // the first failure that wasn't an allowance run out
+	var forbade []forbidden        // the plain 403s rested so far (forbiddenAlike)
 	autoReset := resetFirst != nil // a Codex or Claude reset looked at, once a request
 	// what the tries' held streams sent the agent ahead of a reply (#751)
 	kept := &keptAlive{proto: from, told: start}
+	if k := handedOnOf(r); k != nil {
+		// Codex's own sign-in waited for first, with Codex kept alive
+		kept = k
+	}
 	var sentMs int64 // ms from the request to its answering try going to the vendor
 	// of it, magpie's own, the tries that failed first and the wait for a
 	// slot (usage.Record.Own, Retried, Queued: #1532)
@@ -3095,12 +3126,22 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 		// had cost 616 tries, and the accounts their allowances. Another
 		// vendor left in the group is asked, once
 		protected := !hw.passing && !hw.refused && protectionRefused(hw.code(), hw.errBody())
-		if protected {
+		// Command Code's Zero Data Retention setting refused the model
+		// (plugins #246): every account of the provider is sent the same
+		// header, so none of them is asked the model again, and nobody
+		// rests — it answers as soon as the switch is off. Another member,
+		// its other models among them, is asked
+		zdr := !hw.passing && !hw.refused && hw.code() >= 400 && hw.header.Get(zdrHeader) != ""
+		if protected || zdr {
 			if other == nil {
 				other = &Try{Status: call.Status, Error: call.Error}
 			}
 			try.Fail = failOther
-			if left := elsewhere(cands[i+1:], c); len(left) > 0 {
+			left := elsewhere(cands[i+1:], c)
+			if zdr {
+				left = notMates(cands[i+1:], c)
+			}
+			if len(left) > 0 {
 				try.Fail = failShape
 				s.trace.update(tr, func(t *Route) { t.Tries[len(t.Tries)-1] = try })
 				skipped = append(skipped, c.label()+": "+call.Error)
@@ -3110,6 +3151,8 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 			cands = cands[:i+1]
 			last = true
 		}
+		// nor is it asked again after a moment
+		protected = protected || zdr
 		if wait, ok := passing(hw.code(), hw.header, hw.errBody(), again); ok && !protected && !last && hw.failed() && spentAfter(cands[i+1:]) {
 			// the others left are out of their allowance (Discord, waroy: a
 			// Codex account run out, Grok busy a moment): this one is the
@@ -3170,13 +3213,47 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 			matesLast(cands[i+1:], c)
 			continue
 		}
+		plain403 := hw.failed() && !hw.refused && plainForbidden(c, hw.code(), hw.errBody())
+		if alike, others := forbiddenAlike(forbade, c); plain403 && len(alike) > 0 {
+			// a mate refused this request with a plain 403 too: the
+			// request is what is refused, not each account (plugins#243).
+			// Neither rests, the mate's rest taken back, and its other
+			// mates are asked last, as for a prompt turned away
+			for _, f := range alike {
+				unforbid(f)
+			}
+			forbade = others // each taken back once
+			try.Fail = failOther
+			s.trace.update(tr, func(t *Route) {
+				for _, f := range alike {
+					if f.try >= 0 && f.try < len(t.Tries) {
+						t.Tries[f.try].Rest = nil
+					}
+				}
+				if !last {
+					t.Tries[len(t.Tries)-1] = try
+				}
+			})
+			if !last {
+				if other == nil {
+					other = &Try{Status: call.Status, Error: call.Error}
+				}
+				skipped = append(skipped, c.label()+": "+call.Error)
+				matesLast(cands[i+1:], c)
+				continue
+			}
+		}
 		if !last && hw.failed() {
 			if f := failure(hw.code(), hw.errBody()); other == nil && f != failQuota && f != failCredit {
 				other = &Try{Status: call.Status, Error: call.Error}
 			}
 			rest := s.restAfterMarked(c, hw.code(), hw.header, hw.errBody(), hw.sharedPool)
 			try.Fail, try.Rest = rest.Why, &rest
-			s.trace.update(tr, func(t *Route) { t.Tries[len(t.Tries)-1] = try })
+			at := -1
+			s.trace.update(tr, func(t *Route) { t.Tries[len(t.Tries)-1], at = try, len(t.Tries)-1 })
+			if plain403 {
+				forbade = append(forbade, forbidden{c: c, rest: rest, try: at})
+			}
 			skipped = append(skipped, c.label()+": "+call.Error)
 			if waitsOf(c.patience, patienceFallback) > 0 && !hw.turnedAway && busy(hw.code(), hw.errBody()) {
 				busyNow = noteBusy(busyNow, c, hw.header)
@@ -4584,8 +4661,17 @@ func (s *Server) passthrough(w http.ResponseWriter, r *http.Request, p provider.
 	if proto == provider.Responses {
 		phases = &phaseTidy{sse: sse}
 	}
-	// out is what a filter let through, through phases
+	// each item keeps the id it was added with (itemids.go): Copilot gives
+	// it another in every event
+	var ids *idTidy
+	if proto == provider.Responses && sse {
+		ids = &idTidy{}
+	}
+	// out is what a filter let through, through ids and phases
 	out := func(b []byte) []byte {
+		if ids != nil {
+			b = ids.write(b)
+		}
 		if phases != nil {
 			return phases.write(b)
 		}
@@ -4639,6 +4725,9 @@ func (s *Server) passthrough(w http.ResponseWriter, r *http.Request, p provider.
 			}
 			if sigs != nil {
 				out = sigs.write(out)
+			}
+			if ids != nil {
+				out = ids.write(out)
 			}
 			if phases != nil {
 				out = phases.write(out)
@@ -4701,6 +4790,13 @@ func (s *Server) passthrough(w http.ResponseWriter, r *http.Request, p provider.
 	}
 	if sigs != nil {
 		write(out(sigs.flush()))
+	}
+	if ids != nil {
+		b := ids.flush()
+		if phases != nil {
+			b = phases.write(b)
+		}
+		write(b)
 	}
 	if phases != nil {
 		write(phases.flush())
@@ -6098,7 +6194,9 @@ func validateModel(model string) (string, error) {
 		// otherwise reads as Claude Opus 4 (provider.ClaudeSpelled)
 		return real, nil
 	}
-	return unflat(model), nil
+	// a found group's auto/<model> as group/auto-<slug>, the one id its
+	// key limits, routing, stats and usage rows know it by
+	return provider.CanonicalRef(unflat(model)), nil
 }
 
 // unflat is the catalog id a flat one stands for (provider.Unflat): MiniMax
