@@ -16,6 +16,7 @@ package agent
 
 import (
 	"encoding/json"
+	"fmt"
 	"path/filepath"
 	"slices"
 	"strconv"
@@ -257,7 +258,7 @@ func kimiIn(at place) *Agent {
 		t, err := kimiModelTableForKey(path, k)
 		return err == nil && t != nil
 	}
-	return atomic(&Agent{
+	a := &Agent{
 		ID: "kimi", Name: "Kimi Code", Icon: "kimi", Aliases: []string{"kimi-code", "kimi-cli"}, Spelled: prefixed,
 		UA:  []string{"kimicli"},
 		Bin: "kimi", Dir: dir, Path: path,
@@ -325,7 +326,27 @@ func kimiIn(at place) *Agent {
 				return append(kimiOwnOptions(path, cur["model"]), viaMagpie("kimi", magpieID+"/")...)
 			},
 		}},
-	}, path)
+	}
+	if !legacy && !at.cold {
+		levels := []string{"low", "medium", "high", "xhigh", "max"}
+		a.Fields = append(a.Fields, Field{
+			Key: "effort", Label: "thinking",
+			Get: func() string { t, _ := edit.GetTOMLTable(path, "thinking"); return t["effort"] },
+			Set: func(v string) error {
+				if v == "" {
+					return edit.DelTOMLKey(path, "thinking", "effort")
+				}
+				if !slices.Contains(levels, v) {
+					return fmt.Errorf("%q is not one of Kimi Code's thinking levels", v)
+				}
+				return edit.SetTOMLKey(path, "thinking", "effort", v)
+			},
+			Options: func(map[string]string) []Option {
+				return append([]Option{{Note: "default"}}, static(levels...)...)
+			},
+		})
+	}
+	return atomic(a, path)
 }
 
 // kimiOwnOptions are the models of the user's own in Kimi's config: its

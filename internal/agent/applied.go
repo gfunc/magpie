@@ -66,8 +66,12 @@ func appliedOf(id string) applied {
 	return appliedLoad()[id]
 }
 
-// record keeps what a field reads after magpie set it; a field put back to
-// the agent's default is magpie's no longer.
+func effortKey(key string) bool {
+	return key == "effort" || strings.HasSuffix(key, "_effort") || strings.HasSuffix(key, "_thinking")
+}
+
+// record keeps what a field reads after magpie set it. An explicit effort
+// default is kept too, so Disconnect can restore the pre-connect choice.
 func record(id, key, v string) {
 	appliedMu.Lock()
 	defer appliedMu.Unlock()
@@ -76,7 +80,7 @@ func record(id, key, v string) {
 	if a.Fields == nil {
 		a.Fields = map[string]string{}
 	}
-	if v == "" {
+	if v == "" && !effortKey(key) {
 		delete(a.Fields, key)
 	} else {
 		a.Fields[key] = v
@@ -441,9 +445,9 @@ func (a *Agent) Pick(key, v string) error {
 		}
 		return a.Apply(key, value)
 	}
-	if f := a.Field(key); f != nil && !a.Wired() {
+	if f := a.Field(key); f != nil && !effortKey(f.Key) && !a.Wired() {
 		vals := a.Values()
-		vals[key] = v
+		vals[f.Key] = v
 		if v == magpieID || magpieValue(a, *f, v, vals) {
 			if _, err := a.connect(); err != nil {
 				return err
@@ -754,13 +758,15 @@ func (a *Agent) Disconnect() error {
 			return fmt.Errorf("%s: %w", f.Label, err)
 		}
 	}
-	// a field its own Set left empty goes back to what it was on before
-	// Connect (Goose's own provider and model)
+	// a field cleared by Disconnect goes back to what it was on before
+	// Connect (Goose's own provider and model); an external removal stays.
 	var was map[string]string
 	json.Unmarshal([]byte(unstash(a.ID+".connect.was")), &was)
 	after := a.Values()
 	for _, f := range a.Fields {
-		if w := was[f.Key]; w != "" && after[f.Key] == "" && w != magpieID && !magpieValue(a, f, w, was) {
+		pick, recorded := rec.Fields[f.Key]
+		reset := recorded && effortKey(f.Key) && pick == "" && before[f.Key] == ""
+		if w := was[f.Key]; w != "" && (before[f.Key] != "" || reset) && after[f.Key] == "" && w != magpieID && !magpieValue(a, f, w, was) {
 			if err := f.Set(w); err != nil {
 				return fmt.Errorf("%s: %w", f.Label, err)
 			}
