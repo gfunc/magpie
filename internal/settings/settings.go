@@ -71,7 +71,13 @@ type Settings struct {
 	// environment and then the system, "direct" uses none, anything else
 	// is the proxy (http://, https:// or socks5://; host:port means http).
 	Proxy string `json:"proxy,omitempty"`
-	OTel  OTel   `json:"otel,omitempty"`
+	// ProxyCustom is the last proxy of the user's own Proxy held, kept
+	// while Proxy is "" or "direct" so that choosing Custom again in
+	// Settings brings back the address and login typed (Zane on Discord).
+	// Save sets it from Proxy, and it is stored as Proxy is. This
+	// computer's own (KeepOwn), as Proxy is.
+	ProxyCustom string `json:"proxyCustom,omitempty"`
+	OTel        OTel   `json:"otel,omitempty"`
 	// GitHubToken is a GitHub token the library's requests to GitHub's
 	// API carry, raising its rate limit from 60 requests an hour to 5,000.
 	// It is a secret: the Settings page is told only a masked one, and a
@@ -96,7 +102,10 @@ type Settings struct {
 	RedactPersonal bool            `json:"redactPersonal,omitempty"`
 	RedactKinds    map[string]bool `json:"redactKinds,omitempty"`
 	RedactWords    []string        `json:"redactWords,omitempty"`
-	RedactRules    []redact.Rule   `json:"redactRules,omitempty"`
+	// RedactWordsAnyCase matches RedactWords in any case (ZoeCats on
+	// Discord); off, the default, a word is matched as written.
+	RedactWordsAnyCase bool          `json:"redactWordsAnyCase,omitempty"`
+	RedactRules        []redact.Rule `json:"redactRules,omitempty"`
 	// RedactActions is what is done with a value of a kind (redact.Hit's
 	// Kind: API_KEY, EMAIL, a rule's own…) other than masking it, where
 	// the user chose: redact.Warn sends it as written and records it,
@@ -1025,6 +1034,7 @@ func (s *Settings) KeepOwn(cur Settings) {
 	s.GatewayConversations = cur.GatewayConversations
 	s.UIFont, s.CodeFont = cur.UIFont, cur.CodeFont
 	s.Window, s.Proxy, s.Port, s.Dock, s.DockWindow, s.Lightweight = cur.Window, cur.Proxy, cur.Port, cur.Dock, cur.DockWindow, cur.Lightweight
+	s.ProxyCustom = cur.ProxyCustom
 	s.WindowMaximised, s.KeepAwake, s.KeepAwakeDisplay = cur.WindowMaximised, cur.KeepAwake, cur.KeepAwakeDisplay
 	s.TrayUsages, s.TrayUsage, s.TrayUsageEvery, s.TrayNoLogos, s.TrayNoBird, s.TrayPace, s.TrayNoCost = cur.TrayUsages, cur.TrayUsage, cur.TrayUsageEvery, cur.TrayNoLogos, cur.TrayNoBird, cur.TrayPace, cur.TrayNoCost
 	s.GatewayMode = cur.GatewayMode
@@ -1415,6 +1425,9 @@ func save(s Settings, recording bool) error {
 	s.Proxy = strings.TrimSpace(s.Proxy)
 	if err := CheckProxy(s.Proxy); err != nil {
 		return err
+	}
+	if s.Proxy != "" && s.Proxy != "direct" {
+		s.ProxyCustom = s.Proxy
 	}
 	s.Vision = strings.TrimSpace(s.Vision)
 	if s.Vision != "" && s.Vision != "off" && !strings.Contains(s.Vision, "/") {

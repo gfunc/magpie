@@ -36,7 +36,10 @@ type Options struct {
 	Secrets  bool     // API keys, private keys, tokens, passwords
 	Personal bool     // emails, phone numbers, ID and bank card numbers
 	Words    []string // the user's own: names, codenames, hosts
-	Rules    []Rule   // the user's own rules, masked with the secrets
+	// WordsAnyCase matches Words in any case: Nightjar masks NIGHTJAR and
+	// nightjar too. Off, a word is matched as written.
+	WordsAnyCase bool
+	Rules        []Rule // the user's own rules, masked with the secrets
 	// Kinds turns each of the Categories of personal data on or off by its
 	// id, where the user chose; one not in it is as its Category.On says.
 	// None of them is masked while Personal is off.
@@ -458,6 +461,20 @@ func Hint(kind, v string) (head string, n int) {
 	return string(r[:k]), n
 }
 
+// anyCases are the patterns that find a user's word in any case, by word.
+var anyCases sync.Map
+
+// anyCase finds w as written but in any case (Unicode's simple folding, so
+// a word whose case changes its length in bytes is still found whole).
+func anyCase(w string) *regexp.Regexp {
+	if re, ok := anyCases.Load(w); ok {
+		return re.(*regexp.Regexp)
+	}
+	re := regexp.MustCompile(`(?i)` + regexp.QuoteMeta(w))
+	anyCases.Store(w, re)
+	return re
+}
+
 // Mask swaps what o covers in s for placeholders, and says how many.
 func Mask(s string, o Options) (string, int) {
 	return mask(s, withModel(o, []string{s}), placeholder)
@@ -479,6 +496,12 @@ func mask(s string, o Options, put func(kind, v string) string) (string, int) {
 	var found []span
 	for _, w := range o.Words {
 		if w = strings.TrimSpace(w); len(w) < 2 {
+			continue
+		}
+		if o.WordsAnyCase {
+			for _, m := range anyCase(w).FindAllStringIndex(s, -1) {
+				found = append(found, span{m[0], m[1], "TERM", ByWord})
+			}
 			continue
 		}
 		for i := 0; ; {
@@ -562,7 +585,31 @@ func mask(s string, o Options, put func(kind, v string) string) (string, int) {
 	// kind it has always had
 	found = append(found, modelSpans(s, o)...)
 	found = append(found, knownSpans(s, o)...)
-	return apply(s, found, put, o)
+	return apply(s, noDecimals(s, noIDs(s, found)), put, o)
+}
+
+// noDecimals is found without what is a piece of a decimal number of s:
+// digits right after the point of 5.13800138000, or right before the
+// point of 13800138000.5. A number is judged whole, and the fraction of
+// a height, a price or a coordinate is not a phone or a card number
+// because its digits happen to check (willz on Discord). Only personal
+// data's kinds, whoever found them (a rule, the model, a value known
+// before): a secret is masked wherever it is, and what the user chose
+// (their words, their rules) stays theirs.
+func noDecimals(s string, found []span) []span {
+	return slices.DeleteFunc(found, func(f span) bool {
+		_, personal := kindCats[f.kind]
+		return personal && f.by != ByWord && f.by != ByYours && inDecimal(s, f.start, f.end)
+	})
+}
+
+// inDecimal says s[a:b] starts with a digit that is a decimal's fraction
+// (a digit and a point before it) or ends with a digit that is its whole
+// part (a point and a digit after it).
+func inDecimal(s string, a, b int) bool {
+	isDigit := func(i int) bool { return i >= 0 && i < len(s) && s[i] >= '0' && s[i] <= '9' }
+	return isDigit(a) && a >= 2 && s[a-1] == '.' && isDigit(a-2) ||
+		isDigit(b-1) && b+1 < len(s) && s[b] == '.' && isDigit(b+1)
 }
 
 // by is the finder r is, for Hit.By.

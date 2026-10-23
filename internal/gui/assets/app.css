@@ -124,6 +124,17 @@ body {
   -webkit-user-select: none;
   cursor: default;
 }
+/* What the window shows can be selected and copied: what a request and
+   its vendor said, a conversation, an error, a hint, a value in a detail
+   (Outvi V on Discord: a bug report needs the text). Its controls can't,
+   as in a Mac app (HIG): buttons, tabs, menus, grips, labels. Both at no
+   specificity, so a view's own rule (a list being sorted, a blurred value)
+   still decides; a field typed into stays a field. An account's or a key's
+   name is text, though a click renames it (`.acc .rename`). */
+:where(p, pre, code, kbd, samp, dd, td, .hint, .note, .why, .err, .error, [class*="-err "], [class$="-err"], [class*="-error"], .empty-state, .sess-talk, .rt-log, .rt-steps, .rt-time) { user-select: text; -webkit-user-select: text; }
+:where(button, label, summary, select, nav, menu, [role="tab"], [role="menu"], [role="menuitem"], [role="option"], [role="switch"], [draggable="true"], .pop, .seg, .opt, .grip),
+:where(button, label, summary, select, nav, menu, [role="tab"], [role="menu"], [role="menuitem"], [role="option"], [role="switch"], [draggable="true"], .pop, .seg, .opt, .grip) * { user-select: none; -webkit-user-select: none; }
+:where(input, textarea, [contenteditable="true"], [contenteditable=""]) { user-select: text; -webkit-user-select: text; }
 /* The tray panel sits on a frosted NSVisualEffectView, so its own paint is thin. */
 body.panel { --panel-tint: color-mix(in srgb, var(--bg) 93%, transparent); background: var(--panel-tint); border-radius: 12px; }
 /* on the Mac the panel's colour is painted under the page, where it keeps up
@@ -544,6 +555,9 @@ body.panel .list { border: 0; border-radius: 10px; box-shadow: var(--card-edge);
 .row { display: flex; align-items: center; gap: 9px; min-height: 40px; padding: 5px 9px 5px 11px; }
 body.window .row { min-height: 48px; padding: 7px 12px 7px 14px; gap: 12px; }
 .row + .row, .editor + .row, .row + .editor { border-top: 1px solid var(--line-2); }
+/* Settings' agent-pref link box sits between two rows, empty but for a search:
+   the row after it, and its own first row, still get their line (the owner, 10-22) */
+#agentPrefLinks + .row, .row + #agentPrefLinks > .row:first-child { border-top: 1px solid var(--line-2); }
 .row .ic { width: 18px; height: 18px; }
 body.window .row .ic { width: 22px; height: 22px; }
 .row .name { font-weight: 500; letter-spacing: -.005em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
@@ -797,7 +811,7 @@ body.window .field.solo { grid-column: auto; }
 .field .v { min-width: 0; flex: 0 1 auto; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; font-weight: 500; }
 .field .chev { color: var(--faint); display: inline-flex; margin-left: auto; padding-left: 1px; }
 .field:hover .chev, .field.open .chev { color: var(--muted); }
-.field.flash, .subscription-card.flash, .pq-card.flash { animation: flash 1.2s ease-out; }
+.field.flash, .subscription-card.flash, .pq-card.flash, .row.pref.flash { animation: flash 1.2s ease-out; }
 @keyframes flash { 0%, 35% { box-shadow: inset 0 0 0 1px var(--green); background: var(--green-soft); } 100% {} }
 
 /* ---- usage ---------------------------------------------------------------- */
@@ -2457,7 +2471,7 @@ body.window .ag-sk-icon { width: 22px; height: 22px; border-radius: 6px; }
 .accts > .keys-none + .acc, .accts > .keys-rest + .acc { border-top: 1px solid var(--line-2); }
 .accts > .keys-none, .accts > .keys-rest { padding: 8px 11px; font-size: 12px; border-top: 1px solid var(--line-2); }
 
-.acc .rename { font: inherit; font-weight: 500; color: inherit; background: none; border: 0; padding: 0; cursor: text; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acc .rename { font: inherit; font-weight: 500; color: inherit; background: none; border: 0; padding: 0; cursor: text; user-select: text; -webkit-user-select: text; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .acc .rename:hover { text-decoration: underline dotted var(--faint); text-underline-offset: 3px; }
 .acc .dot.tick { padding: 0; border: 0; background: none; cursor: default; transition: background .15s, box-shadow .15s; }
 .acc .dot.tick:hover { box-shadow: inset 0 0 0 1.5px var(--fg); }
@@ -3114,6 +3128,12 @@ body.window .ag-sk-icon { width: 22px; height: 22px; border-radius: 6px; }
 /* how the agents' lists will call them, and the setting that says so (#868) */
 .msuffix { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 2px 8px 4px; font-size: 12px; }
 .msuffix .hint { font-size: 11px; color: var(--faint); overflow-wrap: anywhere; }
+.msuffix .where { font-size: 11px; color: var(--faint); overflow-wrap: anywhere; }
+/* a provider's Names & levels: what the lists show, where that is set, and
+   the way there, a line each: the list is laid out again a scrollbar's width
+   narrower after a change, and a shared line wrapped then, which moved the
+   list (provider-levels-scroll) */
+.suffix-said .hint, .suffix-said .where { flex-basis: 100%; }
 .msuffix .no-names { flex-basis: 100%; font-size: 11px; color: var(--faint); overflow-wrap: anywhere; }
 .mname { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
 .mname .mwho { display: flex; align-items: center; gap: 8px; flex: 1 1 220px; min-width: 0; }
@@ -3260,7 +3280,6 @@ body:not(.side-nav) #view-settings .set-head.stuck::before { box-shadow: 0 1px 0
 .mo-meter i { display: block; height: 100%; background: color-mix(in srgb, var(--fg) 40%, transparent); transform-origin: left; }
 .mo-row.model .mo-meter i { background: var(--c6); }
 .mo-dotc { flex: none; width: 7px; height: 7px; border-radius: 50%; }
-.mo-spark { flex: none; display: inline-flex; justify-self: center; color: var(--c6); }
 .mo-flow { display: grid; grid-template-columns: minmax(0, 200px) minmax(96px, 1fr) minmax(0, 200px); max-width: 760px; margin: 0 auto; }
 .mo-col { display: flex; flex-direction: column; justify-content: center; gap: 4px; min-width: 0; }
 .mo-node { display: flex; align-items: center; gap: 7px; height: 30px; min-width: 0; padding: 0 9px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--fg); font: inherit; font-size: 12px; cursor: default; }
@@ -3401,7 +3420,10 @@ body:not(.side-nav) #view-settings .set-head.stuck::before { box-shadow: 0 1px 0
 /* a built-in page a plugin's page replaces steps aside in the sidebar */
 #nav button[data-replaced] { display: none !important; }
 img.nav-ic { border-radius: 3px; object-fit: contain; }
-.row.pref { min-height: 50px; padding: 8px 12px 8px 14px; gap: 14px; }
+/* one space above and below every row's content, a row with a line under its
+   name too: the window's 7px for every row made those read cramped beside the
+   one-line rows, which min-height centred (the owner, 10-22) */
+.row.pref, body.window .row.pref { min-height: 48px; padding: 12px 12px 12px 14px; gap: 14px; }
 .row.pref .who { flex: 1 1 auto; }
 .row.pref .sub { margin-top: 2px; color: var(--fg-2); }
 .row.pref.font-row { flex-wrap: wrap; gap: 8px 14px; }
@@ -3429,7 +3451,7 @@ img.nav-ic { border-radius: 3px; object-fit: contain; }
 #otelList .otel-stacked .segs { margin-left: 0; max-width: 100%; flex-wrap: wrap; }
 #otelList .otel-env { padding: 12px 14px; border-top: 1px solid var(--line-2); font-size: 11.5px; color: var(--muted); }
 
-.session-terminal-select, .pref-pick { max-width: min(230px, 45%); height: 29px; color: var(--fg); }
+.session-terminal-select, .pref-pick { max-width: min(230px, 45%); height: 26px; color: var(--fg); }
 .session-terminal-select:focus-visible, .pref-pick:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .row.pref .segs { flex: none; margin-left: auto; }
 .proxy-segs { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; margin-left: auto; min-width: 0; max-width: 100%; }
@@ -4230,6 +4252,8 @@ body.window .row + .row.agent.conn > .who { min-height: 41px; } /* the line abov
 .ag-tier { width: 70px; flex: none; font-size: 12px; color: var(--fg-2); }
 .ag-vl .field.ag-pick { width: 220px; justify-content: flex-start; }
 .ag-vl .field.ag-eff { flex: none; }
+/* the subagents' effort, while they are on Claude Code's pick: Default, dimmed, as a macOS control that can't be used yet */
+.ag-vl .field.ag-eff:disabled, .ag-vl .field.ag-eff:disabled:hover { background: var(--pill); opacity: .5; cursor: default; }
 .ag-vl .field.ag-pick .v { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; }
 .ag-exp .extras-cell { justify-content: flex-start; }
 .ag-chip { display: inline-flex; align-items: center; gap: 5px; height: 22px; padding: 0 8px; border-radius: 6px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line); font-size: 12px; color: var(--fg-2); }
