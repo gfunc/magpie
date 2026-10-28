@@ -35,8 +35,13 @@ func TestAPIJSONServesNativeBuckets(t *testing.T) {
 	if err := provider.SaveGroup(provider.Group{ID: "daily", Name: "Daily", Members: []string{"gx/m-any"}}); err != nil {
 		t.Fatal(err)
 	}
+	wantPrice := catalog.Price{Input: 3, Output: 12, CacheRead: 0.3, CacheWrite: 3.75}
+	if err := provider.SetModelPrice("gx/m-any", &wantPrice); err != nil {
+		t.Fatal(err)
+	}
 
 	req := httptest.NewRequest("GET", "/api.json", nil)
+	req.RemoteAddr = "127.0.0.1:12345" // a local reader sees known prices
 	rec := httptest.NewRecorder()
 	New().Handler().ServeHTTP(rec, req)
 	if rec.Code != 200 {
@@ -104,6 +109,9 @@ func TestAPIJSONServesNativeBuckets(t *testing.T) {
 		t.Errorf("group daily: id %v, want the bare id its key has", m["id"])
 	} else if m["name"] != "Daily · routing group" {
 		t.Errorf("group daily: name %v, want the labelled one", m["name"])
+	}
+	if cost, ok := group["daily"]["cost"].(map[string]any); !ok || cost["input"] != 3.0 || cost["output"] != 12.0 || cost["cache_read"] != 0.3 || cost["cache_write"] != 3.75 {
+		t.Errorf("group daily: cost %v, want the members' shared manual price", group["daily"]["cost"])
 	}
 	if m := openai["gx/m-any"]; m != nil && m["name"] != "Model Any · GX" {
 		t.Errorf("gx/m-any: name %v, want the labelled one", m["name"])

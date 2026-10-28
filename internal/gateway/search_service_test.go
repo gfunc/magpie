@@ -58,11 +58,15 @@ func TestServiceSearcherSeam(t *testing.T) {
 
 	// the spent check passes it whatever model is named, while a plain
 	// provider's key out of its allowance is held
+	restingUntil.Lock()
 	for _, id := range []string{"kimi", "oai"} {
 		restingUntil.m[id] = time.Now().Add(time.Hour)
 		restingUntil.note[id] = Rest{Why: failQuota}
 	}
+	restingUntil.Unlock()
 	t.Cleanup(func() {
+		restingUntil.Lock()
+		defer restingUntil.Unlock()
 		for _, id := range []string{"kimi", "oai"} {
 			delete(restingUntil.m, id)
 			delete(restingUntil.note, id)

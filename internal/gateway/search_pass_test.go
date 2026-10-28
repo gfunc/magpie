@@ -412,6 +412,28 @@ func TestRemoteMagpieFetchForwardsArgs(t *testing.T) {
 	}
 }
 
+// A fetch another magpie already forwarded is read here, not sent to the
+// remote named in Settings: two magpies that name each other cannot loop.
+func TestRemoteMagpieFetchMarkedReadsHere(t *testing.T) {
+	searchSandbox(t)
+	s := newRemoteMagpieSite(t)
+	s.set("", remoteFetchSaid)
+	nameRemoteMagpieFetcher(t, s)
+	own, ownHits := ownSite(t)
+	readWithOwn(t, own)
+
+	m := readMCP(t, mcpPost(lanGuard(New().Handler()), "127.0.0.1:50000", fetchCall(fetchPageURL, ""), "User-Agent", "magpie/0.1.999", SearchingHeader, "1"))
+	if m.Error != nil || m.Result.IsError || len(m.Result.Content) != 1 || !strings.Contains(m.Result.Content[0].Text, fetchOwnSaid) {
+		t.Fatalf("the marked fetch was not read here: %+v", m)
+	}
+	if n := len(s.log()); n != 0 {
+		t.Fatalf("the marked fetch was forwarded %d times: %q", n, s.log())
+	}
+	if hits := ownHits(); hits != 1 {
+		t.Fatalf("magpie's own downloader read %d times, want once", hits)
+	}
+}
+
 // A remote that can't be reached, or that doesn't answer in time, hands the
 // page to magpie's own downloader; a remote tool error surfaces the text
 // the remote wrote, and magpie's own downloader is not asked in its place.

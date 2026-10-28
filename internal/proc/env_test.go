@@ -1,6 +1,7 @@
 package proc
 
 import (
+	"bufio"
 	"context"
 	"errors"
 	"io"
@@ -44,13 +45,15 @@ func TestParseEnviron(t *testing.T) {
 	}
 }
 
-// TestEnvOfHelper is TestEnvOfChild's child: it waits to be ended. macOS
-// keeps a system binary's environment (sleep's) from ps, so the child is
-// this test binary, as the Codex app's codex is its own.
+// TestEnvOfHelper is TestEnvOfChild's child: it says it is running and
+// waits to be ended. macOS keeps a system binary's environment (sleep's)
+// from ps, so the child is this test binary, as the Codex app's codex is
+// its own.
 func TestEnvOfHelper(t *testing.T) {
 	if os.Getenv("MAGPIE_ENV_HELPER") != "1" {
 		return
 	}
+	os.Stdout.WriteString("running\n")
 	signalReady()
 	time.Sleep(30 * time.Second)
 }
@@ -71,7 +74,9 @@ func TestEnvOfChild(t *testing.T) {
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	cmd := CommandContext(ctx, os.Args[0], "-test.run=^TestEnvOfHelper$")
-	cmd.Env = []string{"MAGPIE_ENV_HELPER=1", "HOME=/sand box/h", "CODEX_HOME=/sand box/h/.codex"}
+	// TMPDIR is this test's: given no testenv.Marker, the helper makes a
+	// test home of its own there, which it never removes once killed
+	cmd.Env = []string{"MAGPIE_ENV_HELPER=1", "HOME=/sand box/h", "CODEX_HOME=/sand box/h/.codex", "TMPDIR=" + t.TempDir()}
 	r, w, err := os.Pipe()
 	if err != nil {
 		t.Fatal(err)
@@ -106,11 +111,15 @@ func TestEnvOfChild(t *testing.T) {
 func TestEndExitsClean(t *testing.T) {
 	cmd := CommandContext(context.Background(), os.Args[0], "-test.run=^TestEnvOfHelper$")
 	cmd.Env = append(os.Environ(), "MAGPIE_ENV_HELPER=1")
+	out, _ := cmd.StdoutPipe()
 	if err := cmd.Start(); err != nil {
 		t.Fatal(err)
 	}
 	t.Cleanup(func() { _ = cmd.Process.Kill() })
-	time.Sleep(200 * time.Millisecond) // started, so the signal isn't taken before its handlers
+	// running, so the signal isn't taken before its handlers
+	if line, _ := bufio.NewReader(out).ReadString('\n'); line != "running\n" {
+		t.Fatalf("the helper: %q", line)
+	}
 	if err := End(cmd.Process.Pid); err != nil {
 		t.Fatal(err)
 	}

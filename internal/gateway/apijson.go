@@ -76,12 +76,15 @@ func (s *Server) apiJSON(w http.ResponseWriter, r *http.Request) {
 		models := map[string]any{}
 		labels := provider.Labels(bucketEntries[i])
 		for j, e := range bucketEntries[i] {
+			m := apiJSONModel(e, labels[j], price)
+			id := e.ID
 			// the registry's key and its id agree: a group's bare id
 			// (models.dev keeps a model's id equal to its key)
 			if e.Group != "" {
-				e.ID = strings.TrimPrefix(e.ID, "group/")
+				id = strings.TrimPrefix(e.ID, "group/")
+				m["id"] = id
 			}
-			models[e.ID] = apiJSONModel(e, labels[j], price)
+			models[id] = m
 		}
 		out[b.id] = map[string]any{"id": b.id, "name": b.name, "api": b.api(base), "type": b.typ, "models": models}
 	}

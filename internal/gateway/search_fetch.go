@@ -94,7 +94,9 @@ func (s *Server) fetchMCPRun(r *http.Request, a fetchArgs) (string, error) {
 	// the call is the agent's MCP web_fetch, as a search through the same
 	// server is: the usage row says who called
 	ctx := context.WithValue(r.Context(), searchForKey{}, &CallFor{Agent: callerOf(r).agent, MCP: true})
-	if p := chosenFetcher(); p != nil {
+	// a fetch another magpie forwarded is read here, so two magpies that
+	// name each other's fetch service cannot loop
+	if p := chosenFetcher(); p != nil && !searchFromMagpie(ctx) {
 		if remoteMagpieService(*p) != "" {
 			return s.fetchByMagpie(ctx, *p, u, a, limit)
 		}

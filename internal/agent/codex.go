@@ -1336,6 +1336,24 @@ func codexIn(at place) *Agent {
 		// joined, a model of Codex's own is picked beside magpie's, as in
 		// Codex's /model: it stays connected
 		if joined() && !api() && chatGPT() {
+			// magpie made its provider for a used-up account (codex.out)
+			// and that no longer holds (kept on ChatGPT, or room again):
+			// back on the sign-in as Join leaves it. Only the model set
+			// left magpie the provider of one of Codex's own for good
+			// (eddie.zhan on Discord, Always ChatGPT from the takeover)
+			if asProvider() && stashLoad()[at.key("codex.out")] == "1" && !out() {
+				forget(at.key("codex.out"), at.key("codex.out_own"))
+				if err := edit.DelTOMLTop(path, "model_provider", "model_catalog_json"); err != nil {
+					return err
+				}
+				if err := edit.SetTOMLTop(path,
+					edit.KV{Path: "openai_base_url", Value: at.codexURL()},
+					edit.KV{Path: "model", Value: v},
+				); err != nil {
+					return err
+				}
+				return settle()
+			}
 			if err := edit.SetTOMLTop(path, edit.KV{Path: "model", Value: v}); err != nil {
 				return err
 			}
@@ -2033,7 +2051,8 @@ func codexInMagpie(own []Option) []Option {
 // serves on a ChatGPT account that own, Codex's own list, leaves out: one
 // Codex hides from its picker (gpt-6.1-terra) but the user ticked on the
 // subscription was offered nowhere (ysm119 on Discord), as the hop is all
-// that reaches it.
+// that reaches it. Those come first, in own's group: a "Codex" section
+// of their own beside it read as a second kind of model (ysm119).
 func codexViaMagpieFor(own []Option) []Option {
 	in := map[string]bool{}
 	for _, o := range own {
@@ -2042,14 +2061,18 @@ func codexViaMagpieFor(own []Option) []Option {
 			in[m] = true
 		}
 	}
-	var out []Option
+	var hidden, out []Option
 	for _, o := range viaMagpie("codex", "") {
-		if strings.HasPrefix(o.Value, "codex/") && in[codexOwnOf(o.Value)] {
-			continue
+		if !strings.HasPrefix(o.Value, "codex/") {
+			out = append(out, o)
+		} else if !in[codexOwnOf(o.Value)] {
+			if len(own) > 0 {
+				o.Group, o.GroupIcon = own[0].Group, own[0].GroupIcon
+			}
+			hidden = append(hidden, o)
 		}
-		out = append(out, o)
 	}
-	return out
+	return append(hidden, out...)
 }
 
 // codexOwnViaMagpie is the catalog id magpie serves one of Codex's own
