@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"slices"
 	"strings"
@@ -57,6 +58,11 @@ type ServerHealth struct {
 	// left it: one whose renewed token the server refused has run out
 	// since, and the page's tag says so (新v学员 on Discord)
 	SignIn *mcpauth.Status `json:"signIn,omitempty"`
+	// AgentSignIn are the agents signed in to a server that refused
+	// magpie's check on their own (Claude Code's /mcp, mcp_agent_signin.go),
+	// by id: they use it, though the check, without their tokens, was asked
+	// to sign in (CyberCaius on Discord)
+	AgentSignIn []string `json:"agentSignIn,omitempty"`
 	// Step is what a server that timed out was asked and didn't answer
 	// (initialize, notifications/initialized, tools/list, or connect: an
 	// SSE server's stream), and Waited how long it was waited for, in ms
@@ -108,7 +114,7 @@ type checkedServer struct {
 	h   ServerHealth
 }
 
-func healthKey(s *Server) string {
+func healthKey(s *Server, own ownSignIns) string {
 	c := *s
 	c.Name, c.Agents = "", nil
 	b, _ := json.Marshal(c)
@@ -118,7 +124,9 @@ func healthKey(s *Server) string {
 	if s.Transport == "stdio" {
 		sides = checkSides(s)
 	}
-	return fmt.Sprintf("%s|%v|%v|%d|%q", b, st.SignedIn, st.Dead, st.At, sides)
+	// and the agents signed in to it themselves: one signed in since
+	// isn't left as "needs sign-in"
+	return fmt.Sprintf("%s|%v|%v|%d|%q|%q", b, st.SignedIn, st.Dead, st.At, sides, own.of(s))
 }
 
 // CheckServers checks the library's servers called names (every one when
@@ -141,12 +149,13 @@ func CheckServers(ctx context.Context, names []string, fresh bool) (map[string]S
 			}
 		}
 	}
+	own := readOwnSignIns()
 	out := map[string]ServerHealth{}
 	var outMu sync.Mutex
 	var wg sync.WaitGroup
 	slots := make(chan struct{}, checkAtOnce)
 	for _, s := range list {
-		key := healthKey(s)
+		key := healthKey(s, own)
 		checked.Lock()
 		c, ok := checked.m[s.Name]
 		checked.Unlock()
@@ -161,10 +170,10 @@ func CheckServers(ctx context.Context, names []string, fresh bool) (map[string]S
 			defer wg.Done()
 			slots <- struct{}{}
 			defer func() { <-slots }()
-			h := CheckServer(ctx, s)
+			h := checkServer(ctx, s, own)
 			// as the server is now: a sign-in the check found run out
 			// isn't one to check it again for
-			key := healthKey(s)
+			key := healthKey(s, own)
 			// a check cut short by the page going away isn't one, and a
 			// server that didn't answer in time is asked again next time:
 			// a slow server may answer then (#1467)
@@ -189,6 +198,13 @@ func CheckServers(ctx context.Context, names []string, fresh bool) (map[string]S
 
 // CheckServer connects to one server and asks it for its tools.
 func CheckServer(ctx context.Context, s *Server) ServerHealth {
+	return checkServer(ctx, s, nil)
+}
+
+// checkServer is CheckServer with the agents' own sign-ins read already,
+// once for every server checked together; nil reads them when a server
+// asks for a sign-in.
+func checkServer(ctx context.Context, s *Server, own ownSignIns) ServerHealth {
 	each := remoteStep
 	if s.Transport == "stdio" {
 		each = stdioStep
@@ -213,6 +229,12 @@ func CheckServer(ctx context.Context, s *Server) ServerHealth {
 		if st := mcpauth.StatusOf(s.Name, s.URL); st.SignedIn || st.Dead {
 			h.SignIn = &st
 		}
+	}
+	if h.State == "auth" && s.Transport != "stdio" {
+		if own == nil {
+			own = readOwnSignIns()
+		}
+		h.AgentSignIn = own.of(s)
 	}
 	return h
 }
@@ -470,6 +492,43 @@ func checkStdio(ctx context.Context, s *Server) ServerHealth {
 	return *first
 }
 
+// stdioProgram is the program checkStdio starts for a server's command,
+// and the folder it was found in when magpie's PATH lacks it. A bare name
+// PATH doesn't have is looked for as a terminal would find it
+// (proc.FindTool: the folders a user's tools are installed in, fnm's Nodes
+// among them, #2685), and that folder goes on the child's PATH, as it is
+// on a terminal's: npx's package runs the node beside it by name. A path
+// is taken as it is.
+func stdioProgram(name string) (prog, found string) {
+	if name == "" || strings.ContainsAny(name, `/\`) {
+		return name, ""
+	}
+	if _, err := exec.LookPath(name); err == nil {
+		return name, ""
+	}
+	if p := proc.FindTool(name); p != "" {
+		return p, filepath.Dir(p)
+	}
+	return name, ""
+}
+
+// withPath is env with dir after the folders its PATH has (Path, as
+// Windows spells it, too).
+func withPath(env []string, dir string) []string {
+	out := slices.Clone(env)
+	for i := len(out) - 1; i >= 0; i-- {
+		k, v, ok := strings.Cut(out[i], "=")
+		if ok && (k == "PATH" || runtime.GOOS == "windows" && strings.EqualFold(k, "PATH")) {
+			if v != "" {
+				v += string(os.PathListSeparator)
+			}
+			out[i] = k + "=" + v + dir
+			return out
+		}
+	}
+	return append(out, "PATH="+dir)
+}
+
 // checkStdioAt starts the command on this machine, or in WSL distro.
 func checkStdioAt(ctx context.Context, s *Server, distro string) ServerHealth {
 	// started as the agents start it: in the environment magpie has, with
@@ -481,8 +540,11 @@ func checkStdioAt(ctx context.Context, s *Server, distro string) ServerHealth {
 	var cmd *exec.Cmd
 	var t wslrun.Tool
 	stop := func() {}
+	found := ""
 	if distro == "" {
-		cmd = proc.Command(s.Command, s.Args...)
+		var prog string
+		prog, found = stdioProgram(s.Command)
+		cmd = proc.Command(prog, s.Args...)
 	} else {
 		var err error
 		t, err = wslrun.In(distro, s.Command)
@@ -515,6 +577,9 @@ func checkStdioAt(ctx context.Context, s *Server, distro string) ServerHealth {
 		if runtime.GOOS != "windows" && distro == "" {
 			cmd.Env = append(cmd.Env, "PWD="+d)
 		}
+	}
+	if found != "" {
+		cmd.Env = withPath(cmd.Env, found)
 	}
 	var names []string
 	for k, v := range env {

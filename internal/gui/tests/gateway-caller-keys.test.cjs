@@ -134,6 +134,7 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
       await confirmKeyAction(page, tablet, w.remove);
       await page.waitForFunction(() => document.querySelectorAll("#gatewayKeys .acc[data-key]").length === 4);
       await page.setViewportSize({ width: 560, height: 740 });
+      await page.waitForFunction(() => document.documentElement.scrollWidth <= innerWidth);
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth), false);
       assert.deepEqual(errors, []);
       if (process.env.ARTIFACT_DIR) {

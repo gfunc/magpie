@@ -1662,7 +1662,7 @@ func claudeIn(at place) *Agent {
 				}
 				return env(tierEnv(t))
 			}
-			own := claudeOwn(cur["model"], tier)
+			own := claudeOwn(cur["model"], tier, provider.ClaudeCodeModels())
 			for i := range own {
 				own[i].Direct = direct
 			}
@@ -2268,14 +2268,15 @@ func claudeDropModelEffort(path, n string) error {
 	return nil
 }
 
-// claudeOwn is Anthropic's models as Claude Code takes them: only the
-// catalog's; Claude Code's own short aliases are not something any API
-// lists, and a compiled-in copy would just go stale. One the user's
+// claudeOwn is Anthropic's models as Claude Code takes them, ms: the
+// catalog's, and on this computer the ones Anthropic told Claude Code
+// its account has beyond them (provider.ClaudeCodeModels: Claude Mythos
+// 5.1); Claude Code's own short aliases are not something any API lists,
+// and a compiled-in copy would just go stale. One the user's
 // settings.json names (cur: "model": "sonnet") comes first, said as the
 // model it stands for, so the row doesn't show a bare word; tier is the
 // model the user's env gives a tier, "" for none.
-func claudeOwn(cur string, tier func(string) string) []Option {
-	ms := catalog.Provider("anthropic")
+func claudeOwn(cur string, tier func(string) string, ms []catalog.Model) []Option {
 	var own []Option
 	if o, ok := claudeAliasOption(cur, ms, tier); ok {
 		own = append(own, o)
@@ -2587,6 +2588,64 @@ func StandIn(agent, model string) string {
 	}
 	// a Claude Code in WSL is known by the same User-Agent
 	return wslClaudeStandIn(model)
+}
+
+// ClassifierStandIn is the model Claude Code's auto mode classifier goes
+// to in place of the one it named, while the sonnet tier it named follows
+// a main model that /model has moved since magpie last wrote the tiers.
+// Claude Code 2.1.310 runs the classifier, with CLAUDE_CODE_AUTO_MODE_MODEL
+// unset, on ANTHROPIC_DEFAULT_SONNET_MODEL ($Xe, BB in its bundle), not on
+// the session's model. A pick in /model saves the main model alone, and
+// the tiers following it move only when magpie next looks (Follow), so
+// the first classifier request after a switch named the model before it
+// (CyberCaius on Discord). "" leaves the model as asked. For
+// gateway.ClassifierStandIn.
+func ClassifierStandIn(agent, model string) string {
+	if agent != "claude" {
+		return ""
+	}
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return ""
+	}
+	if m := claudeClassifierIn(here(home), model); m != "" || runtime.GOOS != "windows" {
+		return m
+	}
+	return wslClaudeClassifier(model)
+}
+
+// claudeClassifierIn is ClassifierStandIn for the Claude Code at a place:
+// the main model the sonnet tier follows, at the tier's effort, when the
+// classifier named that tier as magpie last wrote it and the main model
+// has moved on. A tier the user put on a model of its own, or an auto
+// mode model set for the classifier, is left as it is.
+func claudeClassifierIn(at place, model string) string {
+	path := filepath.Join(at.claudeDir(), "settings.json")
+	env := func(k string) string { v, _ := edit.GetJSON(path, "env."+k); return provider.ClaudeRead(v) }
+	if u := env("ANTHROPIC_BASE_URL"); u != at.gw() && !surelyMagpie(u, at.gw()) {
+		return ""
+	}
+	if env(claudeAutoModeEnv) != "" {
+		return ""
+	}
+	st := stashLoad()
+	if st[at.key("claude.tier_own.sonnet")] != "" {
+		return ""
+	}
+	bare := func(v string) string { m, _ := tierAt(v); return strings.TrimSuffix(m, "[1m]") }
+	tier, effort := tierAt(env(tierEnv("sonnet")))
+	if tier == "" || bare(provider.ClaudeRead(model)) != bare(tier) {
+		return ""
+	}
+	was := bare(cmp.Or(st[at.key("claude.main")], env("ANTHROPIC_MODEL")))
+	if was == "" || bare(tier) != bare(follow("sonnet", was)) {
+		return "" // the tier is on a model of its own
+	}
+	main := claudeMain(path)
+	if main == "" || bare(main) == was || !isMagpie(bare(main)) {
+		return ""
+	}
+	return followAt("sonnet", bare(main), effort)
 }
 
 func claudeStandIn(path, model string) string { return claudeStandInAt(path, model, gateway.URL()) }

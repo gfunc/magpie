@@ -13,7 +13,10 @@ clone a working tree or synchronize arbitrary files.
   magpie's settings. Secrets are local, never in the status response.
 - The [`remote`](../../internal/davsync/dav.go) interface reads a version and
   conditionally replaces it. WebDAV and S3 use ETags; GitHub uses the file's
-  blob SHA. [`github.go`](../../internal/davsync/github.go)
+  blob SHA. S3's conditions (`If-Match`, `If-None-Match`) go outside the
+  SigV4 signature ([`unsigned`](../../internal/davsync/s3.go)): a server that
+  reads one back otherwise than it arrived refused the signed request with
+  403 SignatureDoesNotMatch once a sync had an ETag to ask with. [`github.go`](../../internal/davsync/github.go)
   interprets `github://owner/repo[/prefix]`, with `Config.Branch` selecting a
   branch or using the repository's default.
 - [`backup.go`](../../internal/backup/backup.go) owns bundle contents and
@@ -153,8 +156,17 @@ repository can keep the token. The branch is part of the sync state key.
   creation returns `errChanged`. Other 422
   responses stay actionable errors. Authentication, permission and branch
   failures remain distinct from missing files. Rate limits use sync backoff.
-- Request archival remains an S3-only feature; its objects are separate from
-  the encrypted setup and usage files.
+- The request archive goes to S3 only when sync has a bucket. Its objects are
+  separate from the encrypted setup and usage files. With no bucket the same
+  files are kept on this computer instead (`gateway.DiskArchive`, in
+  `<settings.Dir()>/request-archive/<date>/<id>.json`, written through a
+  temporary file and renamed, 0600), under its own switch,
+  `RequestArchiveLocal`. That switch and its size, `RequestArchiveLocalMB`
+  (1 GiB unless set; the oldest calls are removed first past it), are in
+  `KeepOwn`, so sync never turns on writing bodies to another computer's
+  disk, and `RequestArchive` synced from a computer with a bucket keeps
+  nothing on one without (`TestArchiveNeverOnDiskUnasked`,
+  `TestRequestArchiveLocalIsThisComputers`).
 
 ## Verification
 

@@ -85,10 +85,60 @@ func Hold() (release func()) {
 // Forget has every file looked at again on its next read: magpie wrote
 // one.
 func Forget() {
+	renewMu.Lock()
+	defer renewMu.Unlock()
 	mu.Lock()
 	gen++
 	gens.Store(gen)
 	mu.Unlock()
+	renew <- struct{}{}
+	<-renewed
+}
+
+// wake has every loop waiting on Written look at its files, with nothing
+// read forgotten: another process wrote one (Watch), which a look at the
+// disk tells.
+func wake() {
+	renewMu.Lock()
+	defer renewMu.Unlock()
+	renew <- struct{}{}
+	<-renewed
+}
+
+// written is replaced on every Forget, with the old channel closed by the relay.
+var written = make(chan struct{})
+
+// renew and renewed belong to no test bubble. The relay makes every
+// replacement written channel there, and renewMu pairs each swap with its
+// acknowledgement.
+var (
+	renew   = make(chan struct{})
+	renewed = make(chan struct{})
+	renewMu sync.Mutex
+)
+
+func init() {
+	go func() {
+		for range renew {
+			mu.Lock()
+			close(written)
+			written = make(chan struct{})
+			mu.Unlock()
+			renewed <- struct{}{}
+		}
+	}()
+}
+
+// Written is closed by the next write magpie makes (Forget), or by
+// another process's that Watch is told of: a loop that follows magpie's
+// files waits on it, and looks at them only every so often (OthersEvery)
+// for what another process wrote, rather than polling each second for its
+// own writes too (#3185: those polls woke an idle magpie ~12 times a
+// second).
+func Written() <-chan struct{} {
+	mu.Lock()
+	defer mu.Unlock()
+	return written
 }
 
 // gens is gen, read without mu.

@@ -78,8 +78,8 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
       await page.route("**/*", serve(lang));
       t.after(async () => { await browser.close(); });
       await page.goto("http://magpie.test/?view=routing");
-      await page.locator(".rt-day").first().waitFor(); // the view is drawn
-      await page.locator(".rt-day:visible").nth(1).click(); // Live, then the day with the requests
+      await page.locator(".rt-days .rt-day").first().waitFor(); // the view is drawn
+      await page.locator(".rt-days .rt-day:visible").nth(1).click(); // Live, then the day with the requests
       const first = page.locator(".rt-req").nth(1); // the broken-off one, under the newer noted 200
       await first.waitFor();
       // the row is bad, not a green dot that answered (the old rule said "ok": status 200)
@@ -116,8 +116,8 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
       await page.route("**/*", serve(lang));
       t.after(async () => { await browser.close(); });
       await page.goto("http://magpie.test/?view=routing");
-      await page.locator(".rt-day").first().waitFor(); // the view is drawn
-      await page.locator(".rt-day:visible").nth(1).click();
+      await page.locator(".rt-days .rt-day").first().waitFor(); // the view is drawn
+      await page.locator(".rt-days .rt-day:visible").nth(1).click();
       const first = page.locator(".rt-req").first(); // the noted 200, newer than the broken-off one
       await first.waitFor();
       const cls = await first.getAttribute("class");

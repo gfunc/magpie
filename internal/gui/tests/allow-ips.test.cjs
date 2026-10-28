@@ -15,7 +15,7 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 const { test } = require("node:test");
 const { chromium, webkit } = require("playwright");
-const { watchSettingsReads, settingsDrawn } = require("./reader.cjs");
+const { watchSettingsReads, settingsDrawn, scrollRest } = require("./reader.cjs");
 
 const assets = path.resolve(__dirname, "../assets");
 
@@ -164,7 +164,7 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
         await fits(box);
 
         const view = page.locator("#view-settings");
-        const scroll = () => view.evaluate((v) => new Promise((ok) => requestAnimationFrame(() => requestAnimationFrame(() => ok(v.scrollTop)))));
+        const scroll = async () => { await scrollRest(page); return view.evaluate((v) => v.scrollTop); };
         await view.hover();
         for (let i = 0; i < 40; i++) {
           const r = await field.boundingBox();
@@ -242,6 +242,7 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
         await page.mouse.wheel(0, 120);
         await page.waitForTimeout(30);
       }
+      await scrollRest(page);
       await box.locator(".allow-ip-row").filter({ hasText: "203.0.113.50" }).locator("button").click();
       // the refusal names the address magpie sees the page from
       // (Mathresearcher on Discord: which one?), in the page's language
@@ -255,7 +256,7 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
       assert.equal(await fix.getAttribute("title"), await page.evaluate((s) => t(s), en.fixTip));
       await fits(box);
       const view = page.locator("#view-settings");
-      const scroll = () => view.evaluate((v) => new Promise((ok) => requestAnimationFrame(() => requestAnimationFrame(() => ok(v.scrollTop)))));
+      const scroll = async () => { await scrollRest(page); return view.evaluate((v) => v.scrollTop); };
       const before = await scroll();
       await fix.click();
       await page.waitForFunction(() => !document.querySelector("#allowList .rule-row .sub.err"));

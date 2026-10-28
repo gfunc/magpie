@@ -56,7 +56,7 @@ func DeepSeekSearch(p provider.Provider) string {
 // key the API refuses rests, and the next one on is asked; anything else
 // comes back as the failure it is, and no key is asked twice.
 func (s *Server) deepSeekSearch(ctx context.Context, p provider.Provider, query string) (string, []Hit, error) {
-	q, err := maskedQuery(query, &p)
+	q, err := maskedQuery(ctx, query, &p)
 	if err != nil {
 		return "", nil, err
 	}

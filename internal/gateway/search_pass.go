@@ -62,7 +62,7 @@ func (s *Server) remoteMagpieSearch(ctx context.Context, p provider.Provider, qu
 	if searchFromMagpie(ctx) {
 		return "", nil, fmt.Errorf("%s: a search another magpie made is not forwarded to a searcher of its own", p.Name)
 	}
-	q, err := maskedQuery(query, &p)
+	q, err := maskedQuery(ctx, query, &p)
 	if err != nil {
 		return "", nil, err
 	}

@@ -46,7 +46,10 @@ async function reach(page, locator) {
   const v = await page.locator("#" + id).boundingBox();
   await page.mouse.move(v.x + v.width / 2, v.y + v.height / 2);
   let stalls = 0;
-  for (let i = 0; i < 120; i++) {
+  // 20px a wheel: 120 of them reached only 2,400px down, and once Settings'
+  // lines wrapped whole (arculongus on Discord) Allowances' last account
+  // was further than that at 420px. The view's end stops it sooner.
+  for (let i = 0; i < 400; i++) {
     // found and read in one call (evaluateAll): locator.evaluate finds the
     // control in one call and reads it in the next, and a part the page
     // draws again in between (Routing's account rows, a row whose numbers
@@ -173,4 +176,20 @@ async function openAgentSettings(page, id = "codex") {
   await page.waitForFunction(() => __settingsReads.asked > 0 && __settingsReads.asked === __settingsReads.drawn);
 }
 
-module.exports = { inView, reach, wheelTo, click, openPart, watchSettingsReads, settingsDrawn, agentRow, openAgentSettings };
+// scrollRest waits until native wheel and momentum scrolling have stopped.
+async function scrollRest(page) {
+  await page.evaluate(async () => {
+    const at = () => JSON.stringify([scrollY, ...[...document.querySelectorAll("*")].filter((e) => e.scrollTop).map((e) => e.scrollTop)]);
+    let was = at(), still = 0;
+    for (let i = 0; i < 240; i++) {
+      await new Promise(requestAnimationFrame);
+      const now = at();
+      still = now === was ? still + 1 : 0;
+      if (still === 12) return;
+      was = now;
+    }
+    throw new Error("the page did not come to rest after wheel input");
+  });
+}
+
+module.exports = { inView, reach, wheelTo, click, openPart, watchSettingsReads, settingsDrawn, agentRow, openAgentSettings, scrollRest };

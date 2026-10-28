@@ -181,10 +181,13 @@ func TestSettingsSaveKeepsWhatItDoesNotSend(t *testing.T) {
 		QuotaReads:           "asked",
 		NoAccountDiscovery:   true,
 		RedactModel:          true,
+		RedactModelName:      "astrlink-guard",
+		RedactModelScore:     map[string]float64{"astrlink-guard": 0.9},
 	}
 	was.DesktopSubagentEffort = "high"
 	was.CodexAsyncCompact, was.CodexAsyncCompactPercent = true, 70
 	was.ClaudeRunsMost = 3
+	was.RequestArchiveLocal, was.RequestArchiveLocalMB = true, 256
 	was.ProxyCustom = "http://me:secret@proxy.example:8080"
 	if err := settings.Save(was); err != nil {
 		t.Fatal(err)

@@ -64,7 +64,7 @@ func (s *Server) apiJSON(w http.ResponseWriter, r *http.Request) {
 			bucketEntries[len(apiJSONBuckets)-1] = append(bucketEntries[len(apiJSONBuckets)-1], e)
 			continue
 		}
-		native := nativeEndpoints(e)
+		native := provider.NativeEndpoints(e)
 		for i, b := range apiJSONBuckets {
 			if b.native != "" && slices.Contains(native, b.native) {
 				bucketEntries[i] = append(bucketEntries[i], e)

@@ -22,6 +22,7 @@ import (
 	"github.com/yetone/magpie/internal/agent"
 	"github.com/yetone/magpie/internal/appdir"
 	"github.com/yetone/magpie/internal/autostart"
+	"github.com/yetone/magpie/internal/gateway"
 	"github.com/yetone/magpie/internal/library"
 	"github.com/yetone/magpie/internal/omarchy"
 	"github.com/yetone/magpie/internal/proc"
@@ -353,8 +354,11 @@ func Run(version string, showMain bool, link string) error {
 	zoom := h.zoom()
 	go stats.Run(version, "app")
 	handler := devShell(h)
-	if handler == nil {
-		handler = Handler(h, startBackend())
+	ownPage := handler == nil
+	var gw *gateway.Server
+	if ownPage {
+		gw = startBackend()
+		handler = Handler(h, gw)
 	}
 	// Linux: the magpie before holds the app's D-Bus name until it quits,
 	// once it has finished its requests; this one serves the gateway
@@ -430,8 +434,9 @@ func Run(version string, showMain bool, link string) error {
 	watchHide()
 	// The Dock icon opens the window, or goes to it where it is open. Wails
 	// would show every hidden window on it, the panel too, so the hook
-	// answers first and stops it.
+	// answers first and stops it. The icon flaps as the header logo does.
 	h.app.Event.RegisterApplicationEventHook(events.Mac.ApplicationShouldHandleReopen, func(e *application.ApplicationEvent) {
+		go dockFlap()
 		application.InvokeSync(h.reopenMain)
 		e.Cancel()
 	})
@@ -512,6 +517,8 @@ func Run(version string, showMain bool, link string) error {
 		library.KeepLinked(30 * time.Second)
 	}()
 
+	// before the item is made, which starts as hidden as AppKit kept it
+	hiddenAtStart := bringTrayBack()
 	h.tray = h.app.SystemTray.New()
 	if runtime.GOOS == "linux" {
 		// set before the tray starts, it is the item's id too, which
@@ -536,17 +543,18 @@ func Run(version string, showMain bool, link string) error {
 	// a Mac that handed the gateway to the new version (handover.go)
 	// leaves the menu bar to it while it finishes its requests: one bird
 	if runtime.GOOS == "darwin" {
-		onHandedOver = func() {
-			application.InvokeSync(func() {
-				h.tray.Hide()
-				if h.panel != nil {
-					h.panel.Hide()
+		onHandedOver = h.leaveMenuBar
+		// a magpie before this fix hid its item for good as it handed
+		// over (leaveMenuBar): once it has quit, bring the icon back
+		if before != 0 && !hiddenAtStart {
+			go func() {
+				awaitExit(before, handedOffWait)
+				<-h.ready
+				if forgetTrayHidden() > 0 {
+					log.Println("tray: brought back the menu bar icon the magpie before hid")
 				}
-				if h.main != nil {
-					h.main.Hide()
-				}
-				setDock(false, false)
-			})
+				h.tray.Show()
+			}()
 		}
 	}
 	h.watchTrayUsage()
@@ -622,6 +630,10 @@ func Run(version string, showMain bool, link string) error {
 	// GTK 3 with no font DPI set would lay every page out at a negative
 	// width (#1371); give it one before the first webview is made.
 	fontDPI()
+	// the page to a browser too, where Settings says (apppage.go)
+	if ownPage {
+		startAppPage(h, gw)
+	}
 	return h.app.Run()
 }
 
@@ -768,6 +780,25 @@ var OpenView string
 // and SIGTERM itself (it starts listening as it runs, before the app is
 // said to have started); until then a signal is magpie's to handle.
 var Started func()
+
+// leaveMenuBar is a Mac's magpie that handed the gateway to the new
+// version leaving the menu bar, panel, window and Dock to it while it
+// finishes its requests: one bird. Hidden, the item's visibility is kept by
+// AppKit for the app, the new version's item and every later one too, so it
+// is forgotten once the hide is made.
+func (h *host) leaveMenuBar() {
+	application.InvokeSync(func() {
+		h.tray.Hide()
+		forgetTrayHiddenLater()
+		if h.panel != nil {
+			h.panel.Hide()
+		}
+		if h.main != nil {
+			h.main.Hide()
+		}
+		setDock(false, false)
+	})
+}
 
 // setTrayInBar has the tray's item leave the bar's tray while magpie's icon
 // is in Omarchy's bar as its widget, and come back once it isn't. The item

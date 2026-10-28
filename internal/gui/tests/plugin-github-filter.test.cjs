@@ -101,6 +101,7 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
           const sec = page.locator("#view-plugins .pm-ghsec");
           const cards = sec.locator(".pm-card");
           await cards.first().waitFor();
+          await page.waitForFunction(() => document.querySelectorAll("#view-plugins .pm-ghsec .pm-card:not(.ghost)").length === 31 && !document.querySelector("#view-plugins .pm-ghsec .pm-card.ghost"));
           assert.equal(await cards.count(), 31);
           const tr = (s) => page.evaluate((s) => t(s), s);
           if (lang !== "en") for (const s of ["Kind of plugin", "Installed or not", "Not installed", "Filter by name, author or description", "Filter the plugins on GitHub", "No plugin on GitHub matches"]) assert.notEqual(await tr(s), s, `${s} in ${lang}`);
@@ -111,7 +112,7 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
           // two of them, a provider and a middleware, are already here, as
           // the page's own cards say
           const have = sec.locator(".pm-ghhave .opt");
-          const wantHave = async (rs) => [await tr("All") + " · " + rs.length, await tr("Installed") + " · " + rs.filter(here).length, await tr("Not installed") + " · " + rs.filter((r) => !here(r)).length];
+          const wantHave = async (rs) => [await tr("All"), await tr("Installed") + " · " + rs.filter(here).length, await tr("Not installed") + " · " + rs.filter((r) => !here(r)).length];
           assert.deepEqual(await have.allTextContents(), await wantHave(GH.repos));
           assert.equal(await sec.locator(".pm-ghhave .opt.on").textContent(), (await wantHave(GH.repos))[0]);
           assert.deepEqual((await sec.locator(".pm-card.have .pm-name b").allInnerTexts()).sort(), names(GH.repos.filter(here)));

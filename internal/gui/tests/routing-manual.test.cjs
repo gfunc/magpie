@@ -11,6 +11,7 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 const { test } = require("node:test");
 const { chromium, webkit } = require("playwright");
+const { reach } = require("./reader.cjs");
 
 const assets = path.resolve(__dirname, "../assets");
 const models = [
@@ -128,13 +129,7 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
       assert.equal(await row.locator(".segs .opt.on").textContent(), w.manual);
       // the reader wheels the editor's routing into the middle (code that
       // scrolls is put back: only the reader moves the view)
-      const wheelTo = async (x) => {
-        const d = await x.evaluate((e) => { const v = document.querySelector("#view-routing");
-          return Math.round(e.getBoundingClientRect().top - v.getBoundingClientRect().top - v.clientHeight / 2); });
-        await page.mouse.move(550, 400);
-        await page.mouse.wheel(0, d);
-        await page.waitForTimeout(400);
-      };
+      const wheelTo = (x) => reach(page, x);
       await wheelTo(row);
       // the routing's own hint is the first; a group-in-group note follows it
       assert.equal(await row.locator(".hint").first().textContent(), w.hint);

@@ -154,7 +154,7 @@ func openModelPicker(t *testing.T, m model, view string) (model, string) {
 		m.agents = []*agent.Agent{a}
 		m.reload()
 		m.openFieldPicker()
-		return m, "gpt-6-luna" // Codex's own account: its models bare
+		return m, "codex/gpt-6-luna" // no Codex cache here: the fetched model goes through magpie
 	default:
 		m.page = pageGroups
 		m.openMemberPicker(pickMsg{newGroup: "Test"})

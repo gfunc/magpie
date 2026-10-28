@@ -15,6 +15,7 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 const { test } = require("node:test");
 const { chromium, webkit } = require("playwright");
+const { scrollRest } = require("./reader.cjs");
 
 const assets = path.resolve(__dirname, "../assets");
 const pkg = "@magpie-community/opencode-zed-auth";
@@ -134,6 +135,7 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
         await page.waitForTimeout(80);
         if (await at() === was) break;
       }
+      await scrollRest(page);
       const top = await at();
       assert.ok(top > 0, "the editor doesn't scroll: the test proves nothing about keeping its place");
       // a press where the button is, as the reader's mouse does
@@ -159,6 +161,7 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
       assert.equal(await why.innerText(), w.failed);
       assert.equal(await btn.innerText(), w.again);
       assert.equal(await btn.isDisabled(), false);
+      await scrollRest(page);
       assert.equal(await body.evaluate((e) => e.scrollTop), top, "the failure moved the editor");
       await page.evaluate(() => renderProviders());
       assert.equal(await why.innerText(), w.failed, "a redraw forgot why the move failed");

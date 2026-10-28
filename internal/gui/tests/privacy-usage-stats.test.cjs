@@ -9,7 +9,7 @@ const fs = require("node:fs/promises");
 const path = require("node:path");
 const { test } = require("node:test");
 const { chromium, webkit } = require("playwright");
-const { watchSettingsReads, settingsDrawn } = require("./reader.cjs");
+const { watchSettingsReads, settingsDrawn, reach } = require("./reader.cjs");
 
 const assets = path.resolve(__dirname, "../assets");
 
@@ -66,14 +66,8 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
 
       // below the card, scrolled to with the wheel as a reader does
       const reveal = async (name) => {
-        await page.mouse.move(450, 300);
         await row(name).waitFor(); // a save draws the rows again
-        for (let i = 0; i < 40; i++) {
-          const y = (await row(name).boundingBox())?.y ?? 9999;
-          if (y > 60 && y < 600) break;
-          await page.mouse.wheel(0, y > 600 ? 200 : -200);
-          await page.waitForTimeout(80);
-        }
+        await reach(page, row(name));
       };
       await reveal(w.share);
       await row(w.share).getByRole("button", { name: w.off, exact: true }).click();
