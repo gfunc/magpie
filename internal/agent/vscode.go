@@ -218,7 +218,7 @@ func vscodeKindAt(k vscodeKind, dir string) *Agent {
 		}
 		return nil
 	}
-	return atomic(&Agent{
+	a := atomic(&Agent{
 		ID: k.id, Name: k.name, Icon: "vscode", Aliases: k.aliases, Spelled: prefixed,
 		Bin: k.bin, Dir: dir, Path: path,
 		UA: k.ua,
@@ -235,7 +235,7 @@ func vscodeKindAt(k vscodeKind, dir string) *Agent {
 				return false
 			}
 			bin, err := proc.Look(k.bin)
-			return err == nil && vscodeCodeBinary(bin)
+			return err == nil && vscodeCodeBinary(bin, k.bin)
 		},
 		Notice: func() string {
 			if joined() {
@@ -353,11 +353,30 @@ func vscodeKindAt(k vscodeKind, dir string) *Agent {
 			},
 		}},
 	}, path, models, stashPath())
+	// an explicit Connect adopts a server's hand-written group without
+	// changing the model it is on; other VS Code rows keep upstream's flow
+	a.Join = func() (bool, error) {
+		if k.server == "" {
+			return false, nil
+		}
+		if err := a.noModelLeft(); err != nil {
+			return true, err
+		}
+		return true, profiles(func(_, lms []string) error { return setGroup(lms) })
+	}
+	return a
 }
 
-// Cursor can install its own launcher as code. Only a known product identity
-// rules it out: wrappers without readable metadata keep the PATH fallback.
-func vscodeCodeBinary(bin string) bool {
+// Forks of VS Code ship a launcher named code beside their own, in the
+// same bin folder: Cursor's, Qoder IDE's (Contents/Resources/app/bin/code
+// beside qoder), and Windows' installers put that folder on PATH. Such a
+// code is the fork, not VS Code (ggbr on Discord: Qoder IDE listed as VS
+// Code too). So a launcher counts as the build whose command is app only
+// when its product.json names that build (applicationName code,
+// code-insiders or codium); one that names any other product is ruled
+// out. A wrapper without readable product metadata keeps the PATH
+// fallback.
+func vscodeCodeBinary(bin, app string) bool {
 	resolved, err := filepath.EvalSymlinks(bin)
 	if err != nil {
 		return true
@@ -380,11 +399,22 @@ func vscodeCodeBinary(bin string) bool {
 		if err != nil || json.Unmarshal(b, &product) != nil {
 			continue
 		}
-		if strings.EqualFold(product.ApplicationName, "cursor") || strings.EqualFold(product.NameShort, "Cursor") {
-			return false
+		if name := strings.TrimSpace(product.ApplicationName); name != "" {
+			return strings.EqualFold(name, app)
+		}
+		if short := strings.TrimSpace(product.NameShort); short != "" {
+			return vscodeNameShort(short)
 		}
 	}
 	return true
+}
+
+// vscodeNameShort reports whether a product.json's nameShort is one of VS
+// Code's own builds (Code, Code - Insiders, Code - OSS, Visual Studio Code,
+// VSCodium) rather than a fork's (Cursor, Qoder, Windsurf, Trae, Kiro…).
+func vscodeNameShort(short string) bool {
+	s := strings.ToLower(short)
+	return s == "code" || strings.HasPrefix(s, "code - ") || strings.HasPrefix(s, "visual studio code") || s == "vscodium"
 }
 
 // vscodeProfiles are the settings.json and chatLanguageModels.json of the

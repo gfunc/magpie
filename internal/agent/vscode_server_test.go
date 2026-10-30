@@ -2,6 +2,7 @@ package agent
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -69,7 +70,7 @@ func TestVSCodeServerRow(t *testing.T) {
 }
 
 // A chatLanguageModels.json the user wrote magpie's group into by hand is
-// adopted, not duplicated: synced, the one group is magpie's own — the
+// adopted on Connect, not duplicated: synced, the one group is magpie's own — the
 // catalog's models at the gateway's address — the user's other groups and
 // comments kept; disconnected, the file is as it was
 func TestVSCodeServerAdoptsHandWrittenGroup(t *testing.T) {
@@ -108,9 +109,9 @@ func TestVSCodeServerAdoptsHandWrittenGroup(t *testing.T) {
 ]
 `)
 	f := a.Field("model")
-	// the hand-written group already counts as joined, so the model the
-	// user is on stays their own
-	if f.Get() != "gpt-5" || !a.Detected() || !a.Wired() {
+	// the hand-written group is the user's until Connect adopts it, and the
+	// model the user is on stays their own
+	if f.Get() != "gpt-5" || !a.Detected() || a.Wired() {
 		t.Fatalf("before: %q wired %v", f.Get(), a.Wired())
 	}
 	if err := a.Connect(); err != nil {
@@ -200,6 +201,75 @@ func TestVSCodeServerAdoptsHandWrittenGroup(t *testing.T) {
 	if _, ok := edit.GetJSONItem(lm, map[string]string{"name": "Ollama", "vendor": "ollama"}); !ok {
 		t.Fatalf("user's group lost on disconnect:\n%s", readFile(lm))
 	}
+}
+
+func TestVSCodeServerConnectNeedsModels(t *testing.T) {
+	setup := func(t *testing.T) (*Agent, map[string]string) {
+		syncHome(t)
+		a, err := Find("vscode-server")
+		if err != nil {
+			t.Fatal(err)
+		}
+		writeFile(t, a.Path, "{\n  \"chat.defaultModel\": \"gpt-5\"\n}\n")
+		lm := filepath.Join(a.Dir, "chatLanguageModels.json")
+		writeFile(t, lm, `[
+  {
+    "name": "magpie",
+    "vendor": "customendpoint",
+    "models": [{"id": "group/auto", "url": "http://127.0.0.1:3425/v1/chat/completions"}]
+  }
+]
+`)
+		return a, map[string]string{a.Path: readFile(a.Path), lm: readFile(lm)}
+	}
+	assertUnchanged := func(t *testing.T, before map[string]string) {
+		t.Helper()
+		for path, want := range before {
+			if got := readFile(path); got != want {
+				t.Fatalf("Connect changed %s:\n%s", path, got)
+			}
+		}
+	}
+	t.Run("empty", func(t *testing.T) {
+		a, before := setup(t)
+		if err := provider.Delete("relay"); err != nil {
+			t.Fatal(err)
+		}
+		for attempt := 1; attempt <= 2; attempt++ {
+			_, err := a.ConnectHow()
+			var nm *NoModelsError
+			if !errors.As(err, &nm) || nm.Agent != "VS Code Server" {
+				t.Fatalf("Connect attempt %d with no models: %v", attempt, err)
+			}
+			if a.Wired() {
+				t.Fatalf("Connect attempt %d wired the agent after failing", attempt)
+			}
+		}
+		assertUnchanged(t, before)
+	})
+	t.Run("all hidden", func(t *testing.T) {
+		a, before := setup(t)
+		if err := provider.Save(provider.Provider{ID: "other", Name: "Other", Key: "k", Chat: "http://127.0.0.1:1/v1", Models: []string{"m"}}); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := provider.SetModelLists(map[string]provider.ModelList{"vscode-server": {Only: true, Picked: []string{"relay/glm-4.6"}}}); err != nil {
+			t.Fatal(err)
+		}
+		if err := provider.SetOff("relay", true); err != nil {
+			t.Fatal(err)
+		}
+		for attempt := 1; attempt <= 2; attempt++ {
+			_, err := a.ConnectHow()
+			var ah *AllHiddenError
+			if !errors.As(err, &ah) || ah.Agent != "VS Code Server" {
+				t.Fatalf("Connect attempt %d with every model hidden: %v", attempt, err)
+			}
+			if a.Wired() {
+				t.Fatalf("Connect attempt %d wired the agent after failing", attempt)
+			}
+		}
+		assertUnchanged(t, before)
+	})
 }
 
 // installServerGen installs a VS Code Server generation named dirName under

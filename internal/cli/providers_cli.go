@@ -59,7 +59,8 @@ const providerUsage = `usage:
   magpie provider fallback <id> <provider/model>…   where requests go when it's out of quota or down (none clears)
   magpie provider models <id> [ids…]      fetch the vendor's model list, or choose which models to expose:
                                           ids… replace the list, +id adds one, -id takes one out, all: the default,
-                                          none: serve none of them, its balance and usage still shown
+                                          none: serve none of them, its balance and usage still shown,
+                                          best: only the newest of each family it lists (Opus 5.6 replaces 5.5 once listed)
   magpie provider refresh <id>            fetch the vendor's model list again (as the app's Fetch models)
   magpie provider refresh-every <id> [6h|1d|off]
                                           have the gateway (magpie serve, the app) fetch the list again by itself
@@ -134,8 +135,8 @@ const providerUsage = `usage:
                                    (Ollama, LM Studio, oMLX or MLX-Serve on another port or computer: each of its
                                     URLs moves there, keeping its path; address= alone puts it back at the default)
        magpie provider set ollama unmasked=yes
-                                   (a model on this computer or the local network: Settings' redaction leaves its
-                                    requests as written; not for a local relay that passes them on to a vendor)
+                                   (Settings' redaction leaves its requests as written, at any address: your call,
+                                    so mind a relay that passes them on to a vendor; never a signed-in account)
        magpie provider add "My Relay" url=https://relay.example.com/v1 key=sk-… balance=https://relay.example.com/api/usage/token balance.path='$data.total_available / 500000'
        magpie provider set my-relay balance.path='(1 - credits.monthlyCredits / 70) %'
        magpie provider set my-relay balance.method=POST
@@ -163,9 +164,9 @@ func keyColumn(p provider.Provider) string {
 	case p.Account != nil && signedOut(p):
 		// every account in use refused: listed to be signed in again,
 		// as the app's row says, never "signed in"
-		return amber.Render("○ "+p.Account.User+" is signed out") + muted.Render(" · sign in again")
+		return amber.Render("○ "+p.AccountShown(p.Account.User)+" is signed out") + muted.Render(" · sign in again")
 	case p.Account != nil:
-		return green.Render("●") + " " + muted.Render("signed in as "+p.Account.User)
+		return green.Render("●") + " " + muted.Render("signed in as "+p.AccountShown(p.Account.User))
 	case p.IsVertex() && !p.Ready():
 		// no project an address can be made of (providers.json edited
 		// by hand): nothing is asked, as the app's row says
@@ -407,7 +408,9 @@ func notExposed(p provider.Provider) ([]string, string) {
 		}
 	}
 	why := "not picked"
-	if len(p.Models) == 0 {
+	if len(p.Models) == 0 && p.BestInFamily {
+		why = "best in family: an older one of its family"
+	} else if len(p.Models) == 0 {
 		why = fmt.Sprintf("none picked, so only the first %d", len(shown))
 	}
 	return out, why
@@ -511,7 +514,7 @@ func providerCmd(args []string) error {
 		// where requests go when this provider is out of quota, rate
 		// limited or down; "none" clears the list
 		if len(rest) < 1 {
-			return fmt.Errorf("magpie provider fallback <id> [provider/model… | none]")
+			return fmt.Errorf("magpie provider fallback <id> [provider/model… | group/<id>… | none]")
 		}
 		p, err := provider.Find(rest[0])
 		if err != nil {
@@ -521,8 +524,10 @@ func providerCmd(args []string) error {
 			p.Fallback = nil
 			if !(len(rest) == 2 && rest[1] == "none") {
 				for _, id := range rest[1:] {
+					// a routing group's id ("group/<id>") resolves too: the
+					// gateway sends the request through the group
 					if _, _, ok := provider.Resolve(id); !ok {
-						return fmt.Errorf("magpie knows no model %q (magpie models lists them)", id)
+						return fmt.Errorf("magpie knows no model or group %q (magpie models lists them)", id)
 					}
 					p.Fallback = append(p.Fallback, id)
 				}
@@ -677,16 +682,19 @@ func providerCmd(args []string) error {
 		if len(rest) > 1 {
 			before := *p
 			// none: no model served at all, the provider kept for its
-			// balance and usage (#1818); all is the vendor's list again
+			// balance and usage (#1818); best: the newest of each family
+			// the vendor lists (Best in family); all is the vendor's list
+			// again
 			none := len(rest) == 2 && rest[1] == "none"
+			best := len(rest) == 2 && rest[1] == "best"
 			picks, err := editPicks(*p, rest[1:])
-			if none {
+			if none || best {
 				picks, err = nil, nil
 			}
 			if err != nil {
 				return err
 			}
-			p.Models, p.NoModels = picks, none
+			p.Models, p.NoModels, p.BestInFamily = picks, none, best
 			if err := provider.Save(*p); err != nil {
 				return err
 			}
@@ -832,9 +840,9 @@ func showProvider(p provider.Provider) error {
 		kv("user-agent", "agent's"+muted.Render(why))
 	}
 	if p.Unredacted {
-		why := "  local: Settings' redaction leaves its requests as written"
+		why := "  Settings' redaction leaves its requests as written"
 		if !p.SkipsRedaction() {
-			why = "  but masked: not every address of it is on this computer or the local network"
+			why = "  but masked: a signed-in account, another magpie or no address"
 		}
 		kv("unmasked", "yes"+muted.Render(why))
 	}
@@ -843,7 +851,7 @@ func showProvider(p provider.Provider) error {
 	}
 	switch {
 	case p.Account != nil:
-		who := p.Account.User
+		who := p.AccountShown(p.Account.User)
 		if p.Account.Plan != "" {
 			who += muted.Render("  " + p.Account.Plan)
 		}
@@ -1174,9 +1182,9 @@ func applyPairs(p *provider.Provider, pairs []string) error {
 				return fmt.Errorf("compaction=native|magpie, not %q", v)
 			}
 		case "unmasked":
-			// yes: a model on this computer or the local network gets the
-			// requests as written, unmasked by Settings' redaction (lc on
-			// Discord); only while every address of it is local
+			// yes: the provider gets the requests as written, unmasked by
+			// Settings' redaction (lc, AcMilan on Discord): the user's word
+			// at any address, never for an account or another magpie
 			// (provider.SkipsRedaction)
 			if v != "yes" && v != "no" {
 				return fmt.Errorf("unmasked=yes|no, not %q", v)
@@ -1196,8 +1204,10 @@ func applyPairs(p *provider.Provider, pairs []string) error {
 			if err != nil {
 				return err
 			}
-			if r == provider.Manual {
-				return fmt.Errorf("routing=manual is a group's: a provider's keys or accounts are routed smart, order, rotate, usage, pace, weight, free or fast")
+			if r == provider.Manual || r == provider.Cheapest {
+				// cheap: its keys and accounts all bill the provider's one
+				// price, so there is nothing to weigh
+				return fmt.Errorf("routing=%s is a group's: a provider's keys or accounts are routed smart, order, rotate, usage, pace, weight, free or fast", r)
 			}
 			p.Routing = r
 		case "icon":
