@@ -82,7 +82,7 @@ func gatewaySession(g usage.GatewaySession) sessions.Session {
 
 func sessionRoutes(mux *http.ServeMux, w Windows) {
 	warmSessions()
-	mux.HandleFunc("GET /api/sessions", func(rw http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /api/sessions", coldTurn(func(rw http.ResponseWriter, r *http.Request) {
 		// the list and the Codex threads' effort each list every session file
 		defer sessions.OneListing()()
 		n, _ := strconv.Atoi(r.URL.Query().Get("limit"))
@@ -158,11 +158,11 @@ func sessionRoutes(mux *http.ServeMux, w Windows) {
 			Terminal bool     `json:"terminal"`
 			Dirs     []string `json:"dirs"`
 		}{out.Terminal, out.Dirs})
-	})
+	}))
 	// stats is every session's usage by day over the last ?days=N days
 	// (every day when 0 or none), cut by agent, folder and model for the
 	// page to filter; names are the agents' as the page shows them.
-	mux.HandleFunc("GET /api/sessions/stats", func(rw http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /api/sessions/stats", coldTurn(func(rw http.ResponseWriter, r *http.Request) {
 		defer sessions.ShareListing()()
 		n, _ := strconv.Atoi(r.URL.Query().Get("days"))
 		st, gen := statsForGen(n)
@@ -199,11 +199,11 @@ func sessionRoutes(mux *http.ServeMux, w Windows) {
 			statsTags.m[n] = statsTag{gen, agents, tag}
 			statsTags.Unlock()
 		}
-	})
+	}))
 	// overview sums up the range's sessions under the page's filters:
 	// how many, what the middle one spent, how many each day, and the ones
 	// that spent the most.
-	mux.HandleFunc("GET /api/sessions/overview", func(rw http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /api/sessions/overview", coldTurn(func(rw http.ResponseWriter, r *http.Request) {
 		defer sessions.ShareListing()()
 		q := r.URL.Query()
 		n, _ := strconv.Atoi(q.Get("days"))
@@ -234,7 +234,7 @@ func sessionRoutes(mux *http.ServeMux, w Windows) {
 			}
 		}
 		writeJSON(rw, out)
-	})
+	}))
 	// progress is how far the reading of the session files has got, for
 	// the page to show while its first read takes a while.
 	mux.HandleFunc("GET /api/sessions/progress", func(rw http.ResponseWriter, r *http.Request) {
@@ -705,18 +705,68 @@ func warmUp(steps ...func()) {
 	// that asks: an empty sandbox's warm-up looked at settings.json ~300
 	// times on Windows (#1665); a write still reads the disk (edit.Read)
 	defer filememo.Hold()()
+	defer coldTurns.over.Store(true)
 	for _, step := range steps {
-		step()
+		func() {
+			coldTurns.turn <- struct{}{}
+			defer coldTurnDone()
+			step()
+		}()
 	}
 	debug.FreeOSMemory()
 }
 
-// underTightGC runs fn letting the heap grow by a quarter of what it holds
+// coldTurns has the warm-up's reads and the pages' first asks take turns
+// until the warm-up is over. A first start's window asks the Sessions
+// page's stats and the Usage page's requests and heatmap while the
+// warm-up reads the same history, each a first read of it held beside the
+// others: ~150 MB of the asks' and ~40 MB of the warm-up's at once, a
+// ~300 MB live heap and a 420–480 MB footprint (#2278). Each reads after
+// the one before it has kept what it read, and most then find it kept.
+var coldTurns = struct {
+	turn chan struct{}
+	over atomic.Bool
+}{turn: make(chan struct{}, 1)}
+
+// coldTurnDone ends a turn. What the request matching kept for a next
+// read goes with it: kept for scratchLinger, it sat under the next
+// turn's read of the history.
+func coldTurnDone() {
+	usage.ReleaseMatchScratch()
+	<-coldTurns.turn
+}
+
+// coldTurnMost is how long a page waits for its turn: a warm-up stuck on
+// one read never keeps the pages from answering.
+const coldTurnMost = 2 * time.Minute
+
+// coldTurnsTaken is false in tests, whose pages and warm-ups are their own.
+var coldTurnsTaken = !testing.Testing()
+
+// coldTurn is h taking its turn while the warm-up isn't over; the
+// warm-up's reading goes at full speed while it waits (held's
+// sessions.Ask).
+func coldTurn(h http.HandlerFunc) http.HandlerFunc {
+	return func(rw http.ResponseWriter, r *http.Request) {
+		if coldTurnsTaken && !coldTurns.over.Load() {
+			t := time.NewTimer(coldTurnMost)
+			select {
+			case coldTurns.turn <- struct{}{}:
+				defer coldTurnDone()
+			case <-t.C:
+			}
+			t.Stop()
+		}
+		h(rw, r)
+	}
+}
+
+// underTightGC runs fn letting the heap grow by a tenth of what it holds
 // before a collection, not Go's default of all of it, and then puts back
 // what was set; a GOGC the user set lower, or off, is kept. The usage
 // page's read of the whole history holds every row of it at once (~270 MB
 // live for 390k calls), and a cold start that rests at ~200 MB peaked at
-// 555–587 MB in Activity Monitor there; under it, 410–438 MB. That read
+// 555–587 MB in Activity Monitor there; under a quarter, 410–438 MB. That read
 // and Codex's effort, which reads the whole ledger again while the page
 // still holds its rows, run under it: the warm-up as a whole did too for
 // ~11 s more CPU.
@@ -734,7 +784,7 @@ func underTightGC(fn func()) {
 
 // tightGC is what the reads under a tight GC hold: the first to begin sets
 // it, and the last to end puts back what was set before it. Each read
-// putting back what it found let two at once leave GOGC at 25 for good,
+// putting back what it found let two at once leave GOGC tight for good,
 // when the first to begin ended before the second.
 var tightGC struct {
 	sync.Mutex
@@ -763,7 +813,13 @@ func tightenGC() (undo func()) {
 	})
 }
 
-const tightGCPercent = 25
+// tightGCPercent is a tenth. Under a quarter, a first start's footprint
+// peaked at 390–397 MB, and a start with its caches at 304–321 MB, on a
+// live heap of ~280 MB and ~250 MB: each read, and the window's polls
+// beside it, let the heap grow by ~70 MB first. Under a tenth, 350–352
+// MB and 271–275 MB, for ~20% more CPU in the first start's minute and
+// ~2 s a minute of polls asking ten answers every 5 s (#2278).
+const tightGCPercent = 10
 
 // agentCommand is the shell line that starts a: its Launch where it has
 // one (agy, Claude Science, Cursor Private Inference), else its own

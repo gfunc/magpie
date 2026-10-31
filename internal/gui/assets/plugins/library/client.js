@@ -1653,12 +1653,12 @@ magpie.plugin("library", (ctx) => {
     const list = el("div", "list lib-list lib-hublist");
     const row = el("div", "row lib-row lib-hub");
     const who = el("div", "who");
-    who.append(el("div", "name", t("MCP hub")));
+    who.append(el("div", "name", t("MCP router")));
     who.append(el("div", "sub wraps", lib.mcpHub
       ? t("Each agent is given one server, magpie, in place of these. magpie runs each server once for all of them and hands each call to it, as server__tool. Restart an agent for it to read the change.")
       : t("Serve every server through magpie: each agent is given one server, magpie, in place of these, and any other app connects at one address.")));
     if (lib.mcpHub) who.append(el("div", "sub lib-hubstats", hubStats()));
-    row.append(hubMark(), who, toggle(!!lib.mcpHub, t("MCP hub"), (on) =>
+    row.append(hubMark(), who, toggle(!!lib.mcpHub, t("MCP router"), (on) =>
       change("servers/hub", { on }, on
         ? t("The agents are given magpie's one MCP server — restart them to use it")
         : t("The agents are given each server's own entry again — restart them to use it"))));
@@ -1670,7 +1670,7 @@ magpie.plugin("library", (ctx) => {
     const aw = el("div", "who");
     // what it is, not who: the hub's address (the owner: "Other apps" over
     // an address read as nonsense); who connects there is in the tooltip
-    aw.append(el("div", "name", t("Hub address")));
+    aw.append(el("div", "name", t("Router address")));
     aw.title = t("Any other app, as Cursor or VS Code, connects here for every server in the library");
     const u = el("div", "sub mono lib-hubURL", hubURL());
     u.title = hubURL();
@@ -1682,7 +1682,7 @@ magpie.plugin("library", (ctx) => {
     const names = (why) => hubAgents().filter((a) => a.hub === why).map((a) => a.name).join(", ");
     const why = [
       ["no-remote", "{agents} reaches no MCP server over HTTP, so it keeps each server's own entry."],
-      ["taken", "A server in the library is called magpie, so {agents} keeps each server's own entry: give that server another name for the hub to be used."],
+      ["taken", "A server in the library is called magpie, so {agents} keeps each server's own entry: give that server another name for the router to be used."],
       ["own", "{agents} has an MCP server called magpie of its own, which magpie leaves as it is, so it keeps each server's own entry."],
     ];
     for (const [k, text] of why) {
@@ -1695,11 +1695,10 @@ magpie.plugin("library", (ctx) => {
     }
     return out;
   }
-  // magpie's own image server is given as it is, never through the hub: it
-  // asks its agent for the project's folder (inHub in mcp_hub.go)
-  const isSelf = (s) => s.transport === "stdio" && s.args?.[0] === "mcp" && s.args?.[1] === "image";
-  // nor is a server the user keeps direct (#4382): each agent's own entry
-  const inHub = (s) => !isSelf(s) && s.hub !== "direct";
+  // every server is behind the hub, magpie's own image server too, but one
+  // the user keeps direct (#4382): each agent's own entry (inHub in
+  // mcp_hub.go)
+  const inHub = (s) => s.hub !== "direct";
   // the servers each agent is given directly, by name, for the hub's lines
   const directNames = () => lib.servers.filter((s) => !inHub(s)).map((s) => s.name).join(", ");
   // what the hub serves: its servers, their tools as far as checked, and
@@ -1978,7 +1977,7 @@ magpie.plugin("library", (ctx) => {
     // kept to this computer: sync carries it nowhere (huhuy72219405 on X)
     if (s.local) nm.append(tag(t("This computer only"), "lib-local", t("Sync never carries it to your other computers")));
     // out of the hub, each agent's own entry (#4382): said only while the hub is on
-    if (lib.mcpHub && s.hub === "direct") nm.append(tag(t("Not through the hub"), "lib-direct", t("Each agent is given its own entry for it, as with the MCP hub off")));
+    if (lib.mcpHub && s.hub === "direct") nm.append(tag(t("Not through the router"), "lib-direct", t("Each agent is given its own entry for it, as with the MCP router off")));
     // its status beside the name, not in it: the name is still the name
     who.classList.add("lib-srvwho");
     who.append(nm, healthEl(s.name));
@@ -2656,14 +2655,13 @@ magpie.plugin("library", (ctx) => {
     ed.append(...field(t("This computer only"), hereBox, t("Sync never carries it to your other computers, and a sync from them neither removes it nor puts theirs in its place")));
     // with the hub on, a server can stay each agent's own entry (#4382,
     // cuipengcx90): one that reads its project from the folder it starts
-    // in, or keeps a session's state. Shown only while the hub is on, and
-    // never for magpie's own image server, which is always direct
+    // in, or keeps a session's state. Shown only while the hub is on
     d.hub = d.hub === "direct" ? "direct" : "";
-    if (lib.mcpHub && !isSelf(d)) {
+    if (lib.mcpHub) {
       const hubBox = el("div", "lib-hubbox");
-      const drawHub = () => hubBox.replaceChildren(toggle(d.hub !== "direct", t("Through the MCP hub"), (on) => { d.hub = on ? "" : "direct"; drawHub(); }));
+      const drawHub = () => hubBox.replaceChildren(toggle(d.hub !== "direct", t("Through the MCP router"), (on) => { d.hub = on ? "" : "direct"; drawHub(); }));
       drawHub();
-      ed.append(...field(t("Through the MCP hub"), hubBox, t("Off gives each agent its own entry for it, as with the hub off: for a server that reads its project from the folder it starts in, or keeps a session's state")));
+      ed.append(...field(t("Through the MCP router"), hubBox, t("Off gives each agent its own entry for it, as with the router off: for a server that reads its project from the folder it starts in, or keeps a session's state")));
     }
     ed.append(err);
 

@@ -174,7 +174,7 @@ code { font: var(--code-style, normal) var(--code-weight, 400) 11.5px var(--code
    they read a size bigger than a line logo beside them, so they are drawn at
    the size Alma's and Cindy's tiles have of their own. icon-tile.test.cjs
    measures every file in icons/ and keeps this list whole. */
-.ic:is([data-icon="apple-touch-icon"], [data-icon="icon-512"], [data-icon="aihubmix-color"], [data-icon="atomcode"], [data-icon="cherryin-color"], [data-icon="codebuddy-color"], [data-icon="codex-color"], [data-icon="crush"], [data-icon="geminicli-color"], [data-icon="hanako"], [data-icon="hunyuan-color"], [data-icon="kilo"], [data-icon="kiro-color"], [data-icon="lody"], [data-icon="mistermorph-color"], [data-icon="mlx-serve"], [data-icon="monica-color"], [data-icon="penguin-color"], [data-icon="phala-color"], [data-icon="pipellm-color"], [data-icon="qoder"], [data-icon="snow"], [data-icon="targon-color"], [data-icon="typesafe"], [data-icon="workbuddy-color"], [data-icon="yuanbao-color"], [data-icon="zcode"], [data-icon="zoo-code"]) > * { width: 82%; height: 82%; }
+.ic:is([data-icon="aihubmix-color"], [data-icon="atomcode"], [data-icon="cherryin-color"], [data-icon="codebuddy-color"], [data-icon="codex-color"], [data-icon="crush"], [data-icon="geminicli-color"], [data-icon="hanako"], [data-icon="hunyuan-color"], [data-icon="kilo"], [data-icon="kimi-code-desktop"], [data-icon="kiro-color"], [data-icon="lody"], [data-icon="mistermorph-color"], [data-icon="mlx-serve"], [data-icon="monica-color"], [data-icon="penguin-color"], [data-icon="phala-color"], [data-icon="pipellm-color"], [data-icon="qoder"], [data-icon="snow"], [data-icon="targon-color"], [data-icon="typesafe"], [data-icon="workbuddy-color"], [data-icon="yuanbao-color"], [data-icon="zcode"], [data-icon="zoo-code"]) > * { width: 82%; height: 82%; }
 .ic.generic { color: var(--muted); }
 /* maskSpan's shelf: a hidden user of every mask picture loaded, so a logo drawn again paints at once (#1847) */
 .mask-shelf { position: fixed; top: 0; left: 0; width: 0; height: 0; overflow: hidden; visibility: hidden; pointer-events: none; }
@@ -2133,7 +2133,17 @@ body.window .profiles.detailed > #save { margin-top: 4px; }
 
 /* ---- footer --------------------------------------------------------------- */
 .foot { display: flex; align-items: center; gap: 2px; padding: 0 8px 6px 14px; min-height: 28px; flex: none; }
-body.window .foot { padding-left: 18px; }
+/* the window's footer holds only the status line (Quit, Profiles and the
+   Usage tab's age are the panel's), so it takes no room of its own: a page
+   runs to the window's foot instead of stopping above an empty bar
+   (yogurt36 on Discord). A line said there floats as the pill does, over
+   the page's foot, and goes with it. The panel's footer is as it was. */
+body.window footer.foot { position: fixed; left: 0; bottom: 0; width: 0; height: 0; min-height: 0; padding: 0; overflow: visible; z-index: 21; }
+body.window .foot .status:not(:empty):not(.lift) { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); max-width: calc(100vw - 32px); font-size: 12.5px; line-height: 16px; font-weight: 500; padding: 3px 10px; border-radius: 11px; background: color-mix(in srgb, currentColor 16%, var(--card)); box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 30%, transparent), 0 6px 20px rgba(0, 0, 0, .28); animation: fade-in .2s var(--ease); }
+/* a passing note over the page's foot takes no clicks, as a toast: a press
+   on the row under it (the Plugins page's Install at the window's foot)
+   lands on the row. An error or warning stays selectable, to be copied. */
+body.window .foot .status:not(.err):not(.warn) { pointer-events: none; }
 .status { font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity .3s; }
 .status.ok { color: var(--green); }
 .status.err { color: var(--red); }
@@ -2337,7 +2347,10 @@ body.window .ag-sk-icon { width: 22px; height: 22px; border-radius: 6px; }
 .gw .gw-mark.on .led { fill: var(--green); }
 /* narrow, the fix button goes under the state rather than squeeze it */
 .gw .who { flex: 1 1 15em; min-width: 0; }
-.gw .name .state { margin-left: 8px; font-size: 11px; font-weight: 500; color: var(--green); }
+/* the state centred on the title's line, not sat on its baseline: a
+   smaller run of CJK on the baseline reads as dropped below it */
+.gw .name { display: flex; align-items: center; gap: 8px; }
+.gw .name .state { min-width: 0; overflow: hidden; text-overflow: ellipsis; font-size: 11px; font-weight: 500; color: var(--green); }
 .gw .gw-mark:not(.on) ~ .who .state { color: var(--amber); }
 .gw .sub.old { white-space: normal; overflow: visible; text-overflow: clip; }
 .gw .sub.err { color: var(--red); overflow-wrap: anywhere; }
@@ -2367,6 +2380,20 @@ body.window .ag-sk-icon { width: 22px; height: 22px; border-radius: 6px; }
    Not the Providers keys list's rules (.accts.keys): Limit and Models keep
    their room there while hidden, so a hover doesn't push the row about */
 .gw-keys .acc > .plan { flex: 0 6 auto; min-width: 3em; overflow: hidden; text-overflow: ellipsis; }
+/* the keys in the order the user drags them into (alextjy on Discord), by
+   a row anywhere off its buttons, as the search APIs are; the grip in the
+   row's margin shows only on the row under the pointer */
+.gw-keys > .acc { position: relative; }
+.gw-keys.reorderable > .acc { cursor: grab; touch-action: pan-y; }
+.gw-keys.reorderable > .acc:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.gw-keys > .acc > .grip { position: absolute; left: 3px; top: 19px; translate: 0 -50%; width: 6px; height: 11px; background: radial-gradient(circle, var(--muted) .9px, transparent 1.2px) 0 0 / 3px 3.75px; opacity: 0; transition: opacity .15s; pointer-events: none; }
+.gw-keys > .acc:is(:hover, .dragging) > .grip { opacity: 1; }
+/* apart: Safari before 15.4 drops a whole selector list with :focus-visible in it */
+.gw-keys > .acc:focus-visible > .grip { opacity: 1; }
+@media (hover: none) { .gw-keys > .acc > .grip { opacity: 1; } }
+.gw-keys.sorting { user-select: none; -webkit-user-select: none; }
+.gw-keys.sorting > .acc { transition: transform .16s cubic-bezier(.22, 1, .36, 1); cursor: grabbing; }
+.gw-keys.sorting > .acc.dragging { z-index: 2; background: var(--card-2); box-shadow: 0 0 0 1px var(--line); transition: none; will-change: transform; }
 .gw-keys .gw-key-more { flex: none; color: var(--muted); }
 .gw-keys .gw-key-more:is(:hover, .open) { color: var(--fg); }
 #view-gateway .row-head, #view-usage .row-head { margin: 14px 0 6px; padding: 0 2px; }
@@ -3598,6 +3625,8 @@ input.words { width: 240px; max-width: 100%; }
 /* Settings → Long conversations: 272K or the size typed, beside it (#876) */
 .compact-at { display: flex; align-items: center; gap: 8px; margin-left: auto; flex: none; }
 .row.pref .compact-at .segs { margin-left: 0; }
+.compact-held { font-size: 11.5px; user-select: text; -webkit-user-select: text; line-height: 1.4; color: var(--fg-2); margin-top: 6px; text-align: right; overflow-wrap: anywhere; }
+.compact-held button.text { font-size: inherit; margin-left: 0.3em; }
 input.words.compact-num { flex: none; width: 76px; font-variant-numeric: tabular-nums; }
 /* the masking rules' add row: its words in full, then on a line of their
    own a name, prefix or regex, the match taking the room left, Add */
@@ -3878,9 +3907,8 @@ body.panel .modal { padding: 16px 12px; }
   body.web .view {
     --view-left: max(12px, env(safe-area-inset-left));
     --view-right: max(12px, env(safe-area-inset-right));
-    padding: 2px max(0px, calc(var(--view-right) - var(--bar, 0px))) 12px var(--view-left);
+    padding: 2px max(0px, calc(var(--view-right) - var(--bar, 0px))) max(12px, env(safe-area-inset-bottom)) var(--view-left);
   }
-  body.web .foot { padding-bottom: max(8px, env(safe-area-inset-bottom)); min-width: 0; }
   body.web .foot .status { min-width: 0; overflow-wrap: anywhere; }
   body.web .row-head { height: auto; min-height: 40px; flex-wrap: wrap; gap: 4px; }
   body.web .text, body.web .field, body.web .segs .opt, body.web .copy { min-height: 44px; }

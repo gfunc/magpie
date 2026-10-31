@@ -523,6 +523,14 @@ type settingsJSON struct {
 	// its share) out of the config at the last sync: too old for it
 	// (before 0.163.0-alpha.8), or of no known version (codex_async.go)
 	CodexAsyncHeld []agent.CodexReader `json:"codexAsyncHeld,omitempty"`
+	// the keys this machine's Codex config has that Codex reads before
+	// Long conversations (model_context_window,
+	// model_auto_compact_token_limit; agent.CodexCompactHeld)
+	CodexCompactHeld []agent.CodexCompactHold `json:"codexCompactHeld,omitempty"`
+	// the magpie model Codex's config runs, when its own window is no
+	// larger than Long conversations' threshold: Codex compacts it at 90%
+	// of that window (codexWindowUnder)
+	CodexWindow *codexRunWindow `json:"codexWindow,omitempty"`
 	// whether a WorkBuddy (China) account is signed in, and each one's
 	// last daily check-in
 	WorkBuddy         bool                        `json:"workbuddy"`
@@ -661,6 +669,34 @@ type searchFailedJSON struct {
 // it. A var for the tests: the real one asks the user's own system.
 var loginState = autostart.Enabled
 
+// codexRunWindow is a model and the window magpie tells Codex it has.
+type codexRunWindow struct {
+	Model  string `json:"model"`
+	Window int    `json:"window"`
+}
+
+// codexWindowUnder is model's window when Long conversations' threshold
+// doesn't come below it, so Codex compacts at 90% of the window instead
+// (zgjfjfl on Discord, 10-31: a relay's gpt-6-A at 128K, Long
+// conversations at 544K, compacting near 128K). Under Full window, or
+// with a threshold set on the model or its provider, it is nil: the row
+// says what the user chose. A provider's model is looked up at its
+// provider alone (ServedEntryOf), a group in the catalog, since this is
+// read on every settings read.
+func codexWindowUnder(st settings.Settings, model string) *codexRunWindow {
+	if model == "" || st.FullContext {
+		return nil
+	}
+	e, ok := provider.ServedEntryOf(model)
+	if !ok && strings.HasPrefix(model, provider.GroupPrefix) {
+		e, ok = provider.EntryOf(model)
+	}
+	if !ok || e.Context <= 0 || provider.CompactFor(st, e, provider.GroupFinder()) > 0 || st.Working(e.Context) < e.Context {
+		return nil
+	}
+	return &codexRunWindow{Model: model, Window: e.Context}
+}
+
 func settingsState() settingsJSON {
 	s := settingsJSON{Settings: settings.Load(), Version: Version, Dir: tilde(settings.Dir()), Portable: settings.Portable() != "", Gateway: gateway.URL()}
 	s.AddrEnv = os.Getenv("MAGPIE_ADDR")
@@ -715,6 +751,8 @@ func settingsState() settingsJSON {
 	s.CodexWarmed, s.ClaudeWarmed = latest(provider.CodexWarmed()), latest(provider.ClaudeWarmed())
 	s.CodexUsers, s.ClaudeUsers = loginUsers("codex"), loginUsers("claude")
 	s.CodexAsyncHeld = agent.CodexAsyncHeld()
+	s.CodexCompactHeld = agent.CodexCompactHeld("")
+	s.CodexWindow = codexWindowUnder(s.Settings, agent.CodexModel(""))
 	s.WorkBuddy, s.WorkBuddyCheckins = provider.HasWorkBuddy(), provider.WorkBuddyCheckins()
 	s.Trae, s.TraeCheckins = provider.HasTrae(), provider.TraeCheckins()
 	s.MiniMax, s.MiniMaxCheckins = provider.HasMiniMax(), provider.MiniMaxCheckins()
@@ -1462,6 +1500,7 @@ func Handler(w Windows, gw *gateway.Server) http.Handler {
 		in.RedactRouteTo = cur.RedactRouteTo
 		in.DesktopSubagentEffort = cur.DesktopSubagentEffort
 		in.ChinaMirror = cur.ChinaMirror // the Plugins page's, set on its own
+		in.NPMRegistry = cur.NPMRegistry // and its npm registry
 		// which Codex accounts spend a reset by themselves, set on the Usage card
 		in.CodexAutoReset = cur.CodexAutoReset
 		in.CodexAutoResetOnly = cur.CodexAutoResetOnly // and at which of the two times
@@ -1735,6 +1774,15 @@ func Handler(w Windows, gw *gateway.Server) http.Handler {
 			err = provider.SetCompactAt(*in.At)
 		}
 		if err != nil {
+			fail(rw, err)
+			return
+		}
+		writeJSON(rw, settingsState())
+	})
+	// takes out of Codex's config the keys it reads before Long
+	// conversations (agent.CodexCompactHeld), on the user's click
+	mux.HandleFunc("POST /api/settings/codex-compact-held/drop", func(rw http.ResponseWriter, r *http.Request) {
+		if err := agent.DropCodexCompactHolds(""); err != nil {
 			fail(rw, err)
 			return
 		}
@@ -2647,7 +2695,7 @@ func held(h http.Handler) http.Handler {
 			defer sessions.Ask()()
 			// and what the read threw away goes back once the page rests
 			defer readingPage()()
-			// and collected under GOGC 25 while it runs: a poll's reads
+			// and collected under GOGC 10 while it runs: a poll's reads
 			// allocated ~330 MB to keep ~105 MB, and at the default 100 the
 			// heap grew to twice what it kept before a collection, ~320 MB
 			// in Activity Monitor during a poll. No memory limit: held as

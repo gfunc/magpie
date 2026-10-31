@@ -349,6 +349,12 @@ type Settings struct {
 	// real Claude Code, its billing line and identity line kept; off, as by
 	// default, the run is the shape every Claude Code run has.
 	ClaudeLeanPrompt bool `json:"claudeLeanPrompt,omitempty"`
+	// ClaudePrintMode runs a Claude subscription's Claude Code as `claude
+	// -p` always. Off, as by default, a run is Claude Code's interactive
+	// mode, as a person runs it, where it can be (macOS and Linux, no
+	// images, safeguards or client cache marks): the plan counts a -p
+	// request at about twice an interactive one.
+	ClaudePrintMode bool `json:"claudePrintMode,omitempty"`
 	// ClaudeRunsMost is how many Claude Code processes a Claude
 	// subscription may have running at once: conversations' runs, those
 	// waiting for a next turn or on tool results, and one-off tests and
@@ -677,6 +683,12 @@ type Settings struct {
 	// downloads are asked of mirrors in China first, and of their official
 	// addresses after (see source.China).
 	ChinaMirror bool `json:"chinaMirror,omitempty"`
+	// NPMRegistry is the npm registry set on the Plugins page or with
+	// `magpie plugin registry`: plugins are installed from it and npm's
+	// answers asked of it, before a registry the user's .npmrc, bunfig or
+	// shell names and before the 「国内镜像」 switch (plugin.Registry).
+	// "" leaves it to those.
+	NPMRegistry string `json:"npmRegistry,omitempty"`
 	// TextSize is how large the window's and the tray panel's pages are
 	// drawn, in percent (one of TextSizes): the webviews' own zoom, as a
 	// browser's, so the text and everything around it grow together.
