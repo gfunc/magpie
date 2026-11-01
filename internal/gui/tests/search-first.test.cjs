@@ -65,6 +65,9 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
       await settingsDrawn(page); // rows found are the ones that stay (#1659)
       const row = page.locator("#searchList #searchFirstRow");
       await row.waitFor();
+      // the reader wheels it into sight: rows below it (searchAllRow) can
+      // put it under the window's foot, where the app undoes a scroll
+      // that isn't the reader's
       await reach(page, row);
       assert.equal(await row.locator(".name").textContent(), w.name);
       const model = row.locator(".segs button", { hasText: w.model });
@@ -72,6 +75,7 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
       assert(await model.evaluate((b) => b.classList.contains("on")), "model search first at first");
       assert(!await apis.evaluate((b) => b.classList.contains("on")));
 
+      await reach(page, apis);
       const before = await page.evaluate(() => [scrollX, scrollY, document.scrollingElement.scrollTop]);
       const b = await apis.boundingBox();
       await page.mouse.click(b.x + b.width / 2, b.y + b.height / 2);
@@ -88,6 +92,7 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
       assert.deepEqual(await page.evaluate(() => [scrollX, scrollY, document.scrollingElement.scrollTop]), before, "the click moved nothing");
 
       // and back
+      await reach(page, page.locator("#searchFirstRow .segs button", { hasText: w.model }));
       const m = await page.locator("#searchFirstRow .segs button", { hasText: w.model }).boundingBox();
       await page.mouse.click(m.x + m.width / 2, m.y + m.height / 2);
       for (let i = 0; i < 50 && saved.length < 2; i++) await page.waitForTimeout(50);
