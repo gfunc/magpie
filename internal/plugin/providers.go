@@ -100,6 +100,11 @@ type Model struct {
 	// route, plugins#154), models.dev's own, or the models hook's. Unsaid
 	// is nil, which keeps what the client sent.
 	Temperature *bool `json:"temperature,omitempty"`
+	// InputsSaid is whether capabilities.input is someone's word on what
+	// the model takes (models.dev, the config, the plugin's own models
+	// hook): the host's default for a config model said nothing of, input
+	// {"text": true} alone, is nobody's word (#1595, #4436)
+	InputsSaid bool `json:"inputsSaid,omitempty"`
 	// Fast is set by the plugin on a model it runs in its vendor's fast
 	// mode when the request says service_tier "priority" (m.fast: Cursor's
 	// plugin from 0.2.2, for a model Cursor has a fast variant of)
@@ -190,6 +195,16 @@ type Option struct {
 	// Confirm is asked before the switch is turned on, when the plugin
 	// says turning it on does something the user should agree to
 	Confirm string `json:"confirm,omitempty"`
+	// Labels, Descriptions and Confirms are the same words in the window's
+	// other languages, by its language ("zh", "zh-TW", "ja", "de"), as a
+	// page's Titles are (plugins#590); the plain ones are the fallback
+	Labels       map[string]string `json:"labels,omitempty"`
+	Descriptions map[string]string `json:"descriptions,omitempty"`
+	Confirms     map[string]string `json:"confirms,omitempty"`
+	// FiltersModels says the plugin's model list leaves models out while
+	// the switch is on (WorkBuddy's "Free models only"): the editor says
+	// so by the models
+	FiltersModels bool `json:"filtersModels,omitempty"`
 }
 
 // OptionOn is option o of a provider as it stands with the user's values

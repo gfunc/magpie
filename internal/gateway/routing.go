@@ -837,6 +837,7 @@ func (s *Server) Unrest(key string) bool {
 	}
 	unsink(key)
 	s.trace.lifted()
+	s.lanes.signal() // a request waiting in a full lane may go to it now (waitMate)
 	return ok
 }
 
@@ -862,6 +863,7 @@ func (s *Server) UnrestAll(key string) int {
 	}
 	unsinkAll(key)
 	s.trace.lifted()
+	s.lanes.signal() // a request waiting in a full lane may go to it now (waitMate)
 	return n
 }
 
@@ -1532,6 +1534,12 @@ func (s *Server) restAfterMarked(c candidate, status int, header http.Header, bo
 		restingUntil.note[id] = r
 	}
 	restingUntil.Unlock()
+	if id == c.restKey() && (why == failQuota || why == failCredit) {
+		// a pool routed Until used up goes on from it, though it renews
+		// before the pool's next request (dzxx0496); one model of it
+		// refused leaves the account in use for the others
+		routes.Drained(c.rest)
+	}
 	if kept {
 		saveRests() // a magpie started again rests it out, and climbs on
 	}
@@ -1732,6 +1740,24 @@ func creditsAgain(c candidate, status int, body []byte) bool {
 // spendsCredits is onCredits for the account of p, whose allowance is a.
 func spendsCredits(p provider.Provider, a provider.Allowance) bool {
 	return p.Account != nil && p.Account.UsageAgent() == "codex" && a.OnCredits() && provider.CodexCredits(p.Account.User)
+}
+
+// creditsLast: c is a Codex account on its credits (onCredits) that the
+// user set to spend them only after everything else
+// (provider.CodexCreditsLast), and by its last reading a window for the
+// model is used up, where an account set not to spend them is held: it
+// goes on on its credits now, so it is tried after every candidate that
+// isn't (restLast), in its place among those that are. A call ChatGPT
+// counts in no window (freeOnChatGPT) spends no credits, so it stays.
+// Asked for gokoshiki on Discord: a subscription, then an API key, then
+// the subscription's credits.
+func (c candidate) creditsLast(now time.Time) bool {
+	acct := c.p.Account
+	if acct == nil || !provider.CodexCreditsLast(acct.User) || freeOnChatGPT(c.model, acct.Plan) {
+		return false
+	}
+	a, _ := c.allowance()
+	return spendsCredits(c.p, a) && a.CapHeld(c.model, provider.WindowCaps{Credits: true}, now) != nil
 }
 
 // allowance is the candidate's allowance as last known: a subscription
@@ -1936,8 +1962,9 @@ type left struct {
 	amount, of float64
 	unit       string
 	// credits: a Codex account that goes on on its credits once its
-	// allowance is used up (spendsCredits)
-	credits bool
+	// allowance is used up (spendsCredits); first: one set to spend them
+	// before another account (provider.CodexCreditsFirst)
+	credits, first bool
 	// bal is a prepaid wallet's balance in balUnit (Allowance.Left,
 	// #3950); balIn says whose wallet it is, provider and unit, and is
 	// empty when no balance was told: routes.Seat.LeftIn
@@ -2018,6 +2045,7 @@ func weighRouted(p provider.Provider, cs []candidate, model string, from provide
 			rs := a.Restarts(now)
 			l := left{used: u, renews: r, fullest: a.Fullest(c.model, now), soon: a.Renewal(c.model, now), lapse: a.Lapse(c.model, now), pace: pc, due: due, amount: amt, of: of, unit: unit,
 				restarts: rs, dueRestart: !rs.IsZero() && due.Equal(rs), credits: spendsCredits(c.p, a)} // one not known counts as unused
+			l.first = l.credits && provider.CodexCreditsFirst(c.p.Account.User)
 			if b, bu, has := a.Left(c.model); has {
 				// a wallet's figure is weighed only against the same
 				// provider's in the same unit (routes.Seat.LeftIn)
@@ -2044,8 +2072,8 @@ func weighRouted(p provider.Provider, cs []candidate, model string, from provide
 			pace = provider.FreshPace
 		}
 		seats[i] = routes.Seat{Key: c.rest, Account: c.p.Account != nil, Known: known, Learns: learns(c, wg.lefts),
-			Used: l.used, Soon: l.soon, Lapse: l.lapse, Pace: pace, Weight: keyWeight(c), Resting: resting(c), Tokens: routed.used[c.restKey()].now(now), Credits: l.credits,
-			Left: l.bal, LeftIn: l.balIn}
+			Used: l.used, Soon: l.soon, Lapse: l.lapse, Pace: pace, Weight: keyWeight(c), Resting: resting(c), Tokens: routed.used[c.restKey()].now(now), Credits: l.credits, First: l.first,
+			Left: l.bal, LeftIn: l.balIn, Spent: spentRest(c)}
 	}
 	routed.Unlock()
 	if st.ByUse {
