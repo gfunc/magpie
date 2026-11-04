@@ -229,7 +229,7 @@ func TestDeepSeekServiceManualOnly(t *testing.T) {
 		t.Fatal("DeepSeek is searched by itself without being named")
 	}
 	cs := Searchers()
-	if len(cs) != 1 || cs[0].Provider.ID != "ds" || !cs[0].Service || !cs[0].ManualOnly || cs[0].Small != "" || len(cs[0].Models) != 0 {
+	if len(cs) != 1 || cs[0].Provider.ID != "ds" || !cs[0].Service || cs[0].ServiceOwn || !cs[0].ManualOnly || cs[0].Small != "" || len(cs[0].Models) != 0 {
 		t.Fatalf("choices %+v", cs)
 	}
 	st := settings.Load()

@@ -215,7 +215,7 @@ func TestKimiCodePlanNamedToSearch(t *testing.T) {
 		t.Fatal("the plan is picked by itself for other models")
 	}
 	cs := Searchers()
-	if len(cs) != 1 || cs[0].Provider.ID != "kimi" || !cs[0].Service || !cs[0].ManualOnly || cs[0].Small != "" || len(cs[0].Models) != 0 {
+	if len(cs) != 1 || cs[0].Provider.ID != "kimi" || !cs[0].Service || !cs[0].ServiceOwn || !cs[0].ManualOnly || cs[0].Small != "" || len(cs[0].Models) != 0 {
 		t.Fatalf("choices %+v", cs)
 	}
 	st := settings.Load()

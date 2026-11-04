@@ -322,7 +322,7 @@ function renderSearcher(s, keep, box) {
     const [pid, ...rest] = id.split("/");
     const c = choices.find((x) => x.id === pid);
     if (!c) return id;
-    if (c.service) return `${c.name} · ${t("its web search")}`;
+    if (c.service || (c.search && rest.join("/") === "@search")) return `${c.name} · ${t("its web search")}`;
     if (!rest.length) return `${c.name} · ${c.smallName || c.small}`;
     const m = c.models.find((x) => x.id === id);
     return `${m ? m.name : rest.join("/")} · ${c.name}`;
@@ -330,7 +330,7 @@ function renderSearcher(s, keep, box) {
   const icOf = (id) => choices.find((x) => x.id === id.split("/")[0])?.icon;
   const r = el("div", "row pref searcher-row");
   const who = el("div", "who");
-  const sub = el("div", "sub", off ? (s.searchAll ? t("When provider search is off, only configured Search APIs are used, for every model. Without a Search API, magpie does not add a search tool.") : t("When provider search is off, only configured Search APIs are used. Without a Search API, magpie does not add a search tool. Providers' native web search is unchanged.")) : t("When a model can't search the web directly, the selected provider searches for it and returns the results. Searches may use the service's quota or incur charges; if the provider magpie picks fails, it tries other available sources, but a provider you select here is replaced only by the ones you add after it, in their order, then by your Search APIs."));
+  const sub = el("div", "sub", off ? (s.searchAll ? t("When provider search is off, only configured Search APIs are used, for every model. Without a Search API, magpie does not add a search tool.") : t("When provider search is off, only configured Search APIs are used. Without a Search API, magpie does not add a search tool. Providers' native web search is unchanged.")) : t("When a model can't search the web directly, the selected provider searches for it and returns the results. Searches may use the service's quota or incur charges; if the provider magpie picks fails, it tries other available sources, and a provider you select here gives way to the ones you add after it, in their order, then, when it can't search at all (out of quota or rate-limited), to other available sources, then to your Search APIs."));
   if (!off && v && s.searchUnused) {
     const why = { gone: t("it is no longer in magpie"), off: t("it is turned off"), cant: t("it can't search the web by itself"), nomodel: t("it lists no model") }[s.searchUnused] || s.searchUnused;
     sub.append(" · ", el("span", "warn searcher-unused", t("{who} isn't used: {why}, so magpie picks one", { who: named(v), why })));
@@ -347,9 +347,12 @@ function renderSearcher(s, keep, box) {
       : t("{who} didn't search {when}: {why}. No other provider searched in its place; pick Automatic or another provider, or add a Search API.", { who: named(v), when: ago(failed.at), why });
     sub.prepend(el("span", "warn searcher-failed", said), " · ");
   }
-  const plans = choices.filter((c) => c.service).map((c) => c.name);
-  if (!off && plans.length) sub.append(" · ", el("span", "searcher-own",
+  const plans = choices.filter((c) => c.serviceOwn).map((c) => c.name);
+  if (!off && plans.length) sub.append(" · ", el("span", "searcher-service-own",
     t("A Kimi Code plan ({names}) searches for its own models first, with its web search; for other models only when named here", { names: plans.join(", ") })));
+  const manualServices = choices.filter((c) => c.service && !c.serviceOwn).map((c) => c.name);
+  if (!off && manualServices.length) sub.append(" · ", el("span", "searcher-manual-service",
+    t("These keyed search services run only when selected here: {names}.", { names: manualServices.join(", ") })));
   const googles = choices.filter((c) => c.own).map((c) => c.name);
   if (!off && googles.length) sub.append(" · ", el("span", "searcher-own",
     t("{names} search for their own models first, with Gemini's Google Search", { names: googles.join(", ") })));
@@ -377,6 +380,9 @@ function renderSearcher(s, keep, box) {
       options.push({ value: c.id, label: t("its web search"), note: c.name, icon: c.icon, group: c.name });
       continue;
     }
+    // a ChatGPT account searches by its own web search, with no model's
+    // tokens spent (lucy_85908 on Discord); its models stay to be picked
+    if (c.search) options.push({ value: `${c.id}/@search`, label: t("its web search"), note: c.name, icon: c.icon, group: c.name });
     // its small model is offered once (Player on Discord): the model of the
     // same name below it searched just the same, "<provider>/<small>" being
     // that model named rather than magpie's pick, so a pick saved so is

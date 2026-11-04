@@ -104,11 +104,15 @@ func (s *Server) ownSearch(ctx context.Context, p provider.Provider, query strin
 }
 
 // searchBy searches with one searcher: a keyed service by its search
-// service (search_service.go) — a remote magpie named bare, whose service
-// searches with no model — any other by its model.
+// service (search_service.go), a remote magpie named bare included; a
+// ChatGPT account named with codexSearchModel by the backend's search; any
+// other by its model.
 func (s *Server) searchBy(ctx context.Context, p provider.Provider, model, query, effort string) (string, []Hit, error) {
 	if serviceSearch(p) != "" && model == "" {
 		return s.serviceSearchBy(ctx, p, query)
+	}
+	if model == codexSearchModel && codexSearches(p) {
+		return s.codexSearchBy(ctx, p, query)
 	}
 	return s.searchWith(ctx, p, model, query, effort)
 }

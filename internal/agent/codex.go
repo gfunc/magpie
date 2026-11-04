@@ -1670,8 +1670,13 @@ func codexIn(at place) *Agent {
 			// below: magpie becomes Codex's provider on that model as
 			// magpie serves it, the one picked kept (codex.out_own) to go
 			// back to once the account has room. One magpie serves on no
-			// account of its own is left as it is.
-			if m := get("model"); !isMagpie(m) && !api() && chatGPT() && joined() && out() {
+			// account of its own is left as it is, and so is one magpie
+			// could serve on that same account alone, with no fallback
+			// and no other account (provider.CodexServesWhileOut): every
+			// turn would be refused there too, and the takeover only hid
+			// the account and its reset and restarted the app twice
+			// (xiaoq6285 on Discord, one Plus account)
+			if m := get("model"); !isMagpie(m) && !api() && chatGPT() && joined() && out() && provider.CodexServesWhileOut(m) {
 				if id := codexOwnViaMagpie(m); id != "" {
 					stash(map[string]string{at.key("codex.out_own"): m})
 					return set(id)
@@ -1921,7 +1926,10 @@ func codexIn(at place) *Agent {
 				// and nobody could tell them apart (the owner). So a pick
 				// here, Default too, takes away [agents]
 				// default_subagent_model, and Default is then the lead's
-				// model or the one it names, as it says
+				// model or the one it names, as it says. "lead"
+				// (provider.CodexSubagentLead, the GUI's Same as the lead)
+				// puts every subagent on the lead's own model, whatever it
+				// names (cleverpigo on X)
 				Key: "subagent_model", Label: "subagent model", Quiet: true,
 				Get: provider.CodexSubagentModel,
 				Set: func(v string) error {

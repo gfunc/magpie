@@ -142,7 +142,7 @@ func TestRemoteMagpieServiceSearches(t *testing.T) {
 			choice = &cs[i]
 		}
 	}
-	if choice == nil || !choice.Service || !choice.ManualOnly || choice.Small != "" || len(choice.Models) != 0 {
+	if choice == nil || !choice.Service || choice.ServiceOwn || !choice.ManualOnly || choice.Small != "" || len(choice.Models) != 0 {
 		t.Fatalf("the remote's service entry is missing: %+v", cs)
 	}
 	if cp, model, why := chosenSearcher(); cp == nil || cp.ID != "office" || model != "" || why != "" {
@@ -671,7 +671,7 @@ func TestRemoteMagpieNativeModelsUnchanged(t *testing.T) {
 			*models = c
 		}
 	}
-	if service == nil || !service.ManualOnly || service.Small != "" || len(service.Models) != 0 {
+	if service == nil || service.ServiceOwn || !service.ManualOnly || service.Small != "" || len(service.Models) != 0 {
 		t.Fatalf("the remote's service entry is missing: %+v", Searchers())
 	}
 	if models == nil || models.Service || models.Small != "glm-5.3" ||
