@@ -43,6 +43,7 @@ var readOnlyRoutes = map[string]bool{
 	"GET " + OwnMCPPath:               true,
 	"GET " + KeyPagePath:              true,
 	"GET " + keyPageData:              true,
+	"GET /api.json":                   true,
 }
 
 // ReadOnlyCode is the error code a read-only key is refused a route with.

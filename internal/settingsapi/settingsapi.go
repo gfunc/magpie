@@ -47,7 +47,7 @@ var Keys = []string{
 	// models: replies, vision, images, search
 	"replyModel", "noLoopGuard", "claudeLeanPrompt", "claudePrintMode", "refusalRetries",
 	"vision", "visionEffort", "imageGen", "imageTimeout", "classifyTimeout",
-	"searcher", "searcherThen", "searcherEffort", "searchFirst",
+	"searcher", "searcherThen", "searcherEffort", "searchFirst", "fetch",
 	// updates
 	"noUpdatePill", "noAutoUpdate", "updateEvery", "noAutoDownload", "autoRestart", "updateChannel",
 }
