@@ -793,6 +793,7 @@ function renderAgents() {
       // what is folded, and how many of them were hidden by hand
       label.textContent = showAllAgents ? t("Show less")
         : !unset.length ? t("{n} hidden agents", { n: byHand.length })
+        : !used.length ? t("Show all {n} agents", { n: unset.length })
         : t("Show {n} more", { n: unset.length });
       more.setAttribute("aria-expanded", String(showAllAgents));
     };
@@ -2864,9 +2865,14 @@ function arrangeAgents() {
   // having nothing to connect, once any is set
   const counts = all.some(connectable) ? onMagpie : agentUsed;
   const anyUsed = all.some((a) => !hidden.has(a.id) && counts(a));
+  // a new user's first view is Get started alone: its second step names the
+  // agents found here, each connected in a click, and the whole list is
+  // folded under it until one is, a step at a time rather than every agent
+  // at once (Renzexi01 on X: 一进来就这么复杂)
+  const guiding = !anyUsed && !!guideShown();
   // what is set on it alone decides where one not hidden goes: pinned in view
   // by hand, one cleared stayed up among the set ones with nothing to say why
-  const inView = (a) => !hidden.has(a.id) && (!anyUsed || agentUsed(a));
+  const inView = (a) => !guiding && !hidden.has(a.id) && (!anyUsed || agentUsed(a));
   return { all, shown: all.filter(inView), folded: all.filter((a) => !inView(a)) };
 }
 
@@ -3122,9 +3128,7 @@ function dragListen(handle, move, finish) {
   return () => { for (const [t, n, f, o] of on) t.removeEventListener(n, f, o); };
 }
 
-// A tap-to-click on a trackpad can slide a few pixels between the press and
-// the lift. A press let go within 300ms and under 12px from where it came down
-// is a click, not a drag, though it crossed the 4px that lifts a row.
+// A trackpad tap can slide a few px: a press let go within 300ms and 12px is a click, not a drag.
 const tapLike = (t0, x0, y0, ev) => ev?.type === "pointerup" && performance.now() - t0 < 300 && Math.hypot(ev.clientX - x0, ev.clientY - y0) < 12;
 
 // Shared pointer sorter: transforms each frame, one commit on release. Rows are
@@ -4539,16 +4543,13 @@ async function backAsNew(was) {
   }
 }
 
-// servedAnew reloads a browser's page (magpie web, or the app's page)
-// that another version of magpie now answers for, and says whether it did.
-// The page restarted to update itself reloads in backAsNew; one whose
-// magpie restarted for another's update (the app's window put it in, and
-// magpie web followed, or the app restarted under its own page) ran on as
-// the old page, its Update pill still offering the version already in
-// (visamzh on X).
+// servedAnew reloads, once, a browser's page that another version of
+// magpie now answers for (visamzh on X): its magpie restarted into an
+// update put in elsewhere. The badge and the Version row both ask.
+let reloadingAnew = false;
 function servedAnew(u) {
   if (!web || !pageVersion || !u?.current || u.current === pageVersion) return false;
-  location.reload();
+  if (!reloadingAnew) { reloadingAnew = true; location.reload(); }
   return true;
 }
 
@@ -6831,26 +6832,20 @@ function segs(items, current, onPick) {
   });
   return box;
 }
-// where a control is in the page: the nearest element with an id, and which
-// of the same options it is there; "" for one not in the page
+// where a control is: the nearest id, and which of its kind there; "" if not in the page
 function segsPlace(box) {
   const home = box.isConnected && box.parentElement.closest("[id]");
   return home ? box.dataset.kind + "@" + home.id + ":" + [...home.querySelectorAll(".segs")].filter((x) => x.dataset.kind === box.dataset.kind).indexOf(box) : "";
 }
-// A press on an option still picks it when the control is drawn again
-// before the button is let go: a save's answer redraws Settings, and a
-// second option pressed while the first one's save came back was let go
-// on a new button. Down and up were on two buttons, so the browser sent the
-// click to neither and nothing was picked. Let go on the same option of the
-// same control, the new one is clicked; let go anywhere else (dragged off
-// to another option), nothing is, as for any button. A touch tap is left to
-// the browser, which clicks what is under the finger as it lifts; a mouse or
-// trackpad tap that slid off its option within tapLike's bounds still picks it.
+// A press on an option still picks it when the control is drawn again before
+// the button is let go (a save's answer redraws Settings): down and up were on
+// two buttons, so no click came. Let go on the same option of the same
+// control, the new one is clicked; anywhere else, nothing is. A touch tap is
+// the browser's; a mouse tap that slid off its option within tapLike's bounds
+// still picks it.
 let segsPress = null;
 const optAt = (b) => [...b.parentElement.querySelectorAll(":scope > .opt")].indexOf(b);
-// the same control is at the same place, among as many of its kind, in rows
-// that are the same by their data-* (an agent's, a provider's): a list drawn
-// again with a row gone, come in or moved above it is another control there
+// the same control: same place, as many of its kind, rows the same by data-*
 function segsWho(box) {
   const place = segsPlace(box);
   if (!place) return "";
@@ -6869,26 +6864,40 @@ addEventListener("pointerup", (e) => {
   if (!p?.who || !e.isPrimary) return;
   let b;
   if (p.b.isConnected) {
-    // a tap that slid off its option (a trackpad's tap lifts a few pixels
-    // from where it came down, refeccd's first press of Form | JSON): the
-    // browser clicks neither, or their common holder. A tap is the press
-    // let go soon and near, as tapLike has it; a drag off it is not.
+    // a tap that slid off its option: the browser clicks neither
     if (p.b.contains(e.target) || !tapLike(p.t, p.x, p.y, e)) return;
     b = p.b;
   } else {
     b = document.elementFromPoint(e.clientX, e.clientY)?.closest(".segs > .opt");
     if (!b || segsWho(b.parentElement) !== p.who || optAt(b) !== p.i) return;
   }
-  // after the browser's own click, should one come to it after all
   let clicked = false;
   const seen = (c) => { if (b.contains(c.target)) clicked = true; };
   addEventListener("click", seen, true);
   setTimeout(() => {
     removeEventListener("click", seen, true);
-    // its newest self: b, or what a draw since put there (#3922)
+    // its newest self (#3922)
     if (!clicked) [...document.querySelectorAll(".segs")].find((x) => segsWho(x) === p.who)?.querySelectorAll(":scope > .opt")[p.i]?.click();
   });
 }, true);
+
+// A tap whose mouseup comes and no click (refeccd, Tap to click on a Mac): the
+// control pressed and let go is clicked once; a click comes with the mouseup.
+{
+  let d, clicked;
+  addEventListener("mousedown", (e) => {
+    const el = e.isTrusted && !e.button && e.target.closest?.('button, a[href], summary, label, .opt, [role="button"], [role="tab"], [role="switch"], [role="checkbox"], [role="radio"], [role="menuitem"], [role="option"]');
+    d = el && { el, t: performance.now(), x: e.clientX, y: e.clientY };
+  }, true);
+  addEventListener("click", () => { clicked = true; }, true);
+  addEventListener("mouseup", (e) => {
+    const p = d;
+    d = null;
+    if (!p || !e.isTrusted || e.button || !p.el.contains(e.target) || performance.now() - p.t >= 300 || Math.hypot(e.clientX - p.x, e.clientY - p.y) >= 12 || getComputedStyle(p.el).getPropertyValue("--wails-draggable").trim() === "drag") return;
+    clicked = false;
+    setTimeout(() => { if (!clicked && p.el.isConnected && !p.el.disabled && !p.el.closest('[inert], [aria-disabled="true"]')) p.el.click(); }, 30);
+  }, true);
+}
 
 // An installed list's order, the reader's pick, remembered for each list
 // (#481): its names A→Z or Z→A, and for a list that has one, a view of its
@@ -11990,7 +11999,11 @@ function renderRouting(p) {
       ? t("Routing picks the account for each request through magpie, in the accounts' order; {agent} on its own stays signed in to {user}, whatever it has left.", { agent: a.agentName, user: keptLogin(p) })
       : p.keepLogin && !p.switchOnly
       ? t("Routing picks the account for each request through magpie; {agent} on its own stays signed in to the first account, whatever it has left.", { agent: a.agentName })
-      : routing === "order" || routing === "drain"
+      : routing === "drain"
+        // Until used up keeps the requests on the next, and the sign-in
+        // with them (provider.returnsToFirst; WalterAIBuilder on X)
+        ? t("Routing picks the account for each request through magpie; {agent} on its own uses the one it is signed in to, which magpie moves to the next ticked account with room once it is used up, and keeps it there till that one is used up too.", { agent: a.agentName })
+      : routing === "order"
         ? t("Routing picks the account for each request through magpie; {agent} on its own uses the one it is signed in to, which magpie moves to the next ticked account with room once it is used up, and back to the first once that has room again.", { agent: a.agentName })
         : a.agent === "codex" && !p.switchOnly || p.keepLogin
         ? t("Routing picks the account for each request through magpie; {agent} on its own uses the one it is signed in to, which magpie moves to the next ticked account with room once it is 98% used, and back to the first once that has room again.", { agent: a.agentName })
@@ -21796,18 +21809,7 @@ function renderRedact(s, keep) {
     r.append(who, val);
     box.append(r);
   }
-  const words = (s.redactWords || []).join(", ");
-  const i = input(words, t("names, codenames, hosts"));
-  i.className = "words";
-  const save = () => {
-    const v = i.value.split(/[,，\n]/).map((w) => w.trim()).filter(Boolean);
-    if (v.join(", ") === words) return;
-    savePrefs({ ...keep, redactWords: v });
-  };
-  i.onkeydown = (e) => { e.stopPropagation(); if (e.key === "Enter") save(); else if (e.key === "Escape") { i.value = words; i.blur(); } };
-  i.onblur = save;
-  row(t("Masked words"), t("Your own words to keep from vendors, separated by commas"), i);
-  // plain words, matched as written unless the user asks for any case
+  // Masked words go above this, a list of the redact plugin's (wordList)
   row(t("Masked words in any case"), t("A word also matches in other capitals: Nightjar masks NIGHTJAR and nightjar too"),
     onOff(s.redactWordsAnyCase, (redactWordsAnyCase) => savePrefs({ ...keep, redactWordsAnyCase }))).id = "redactWordsAnyCaseRow";
   row(t("Whole words only"), t("A word is not masked inside a longer one: ABC masks ABC and 'ABC' but not XABCD, and 123456 not 0.123456"),
@@ -22210,21 +22212,7 @@ function renderMaskActions(s) {
     more.onclick = () => { maskActAll = !maskActAll; renderSettings(); };
     row(t("Personal data"), t("Emails, phone numbers, names and the rest, masked unless set here"), more).classList.add("mask-act-more");
   }
-  // the allow list: values sent as written whichever finder finds them
-  const allow = (s.redactAllow || []).join(", ");
-  const i = input(allow, t("ops@company.com, build-01"));
-  i.className = "words mask-allow";
-  i.setAttribute("aria-label", t("Never mask"));
-  const save = () => {
-    const v = i.value.split(/[,，\n]/).map((w) => w.trim()).filter(Boolean);
-    if (v.join(", ") === allow) return;
-    writingPrefs(api("settings/redact-allow", { allow: v }))
-      .then((ns) => { prefs = ns; renderSettings(); status(t("Saved"), "ok", 1500); })
-      .catch(settingsErr);
-  };
-  i.onkeydown = (e) => { e.stopPropagation(); if (e.key === "Enter") save(); else if (e.key === "Escape") { i.value = allow; i.blur(); } };
-  i.onblur = save;
-  row(t("Never mask"), t("Values that always go as written, each whole and in any case, separated by commas: a team address, a test key"), i);
+  // Never mask's list goes under these, the redact plugin's (wordList)
 }
 
 // renderMaskTry: text typed here is masked as a request would be now, and
@@ -24153,9 +24141,7 @@ setInterval(async () => {
 }
 window.addEventListener("focus", () => loadBack());
 setInterval(renderUpdateBadge, 15 * 60 * 1000); // a window left open still hears of a new version
-// a browser's page on screen hears within a minute that its magpie
-// restarted into an update put in elsewhere (servedAnew), without a click
-// into it first
+// a browser's page on screen hears of it within a minute (servedAnew)
 if (web) setInterval(() => { if (!document.hidden) renderUpdateBadge(); }, 60e3);
 // renderPluginDot puts a dot on Plugins while a plugin's update waits for
 // the reader (someone else's plugin, or one pinned; the community's update
