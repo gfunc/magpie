@@ -221,6 +221,9 @@ type SubscriptionQuota struct {
 	// CheckinOff is set on such an account the user left out of its
 	// vendor's check-in (settings.CheckinOff, #1902): it isn't checked in.
 	CheckinOff bool `json:"checkinOff,omitempty"`
+	// CheckinKey is such an account's entry in its vendor's check-in, the
+	// key Check in now presses it by (CheckInAccount).
+	CheckinKey string `json:"checkinKey,omitempty"`
 	// Kind is the card's kind as another magpie is told it (CachedCards):
 	// subscription, plan or balance; "" here.
 	Kind string `json:"kind,omitempty"`
@@ -328,7 +331,7 @@ func SubscriptionUsage(ctx context.Context) []SubscriptionQuota {
 		go func() {
 			out := fetchSubscriptionUsage(readCtx)
 			noteDailyCredits(out, time.Now())
-			noteQuotaHistory(out, time.Now())
+			noteCardHistory(out, time.Now())
 			c.Lock()
 			c.data = cacheCards(c.data, out, seq, false)
 			c.at, c.pending = time.Now(), nil
@@ -919,6 +922,8 @@ func claudeWindows(ctx context.Context, user string, active bool) ([]QuotaWindow
 		}
 		return ws, err
 	}
+	// a whole reading: a window it leaves out hasn't started
+	ws = claudeWithUnstarted(ws)
 	c.Lock()
 	if c.m == nil {
 		c.m = map[string]claudeUsageEntry{}
@@ -1182,36 +1187,26 @@ func codexHeld(u codexUsage) bool {
 	return true
 }
 
-// codexAtLimit is whether the reading says the allowance is used up:
-// rate_limit.allowed false, which is what ChatGPT.app 26.1021 gates on, or
-// else one the backend does not call open (allowed not said) with
-// limit_reached or a window at 100%, or one it calls allowed with every
-// window it reports at 100%. The 26.1029 app blocked an account magpie's
-// 用量 showed used up, with no credits (xiaoq6285 on Discord), and a
-// reading that did not say allowed false is the only way codexHeld could
-// have missed it. Held wrongly takes the app out of ChatGPT (durable
-// threads, remote control) while it would still send (#996 undid that for
-// limit_reached alone), so allowed true stands unless nothing is left in
-// any window: a 5h window at 100% with the week open is not held.
+// codexAtLimit is whether the reading says the allowance is used up as
+// the Codex app's composer reads it: rate_limit.allowed false, and that
+// alone. Not said is not at the limit, and neither is allowed true with a
+// window at 100%: the app's gate returns open on anything but allowed
+// false (ChatGPT.app 26.1029.61003, the macOS build of the version
+// xiaoq6285 runs on Windows, async chunk "a6kU": search
+// "n.rate_limit?.allowed!==!1||"; the same in OpenAI.Codex 26.1027 on the
+// Windows box and in 26.1021), and its remaining-percent reading keeps a
+// window of an allowed account at 1% or more (search
+// "Math.max(100-e,+(!0===t))"), so to the app such an account still has
+// room. Holding it would take the app out of ChatGPT (durable threads,
+// remote control, its usage meter, #996) for no Send it would grey.
+//
+// A used-up 5h window with the week open is held through allowed: the
+// backend says allowed false and limit_reached true there (the real Team
+// reply in testdata, 5h at 100% and the week at 63%), which is what
+// greys the app's Send.
 func codexAtLimit(u codexUsage) bool {
-	r := u.RateLimit
-	if r.Allowed != nil && !*r.Allowed {
-		return true
-	}
-	spent, any := true, false
-	for _, w := range []*codexWindow{r.Primary, r.Secondary} {
-		if w == nil {
-			continue
-		}
-		any = true
-		if w.UsedPercent < 100 {
-			spent = false
-		}
-	}
-	if r.Allowed != nil { // allowed true: held only with every window gone
-		return any && spent
-	}
-	return r.LimitReached != nil && *r.LimitReached || any && spent
+	a := u.RateLimit.Allowed
+	return a != nil && !*a
 }
 
 type codexWindow struct {

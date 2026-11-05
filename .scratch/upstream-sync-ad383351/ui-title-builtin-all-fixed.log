@@ -1,0 +1,1190 @@
+✔ chromium zh: the title bar's tools never lie over where the reader is (27043.726029ms)
+✔ chromium zh-TW: the title bar's tools never lie over where the reader is (27094.33977ms)
+✔ chromium ja: the title bar's tools never lie over where the reader is (27245.377094ms)
+title-debug library instructions [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 420,
+    y: 0,
+    width: 62,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 420
+  },
+  left: '420px',
+  right: '78px',
+  crumbMax: '166px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    {
+      text: 'Anweisungen',
+      hidden: false,
+      width: 89.046875,
+      scroll: 89
+    }
+  ]
+}
+title-debug library mcp [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 420,
+    y: 0,
+    width: 62,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 420
+  },
+  left: '420px',
+  right: '78px',
+  crumbMax: '166px',
+  actionsLeft: 490,
+  need: 97,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'MCP-Server', hidden: false, width: 77.328125, scroll: 77 }
+  ]
+}
+title-debug library skills [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 385,
+    y: 0,
+    width: 97,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 385
+  },
+  left: '385px',
+  right: '78px',
+  crumbMax: '131px',
+  actionsLeft: 490,
+  need: 97,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Skills', hidden: false, width: 35.875, scroll: 36 }
+  ]
+}
+title-debug library hooks [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 420,
+    y: 0,
+    width: 62,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 420
+  },
+  left: '420px',
+  right: '78px',
+  crumbMax: '166px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Hooks', hidden: false, width: 24.703125, scroll: 42 }
+  ]
+}
+title-debug library subagents [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 420,
+    y: 0,
+    width: 62,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 420
+  },
+  left: '420px',
+  right: '78px',
+  crumbMax: '166px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Subagenten', hidden: false, width: 79.734375, scroll: 80 }
+  ]
+}
+title-debug library rtk [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 420,
+    y: 0,
+    width: 62,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 420
+  },
+  left: '420px',
+  right: '78px',
+  crumbMax: '166px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'RTK', hidden: false, width: 24.703125, scroll: 27 }
+  ]
+}
+title-debug plugins builtin [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 482,
+    y: 0,
+    width: 0,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 482
+  },
+  left: '482px',
+  right: '78px',
+  crumbMax: '228px',
+  actionsLeft: 490,
+  need: 0,
+  kids: [
+    { text: 'Zusätze', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    {
+      text: 'Erweiterungen',
+      hidden: false,
+      width: 92.609375,
+      scroll: 93
+    },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Eingebaut', hidden: false, width: 67.484375, scroll: 67 }
+  ]
+}
+title-debug plugins discover [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 324,
+    y: 0,
+    width: 158,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 324
+  },
+  left: '324px',
+  right: '78px',
+  crumbMax: '70px',
+  actionsLeft: 490,
+  need: 158,
+  kids: [
+    { text: 'Zusätze', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Erweiterungen', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Entdecken', hidden: false, width: 70, scroll: 70 }
+  ]
+}
+title-debug plugins installed [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 362,
+    y: 0,
+    width: 120,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 362
+  },
+  left: '362px',
+  right: '78px',
+  crumbMax: '108px',
+  actionsLeft: 490,
+  need: 158,
+  kids: [
+    { text: 'Zusätze', hidden: false, width: 48.546875, scroll: 49 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    {
+      text: 'Erweiterungen',
+      hidden: false,
+      width: 92.609375,
+      scroll: 93
+    },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Installiert', hidden: false, width: 0, scroll: 65 }
+  ]
+}
+title-debug settings [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 425,
+    y: 0,
+    width: 57,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 425
+  },
+  left: '425px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 490,
+  need: 57,
+  kids: [
+    {
+      text: 'Einstellungen',
+      hidden: false,
+      width: 85.515625,
+      scroll: 86
+    },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Allgemein', hidden: false, width: 66.421875, scroll: 66 }
+  ]
+}
+title-debug library instructions [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 381,
+    y: 0,
+    width: 191,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 381
+  },
+  left: '381px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 580,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    {
+      text: 'Anweisungen',
+      hidden: false,
+      width: 89.046875,
+      scroll: 89
+    }
+  ]
+}
+title-debug library mcp [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 473,
+    y: 0,
+    width: 99,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 473
+  },
+  left: '473px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 580,
+  need: 97,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'MCP-Server', hidden: false, width: 77.328125, scroll: 77 }
+  ]
+}
+title-debug library skills [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 432,
+    y: 0,
+    width: 140,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 432
+  },
+  left: '432px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 580,
+  need: 97,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Skills', hidden: false, width: 35.875, scroll: 36 }
+  ]
+}
+title-debug library hooks [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 438,
+    y: 0,
+    width: 134,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 438
+  },
+  left: '438px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 580,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Hooks', hidden: false, width: 41.96875, scroll: 42 }
+  ]
+}
+title-debug library subagents [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 476,
+    y: 0,
+    width: 96,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 476
+  },
+  left: '476px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 580,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Subagenten', hidden: false, width: 79.734375, scroll: 80 }
+  ]
+}
+title-debug library rtk [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 423,
+    y: 0,
+    width: 149,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 423
+  },
+  left: '423px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 580,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'RTK', hidden: false, width: 26.65625, scroll: 27 }
+  ]
+}
+title-debug plugins builtin [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 572,
+    y: 0,
+    width: 0,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 572
+  },
+  left: '572px',
+  right: '78px',
+  crumbMax: '318px',
+  actionsLeft: 580,
+  need: 0,
+  kids: [
+    { text: 'Zusätze', hidden: false, width: 48.546875, scroll: 49 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    {
+      text: 'Erweiterungen',
+      hidden: false,
+      width: 92.609375,
+      scroll: 93
+    },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Eingebaut', hidden: false, width: 67.484375, scroll: 67 }
+  ]
+}
+title-debug plugins discover [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 414,
+    y: 0,
+    width: 158,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 414
+  },
+  left: '414px',
+  right: '78px',
+  crumbMax: '160px',
+  actionsLeft: 580,
+  need: 158,
+  kids: [
+    { text: 'Zusätze', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Erweiterungen', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Entdecken', hidden: false, width: 70.296875, scroll: 70 }
+  ]
+}
+title-debug plugins installed [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 452,
+    y: 0,
+    width: 120,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 452
+  },
+  left: '452px',
+  right: '78px',
+  crumbMax: '198px',
+  actionsLeft: 580,
+  need: 158,
+  kids: [
+    { text: 'Zusätze', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    {
+      text: 'Erweiterungen',
+      hidden: false,
+      width: 92.609375,
+      scroll: 93
+    },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    {
+      text: 'Installiert',
+      hidden: false,
+      width: 64.859375,
+      scroll: 65
+    }
+  ]
+}
+title-debug settings [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 425,
+    y: 0,
+    width: 147,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 425
+  },
+  left: '425px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 580,
+  need: 147,
+  kids: [
+    {
+      text: 'Einstellungen',
+      hidden: false,
+      width: 85.515625,
+      scroll: 86
+    },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Allgemein', hidden: false, width: 66.421875, scroll: 66 }
+  ]
+}
+✔ chromium de: the title bar's tools never lie over where the reader is (27366.243745ms)
+✔ chromium en: the title bar's tools never lie over where the reader is (26758.193559ms)
+✔ webkit zh: the title bar's tools never lie over where the reader is (35143.710617ms)
+✔ webkit zh-TW: the title bar's tools never lie over where the reader is (35062.943257ms)
+✔ webkit ja: the title bar's tools never lie over where the reader is (35564.333647ms)
+title-debug library instructions [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 420,
+    y: 0,
+    width: 62,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 420
+  },
+  left: '420px',
+  right: '78px',
+  crumbMax: '166px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    {
+      text: 'Anweisungen',
+      hidden: false,
+      width: 89.046875,
+      scroll: 89
+    }
+  ]
+}
+title-debug library mcp [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 420,
+    y: 0,
+    width: 62,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 420
+  },
+  left: '420px',
+  right: '78px',
+  crumbMax: '166px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'MCP-Server', hidden: false, width: 77.71875, scroll: 78 }
+  ]
+}
+title-debug library skills [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 420,
+    y: 0,
+    width: 62,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 420
+  },
+  left: '420px',
+  right: '78px',
+  crumbMax: '166px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Skills', hidden: false, width: 35.875, scroll: 36 }
+  ]
+}
+title-debug library hooks [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 420,
+    y: 0,
+    width: 62,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 420
+  },
+  left: '420px',
+  right: '78px',
+  crumbMax: '166px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Hooks', hidden: false, width: 41.96875, scroll: 42 }
+  ]
+}
+title-debug library subagents [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 420,
+    y: 0,
+    width: 62,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 420
+  },
+  left: '420px',
+  right: '78px',
+  crumbMax: '166px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Subagenten', hidden: false, width: 79.734375, scroll: 80 }
+  ]
+}
+title-debug library rtk [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 420,
+    y: 0,
+    width: 62,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 420
+  },
+  left: '420px',
+  right: '78px',
+  crumbMax: '166px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'RTK', hidden: false, width: 26.65625, scroll: 27 }
+  ]
+}
+title-debug plugins builtin [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 482,
+    y: 0,
+    width: 0,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 482
+  },
+  left: '482px',
+  right: '78px',
+  crumbMax: '228px',
+  actionsLeft: 490,
+  need: 0,
+  kids: [
+    { text: 'Zusätze', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    {
+      text: 'Erweiterungen',
+      hidden: false,
+      width: 92.609375,
+      scroll: 93
+    },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Eingebaut', hidden: false, width: 67.484375, scroll: 67 }
+  ]
+}
+title-debug plugins discover [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 362,
+    y: 0,
+    width: 120,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 362
+  },
+  left: '362px',
+  right: '78px',
+  crumbMax: '108px',
+  actionsLeft: 490,
+  need: 120,
+  kids: [
+    { text: 'Zusätze', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Erweiterungen', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Entdecken', hidden: false, width: 70.296875, scroll: 70 }
+  ]
+}
+title-debug plugins installed [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 362,
+    y: 0,
+    width: 120,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 362
+  },
+  left: '362px',
+  right: '78px',
+  crumbMax: '108px',
+  actionsLeft: 490,
+  need: 120,
+  kids: [
+    { text: 'Zusätze', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Erweiterungen', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    {
+      text: 'Installiert',
+      hidden: false,
+      width: 64.859375,
+      scroll: 65
+    }
+  ]
+}
+title-debug settings [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 425,
+    y: 0,
+    width: 57,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 425
+  },
+  left: '425px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 490,
+  need: 57,
+  kids: [
+    {
+      text: 'Einstellungen',
+      hidden: false,
+      width: 85.515625,
+      scroll: 86
+    },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Allgemein', hidden: false, width: 66.421875, scroll: 66 }
+  ]
+}
+title-debug library instructions [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 485,
+    y: 0,
+    width: 87,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 485
+  },
+  left: '485px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 580,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    {
+      text: 'Anweisungen',
+      hidden: false,
+      width: 89.046875,
+      scroll: 89
+    }
+  ]
+}
+title-debug library mcp [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 381,
+    y: 0,
+    width: 191,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 381
+  },
+  left: '381px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 580,
+  need: 97,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'MCP-Server', hidden: false, width: 77.71875, scroll: 78 }
+  ]
+}
+title-debug library skills [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 432,
+    y: 0,
+    width: 140,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 432
+  },
+  left: '432px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 580,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Skills', hidden: false, width: 35.875, scroll: 36 }
+  ]
+}
+title-debug library hooks [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 438,
+    y: 0,
+    width: 134,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 438
+  },
+  left: '438px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 580,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Hooks', hidden: false, width: 41.96875, scroll: 42 }
+  ]
+}
+title-debug library subagents [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 476,
+    y: 0,
+    width: 96,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 476
+  },
+  left: '476px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 580,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Subagenten', hidden: false, width: 79.734375, scroll: 80 }
+  ]
+}
+title-debug library rtk [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 423,
+    y: 0,
+    width: 149,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 423
+  },
+  left: '423px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 580,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'RTK', hidden: false, width: 26.65625, scroll: 27 }
+  ]
+}
+title-debug plugins builtin [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 572,
+    y: 0,
+    width: 0,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 572
+  },
+  left: '572px',
+  right: '78px',
+  crumbMax: '318px',
+  actionsLeft: 580,
+  need: 0,
+  kids: [
+    { text: 'Zusätze', hidden: false, width: 48.546875, scroll: 49 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    {
+      text: 'Erweiterungen',
+      hidden: false,
+      width: 92.609375,
+      scroll: 93
+    },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Eingebaut', hidden: false, width: 67.484375, scroll: 67 }
+  ]
+}
+title-debug plugins discover [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 414,
+    y: 0,
+    width: 158,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 414
+  },
+  left: '414px',
+  right: '78px',
+  crumbMax: '160px',
+  actionsLeft: 580,
+  need: 158,
+  kids: [
+    { text: 'Zusätze', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Erweiterungen', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Entdecken', hidden: false, width: 70.296875, scroll: 70 }
+  ]
+}
+title-debug plugins installed [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 452,
+    y: 0,
+    width: 120,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 452
+  },
+  left: '452px',
+  right: '78px',
+  crumbMax: '198px',
+  actionsLeft: 580,
+  need: 120,
+  kids: [
+    { text: 'Zusätze', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    {
+      text: 'Erweiterungen',
+      hidden: false,
+      width: 92.609375,
+      scroll: 93
+    },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    {
+      text: 'Installiert',
+      hidden: false,
+      width: 64.859375,
+      scroll: 65
+    }
+  ]
+}
+title-debug settings [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 425,
+    y: 0,
+    width: 147,
+    height: 46,
+    top: 0,
+    right: 572,
+    bottom: 46,
+    left: 425
+  },
+  left: '425px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 580,
+  need: 147,
+  kids: [
+    {
+      text: 'Einstellungen',
+      hidden: false,
+      width: 85.515625,
+      scroll: 86
+    },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Allgemein', hidden: false, width: 66.421875, scroll: 66 }
+  ]
+}
+✔ webkit de: the title bar's tools never lie over where the reader is (36040.220243ms)
+
+Interrupted while running:
+
+⚠ internal/gui/tests/title-bar-tools.test.cjs (internal/gui/tests/title-bar-tools.test.cjs:1:1)
+✖ internal/gui/tests/title-bar-tools.test.cjs (299960.473214ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 1
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 299967.147496
+
+✖ failing tests:
+
+test at internal/gui/tests/title-bar-tools.test.cjs:1:1
+✖ internal/gui/tests/title-bar-tools.test.cjs (299960.473214ms)
+  'Promise resolution is still pending but the event loop has already resolved'

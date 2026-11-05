@@ -1,0 +1,36 @@
+Merge remote-tracking branch 'origin/main'
+
+Preserve the fork's registry, VS Code Server, fetch picker, and agent runtimes while syncing upstream through a47596ea.
+
+Resolution notes:
+- Keep /api.json, ImageMCPPath, XDG_DATA_DIRS, MAGPIE_REGISTRY_DEFAULT_EFFORT, updateChannel, and fetch.
+- Adapt registry code to provider.NativeEndpoints and maskedQuery's context parameter.
+- Register /api.json as a one-port client route.
+- Classify CARGO_HOME as a shared package cache.
+- Match encoding/json separator escaping across supported Go versions.
+- Move filememo replacement channels to an init-owned synchronous relay.
+- Restrict Codex's richer metadata request to single-protocol providers, preserving shared-base deduplication.
+- Make environment, image-budget, and WSL listener tests independent of toolchain timing and transport changes.
+- Defer header fitting out of its ResizeObserver callback for WebKit.
+- Reserve framed-editor scrollbar room on Linux WebKit as on macOS.
+- Wait for the first state read before placing agent preference rows.
+- Include solid Apple and Penguin icons in the 82% tile rule.
+- Limit scroll-rest waits to the specific wheel-driven UI tests that need them, leaving the shared reach helper's behavior unchanged.
+- Expect a fetched Codex model to use magpie when the fixture has no local Codex cache, matching upstream's hidden-model behavior.
+- Correct the search refusal codes, fetch symbol reference, and filememo channel comment found by comment review.
+- Set GUI budgets to the measured merged sizes 1,313,610 and 1,529,732.
+
+Verification:
+- gofmt on changed Go files; no formatting differences remain.
+- GOTOOLCHAIN=go1.26.8 go vet -tags nogui ./... and GOOS=windows go vet ./... pass.
+- go build -tags nogui ./... and GOOS=windows go build -tags nogui ./... pass.
+- make cli VERSION=sync-check passes.
+- Browser-access, /api.json default-effort, service-searcher, fetch-selector, and one-port focused tests pass with the race detector in internal/gui and internal/gateway.
+- TestCoreScriptBudget passes at the measured merged sizes.
+- All 45 site tests pass, and sh -n site/public/install.sh passes.
+- The 38 focused web-search browser cases pass in Chromium and WebKit.
+- The focused Codex hidden-model and TUI subscription-model tests pass.
+- Full Go 1.26.8 suite passed in 318 seconds.
+- Focused failures in last-page, routing-rule-models, side-toggle, title-bar-tools, usage-focus-steady, and usage-agents-hide also occur on a pristine a47596ea checkout. No fork production change was made for those pre-existing failures.
+- The full 922-file UI suite is an optional diagnostic and was not run to completion on this checkpoint.
+- Not run: live third-party vendor calls or native Windows/macOS UI.

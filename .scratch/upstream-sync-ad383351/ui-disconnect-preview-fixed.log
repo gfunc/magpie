@@ -1,0 +1,12 @@
+✔ chromium en: disconnect previews use the full body width (6475.27682ms)
+✔ chromium zh: disconnect previews use the full body width (5962.181802ms)
+✔ webkit en: disconnect previews use the full body width (7384.038043ms)
+✔ webkit zh: disconnect previews use the full body width (7377.431977ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 27540.798781

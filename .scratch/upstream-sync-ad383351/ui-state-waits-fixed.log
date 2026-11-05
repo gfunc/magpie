@@ -1,0 +1,215 @@
+✔ chromium en: independent installed fonts, real styles, persistence and reset (8018.044595ms)
+✔ chromium zh: independent installed fonts, real styles, persistence and reset (7929.818187ms)
+✔ chromium: queued choices and failed writes restore the saved face (4968.369212ms)
+✔ chromium: refresh errors, missing faces, empty lists and literal names (5495.470877ms)
+✔ chromium: a search narrowing the menu under a still pointer keeps the typing in its field (1009.576155ms)
+✔ chromium: font menu search and keys fit narrow windows without scrolling the page (1766.127128ms)
+✔ chromium: explicit fonts override Omarchy and browser mode keeps its defaults (1965.148263ms)
+✔ chromium: native notifications update the other webview without another save (1724.31039ms)
+✔ chromium: named variable traits retain fractional weight and custom width (2528.32918ms)
+✔ webkit en: independent installed fonts, real styles, persistence and reset (8919.218626ms)
+✔ webkit zh: independent installed fonts, real styles, persistence and reset (8913.633885ms)
+✔ webkit: queued choices and failed writes restore the saved face (5244.670707ms)
+✔ webkit: refresh errors, missing faces, empty lists and literal names (5269.147189ms)
+✖ webkit: a search narrowing the menu under a still pointer keeps the typing in its field (6781.998957ms)
+✔ webkit: font menu search and keys fit narrow windows without scrolling the page (2514.691586ms)
+✔ webkit: explicit fonts override Omarchy and browser mode keeps its defaults (3004.235465ms)
+✔ webkit: native notifications update the other webview without another save (1897.64917ms)
+✔ webkit: named variable traits retain fractional weight and custom width (2162.132209ms)
+✔ chromium en: manage named caller keys and filter their usage (6149.884932ms)
+✔ chromium zh: manage named caller keys and filter their usage (5535.969698ms)
+✔ webkit en: manage named caller keys and filter their usage (5048.620551ms)
+✔ webkit zh: manage named caller keys and filter their usage (5082.111211ms)
+✔ chromium: the window opens on the page last left (10386.138001ms)
+✔ webkit: the window opens on the page last left (12683.953129ms)
+▶ chromium: the plugins on GitHub are narrowed by kind and by a field of their own
+  ✔ nothing installed (525.195116ms)
+  ✔ en 1100px (2865.017541ms)
+  ✔ en 980px (2747.875366ms)
+  ✔ en 420px (2731.269ms)
+  ✔ zh 1100px (2797.623143ms)
+  ✔ zh 980px (2756.496987ms)
+  ✔ zh 420px (2693.523706ms)
+  ✔ zh-TW 1100px (2798.576764ms)
+  ✔ zh-TW 980px (2753.382501ms)
+  ✔ zh-TW 420px (2729.936052ms)
+  ✔ ja 1100px (2800.66812ms)
+  ✔ ja 980px (2767.337713ms)
+  ✔ ja 420px (2833.842355ms)
+  ✔ de 1100px (2782.97794ms)
+  ✔ de 980px (2748.468598ms)
+  ✔ de 420px (2845.38695ms)
+✔ chromium: the plugins on GitHub are narrowed by kind and by a field of their own (42358.42405ms)
+▶ webkit: the plugins on GitHub are narrowed by kind and by a field of their own
+  ✔ nothing installed (962.759249ms)
+  ✔ en 1100px (3513.872371ms)
+  ✔ en 980px (3364.487048ms)
+  ✔ en 420px (3421.730757ms)
+  ✔ zh 1100px (3514.064956ms)
+  ✔ zh 980px (3406.566719ms)
+  ✔ zh 420px (3333.038925ms)
+  ✔ zh-TW 1100px (3512.636019ms)
+  ✔ zh-TW 980px (3404.064807ms)
+  ✔ zh-TW 420px (3303.248481ms)
+  ✔ ja 1100px (3505.025482ms)
+  ✔ ja 980px (3444.051374ms)
+  ✔ ja 420px (3509.233213ms)
+  ✔ de 1100px (3526.276538ms)
+  ✔ de 980px (3441.155342ms)
+  ✔ de 420px (3514.992396ms)
+✔ webkit: the plugins on GitHub are narrowed by kind and by a field of their own (52831.214454ms)
+✔ chromium en: a built-in subscription moves to its plugin for good (2734.089404ms)
+✔ chromium en: the Plugins tab opened as the page offers Zed's accounts (1684.537169ms)
+✔ chromium zh: a built-in subscription moves to its plugin for good (2717.831679ms)
+✔ chromium zh: the Plugins tab opened as the page offers Zed's accounts (1714.068279ms)
+✖ webkit en: a built-in subscription moves to its plugin for good (2246.033474ms)
+✔ webkit en: the Plugins tab opened as the page offers Zed's accounts (1946.478058ms)
+✔ webkit zh: a built-in subscription moves to its plugin for good (3159.286016ms)
+✔ webkit zh: the Plugins tab opened as the page offers Zed's accounts (1925.214054ms)
+▶ chromium: the sidebar's button
+  ✔ en (1011.533718ms)
+  ✔ zh (918.684576ms)
+  ✔ zh-TW (951.115102ms)
+  ✔ ja (899.201757ms)
+  ✔ de (883.080177ms)
+  ✔ the two trade places as one motion (1232.661788ms)
+  ✔ Linux: at once, no transition (458.341674ms)
+  ✔ a transition that never ends is cut short (1949.369673ms)
+  ✔ less motion: at once (398.90128ms)
+✔ chromium: the sidebar's button (8876.191831ms)
+▶ webkit: the sidebar's button
+  ✔ en (1449.811765ms)
+  ✔ zh (1393.194463ms)
+  ✔ zh-TW (1411.026459ms)
+  ✔ ja (1412.460726ms)
+  ✔ de (1372.541895ms)
+  ✔ the two trade places as one motion (1591.815651ms)
+  ✔ Linux: at once, no transition (855.295191ms)
+  ✔ a transition that never ends is cut short (2328.292545ms)
+  ✔ less motion: at once (755.73399ms)
+✔ webkit: the sidebar's button (12716.803987ms)
+✔ chromium zh: the title bar's tools never lie over where the reader is (27001.479138ms)
+✔ chromium zh-TW: the title bar's tools never lie over where the reader is (26997.728216ms)
+✔ chromium ja: the title bar's tools never lie over where the reader is (27378.65051ms)
+✖ chromium de: the title bar's tools never lie over where the reader is (8493.821786ms)
+✔ chromium en: the title bar's tools never lie over where the reader is (26737.692425ms)
+✔ webkit zh: the title bar's tools never lie over where the reader is (35056.408281ms)
+✔ webkit zh-TW: the title bar's tools never lie over where the reader is (35198.998737ms)
+✔ webkit ja: the title bar's tools never lie over where the reader is (35522.89881ms)
+✖ webkit de: the title bar's tools never lie over where the reader is (9805.129042ms)
+✔ webkit en: the title bar's tools never lie over where the reader is (35061.093035ms)
+✔ chromium en: usage by subscription account (1333.567727ms)
+✔ chromium zh: usage by subscription account (1337.214601ms)
+✔ webkit en: usage by subscription account (1838.11212ms)
+✔ webkit zh: usage by subscription account (1808.504442ms)
+✖ chromium en: focusing the window keeps the Usage charts and the Routing groups (5541.191958ms)
+✖ chromium zh: focusing the window keeps the Usage charts and the Routing groups (5523.093187ms)
+✖ webkit en: focusing the window keeps the Usage charts and the Routing groups (5832.293161ms)
+✖ webkit zh: focusing the window keeps the Usage charts and the Routing groups (5779.188684ms)
+ℹ tests 104
+ℹ suites 0
+ℹ pass 96
+ℹ fail 8
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 559572.112458
+
+✖ failing tests:
+
+test at internal/gui/tests/fonts.test.cjs:191:3
+✖ webkit: a search narrowing the menu under a still pointer keeps the typing in its field (6781.998957ms)
+  page.waitForFunction: Timeout 5000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/fonts.test.cjs:215:18) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+test at internal/gui/tests/plugin-move.test.cjs:91:5
+✖ webkit en: a built-in subscription moves to its plugin for good (2246.033474ms)
+  AssertionError [ERR_ASSERTION]: the failure moved the editor
+  
+  521 !== 491
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/plugin-move.test.cjs:164:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 521,
+    expected: 491,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ chromium de: the title bar's tools never lie over where the reader is (8493.821786ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#view-plugins .pm-head') to be visible[22m
+  [2m    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:108:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#view-plugins .pm-head') to be visible", '    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit de: the title bar's tools never lie over where the reader is (9805.129042ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#view-plugins .pm-head') to be visible[22m
+  [2m    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:108:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#view-plugins .pm-head') to be visible", '    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>' ]
+  }
+
+test at internal/gui/tests/usage-focus-steady.test.cjs:117:5
+✖ chromium en: focusing the window keeps the Usage charts and the Routing groups (5541.191958ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#usageTab .opt').first() to be visible[22m
+  [2m    14 × locator resolved to hidden <button class="opt on">Overview</button>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-focus-steady.test.cjs:133:49) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#usageTab .opt').first() to be visible", '    14 × locator resolved to hidden <button class="opt on">Overview</button>' ]
+  }
+
+test at internal/gui/tests/usage-focus-steady.test.cjs:117:5
+✖ chromium zh: focusing the window keeps the Usage charts and the Routing groups (5523.093187ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#usageTab .opt').first() to be visible[22m
+  [2m    14 × locator resolved to hidden <button class="opt on">概览</button>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-focus-steady.test.cjs:133:49) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#usageTab .opt').first() to be visible", '    14 × locator resolved to hidden <button class="opt on">概览</button>' ]
+  }
+
+test at internal/gui/tests/usage-focus-steady.test.cjs:117:5
+✖ webkit en: focusing the window keeps the Usage charts and the Routing groups (5832.293161ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#usageTab .opt').first() to be visible[22m
+  [2m    14 × locator resolved to hidden <button class="opt on">Overview</button>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-focus-steady.test.cjs:133:49) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#usageTab .opt').first() to be visible", '    14 × locator resolved to hidden <button class="opt on">Overview</button>' ]
+  }
+
+test at internal/gui/tests/usage-focus-steady.test.cjs:117:5
+✖ webkit zh: focusing the window keeps the Usage charts and the Routing groups (5779.188684ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#usageTab .opt').first() to be visible[22m
+  [2m    14 × locator resolved to hidden <button class="opt on">概览</button>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-focus-steady.test.cjs:133:49) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#usageTab .opt').first() to be visible", '    14 × locator resolved to hidden <button class="opt on">概览</button>' ]
+  }

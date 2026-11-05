@@ -1,0 +1,396 @@
+hide-state { was: 532.703125, scroll: 0 }
+▶ chromium: the Usage page's Agents list hides a client, and brings it back
+  ✖ en 1200 (2307.432199ms)
+hide-state { was: 552.703125, scroll: 0 }
+  ✖ en 560 (2148.822311ms)
+hide-state { was: 558.53125, scroll: 502 }
+  ✔ en 390 web (5941.152868ms)
+hide-state { was: 532.703125, scroll: 0 }
+  ✖ zh 1200 (2156.941417ms)
+hide-state { was: 561.6875, scroll: 0 }
+  ✖ zh 560 (2149.272937ms)
+hide-state { was: 558.53125, scroll: 502 }
+  ✔ zh 390 web (5944.428146ms)
+hide-state { was: 532.703125, scroll: 0 }
+  ✖ zh-TW 1200 (2146.659949ms)
+hide-state { was: 561.6875, scroll: 0 }
+  ✖ zh-TW 560 (2142.170128ms)
+hide-state { was: 558.53125, scroll: 502 }
+  ✔ zh-TW 390 web (5957.759311ms)
+hide-state { was: 532.703125, scroll: 0 }
+  ✖ ja 1200 (2125.670623ms)
+hide-state { was: 568.09375, scroll: 0 }
+  ✖ ja 560 (2113.319434ms)
+hide-state { was: 553.921875, scroll: 522 }
+  ✔ ja 390 web (6094.025208ms)
+hide-state { was: 532.703125, scroll: 0 }
+  ✖ de 1200 (2155.957916ms)
+hide-state { was: 583.484375, scroll: 0 }
+  ✖ de 560 (2118.062146ms)
+hide-state { was: 553.921875, scroll: 522 }
+  ✔ de 390 web (6091.630771ms)
+✖ chromium: the Usage page's Agents list hides a client, and brings it back (52000.608824ms)
+hide-state { was: 532.703125, scroll: 0 }
+▶ webkit: the Usage page's Agents list hides a client, and brings it back
+  ✖ en 1200 (2758.065116ms)
+hide-state { was: 552.703125, scroll: 0 }
+  ✖ en 560 (2722.196441ms)
+hide-state { was: 558.53125, scroll: 501 }
+  ✔ en 390 web (7393.285707ms)
+hide-state { was: 532.703125, scroll: 0 }
+  ✖ zh 1200 (2823.235484ms)
+hide-state { was: 561.6875, scroll: 0 }
+  ✖ zh 560 (2740.932706ms)
+hide-state { was: 558.53125, scroll: 501 }
+  ✔ zh 390 web (7604.473479ms)
+hide-state { was: 532.703125, scroll: 0 }
+  ✖ zh-TW 1200 (2939.975377ms)
+hide-state { was: 561.6875, scroll: 0 }
+  ✖ zh-TW 560 (2824.914161ms)
+hide-state { was: 558.53125, scroll: 501 }
+  ✔ zh-TW 390 web (7658.710436ms)
+hide-state { was: 532.703125, scroll: 0 }
+  ✖ ja 1200 (2931.508236ms)
+hide-state { was: 583.484375, scroll: 0 }
+  ✖ ja 560 (2879.833433ms)
+hide-state { was: 553.921875, scroll: 521 }
+  ✔ ja 390 web (7948.908576ms)
+hide-state { was: 532.703125, scroll: 0 }
+  ✖ de 1200 (3060.813847ms)
+hide-state { was: 583.484375, scroll: 0 }
+  ✖ de 560 (2959.803422ms)
+hide-state { was: 569.3125, scroll: 521 }
+  ✔ de 390 web (8212.687835ms)
+✖ webkit: the Usage page's Agents list hides a client, and brings it back (68321.998529ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 10
+ℹ fail 22
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 120676.444245
+
+✖ failing tests:
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ en 1200 (2307.432199ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ en 560 (2148.822311ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 552.703125 → 602.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh 1200 (2156.941417ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh 560 (2149.272937ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 561.6875 → 611.96875
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh-TW 1200 (2146.659949ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh-TW 560 (2142.170128ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 561.6875 → 611.96875
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ ja 1200 (2125.670623ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ ja 560 (2113.319434ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 568.09375 → 618.375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ de 1200 (2155.957916ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ de 560 (2118.062146ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 583.484375 → 633.765625
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ en 1200 (2758.065116ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ en 560 (2722.196441ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 552.703125 → 602.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh 1200 (2823.235484ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh 560 (2740.932706ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 561.6875 → 611.96875
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh-TW 1200 (2939.975377ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh-TW 560 (2824.914161ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 561.6875 → 611.96875
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ ja 1200 (2931.508236ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ ja 560 (2879.833433ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 583.484375 → 633.765625
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ de 1200 (3060.813847ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ de 560 (2959.803422ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 583.484375 → 633.765625
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:177:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

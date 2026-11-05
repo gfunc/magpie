@@ -1,0 +1,16 @@
+✔ chromium en 980px: search APIs are added and removed in Settings (10091.127177ms)
+✔ chromium en 420px: search APIs are added and removed in Settings (12593.563421ms)
+✔ chromium zh 980px: search APIs are added and removed in Settings (9999.959364ms)
+✔ chromium zh 420px: search APIs are added and removed in Settings (12567.584052ms)
+✔ webkit en 980px: search APIs are added and removed in Settings (10050.498081ms)
+✔ webkit en 420px: search APIs are added and removed in Settings (12790.961169ms)
+✔ webkit zh 980px: search APIs are added and removed in Settings (10013.616521ms)
+✔ webkit zh 420px: search APIs are added and removed in Settings (12793.52036ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 91242.095421

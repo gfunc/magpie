@@ -1,0 +1,140 @@
+✖ chromium zh: the title bar's tools never lie over where the reader is (6323.578217ms)
+✖ chromium zh-TW: the title bar's tools never lie over where the reader is (6246.320954ms)
+✖ chromium ja: the title bar's tools never lie over where the reader is (5735.537827ms)
+✖ chromium de: the title bar's tools never lie over where the reader is (6236.751548ms)
+✖ chromium en: the title bar's tools never lie over where the reader is (6246.08786ms)
+✖ webkit zh: the title bar's tools never lie over where the reader is (6959.936338ms)
+✖ webkit zh-TW: the title bar's tools never lie over where the reader is (6939.230531ms)
+✖ webkit ja: the title bar's tools never lie over where the reader is (6283.151887ms)
+✖ webkit de: the title bar's tools never lie over where the reader is (6938.458131ms)
+✖ webkit en: the title bar's tools never lie over where the reader is (6902.613777ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 0
+ℹ fail 10
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 65358.843229
+
+✖ failing tests:
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ chromium zh: the title bar's tools never lie over where the reader is (6323.578217ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#crumb b') to be visible[22m
+  [2m    14 × locator resolved to hidden <b>MCP 服务器</b>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:110:42) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#crumb b') to be visible", '    14 × locator resolved to hidden <b>MCP 服务器</b>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ chromium zh-TW: the title bar's tools never lie over where the reader is (6246.320954ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#crumb b') to be visible[22m
+  [2m    14 × locator resolved to hidden <b>MCP 伺服器</b>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:110:42) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#crumb b') to be visible", '    14 × locator resolved to hidden <b>MCP 伺服器</b>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ chromium ja: the title bar's tools never lie over where the reader is (5735.537827ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#crumb b') to be visible[22m
+  [2m    14 × locator resolved to hidden <b>指示</b>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:110:42) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#crumb b') to be visible", '    14 × locator resolved to hidden <b>指示</b>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ chromium de: the title bar's tools never lie over where the reader is (6236.751548ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#crumb b') to be visible[22m
+  [2m    14 × locator resolved to hidden <b>MCP-Server</b>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:110:42) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#crumb b') to be visible", '    14 × locator resolved to hidden <b>MCP-Server</b>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ chromium en: the title bar's tools never lie over where the reader is (6246.08786ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#crumb b') to be visible[22m
+  [2m    14 × locator resolved to hidden <b>MCP servers</b>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:110:42) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#crumb b') to be visible", '    14 × locator resolved to hidden <b>MCP servers</b>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit zh: the title bar's tools never lie over where the reader is (6959.936338ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#crumb b') to be visible[22m
+  [2m    14 × locator resolved to hidden <b>MCP 服务器</b>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:110:42) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#crumb b') to be visible", '    14 × locator resolved to hidden <b>MCP 服务器</b>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit zh-TW: the title bar's tools never lie over where the reader is (6939.230531ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#crumb b') to be visible[22m
+  [2m    14 × locator resolved to hidden <b>MCP 伺服器</b>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:110:42) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#crumb b') to be visible", '    14 × locator resolved to hidden <b>MCP 伺服器</b>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit ja: the title bar's tools never lie over where the reader is (6283.151887ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#crumb b') to be visible[22m
+  [2m    14 × locator resolved to hidden <b>指示</b>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:110:42) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#crumb b') to be visible", '    14 × locator resolved to hidden <b>指示</b>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit de: the title bar's tools never lie over where the reader is (6938.458131ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#crumb b') to be visible[22m
+  [2m    14 × locator resolved to hidden <b>MCP-Server</b>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:110:42) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#crumb b') to be visible", '    14 × locator resolved to hidden <b>MCP-Server</b>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit en: the title bar's tools never lie over where the reader is (6902.613777ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#crumb b') to be visible[22m
+  [2m    14 × locator resolved to hidden <b>MCP servers</b>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:110:42) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#crumb b') to be visible", '    14 × locator resolved to hidden <b>MCP servers</b>' ]
+  }

@@ -1,0 +1,19 @@
+font-hover-debug {
+  box: {
+    x: 108.78009796142578,
+    y: 160.66546630859375,
+    width: 306.86153411865234,
+    height: 36.43980407714844
+  },
+  hit: '<button class="pm-item" type="button" role="menuitemradio" aria-checked="false"><span class="pm-tick"></span><span class="pm-words"><span class="pm-name">Consolas</span><span class="pm-note"></span></span></button>',
+  active: '<button class="pm-item" type="button" role="menuitemradio" aria-checked="false"><span class="pm-tick"></span><span class="pm-words"><span class="pm-name">Consolas</span><span class="pm-note"></span></span></button>'
+}
+✔ webkit: a search narrowing the menu under a still pointer keeps the typing in its field (2131.031747ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2464.168887

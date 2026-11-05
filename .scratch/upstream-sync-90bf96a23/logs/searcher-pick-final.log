@@ -1,0 +1,30 @@
+✔ chromium en: the picked searcher that didn't search is said first (1692.769792ms)
+✔ chromium zh: the picked searcher that didn't search is said first (1649.630978ms)
+✔ chromium zh-TW: the picked searcher that didn't search is said first (1619.841635ms)
+✔ chromium ja: the picked searcher that didn't search is said first (1667.0296ms)
+✔ chromium de: the picked searcher that didn't search is said first (1608.827869ms)
+✔ chromium en: the provider that searches for other models is picked in Settings (7192.284499ms)
+✔ chromium zh: the provider that searches for other models is picked in Settings (7756.323464ms)
+✔ chromium en: search help preserves ellipsis and hover titles (5343.81324ms)
+✔ chromium zh: search help preserves ellipsis and hover titles (5213.756347ms)
+✔ chromium ja: search help preserves ellipsis and hover titles (5257.77108ms)
+✔ chromium de: search help preserves ellipsis and hover titles (6569.85819ms)
+✔ webkit en: the picked searcher that didn't search is said first (2403.853961ms)
+✔ webkit zh: the picked searcher that didn't search is said first (2403.03689ms)
+✔ webkit zh-TW: the picked searcher that didn't search is said first (2419.473066ms)
+✔ webkit ja: the picked searcher that didn't search is said first (2420.352547ms)
+✔ webkit de: the picked searcher that didn't search is said first (2446.016896ms)
+✔ webkit en: the provider that searches for other models is picked in Settings (8845.656086ms)
+✔ webkit zh: the provider that searches for other models is picked in Settings (8899.713733ms)
+✔ webkit en: search help preserves ellipsis and hover titles (6357.198293ms)
+✔ webkit zh: search help preserves ellipsis and hover titles (6298.754417ms)
+✔ webkit ja: search help preserves ellipsis and hover titles (6339.949159ms)
+✔ webkit de: search help preserves ellipsis and hover titles (7602.080991ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 102349.064316

@@ -1,0 +1,89 @@
+✔ chromium 1100 en: each WorkBuddy account's check-in on its own in Settings (1712.898142ms)
+✔ chromium 1100 en: an account left out says so on its Usage card (618.91702ms)
+✔ chromium 1100 zh: each WorkBuddy account's check-in on its own in Settings (1590.258438ms)
+✔ chromium 1100 zh: an account left out says so on its Usage card (618.413647ms)
+✔ chromium 1100 zh-TW: each WorkBuddy account's check-in on its own in Settings (1582.709853ms)
+✔ chromium 1100 zh-TW: an account left out says so on its Usage card (605.529309ms)
+✔ chromium 1100 ja: each WorkBuddy account's check-in on its own in Settings (1541.894787ms)
+✔ chromium 1100 ja: an account left out says so on its Usage card (620.619672ms)
+✔ chromium 1100 de: each WorkBuddy account's check-in on its own in Settings (1760.774574ms)
+✔ chromium 1100 de: an account left out says so on its Usage card (587.923997ms)
+✔ chromium 420 en: each WorkBuddy account's check-in on its own in Settings (2528.329531ms)
+✔ chromium 420 en: an account left out says so on its Usage card (559.50319ms)
+✔ chromium 420 zh: each WorkBuddy account's check-in on its own in Settings (2511.892282ms)
+✔ chromium 420 zh: an account left out says so on its Usage card (565.178386ms)
+✔ chromium 420 zh-TW: each WorkBuddy account's check-in on its own in Settings (2545.299888ms)
+✔ chromium 420 zh-TW: an account left out says so on its Usage card (586.783609ms)
+✔ chromium 420 ja: each WorkBuddy account's check-in on its own in Settings (2551.693553ms)
+✔ chromium 420 ja: an account left out says so on its Usage card (593.936399ms)
+✔ chromium 420 de: each WorkBuddy account's check-in on its own in Settings (2700.751259ms)
+✔ chromium 420 de: an account left out says so on its Usage card (576.045864ms)
+✔ webkit 1100 en: each WorkBuddy account's check-in on its own in Settings (1945.50546ms)
+✔ webkit 1100 en: an account left out says so on its Usage card (1034.396732ms)
+✔ webkit 1100 zh: each WorkBuddy account's check-in on its own in Settings (1926.766991ms)
+✔ webkit 1100 zh: an account left out says so on its Usage card (1039.760763ms)
+✔ webkit 1100 zh-TW: each WorkBuddy account's check-in on its own in Settings (1898.148841ms)
+✔ webkit 1100 zh-TW: an account left out says so on its Usage card (1041.971671ms)
+✔ webkit 1100 ja: each WorkBuddy account's check-in on its own in Settings (1856.643232ms)
+✔ webkit 1100 ja: an account left out says so on its Usage card (1045.711369ms)
+✔ webkit 1100 de: each WorkBuddy account's check-in on its own in Settings (2123.429205ms)
+✔ webkit 1100 de: an account left out says so on its Usage card (1049.85189ms)
+✔ webkit 420 en: each WorkBuddy account's check-in on its own in Settings (3792.451568ms)
+✔ webkit 420 en: an account left out says so on its Usage card (1034.813076ms)
+✔ webkit 420 zh: each WorkBuddy account's check-in on its own in Settings (3838.106748ms)
+✔ webkit 420 zh: an account left out says so on its Usage card (950.448182ms)
+✔ webkit 420 zh-TW: each WorkBuddy account's check-in on its own in Settings (3808.269641ms)
+✔ webkit 420 zh-TW: an account left out says so on its Usage card (954.956204ms)
+✔ webkit 420 ja: each WorkBuddy account's check-in on its own in Settings (3745.633816ms)
+✔ webkit 420 ja: an account left out says so on its Usage card (919.420224ms)
+✔ webkit 420 de: each WorkBuddy account's check-in on its own in Settings (4082.529782ms)
+✔ webkit 420 de: an account left out says so on its Usage card (990.926526ms)
+✖ the tile logos' rule names every logo solid to its edges, and no other (926.818325ms)
+✔ a tile logo is drawn at 82% of its box, a line logo whole (chromium) (464.325742ms)
+✔ a tile logo is drawn at 82% of its box, a line logo whole (webkit) (1040.621719ms)
+✔ chromium en: the picked searcher that didn't search is said first (1775.083733ms)
+✔ chromium zh: the picked searcher that didn't search is said first (1651.844679ms)
+✔ chromium zh-TW: the picked searcher that didn't search is said first (1701.706095ms)
+✔ chromium ja: the picked searcher that didn't search is said first (1676.564767ms)
+✔ chromium de: the picked searcher that didn't search is said first (1732.845986ms)
+✔ chromium en: the provider that searches for other models is picked in Settings (4144.13651ms)
+✔ chromium zh: the provider that searches for other models is picked in Settings (3502.15055ms)
+✔ chromium en: search help preserves ellipsis and hover titles (5212.021685ms)
+✔ chromium zh: search help preserves ellipsis and hover titles (4519.24535ms)
+✔ chromium ja: search help preserves ellipsis and hover titles (5250.556549ms)
+✔ chromium de: search help preserves ellipsis and hover titles (5516.22827ms)
+✔ webkit en: the picked searcher that didn't search is said first (2317.554596ms)
+✔ webkit zh: the picked searcher that didn't search is said first (2525.959677ms)
+✔ webkit zh-TW: the picked searcher that didn't search is said first (2314.616481ms)
+✔ webkit ja: the picked searcher that didn't search is said first (2284.024195ms)
+✔ webkit de: the picked searcher that didn't search is said first (2298.028309ms)
+✔ webkit en: the provider that searches for other models is picked in Settings (4605.227373ms)
+✔ webkit zh: the provider that searches for other models is picked in Settings (4631.975466ms)
+✔ webkit en: search help preserves ellipsis and hover titles (5457.814369ms)
+✔ webkit zh: search help preserves ellipsis and hover titles (5228.744505ms)
+✔ webkit ja: search help preserves ellipsis and hover titles (5508.442245ms)
+✔ webkit de: search help preserves ellipsis and hover titles (5683.415759ms)
+ℹ tests 65
+ℹ suites 0
+ℹ pass 64
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 149070.100807
+
+✖ failing tests:
+
+test at internal/gui/tests/icon-tile.test.cjs:37:1
+✖ the tile logos' rule names every logo solid to its edges, and no other (926.818325ms)
+  AssertionError [ERR_ASSERTION]: the tile rule names apple-touch-icon, which icons/ doesn't have
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/icon-tile.test.cjs:71:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

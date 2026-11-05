@@ -1,0 +1,26 @@
+✔ webkit en 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2709.357553ms)
+✔ webkit en 440: an agent's own settings are in its opened row, and Settings' search finds them there (2892.879296ms)
+✔ webkit en: in the panel a Settings line and the agent's menu open its sheet (1772.567392ms)
+✔ webkit zh 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2624.702833ms)
+✔ webkit zh 440: an agent's own settings are in its opened row, and Settings' search finds them there (2885.035045ms)
+✔ webkit zh: in the panel a Settings line and the agent's menu open its sheet (1771.826644ms)
+✔ webkit zh-TW 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2611.836026ms)
+✔ webkit zh-TW 440: an agent's own settings are in its opened row, and Settings' search finds them there (2897.782972ms)
+✔ webkit zh-TW: in the panel a Settings line and the agent's menu open its sheet (1779.971767ms)
+✔ webkit ja 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2623.33839ms)
+✔ webkit ja 440: an agent's own settings are in its opened row, and Settings' search finds them there (2900.357767ms)
+✔ webkit ja: in the panel a Settings line and the agent's menu open its sheet (1776.911563ms)
+✔ webkit de 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2600.62203ms)
+✔ webkit de 440: an agent's own settings are in its opened row, and Settings' search finds them there (2897.711026ms)
+✔ webkit de: in the panel a Settings line and the agent's menu open its sheet (1795.243508ms)
+✔ webkit: gateway mode shows none of an agent's settings (1232.643366ms)
+✔ webkit: gateway mode keeps Long conversations in Settings (1001.62256ms)
+✔ webkit: no Codex or Claude Code keeps Long conversations in Settings (1044.772344ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 40171.753936

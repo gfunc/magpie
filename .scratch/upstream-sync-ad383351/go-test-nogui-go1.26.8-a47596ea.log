@@ -1,0 +1,139 @@
+?   	github.com/yetone/magpie	[no test files]
+ok  	github.com/yetone/magpie/internal/access	0.182s
+ok  	github.com/yetone/magpie/internal/agent	51.280s
+ok  	github.com/yetone/magpie/internal/agentenv	0.285s
+ok  	github.com/yetone/magpie/internal/agentplug	0.169s
+ok  	github.com/yetone/magpie/internal/appdir	0.012s
+ok  	github.com/yetone/magpie/internal/autostart	0.012s
+ok  	github.com/yetone/magpie/internal/awake	0.145s
+ok  	github.com/yetone/magpie/internal/backup	3.179s
+ok  	github.com/yetone/magpie/internal/beat	0.012s
+?   	github.com/yetone/magpie/internal/budget	[no test files]
+ok  	github.com/yetone/magpie/internal/catalog	0.398s
+ok  	github.com/yetone/magpie/internal/claudebridge	0.228s
+ok  	github.com/yetone/magpie/internal/claudecode	0.042s
+?   	github.com/yetone/magpie/internal/claudeseal	[no test files]
+ok  	github.com/yetone/magpie/internal/cli	21.577s
+ok  	github.com/yetone/magpie/internal/codexcat	0.109s
+ok  	github.com/yetone/magpie/internal/codexsummary	0.014s
+ok  	github.com/yetone/magpie/internal/daemon	0.243s
+ok  	github.com/yetone/magpie/internal/davsync	31.345s
+ok  	github.com/yetone/magpie/internal/desktopdir	0.012s
+ok  	github.com/yetone/magpie/internal/dirent	0.121s
+ok  	github.com/yetone/magpie/internal/edit	0.380s
+ok  	github.com/yetone/magpie/internal/filelock	0.377s
+ok  	github.com/yetone/magpie/internal/filememo	0.035s
+ok  	github.com/yetone/magpie/internal/fonts	0.004s
+ok  	github.com/yetone/magpie/internal/fx	0.015s
+ok  	github.com/yetone/magpie/internal/gateway	314.722s
+ok  	github.com/yetone/magpie/internal/ghtoken	0.025s
+ok  	github.com/yetone/magpie/internal/gui	83.657s
+?   	github.com/yetone/magpie/internal/gui/genpurposes	[no test files]
+?   	github.com/yetone/magpie/internal/gui/windowshape	[no test files]
+?   	github.com/yetone/magpie/internal/gwbudget	[no test files]
+ok  	github.com/yetone/magpie/internal/gwmw	0.007s
+?   	github.com/yetone/magpie/internal/gwtool	[no test files]
+ok  	github.com/yetone/magpie/internal/handoff	0.012s
+ok  	github.com/yetone/magpie/internal/iconproxy	0.004s
+ok  	github.com/yetone/magpie/internal/imagemcp	6.343s
+?   	github.com/yetone/magpie/internal/jsmod	[no test files]
+ok  	github.com/yetone/magpie/internal/lastgood	0.011s
+ok  	github.com/yetone/magpie/internal/libc	0.004s
+ok  	github.com/yetone/magpie/internal/library	39.033s
+ok  	github.com/yetone/magpie/internal/masking	0.015s
+ok  	github.com/yetone/magpie/internal/maskrec	0.092s
+ok  	github.com/yetone/magpie/internal/mcpauth	0.150s
+?   	github.com/yetone/magpie/internal/mcpauth/mcpauthtest	[no test files]
+ok  	github.com/yetone/magpie/internal/middleware	0.618s
+ok  	github.com/yetone/magpie/internal/netguard	0.006s
+ok  	github.com/yetone/magpie/internal/netproxy	2.641s
+ok  	github.com/yetone/magpie/internal/omarchy	0.010s
+ok  	github.com/yetone/magpie/internal/otlp	11.117s
+ok  	github.com/yetone/magpie/internal/pii	9.687s
+ok  	github.com/yetone/magpie/internal/pii/guard	0.016s
+?   	github.com/yetone/magpie/internal/pii/guard/coreml	[no test files]
+ok  	github.com/yetone/magpie/internal/plugin	16.895s
+ok  	github.com/yetone/magpie/internal/pluginrt	0.104s
+ok  	github.com/yetone/magpie/internal/probelog	0.009s
+ok  	github.com/yetone/magpie/internal/proc	4.381s
+ok  	github.com/yetone/magpie/internal/profile	1.269s
+ok  	github.com/yetone/magpie/internal/provider	48.335s
+?   	github.com/yetone/magpie/internal/qoder	[no test files]
+ok  	github.com/yetone/magpie/internal/redact	2.199s
+ok  	github.com/yetone/magpie/internal/routes	0.014s
+ok  	github.com/yetone/magpie/internal/sessions	11.031s
+ok  	github.com/yetone/magpie/internal/settings	0.733s
+ok  	github.com/yetone/magpie/internal/shortcut	0.005s
+ok  	github.com/yetone/magpie/internal/source	5.219s
+ok  	github.com/yetone/magpie/internal/sqlitedb	0.052s
+ok  	github.com/yetone/magpie/internal/stats	0.037s
+ok  	github.com/yetone/magpie/internal/steady	0.028s
+ok  	github.com/yetone/magpie/internal/testenv	0.019s
+--- FAIL: TestTUIFetchesSubscriptionModels (0.09s)
+    --- FAIL: TestTUIFetchesSubscriptionModels/agent (0.02s)
+        models_test.go:96: the picker hasn't Codex's listed model: got "codex/gpt-6-luna", want "gpt-6-luna"
+              ◉ magpie › Codex › model
+            
+              ❯ gpt-6-luna
+            
+              ▸ codex/gpt-6-luna  me@example.com · via magpie
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+              
+              ↑↓ move  ·  ↵ select  ·  esc back
+2026/10/27 16:26:18 codex: ChatGPT models: 503 Service Unavailable
+FAIL
+FAIL	github.com/yetone/magpie/internal/tui	6.788s
+ok  	github.com/yetone/magpie/internal/tune	0.030s
+ok  	github.com/yetone/magpie/internal/update	7.497s
+ok  	github.com/yetone/magpie/internal/update/launcher	0.003s
+ok  	github.com/yetone/magpie/internal/upstream	0.234s
+ok  	github.com/yetone/magpie/internal/usage	13.776s
+ok  	github.com/yetone/magpie/internal/usageapi	0.020s
+?   	github.com/yetone/magpie/internal/webview2env	[no test files]
+ok  	github.com/yetone/magpie/internal/wslrun	0.012s
+?   	github.com/yetone/magpie/plugins/all	[no test files]
+ok  	github.com/yetone/magpie/plugins/budget	0.015s
+?   	github.com/yetone/magpie/plugins/gateway	[no test files]
+ok  	github.com/yetone/magpie/plugins/groups	0.020s
+?   	github.com/yetone/magpie/plugins/library	[no test files]
+ok  	github.com/yetone/magpie/plugins/middleware	0.021s
+ok  	github.com/yetone/magpie/plugins/otel	0.124s
+ok  	github.com/yetone/magpie/plugins/redact	0.009s
+ok  	github.com/yetone/magpie/plugins/rotation	0.020s
+?   	github.com/yetone/magpie/plugins/routing	[no test files]
+ok  	github.com/yetone/magpie/plugins/search	0.013s
+?   	github.com/yetone/magpie/plugins/sessions	[no test files]
+ok  	github.com/yetone/magpie/plugins/tools	0.008s
+?   	github.com/yetone/magpie/plugins/usage	[no test files]
+?   	github.com/yetone/magpie/plugins/warmups	[no test files]
+FAIL

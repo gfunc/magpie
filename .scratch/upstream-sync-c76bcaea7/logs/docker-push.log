@@ -1,0 +1,12 @@
+The push refers to repository [docker.io/georgefu12/magpie]
+485e36b9a156: Preparing
+63a5476bf656: Preparing
+b612fe767119: Preparing
+d3cb4d77992c: Preparing
+44a87794b739: Preparing
+d3cb4d77992c: Layer already exists
+44a87794b739: Layer already exists
+485e36b9a156: Pushed
+63a5476bf656: Pushed
+b612fe767119: Pushed
+fork: digest: sha256:3ad854ac207ad89c73d4ae05aba7f4fcd316b1ea2054802c67aeb2a6104ce62e size: 1366

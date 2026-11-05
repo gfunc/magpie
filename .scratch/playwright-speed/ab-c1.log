@@ -1,0 +1,137 @@
+▶ chromium: costs show in the chosen currency
+  ✔ en (2293.279875ms)
+  ✔ zh (2660.15979ms)
+✔ chromium: costs show in the chosen currency (5271.81329ms)
+▶ chromium: a currency chosen before a restart is the one costs show in
+  ✔ en (1331.909971ms)
+  ✔ zh (1280.895576ms)
+✔ chromium: a currency chosen before a restart is the one costs show in (2917.852288ms)
+✔ chromium en 980: an MCP server's tools are listed by name and description (2989.939435ms)
+✔ chromium en 420: an MCP server's tools are listed by name and description (2975.899764ms)
+✔ chromium zh 980: an MCP server's tools are listed by name and description (2712.529347ms)
+✔ chromium zh 420: an MCP server's tools are listed by name and description (2962.252675ms)
+✔ chromium zh-TW 980: an MCP server's tools are listed by name and description (2677.063573ms)
+✔ chromium zh-TW 420: an MCP server's tools are listed by name and description (2716.999202ms)
+✔ chromium ja 980: an MCP server's tools are listed by name and description (2563.282715ms)
+✖ chromium ja 420: an MCP server's tools are listed by name and description (1753.746751ms)
+✔ chromium de 980: an MCP server's tools are listed by name and description (2679.644778ms)
+✔ chromium de 420: an MCP server's tools are listed by name and description (3151.894027ms)
+✔ chromium en: the agents' lists name models with their providers, or not (2077.030191ms)
+✔ chromium zh: the agents' lists name models with their providers, or not (1905.071345ms)
+▶ chromium: a card's Update button updates the plugin
+  ✔ en (1292.349622ms)
+  ✔ zh (1100.768993ms)
+✔ chromium: a card's Update button updates the plugin (2823.342222ms)
+✔ chromium en: a group's rules are dragged into order (7088.777413ms)
+✔ chromium zh: a group's rules are dragged into order (6341.382498ms)
+✔ chromium zh-TW: a group's rules are dragged into order (6545.795311ms)
+✔ chromium ja: a group's rules are dragged into order (6879.46239ms)
+✔ chromium de: a group's rules are dragged into order (6972.941376ms)
+▶ chromium: the Requests tab's heatmap
+  ✔ en at 420 (1446.019089ms)
+  ✔ en at 1100 (1321.393419ms)
+  ✔ zh at 420 (1749.389495ms)
+  ✔ zh at 1100 (1624.617389ms)
+  ✔ zh-TW at 420 (1293.708906ms)
+  ✔ zh-TW at 1100 (1240.245888ms)
+  ✔ ja at 420 (1410.763641ms)
+  ✔ ja at 1100 (1259.433219ms)
+  ✔ de at 420 (1700.101897ms)
+  ✔ de at 1100 (1352.878317ms)
+  ✔ a few days (787.155309ms)
+  ✔ dark, and none (1801.703631ms)
+✔ chromium: the Requests tab's heatmap (17170.076153ms)
+▶ chromium: the Usage page's Requests
+  ✔ en: changing period clears an unavailable agent and reloads (2498.771826ms)
+  ✔ en: changing period clears an unavailable provider and reloads (2548.738335ms)
+  ✔ en: an unavailable caller filter is cleared (1905.465237ms)
+  ✔ en (11364.098031ms)
+  ✔ en: request routing links (8451.935383ms)
+  ✔ en: clearing the route restores prior filters (2091.33565ms)
+  ✖ en: newest live route needs no return-to-live button (7055.538669ms)
+  ✔ en: dark, and narrow (2855.077342ms)
+  ✔ zh: changing period clears an unavailable agent and reloads (2203.060334ms)
+  ✔ zh: changing period clears an unavailable provider and reloads (2660.155726ms)
+  ✔ zh: an unavailable caller filter is cleared (2120.609145ms)
+  ✔ zh (11479.42601ms)
+  ✔ zh: request routing links (8560.84458ms)
+  ✔ zh: clearing the route restores prior filters (2101.37307ms)
+  ✖ zh: newest live route needs no return-to-live button (6976.888948ms)
+  ✔ zh: dark, and narrow (2234.864209ms)
+✖ chromium: the Usage page's Requests (77698.826277ms)
+✔ chromium en 1100: what a request said can be selected, its controls can't (2229.836913ms)
+✔ chromium en 420: what a request said can be selected, its controls can't (2347.145999ms)
+✔ chromium zh 1100: what a request said can be selected, its controls can't (1962.862128ms)
+✔ chromium zh 420: what a request said can be selected, its controls can't (2111.48792ms)
+✔ chromium ja 1100: what a request said can be selected, its controls can't (1989.885888ms)
+✔ chromium ja 420: what a request said can be selected, its controls can't (2104.881776ms)
+✔ chromium de 1100: what a request said can be selected, its controls can't (1988.105236ms)
+✔ chromium de 420: what a request said can be selected, its controls can't (2035.160614ms)
+ℹ tests 64
+ℹ suites 0
+ℹ pass 60
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 211301.694473
+
+✖ failing tests:
+
+test at internal/gui/tests/library-mcp-tools.test.cjs:80:7
+✖ chromium ja 420: an MCP server's tools are listed by name and description (1753.746751ms)
+  AssertionError [ERR_ASSERTION]: the click scrolled the page
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/library-mcp-tools.test.cjs:127:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-ledger.test.cjs:411:15
+✖ en: newest live route needs no return-to-live button (7055.538669ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:423:16)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:411:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-ledger.test.cjs:411:15
+✖ zh: newest live route needs no return-to-live button (6976.888948ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:423:16)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:411:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+Command exited with non-zero status 1
+wall=211.38s maxRSS=399972KB

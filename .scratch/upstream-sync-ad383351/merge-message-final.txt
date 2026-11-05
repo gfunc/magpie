@@ -1,0 +1,28 @@
+Merge remote-tracking branch 'origin/main'
+
+Sync upstream through 1a804859 while preserving the fork's registry, VS Code Server, fetch picker, and agent runtimes.
+
+Resolution notes:
+- Follow upstream's filememo endWaits mechanism rather than retaining the earlier replacement-channel relay.
+- Keep both TMPDIR isolation and the exec-readiness pipe in the process and Codex app-server test helpers.
+- Keep the clearer upstream Codex hidden-model explanation and behavior.
+- Set GUI budgets to the measured merged sizes: app.js 1,313,080 bytes and core scripts 1,529,911 bytes.
+- Read an already-forwarded web_fetch with the receiving magpie's own downloader instead of delegating again, so two Remote magpies that name each other cannot recurse.
+- Price the original routing-group entry before writing its bare ID into the registry output, preserving uniformly known manual prices.
+- Lock restingUntil in the service-search test's fixture writes and cleanup, matching production access.
+- Document the marked-fetch loop guard and its regression test in the gateway routing reference.
+
+Verification:
+- TestRemoteMagpieFetchMarkedReadsHere failed before the fetch guard by returning the configured remote's answer, and passes after it.
+- The group-pricing test fails with cost <nil> under the old mutate-before-pricing order and passes with the fixed copy order.
+- Race-enabled focused gateway tests pass for ordinary and marked remote fetches, fetch fallbacks, /api.json native buckets, group pricing and default effort, and the service searcher.
+- Race-enabled focused GUI tests pass for the core budget, fetch selector, one-port routes, and browser page behavior.
+- Race-enabled filememo, process-helper, Codex app-server-helper, and TUI package tests pass.
+- Focused go vet passes for the gateway, GUI, filememo, process, provider, and TUI packages.
+- All 38 focused web-search and fetch-picker browser cases pass in Chromium and WebKit.
+- The five WebKit font failures in the merged tree reproduce identically on a pristine 1a804859 checkout, so they are not merge regressions.
+- make cli VERSION=sync-final passes.
+- The built binary launches in an isolated temporary home and serves /v1/models 200, /api.json 200, and web 401.
+- Independent review of the complete final delta returned PASS, with the group-pricing fix and marked-fetch documentation verified and no new issue found.
+- Full Go and Playwright suites were not used as deployment gates.
+- Not run: live third-party vendor calls or native Windows/macOS UI.

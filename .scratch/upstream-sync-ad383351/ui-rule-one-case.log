@@ -1,0 +1,20 @@
+✖ webkit en 390: a rule names several models (40726.734004ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 41070.035849
+
+✖ failing tests:
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ webkit en 390: a rule names several models (40726.734004ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":390,"height":1266},"target":{"x":155.265625,"y":974.578125,"width":16,"height":16}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:75:9)
+      at async press (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:87:3)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:128:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)

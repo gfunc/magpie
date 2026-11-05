@@ -1,0 +1,35 @@
+✔ chromium en: a built-in subscription moves to its plugin for good (3104.181652ms)
+✔ chromium en: the Plugins tab opened as the page offers Zed's accounts (1706.021233ms)
+✔ chromium zh: a built-in subscription moves to its plugin for good (3053.221321ms)
+✔ chromium zh: the Plugins tab opened as the page offers Zed's accounts (1676.0279ms)
+✖ webkit en: a built-in subscription moves to its plugin for good (2595.462608ms)
+✔ webkit en: the Plugins tab opened as the page offers Zed's accounts (1912.066177ms)
+✔ webkit zh: a built-in subscription moves to its plugin for good (3512.229861ms)
+✔ webkit zh: the Plugins tab opened as the page offers Zed's accounts (1919.622511ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 7
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19808.921247
+
+✖ failing tests:
+
+test at internal/gui/tests/plugin-move.test.cjs:91:5
+✖ webkit en: a built-in subscription moves to its plugin for good (2595.462608ms)
+  AssertionError [ERR_ASSERTION]: the failure moved the editor
+  
+  521 !== 491
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/plugin-move.test.cjs:165:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 521,
+    expected: 491,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

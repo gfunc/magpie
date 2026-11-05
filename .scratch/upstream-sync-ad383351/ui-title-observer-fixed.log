@@ -1,0 +1,941 @@
+title-debug library instructions [
+  "560px library instructions: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library instructions: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 261,
+    y: 0,
+    width: 221,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 261
+  },
+  left: '261px',
+  right: '78px',
+  crumbMax: '7px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Anweisungen', hidden: false, width: 7, scroll: 89 }
+  ]
+}
+title-debug library mcp [
+  "560px library instructions: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library instructions: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library mcp: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library mcp: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 255,
+    y: 0,
+    width: 227,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 255
+  },
+  left: '255px',
+  right: '78px',
+  crumbMax: '1px',
+  actionsLeft: 490,
+  need: 97,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'MCP-Server', hidden: false, width: 1, scroll: 77 }
+  ]
+}
+title-debug library skills [
+  "560px library instructions: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library instructions: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library mcp: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library mcp: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library skills: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library skills: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 261,
+    y: 0,
+    width: 221,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 261
+  },
+  left: '261px',
+  right: '78px',
+  crumbMax: '7px',
+  actionsLeft: 490,
+  need: 97,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Skills', hidden: false, width: 7, scroll: 36 }
+  ]
+}
+title-debug library hooks [
+  "560px library instructions: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library instructions: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library mcp: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library mcp: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library skills: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library skills: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library hooks: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library hooks: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 261,
+    y: 0,
+    width: 221,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 261
+  },
+  left: '261px',
+  right: '78px',
+  crumbMax: '7px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Hooks', hidden: false, width: 7, scroll: 42 }
+  ]
+}
+title-debug library subagents [
+  "560px library instructions: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library instructions: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library mcp: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library mcp: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library skills: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library skills: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library hooks: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library hooks: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library subagents: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library subagents: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 261,
+    y: 0,
+    width: 221,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 261
+  },
+  left: '261px',
+  right: '78px',
+  crumbMax: '7px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Subagenten', hidden: false, width: 7, scroll: 80 }
+  ]
+}
+title-debug library rtk [
+  "560px library instructions: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library instructions: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library mcp: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library mcp: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library skills: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library skills: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library hooks: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library hooks: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library subagents: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library subagents: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library rtk: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library rtk: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 261,
+    y: 0,
+    width: 221,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 261
+  },
+  left: '261px',
+  right: '78px',
+  crumbMax: '7px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'RTK', hidden: false, width: 7, scroll: 27 }
+  ]
+}
+title-debug plugins builtin [
+  "560px library instructions: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library instructions: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library mcp: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library mcp: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library skills: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library skills: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library hooks: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library hooks: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library subagents: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library subagents: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library rtk: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library rtk: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px plugins builtin: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px plugins builtin: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 482,
+    y: 0,
+    width: 0,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 482
+  },
+  left: '482px',
+  right: '78px',
+  crumbMax: '228px',
+  actionsLeft: 490,
+  need: 0,
+  kids: [
+    { text: 'Zusätze', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    {
+      text: 'Erweiterungen',
+      hidden: false,
+      width: 92.609375,
+      scroll: 93
+    },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Eingebaut', hidden: false, width: 67.484375, scroll: 67 }
+  ]
+}
+title-debug plugins discover [
+  "560px library instructions: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library instructions: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library mcp: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library mcp: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library skills: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library skills: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library hooks: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library hooks: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library subagents: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library subagents: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library rtk: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px library rtk: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px plugins builtin: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px plugins builtin: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px plugins discover: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6',
+  "560px plugins discover: TypeError: Failed to execute 'observe' on 'ResizeObserver': parameter 1 is not of type 'Element'.\n" +
+    '    at http://magpie.test/app.js:24211:6'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 255,
+    y: 0,
+    width: 227,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 255
+  },
+  left: '255px',
+  right: '78px',
+  crumbMax: '1px',
+  actionsLeft: 490,
+  need: 217,
+  kids: [
+    { text: 'Zusätze', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Erweiterungen', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Entdecken', hidden: false, width: 1, scroll: 70 }
+  ]
+}
+✖ chromium de: the title bar's tools never lie over where the reader is (9032.08472ms)
+title-debug library instructions [
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 261,
+    y: 0,
+    width: 221,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 261
+  },
+  left: '261px',
+  right: '78px',
+  crumbMax: '7px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Anweisungen', hidden: false, width: 7, scroll: 89 }
+  ]
+}
+title-debug library mcp [
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library mcp: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library mcp: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 261,
+    y: 0,
+    width: 221,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 261
+  },
+  left: '261px',
+  right: '78px',
+  crumbMax: '7px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'MCP-Server', hidden: false, width: 7, scroll: 78 }
+  ]
+}
+title-debug library skills [
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library mcp: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library mcp: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library skills: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library skills: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 261,
+    y: 0,
+    width: 221,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 261
+  },
+  left: '261px',
+  right: '78px',
+  crumbMax: '7px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Skills', hidden: false, width: 7, scroll: 36 }
+  ]
+}
+title-debug library hooks [
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library mcp: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library mcp: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library skills: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library skills: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library hooks: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library hooks: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 261,
+    y: 0,
+    width: 221,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 261
+  },
+  left: '261px',
+  right: '78px',
+  crumbMax: '7px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Hooks', hidden: false, width: 7, scroll: 42 }
+  ]
+}
+title-debug library subagents [
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library mcp: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library mcp: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library skills: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library skills: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library hooks: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library hooks: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library subagents: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library subagents: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 261,
+    y: 0,
+    width: 221,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 261
+  },
+  left: '261px',
+  right: '78px',
+  crumbMax: '7px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Subagenten', hidden: false, width: 7, scroll: 80 }
+  ]
+}
+title-debug library rtk [
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library mcp: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library mcp: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library skills: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library skills: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library hooks: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library hooks: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library subagents: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library subagents: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library rtk: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library rtk: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 261,
+    y: 0,
+    width: 221,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 261
+  },
+  left: '261px',
+  right: '78px',
+  crumbMax: '7px',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'RTK', hidden: false, width: 7, scroll: 27 }
+  ]
+}
+title-debug plugins builtin [
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library mcp: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library mcp: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library skills: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library skills: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library hooks: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library hooks: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library subagents: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library subagents: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library rtk: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library rtk: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px plugins builtin: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px plugins builtin: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 482,
+    y: 0,
+    width: 0,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 482
+  },
+  left: '482px',
+  right: '78px',
+  crumbMax: '228px',
+  actionsLeft: 490,
+  need: 0,
+  kids: [
+    { text: 'Zusätze', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    {
+      text: 'Erweiterungen',
+      hidden: false,
+      width: 92.609375,
+      scroll: 93
+    },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Eingebaut', hidden: false, width: 67.484375, scroll: 67 }
+  ]
+}
+title-debug plugins discover [
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library mcp: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library mcp: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library skills: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library skills: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library hooks: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library hooks: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library subagents: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library subagents: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library rtk: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library rtk: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px plugins builtin: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px plugins builtin: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px plugins discover: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px plugins discover: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 362,
+    y: 0,
+    width: 120,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 362
+  },
+  left: '362px',
+  right: '78px',
+  crumbMax: '108px',
+  actionsLeft: 490,
+  need: 120,
+  kids: [
+    { text: 'Zusätze', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Erweiterungen', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Entdecken', hidden: false, width: 70.296875, scroll: 70 }
+  ]
+}
+title-debug plugins installed [
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library instructions: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library mcp: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library mcp: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library skills: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library skills: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library hooks: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library hooks: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library subagents: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library subagents: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library rtk: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px library rtk: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px plugins builtin: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px plugins builtin: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px plugins discover: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px plugins discover: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px plugins installed: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)',
+  "560px plugins installed: TypeError: Argument 1 ('target') to ResizeObserver.observe must be an instance of Element\n" +
+    '    at observe (http://magpie.test/app.js:24211:13)\n' +
+    '    at global code (http://magpie.test/app.js:24211:13)'
+] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 362,
+    y: 0,
+    width: 120,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 362
+  },
+  left: '362px',
+  right: '78px',
+  crumbMax: '108px',
+  actionsLeft: 490,
+  need: 120,
+  kids: [
+    { text: 'Zusätze', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Erweiterungen', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    {
+      text: 'Installiert',
+      hidden: false,
+      width: 64.859375,
+      scroll: 65
+    }
+  ]
+}
+✖ webkit de: the title bar's tools never lie over where the reader is (11367.359183ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 20890.656659
+
+✖ failing tests:
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ chromium de: the title bar's tools never lie over where the reader is (9032.08472ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#crumb b') to be visible[22m
+  [2m    14 × locator resolved to hidden <b>Entdecken</b>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:110:42) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#crumb b') to be visible", '    14 × locator resolved to hidden <b>Entdecken</b>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit de: the title bar's tools never lie over where the reader is (11367.359183ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#crumb b') to be visible[22m
+  [2m    14 × locator resolved to hidden <b>Installiert</b>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:110:42) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#crumb b') to be visible", '    14 × locator resolved to hidden <b>Installiert</b>' ]
+  }

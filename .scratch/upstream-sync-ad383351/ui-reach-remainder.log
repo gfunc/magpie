@@ -1,0 +1,530 @@
+▶ chromium: counts in K/M/B or, picked in Settings in Chinese, 万/亿
+  ✔ en (1362.500874ms)
+  ✖ zh (908.921705ms)
+✖ chromium: counts in K/M/B or, picked in Settings in Chinese, 万/亿 (2454.01227ms)
+▶ webkit: counts in K/M/B or, picked in Settings in Chinese, 万/亿
+  ✔ en (2432.826476ms)
+  ✖ zh (1482.097599ms)
+✖ webkit: counts in K/M/B or, picked in Settings in Chinese, 万/亿 (4070.630819ms)
+✖ chromium en 1100: a rule names several models (7435.929673ms)
+✖ chromium en 390: a rule names several models (13893.823576ms)
+✖ chromium zh 1100: a rule names several models (7172.05723ms)
+✖ chromium zh 390: a rule names several models (12858.422048ms)
+✖ chromium zh-TW 1100: a rule names several models (7152.45917ms)
+✖ chromium zh-TW 390: a rule names several models (12883.592387ms)
+✖ chromium ja 1100: a rule names several models (7602.490088ms)
+✖ chromium ja 390: a rule names several models (13591.572068ms)
+✖ chromium de 1100: a rule names several models (7552.465078ms)
+✖ chromium de 390: a rule names several models (15248.845747ms)
+✖ webkit en 1100: a rule names several models (6404.182856ms)
+✖ webkit en 390: a rule names several models (8289.564455ms)
+✖ webkit zh 1100: a rule names several models (8354.03828ms)
+✖ webkit zh 390: a rule names several models (8025.025656ms)
+✖ webkit zh-TW 1100: a rule names several models (6386.149078ms)
+✖ webkit zh-TW 390: a rule names several models (8063.953455ms)
+✖ webkit ja 1100: a rule names several models (6382.68127ms)
+✖ webkit ja 390: a rule names several models (8369.125645ms)
+✖ webkit de 1100: a rule names several models (6368.824422ms)
+✖ webkit de 390: a rule names several models (9099.259599ms)
+✔ chromium en: web search can go to the search APIs first (1693.403532ms)
+✔ chromium en: with no provider that searches there is nothing to choose (592.5138ms)
+✔ chromium zh: web search can go to the search APIs first (1241.236571ms)
+✔ chromium zh: with no provider that searches there is nothing to choose (605.799016ms)
+✔ webkit en: web search can go to the search APIs first (1938.358364ms)
+✔ webkit en: with no provider that searches there is nothing to choose (969.454087ms)
+✔ webkit zh: web search can go to the search APIs first (1575.98179ms)
+✔ webkit zh: with no provider that searches there is nothing to choose (960.529596ms)
+✔ chromium en: focusing the window keeps the Usage charts and the Routing groups (6164.618183ms)
+✔ chromium zh: focusing the window keeps the Usage charts and the Routing groups (6614.102895ms)
+✖ webkit en: focusing the window keeps the Usage charts and the Routing groups (1019.062538ms)
+✔ webkit zh: focusing the window keeps the Usage charts and the Routing groups (7251.110361ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 13
+ℹ fail 25
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 219629.424654
+
+✖ failing tests:
+
+test at internal/gui/tests/number-units.test.cjs:145:15
+✖ zh (908.921705ms)
+  AssertionError [ERR_ASSERTION]: the settings list must be long enough to scroll
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/number-units.test.cjs:180:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/number-units.test.cjs:145:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/number-units.test.cjs:145:15
+✖ zh (1482.097599ms)
+  AssertionError [ERR_ASSERTION]: the settings list must be long enough to scroll
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/number-units.test.cjs:180:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/number-units.test.cjs:145:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ chromium en 1100: a rule names several models (7435.929673ms)
+  Error: control did not come clear into sight: {"view":{"x":212,"y":46,"width":888,"height":1326},"target":{"x":588.78125,"y":1125.828125,"width":16,"height":16}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:75:9)
+      at async press (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:87:3)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:127:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ chromium en 390: a rule names several models (13893.823576ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":390,"height":1266},"target":{"x":155.265625,"y":975.078125,"width":16,"height":16}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:75:9)
+      at async press (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:87:3)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:127:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ chromium zh 1100: a rule names several models (7172.05723ms)
+  Error: control did not come clear into sight: {"view":{"x":212,"y":46,"width":888,"height":1326},"target":{"x":551.28125,"y":1125.53125,"width":16,"height":16}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:75:9)
+      at async press (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:87:3)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:127:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ chromium zh 390: a rule names several models (12858.422048ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":390,"height":1266},"target":{"x":155.265625,"y":974.921875,"width":16,"height":16}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:75:9)
+      at async press (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:87:3)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:127:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ chromium zh-TW 1100: a rule names several models (7152.45917ms)
+  Error: control did not come clear into sight: {"view":{"x":212,"y":46,"width":888,"height":1326},"target":{"x":551.28125,"y":1125.53125,"width":16,"height":16}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:75:9)
+      at async press (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:87:3)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:127:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ chromium zh-TW 390: a rule names several models (12883.592387ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":390,"height":1266},"target":{"x":155.265625,"y":974.921875,"width":16,"height":16}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:75:9)
+      at async press (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:87:3)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:127:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ chromium ja 1100: a rule names several models (7602.490088ms)
+  Error: control did not come clear into sight: {"view":{"x":212,"y":46,"width":888,"height":1326},"target":{"x":555.359375,"y":1126.1875,"width":16,"height":16}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:75:9)
+      at async press (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:87:3)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:127:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ chromium ja 390: a rule names several models (13591.572068ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":390,"height":1266},"target":{"x":147.34375,"y":975.1875,"width":16,"height":16}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:75:9)
+      at async press (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:87:3)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:127:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ chromium de 1100: a rule names several models (7552.465078ms)
+  Error: control did not come clear into sight: {"view":{"x":212,"y":46,"width":888,"height":1326},"target":{"x":600.40625,"y":1125.796875,"width":16,"height":16}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:75:9)
+      at async press (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:87:3)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:127:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ chromium de 390: a rule names several models (15248.845747ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":390,"height":1266},"target":{"x":155.265625,"y":974.65625,"width":16,"height":16}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:75:9)
+      at async press (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:87:3)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:127:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ webkit en 1100: a rule names several models (6404.182856ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:126:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ webkit en 390: a rule names several models (8289.564455ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:126:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ webkit zh 1100: a rule names several models (8354.03828ms)
+  Error: control did not come clear into sight: {"view":{"x":212,"y":46,"width":888,"height":1326},"target":{"x":551.28125,"y":1125.90625,"width":16,"height":16}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:75:9)
+      at async press (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:87:3)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:127:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ webkit zh 390: a rule names several models (8025.025656ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:126:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ webkit zh-TW 1100: a rule names several models (6386.149078ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:126:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ webkit zh-TW 390: a rule names several models (8063.953455ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:126:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ webkit ja 1100: a rule names several models (6382.68127ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:126:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ webkit ja 390: a rule names several models (8369.125645ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:126:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ webkit de 1100: a rule names several models (6368.824422ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:126:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:103:7
+✖ webkit de 390: a rule names several models (9099.259599ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:126:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/usage-focus-steady.test.cjs:117:5
+✖ webkit en: focusing the window keeps the Usage charts and the Routing groups (1019.062538ms)
+  locator.evaluate: TypeError: null is not an object (evaluating 'b.parentElement.firstElementChild')
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-focus-steady.test.cjs:134:48) {
+    log: []
+  }

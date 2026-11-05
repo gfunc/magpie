@@ -1,0 +1,11 @@
+✔ the tile logos' rule names every logo solid to its edges, and no other (742.653411ms)
+✔ a tile logo is drawn at 82% of its box, a line logo whole (chromium) (436.647797ms)
+✔ a tile logo is drawn at 82% of its box, a line logo whole (webkit) (998.068768ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2507.251687

@@ -1,0 +1,145 @@
+▶ chromium: costs show in the chosen currency
+  ✔ en (3696.654247ms)
+  ✔ zh (3366.22381ms)
+✔ chromium: costs show in the chosen currency (7624.294291ms)
+▶ chromium: a currency chosen before a restart is the one costs show in
+  ✔ en (1386.121396ms)
+  ✔ zh (1385.992864ms)
+✔ chromium: a currency chosen before a restart is the one costs show in (3140.922505ms)
+✔ chromium en 980: an MCP server's tools are listed by name and description (4023.561843ms)
+✔ chromium en 420: an MCP server's tools are listed by name and description (3463.749845ms)
+✔ chromium zh 980: an MCP server's tools are listed by name and description (3153.934527ms)
+✔ chromium zh 420: an MCP server's tools are listed by name and description (3283.706543ms)
+✔ chromium zh-TW 980: an MCP server's tools are listed by name and description (3515.721622ms)
+✔ chromium zh-TW 420: an MCP server's tools are listed by name and description (3420.178286ms)
+✔ chromium ja 980: an MCP server's tools are listed by name and description (3689.729447ms)
+✖ chromium ja 420: an MCP server's tools are listed by name and description (2550.438504ms)
+✔ chromium de 980: an MCP server's tools are listed by name and description (3756.210377ms)
+✔ chromium de 420: an MCP server's tools are listed by name and description (4255.480976ms)
+✔ chromium en: the agents' lists name models with their providers, or not (3155.068298ms)
+✔ chromium zh: the agents' lists name models with their providers, or not (2827.297388ms)
+▶ chromium: a card's Update button updates the plugin
+  ✔ en (1636.57397ms)
+  ✔ zh (1060.612479ms)
+✔ chromium: a card's Update button updates the plugin (3254.388323ms)
+✔ chromium en: a group's rules are dragged into order (9048.719909ms)
+✖ chromium zh: a group's rules are dragged into order (7233.931175ms)
+✔ chromium zh-TW: a group's rules are dragged into order (9410.884081ms)
+✔ chromium ja: a group's rules are dragged into order (8777.216319ms)
+✔ chromium de: a group's rules are dragged into order (7694.717858ms)
+▶ chromium: the Requests tab's heatmap
+  ✔ en at 420 (1990.486192ms)
+  ✔ en at 1100 (1360.854561ms)
+  ✔ zh at 420 (2015.060684ms)
+  ✔ zh at 1100 (1723.120757ms)
+  ✔ zh-TW at 420 (2589.830359ms)
+  ✔ zh-TW at 1100 (1804.763179ms)
+  ✔ ja at 420 (1986.108925ms)
+  ✔ ja at 1100 (2472.762385ms)
+  ✔ de at 420 (1711.791697ms)
+  ✔ de at 1100 (2056.989213ms)
+  ✔ a few days (1367.35321ms)
+  ✔ dark, and none (2558.4961ms)
+✔ chromium: the Requests tab's heatmap (23902.122265ms)
+▶ chromium: the Usage page's Requests
+  ✔ en: changing period clears an unavailable agent and reloads (3295.487045ms)
+  ✔ en: changing period clears an unavailable provider and reloads (3184.94669ms)
+  ✔ en: an unavailable caller filter is cleared (2441.555238ms)
+  ✔ en (14719.035329ms)
+  ✔ en: request routing links (8667.001916ms)
+  ✔ en: clearing the route restores prior filters (2308.912455ms)
+  ✖ en: newest live route needs no return-to-live button (7290.222005ms)
+  ✔ en: dark, and narrow (2685.581583ms)
+  ✔ zh: changing period clears an unavailable agent and reloads (2624.942055ms)
+  ✔ zh: changing period clears an unavailable provider and reloads (2318.96174ms)
+  ✔ zh: an unavailable caller filter is cleared (2318.72133ms)
+  ✔ zh (11493.859284ms)
+  ✔ zh: request routing links (8321.653656ms)
+  ✔ zh: clearing the route restores prior filters (2396.655221ms)
+  ✖ zh: newest live route needs no return-to-live button (7294.603549ms)
+  ✔ zh: dark, and narrow (2879.995029ms)
+✖ chromium: the Usage page's Requests (85053.710771ms)
+✔ chromium en 1100: what a request said can be selected, its controls can't (2887.397532ms)
+✔ chromium en 420: what a request said can be selected, its controls can't (2987.684506ms)
+✔ chromium zh 1100: what a request said can be selected, its controls can't (2699.56089ms)
+✔ chromium zh 420: what a request said can be selected, its controls can't (2666.704288ms)
+✔ chromium ja 1100: what a request said can be selected, its controls can't (2370.837618ms)
+✔ chromium ja 420: what a request said can be selected, its controls can't (2665.101334ms)
+✔ chromium de 1100: what a request said can be selected, its controls can't (2057.917489ms)
+✔ chromium de 420: what a request said can be selected, its controls can't (2186.421997ms)
+ℹ tests 64
+ℹ suites 0
+ℹ pass 59
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 97454.581608
+
+✖ failing tests:
+
+test at internal/gui/tests/library-mcp-tools.test.cjs:80:7
+✖ chromium ja 420: an MCP server's tools are listed by name and description (2550.438504ms)
+  AssertionError [ERR_ASSERTION]: the click scrolled the page
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/library-mcp-tools.test.cjs:127:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-rule-drag.test.cjs:65:5
+✖ chromium zh: a group's rules are dragged into order (7233.931175ms)
+  page.waitForFunction: Timeout 5000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-drag.test.cjs:91:18) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+test at internal/gui/tests/usage-ledger.test.cjs:411:15
+✖ en: newest live route needs no return-to-live button (7290.222005ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:423:16)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:411:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-ledger.test.cjs:411:15
+✖ zh: newest live route needs no return-to-live button (7294.603549ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:423:16)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:411:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+Command exited with non-zero status 1
+wall=97.53s maxRSS=396512KB

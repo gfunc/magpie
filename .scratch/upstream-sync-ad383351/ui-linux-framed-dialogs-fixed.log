@@ -1,0 +1,30 @@
+✔ chromium: account dragging uses the routing order in every mode (20179.963094ms)
+✔ webkit: account dragging uses the routing order in every mode (15794.212432ms)
+✔ chromium en 800x500: the wheel takes a provider's editor past its models to the end (1234.21413ms)
+✔ chromium en 600x420: the wheel takes a provider's editor past its models to the end (1193.107354ms)
+✔ chromium en 420x340: the wheel takes a provider's editor past its models to the end (1299.365522ms)
+✔ chromium zh 800x500: the wheel takes a provider's editor past its models to the end (1222.806112ms)
+✔ chromium zh 600x420: the wheel takes a provider's editor past its models to the end (1244.204972ms)
+✔ chromium zh 420x340: the wheel takes a provider's editor past its models to the end (1401.036946ms)
+✔ webkit en 800x500: the wheel takes a provider's editor past its models to the end (1701.709698ms)
+✔ webkit en 600x420: the wheel takes a provider's editor past its models to the end (1787.286422ms)
+✔ webkit en 420x340: the wheel takes a provider's editor past its models to the end (1992.593443ms)
+✔ webkit zh 800x500: the wheel takes a provider's editor past its models to the end (1767.998814ms)
+✔ webkit zh 600x420: the wheel takes a provider's editor past its models to the end (1791.304292ms)
+✔ webkit zh 420x340: the wheel takes a provider's editor past its models to the end (2008.012621ms)
+✔ chromium en: a provider's models are let out and folded back (3735.667114ms)
+✔ chromium zh: a provider's models are let out and folded back (3757.279681ms)
+✔ webkit en: a provider's models are let out and folded back (2711.144072ms)
+✔ webkit zh: a provider's models are let out and folded back (2731.565975ms)
+✔ chromium en: what's new after an update (4636.665694ms)
+✔ chromium zh: what's new after an update (4613.465381ms)
+✔ webkit en: what's new after an update (6245.548417ms)
+✔ webkit zh: what's new after an update (6295.930267ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 90789.274504

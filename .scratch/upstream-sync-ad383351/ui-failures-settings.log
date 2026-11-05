@@ -1,0 +1,1002 @@
+test at internal/gui/tests/balance-fix.test.cjs:232:19
+✖ new provider with a token and no Balance URL (979.187082ms)
+  AssertionError [ERR_ASSERTION]: both account balance shortcuts are offered
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/balance-fix.test.cjs:256:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/balance-fix.test.cjs:232:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/balance-fix.test.cjs:232:19
+✖ new provider with a token and no Balance URL (993.670053ms)
+  AssertionError [ERR_ASSERTION]: both account balance shortcuts are offered
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/balance-fix.test.cjs:256:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/balance-fix.test.cjs:232:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/cors-origins.test.cjs:105:15
+✖ en (1477.764141ms)
+  AssertionError [ERR_ASSERTION]: Add moved the page
+  
+  592 !== 778
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/cors-origins.test.cjs:171:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/cors-origins.test.cjs:105:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 592,
+    expected: 778,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/cors-origins.test.cjs:105:15
+✖ zh (1401.442464ms)
+  AssertionError [ERR_ASSERTION]: Add moved the page
+  
+  484 !== 671
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/cors-origins.test.cjs:171:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/cors-origins.test.cjs:105:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 484,
+    expected: 671,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/currency.test.cjs:82:15
+✖ en (1487.862993ms)
+  AssertionError [ERR_ASSERTION]: picking a currency must not scroll the settings page
+  
+  74 !== 40
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/currency.test.cjs:133:16)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/currency.test.cjs:82:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 74,
+    expected: 40,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/currency.test.cjs:82:15
+✖ zh (1465.352788ms)
+  AssertionError [ERR_ASSERTION]: picking a currency must not scroll the settings page
+  
+  75 !== 40
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/currency.test.cjs:133:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/currency.test.cjs:82:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 75,
+    expected: 40,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/gateway-key-limit.test.cjs:24:5
+✖ webkit en: a gateway key's limit is shown and set with Save (1184.088012ms)
+  AssertionError [ERR_ASSERTION]: opening the editor moved the page
+  + actual - expected
+  
+    [
+  +   120,
+  -   115,
+      0
+    ]
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/gateway-key-limit.test.cjs:63:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 120, 0 ],
+    expected: [ 115, 0 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/gateway-key-limit.test.cjs:24:5
+✖ webkit zh: a gateway key's limit is shown and set with Save (1148.643036ms)
+  AssertionError [ERR_ASSERTION]: opening the editor moved the page
+  + actual - expected
+  
+    [
+  +   120,
+  -   116,
+      0
+    ]
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/gateway-key-limit.test.cjs:63:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 120, 0 ],
+    expected: [ 116, 0 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/gateway-key-models.test.cjs:11:5
+✖ webkit en: a gateway key is held to the models picked for it (1241.354988ms)
+  AssertionError [ERR_ASSERTION]: opening the menu moved the page
+  + actual - expected
+  
+    [
+  +   120,
+  -   118,
+      0
+    ]
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/gateway-key-models.test.cjs:48:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 120, 0 ],
+    expected: [ 118, 0 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/gateway-key-models.test.cjs:11:5
+✖ webkit zh: a gateway key is held to the models picked for it (1204.980068ms)
+  AssertionError [ERR_ASSERTION]: opening the menu moved the page
+  + actual - expected
+  
+    [
+  -   118,
+      0,
+  +   0
+    ]
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/gateway-key-models.test.cjs:48:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 0, 0 ],
+    expected: [ 118, 0 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/lan-docker.test.cjs:98:15
+✖ en (6075.312123ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#lanList .lan-address-controls .segs .opt').nth(1)[22m
+  [2m    - locator resolved to <button class="opt" type="button" aria-pressed="false">Anthropic</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m    - element is not stable[22m
+  [2m  2 × retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <button data-t="" role="tab" type="button" tabindex="-1" data-set="otel" id="setTab-otel" data-feature="otel" aria-selected="false" data-en="Observability" aria-controls="setPage-otel">Observability</button> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events[22m
+  [2m  8 × retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <button data-t="" role="tab" type="button" tabindex="-1" data-set="otel" id="setTab-otel" data-feature="otel" aria-selected="false" data-en="Observability" aria-controls="setPage-otel">Observability</button> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events[22m
+  [2m  - retrying click action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/lan-docker.test.cjs:118:27)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/lan-docker.test.cjs:98:7) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#lanList .lan-address-controls .segs .opt').nth(1)", '    - locator resolved to <button class="opt" type="button" aria-pressed="false">Anthropic</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '    - waiting 20ms', '    - waiting for element to be visible, enabled and stable', '    - element is not stable', '  2 × retrying click action', '      - waiting 100ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <button data-t="" role="tab" type="button" tabindex="-1" data-set="otel" id="setTab-otel" data-feature="otel" aria-selected="false" data-en="Observability" aria-controls="setPage-otel">Observability</button> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events', '  8 × retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <button data-t="" role="tab" type="button" tabindex="-1" data-set="otel" id="setTab-otel" data-feature="otel" aria-selected="false" data-en="Observability" aria-controls="setPage-otel">Observability</button> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events', '  - retrying click action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/lan-docker.test.cjs:98:15
+✖ zh (6033.286549ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#lanList .lan-address-controls .segs .opt').nth(1)[22m
+  [2m    - locator resolved to <button class="opt" type="button" aria-pressed="false">Anthropic</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m    - element is not stable[22m
+  [2m  2 × retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <div class="row-head set-head stuck">…</div> intercepts pointer events[22m
+  [2m  8 × retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <div class="row-head set-head stuck">…</div> intercepts pointer events[22m
+  [2m  - retrying click action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/lan-docker.test.cjs:118:27)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/lan-docker.test.cjs:98:7) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#lanList .lan-address-controls .segs .opt').nth(1)", '    - locator resolved to <button class="opt" type="button" aria-pressed="false">Anthropic</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '    - waiting 20ms', '    - waiting for element to be visible, enabled and stable', '    - element is not stable', '  2 × retrying click action', '      - waiting 100ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <div class="row-head set-head stuck">…</div> intercepts pointer events', '  8 × retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <div class="row-head set-head stuck">…</div> intercepts pointer events', '  - retrying click action', '    - waiting 500ms' ]
+  }
+
+
+test at internal/gui/tests/model-suffix-own.test.cjs:64:5
+✖ webkit en: a name the user gave can go without its provider (1971.62507ms)
+  AssertionError [ERR_ASSERTION]: a click scrolled the page
+  
+  381 !== 297
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/model-suffix-own.test.cjs:115:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 381,
+    expected: 297,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/model-suffix-own.test.cjs:64:5
+✖ webkit zh: a name the user gave can go without its provider (1835.89336ms)
+  AssertionError [ERR_ASSERTION]: a click scrolled the page
+  
+  271 !== 276
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/model-suffix-own.test.cjs:115:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 271,
+    expected: 276,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/number-units.test.cjs:145:15
+✖ zh (6514.814103ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#unitsSegs .opt').nth(1)[22m
+  [2m    - locator resolved to <button class="opt" type="button" aria-pressed="false">中文（万 / 亿）</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m    - element is not stable[22m
+  [2m  2 × retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events[22m
+  [2m  2 × retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head">…</div> subtree intercepts pointer events[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events[22m
+  [2m  - retrying click action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/number-units.test.cjs:182:29)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/number-units.test.cjs:145:7) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#unitsSegs .opt').nth(1)", '    - locator resolved to <button class="opt" type="button" aria-pressed="false">中文（万 / 亿）</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '    - waiting 20ms', '    - waiting for element to be visible, enabled and stable', '    - element is not stable', '  2 × retrying click action', '      - waiting 100ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events', '  2 × retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head">…</div> subtree intercepts pointer events', '    - retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events', '    - retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events', '    - retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events', '  - retrying click action', '    - waiting 500ms' ]
+  }
+
+
+test at internal/gui/tests/plain-names.test.cjs:70:5
+✖ webkit en: the agents' lists name models with their providers, or not (1758.406654ms)
+  AssertionError [ERR_ASSERTION]: the click scrolled the page
+  
+  299 !== 330
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/plain-names.test.cjs:108:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 299,
+    expected: 330,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/plain-names.test.cjs:70:5
+✖ webkit zh: the agents' lists name models with their providers, or not (1675.680633ms)
+  AssertionError [ERR_ASSERTION]: the click scrolled the page
+  
+  79 !== 323
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/plain-names.test.cjs:108:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 79,
+    expected: 323,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/privacy-usage-stats.test.cjs:45:5
+✖ webkit en: Privacy switches off sharing what magpie is used with (6867.363577ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#setPage-privacy .list .row').filter({ has: locator('.name').filter({ hasText: /^Mask personal data$/ }) }).getByRole('button', { name: 'On', exact: true })[22m
+  [2m    - locator resolved to <button class="opt" type="button" aria-pressed="false">On</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m    - element is not stable[22m
+  [2m  2 × retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <div class="row-head set-head stuck">…</div> intercepts pointer events[22m
+  [2m  2 × retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <div class="row-head set-head">…</div> intercepts pointer events[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <div class="row-head set-head stuck">…</div> intercepts pointer events[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <div class="row-head set-head stuck">…</div> intercepts pointer events[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <div class="row-head set-head stuck">…</div> intercepts pointer events[22m
+  [2m  - retrying click action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/privacy-usage-stats.test.cjs:86:78) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#setPage-privacy .list .row').filter({ has: locator('.name').filter({ hasText: /^Mask personal data$/ }) }).getByRole('button', { name: 'On', exact: true })", '    - locator resolved to <button class="opt" type="button" aria-pressed="false">On</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '    - waiting 20ms', '    - waiting for element to be visible, enabled and stable', '    - element is not stable', '  2 × retrying click action', '      - waiting 100ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <div class="row-head set-head stuck">…</div> intercepts pointer events', '  2 × retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <div class="row-head set-head">…</div> intercepts pointer events', '    - retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <div class="row-head set-head stuck">…</div> intercepts pointer events', '    - retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <div class="row-head set-head stuck">…</div> intercepts pointer events', '    - retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <div class="row-head set-head stuck">…</div> intercepts pointer events', '  - retrying click action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/privacy-usage-stats.test.cjs:45:5
+✖ webkit zh: Privacy switches off sharing what magpie is used with (6894.039534ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#setPage-privacy .list .row').filter({ has: locator('.name').filter({ hasText: /^脱敏个人信息$/ }) }).getByRole('button', { name: '开启', exact: true })[22m
+  [2m    - locator resolved to <button class="opt" type="button" aria-pressed="false">开启</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m    - element is not stable[22m
+  [2m  2 × retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events[22m
+  [2m  2 × retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head">…</div> subtree intercepts pointer events[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events[22m
+  [2m  - retrying click action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/privacy-usage-stats.test.cjs:86:78) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#setPage-privacy .list .row').filter({ has: locator('.name').filter({ hasText: /^脱敏个人信息$/ }) }).getByRole('button', { name: '开启', exact: true })", '    - locator resolved to <button class="opt" type="button" aria-pressed="false">开启</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '    - waiting 20ms', '    - waiting for element to be visible, enabled and stable', '    - element is not stable', '  2 × retrying click action', '      - waiting 100ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events', '  2 × retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head">…</div> subtree intercepts pointer events', '    - retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events', '    - retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events', '    - retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events', '  - retrying click action', '    - waiting 500ms' ]
+  }
+
+
+test at internal/gui/tests/provider-url-each-api.test.cjs:43:5
+✖ webkit en 900px: a Base URL for each API, typed in turn, is saved (2328.100189ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   '/magpie.test/api/state due to access control checks.'
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/provider-url-each-api.test.cjs:109:14)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ '/magpie.test/api/state due to access control checks.' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/redact-rule-edit.test.cjs:60:7
+✖ webkit en 420px: a masking rule is edited in its place (1303.099881ms)
+  AssertionError [ERR_ASSERTION]: the click moved nothing
+  + actual - expected
+  
+    [
+      0,
+      0,
+  +   501
+  -   488
+    ]
+  
+      at click (/home/georgefu/Projects/magpie/internal/gui/tests/redact-rule-edit.test.cjs:95:18)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/redact-rule-edit.test.cjs:100:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 0, 0, 501 ],
+    expected: [ 0, 0, 488 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/redact-rule-edit.test.cjs:60:7
+✖ webkit zh 420px: a masking rule is edited in its place (1304.802358ms)
+  AssertionError [ERR_ASSERTION]: the click moved nothing
+  + actual - expected
+  
+    [
+      0,
+      0,
+  +   502
+  -   489
+    ]
+  
+      at click (/home/georgefu/Projects/magpie/internal/gui/tests/redact-rule-edit.test.cjs:95:18)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/redact-rule-edit.test.cjs:100:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 0, 0, 502 ],
+    expected: [ 0, 0, 489 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/redact-rule-edit.test.cjs:60:7
+✖ webkit zh-TW 420px: a masking rule is edited in its place (1309.238993ms)
+  AssertionError [ERR_ASSERTION]: the click moved nothing
+  + actual - expected
+  
+    [
+      0,
+      0,
+  +   504
+  -   489
+    ]
+  
+      at click (/home/georgefu/Projects/magpie/internal/gui/tests/redact-rule-edit.test.cjs:95:18)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/redact-rule-edit.test.cjs:100:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 0, 0, 504 ],
+    expected: [ 0, 0, 489 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/redact-rule-edit.test.cjs:60:7
+✖ webkit ja 420px: a masking rule is edited in its place (1308.324854ms)
+  AssertionError [ERR_ASSERTION]: the click moved nothing
+  + actual - expected
+  
+    [
+      0,
+      0,
+  +   503
+  -   489
+    ]
+  
+      at click (/home/georgefu/Projects/magpie/internal/gui/tests/redact-rule-edit.test.cjs:95:18)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/redact-rule-edit.test.cjs:100:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 0, 0, 503 ],
+    expected: [ 0, 0, 489 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/redact-rule-edit.test.cjs:60:7
+✖ webkit de 420px: a masking rule is edited in its place (1328.133624ms)
+  AssertionError [ERR_ASSERTION]: the click moved nothing
+  + actual - expected
+  
+    [
+      0,
+      0,
+  +   502
+  -   488
+    ]
+  
+      at click (/home/georgefu/Projects/magpie/internal/gui/tests/redact-rule-edit.test.cjs:95:18)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/redact-rule-edit.test.cjs:100:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 0, 0, 502 ],
+    expected: [ 0, 0, 488 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/redact-words-any-case.test.cjs:52:7
+✖ webkit en 640px: masked words match in any case only when turned on (6765.173132ms)
+  page.waitForFunction: Timeout 5000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/redact-words-any-case.test.cjs:90:20) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+test at internal/gui/tests/redact-words-any-case.test.cjs:52:7
+✖ webkit zh 640px: masked words match in any case only when turned on (6729.719717ms)
+  page.waitForFunction: Timeout 5000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/redact-words-any-case.test.cjs:90:20) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+test at internal/gui/tests/redact-words-any-case.test.cjs:52:7
+✖ webkit zh-TW 640px: masked words match in any case only when turned on (6743.231548ms)
+  page.waitForFunction: Timeout 5000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/redact-words-any-case.test.cjs:90:20) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+test at internal/gui/tests/redact-words-any-case.test.cjs:52:7
+✖ webkit ja 640px: masked words match in any case only when turned on (6740.823821ms)
+  page.waitForFunction: Timeout 5000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/redact-words-any-case.test.cjs:90:20) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+test at internal/gui/tests/redact-words-any-case.test.cjs:52:7
+✖ webkit de 640px: masked words match in any case only when turned on (6735.728164ms)
+  page.waitForFunction: Timeout 5000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/redact-words-any-case.test.cjs:90:20) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+
+test at internal/gui/tests/redact-words-whole.test.cjs:52:7
+✖ webkit en 640px: masked words match as whole words only when turned on (6798.744081ms)
+  page.waitForFunction: Timeout 5000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/redact-words-whole.test.cjs:90:20) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+test at internal/gui/tests/redact-words-whole.test.cjs:52:7
+✖ webkit zh 640px: masked words match as whole words only when turned on (6784.57849ms)
+  page.waitForFunction: Timeout 5000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/redact-words-whole.test.cjs:90:20) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+test at internal/gui/tests/redact-words-whole.test.cjs:52:7
+✖ webkit zh-TW 640px: masked words match as whole words only when turned on (6773.056398ms)
+  page.waitForFunction: Timeout 5000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/redact-words-whole.test.cjs:90:20) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+test at internal/gui/tests/redact-words-whole.test.cjs:52:7
+✖ webkit ja 640px: masked words match as whole words only when turned on (6772.948732ms)
+  page.waitForFunction: Timeout 5000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/redact-words-whole.test.cjs:90:20) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+test at internal/gui/tests/redact-words-whole.test.cjs:52:7
+✖ webkit de 640px: masked words match as whole words only when turned on (6791.971524ms)
+  page.waitForFunction: Timeout 5000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/redact-words-whole.test.cjs:90:20) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+
+test at internal/gui/tests/s3-sync.test.cjs:50:5
+✖ webkit en: S3 sync settings (4661.958501ms)
+  AssertionError [ERR_ASSERTION]: picking WebDAV must not scroll the page
+  
+  0 !== 112
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/s3-sync.test.cjs:137:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 112,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/search-first.test.cjs:53:5
+✖ chromium en: web search can go to the search APIs first (3253.497391ms)
+  AssertionError [ERR_ASSERTION]: saved once
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/search-first.test.cjs:78:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/search-first.test.cjs:53:5
+✖ chromium zh: web search can go to the search APIs first (3189.4161ms)
+  AssertionError [ERR_ASSERTION]: saved once
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/search-first.test.cjs:78:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/search-first.test.cjs:53:5
+✖ webkit en: web search can go to the search APIs first (3656.131483ms)
+  AssertionError [ERR_ASSERTION]: saved once
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/search-first.test.cjs:78:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/search-first.test.cjs:53:5
+✖ webkit zh: web search can go to the search APIs first (3580.828182ms)
+  AssertionError [ERR_ASSERTION]: saved once
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/search-first.test.cjs:78:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/tray-totals.test.cjs:195:15
+✖ panel (988.067603ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  3 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/tray-totals.test.cjs:213:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/tray-totals.test.cjs:195:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/tray-totals.test.cjs:195:15
+✖ panel (1001.40461ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  3 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/tray-totals.test.cjs:213:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/tray-totals.test.cjs:195:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/tray-totals.test.cjs:195:15
+✖ panel (1002.121865ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  3 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/tray-totals.test.cjs:213:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/tray-totals.test.cjs:195:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/tray-totals.test.cjs:195:15
+✖ panel (988.332447ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  3 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/tray-totals.test.cjs:213:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/tray-totals.test.cjs:195:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/tray-totals.test.cjs:195:15
+✖ panel (1005.793693ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  3 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/tray-totals.test.cjs:213:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/tray-totals.test.cjs:195:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/warm-at-own.test.cjs:74:7
+✖ webkit en 440px: each Codex account has its own daily warm-up time (1634.529667ms)
+  AssertionError [ERR_ASSERTION]: a click moved the page
+  
+  '0,1492' !== '0,1416'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/warm-at-own.test.cjs:117:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '0,1492',
+    expected: '0,1416',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/warm-at-own.test.cjs:74:7
+✖ webkit zh 440px: each Codex account has its own daily warm-up time (1648.210434ms)
+  AssertionError [ERR_ASSERTION]: a click moved the page
+  
+  '0,1515' !== '0,1436'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/warm-at-own.test.cjs:117:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '0,1515',
+    expected: '0,1436',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/warm-at-own.test.cjs:74:7
+✖ webkit ja 440px: each Codex account has its own daily warm-up time (1629.092597ms)
+  AssertionError [ERR_ASSERTION]: a click moved the page
+  
+  '0,1509' !== '0,1430'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/warm-at-own.test.cjs:117:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '0,1509',
+    expected: '0,1430',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/warm-at-own.test.cjs:74:7
+✖ webkit de 440px: each Codex account has its own daily warm-up time (1784.32792ms)
+  AssertionError [ERR_ASSERTION]: a click moved the page
+  
+  '0,1613' !== '0,1519'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/warm-at-own.test.cjs:117:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '0,1613',
+    expected: '0,1519',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+

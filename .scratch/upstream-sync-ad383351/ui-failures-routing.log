@@ -1,0 +1,1855 @@
+test at internal/gui/tests/routing-bodies.test.cjs:92:5
+✖ webkit en: a request on the Routing page opens to its request and response (5977.558284ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day" data-label="By session"></button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    9 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-bodies.test.cjs:124:44) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day" data-label="By session"></button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    9 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-bodies.test.cjs:92:5
+✖ webkit zh: a request on the Routing page opens to its request and response (6015.585286ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day" data-label="By session"></button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    9 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-bodies.test.cjs:124:44) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day" data-label="By session"></button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    9 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-bodies.test.cjs:92:5
+✖ webkit zh-TW: a request on the Routing page opens to its request and response (5945.76237ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day" data-label="By session"></button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    9 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-bodies.test.cjs:124:44) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day" data-label="By session"></button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    9 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-bodies.test.cjs:92:5
+✖ webkit ja: a request on the Routing page opens to its request and response (5963.481717ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day" data-label="By session"></button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    9 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-bodies.test.cjs:124:44) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day" data-label="By session"></button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    9 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-bodies.test.cjs:92:5
+✖ webkit de: a request on the Routing page opens to its request and response (5949.866671ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day" data-label="By session"></button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    9 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-bodies.test.cjs:124:44) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day" data-label="By session"></button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    9 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 500ms' ]
+  }
+
+
+test at internal/gui/tests/routing-broke-off.test.cjs:71:5
+✖ webkit zh: a reply that broke off is told as failed everywhere (15982.649271ms)
+  locator.click: Timeout 15000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day:visible').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day" data-label="By session"></button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    28 × waiting for element to be visible, enabled and stable[22m
+  [2m       - element is not visible[22m
+  [2m     - retrying click action[22m
+  [2m       - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-broke-off.test.cjs:82:52) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day:visible').nth(1)", '    - locator resolved to <button class="rt-day" data-label="By session"></button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    28 × waiting for element to be visible, enabled and stable', '       - element is not visible', '     - retrying click action', '       - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-broke-off.test.cjs:109:5
+✖ webkit en: a 200 with a note of its own is still an answer (15998.506404ms)
+  locator.click: Timeout 15000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day:visible').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day" data-label="By session"></button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    28 × waiting for element to be visible, enabled and stable[22m
+  [2m       - element is not visible[22m
+  [2m     - retrying click action[22m
+  [2m       - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-broke-off.test.cjs:120:52) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day:visible').nth(1)", '    - locator resolved to <button class="rt-day" data-label="By session"></button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    28 × waiting for element to be visible, enabled and stable', '       - element is not visible', '     - retrying click action', '       - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-broke-off.test.cjs:109:5
+✖ webkit zh: a 200 with a note of its own is still an answer (16000.488088ms)
+  locator.click: Timeout 15000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day:visible').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day" data-label="By session"></button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    28 × waiting for element to be visible, enabled and stable[22m
+  [2m       - element is not visible[22m
+  [2m     - retrying click action[22m
+  [2m       - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-broke-off.test.cjs:120:52) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day:visible').nth(1)", '    - locator resolved to <button class="rt-day" data-label="By session"></button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    28 × waiting for element to be visible, enabled and stable', '       - element is not visible', '     - retrying click action', '       - waiting 500ms' ]
+  }
+
+
+test at internal/gui/tests/routing-cline-route.test.cjs:94:5
+✖ webkit en: a ClinePass route reads as its route, with what was asked (5993.137251ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">By request</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    9 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-cline-route.test.cjs:111:44) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">By request</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    9 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-cline-route.test.cjs:94:5
+✖ webkit zh: a ClinePass route reads as its route, with what was asked (6012.445626ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day" data-label="By session"></button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    9 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-cline-route.test.cjs:111:44) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day" data-label="By session"></button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    9 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 500ms' ]
+  }
+
+
+test at internal/gui/tests/routing-intent-entry.test.cjs:80:7
+✖ chromium zh 1100: Add a rule makes a rule by intent (8432.200127ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first() to be visible[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-intent-entry.test.cjs:145:46) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first() to be visible" ]
+  }
+
+test at internal/gui/tests/routing-intent-entry.test.cjs:80:7
+✖ webkit en 1100: Add a rule makes a rule by intent (9041.72211ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit') to be visible[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-intent-entry.test.cjs:139:18) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit') to be visible" ]
+  }
+
+test at internal/gui/tests/routing-intent-entry.test.cjs:80:7
+✖ webkit zh 1100: Add a rule makes a rule by intent (9133.302695ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first() to be visible[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-intent-entry.test.cjs:145:46) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first() to be visible" ]
+  }
+
+
+test at internal/gui/tests/routing-manual.test.cjs:75:5
+✖ webkit en: a manual group's model is picked on its card (7463.516082ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('label').filter({ hasText: /^Routing$/ }).locator('xpath=following-sibling::div[1]').locator('.segs .opt').filter({ hasText: 'Smart' })[22m
+  [2m    - locator resolved to <button class="opt" type="button" aria-pressed="false">Smart</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m    - element is not stable[22m
+  [2m  2 × retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  8 × retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <header class="top">…</header> intercepts pointer events[22m
+  [2m  - retrying click action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-manual.test.cjs:141:61) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('label').filter({ hasText: /^Routing$/ }).locator('xpath=following-sibling::div[1]').locator('.segs .opt').filter({ hasText: 'Smart' })", '    - locator resolved to <button class="opt" type="button" aria-pressed="false">Smart</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '    - waiting 20ms', '    - waiting for element to be visible, enabled and stable', '    - element is not stable', '  2 × retrying click action', '      - waiting 100ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  8 × retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <header class="top">…</header> intercepts pointer events', '  - retrying click action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-manual.test.cjs:75:5
+✖ webkit zh: a manual group's model is picked on its card (7467.522516ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('label').filter({ hasText: /^路由$/ }).locator('xpath=following-sibling::div[1]').locator('.segs .opt').filter({ hasText: '智能' })[22m
+  [2m    - locator resolved to <button class="opt" type="button" aria-pressed="false">智能</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m    - element is not stable[22m
+  [2m  2 × retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  8 × retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <header class="top">…</header> intercepts pointer events[22m
+  [2m  - retrying click action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-manual.test.cjs:141:61) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('label').filter({ hasText: /^路由$/ }).locator('xpath=following-sibling::div[1]').locator('.segs .opt').filter({ hasText: '智能' })", '    - locator resolved to <button class="opt" type="button" aria-pressed="false">智能</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '    - waiting 20ms', '    - waiting for element to be visible, enabled and stable', '    - element is not stable', '  2 × retrying click action', '      - waiting 100ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  8 × retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <header class="top">…</header> intercepts pointer events', '  - retrying click action', '    - waiting 500ms' ]
+  }
+
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ chromium en 1100px: one model resting leaves the account's other models and the account in (4399.643998ms)
+  Error: control did not come clear into sight: {"view":{"x":212,"y":46,"width":888,"height":826},"target":{"x":262,"y":1048.09375,"width":52.6875,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ chromium en 420px: one model resting leaves the account's other models and the account in (4946.035554ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":766},"target":{"x":50,"y":1187.109375,"width":52.6875,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ chromium zh 1100px: one model resting leaves the account's other models and the account in (4299.379259ms)
+  Error: control did not come clear into sight: {"view":{"x":212,"y":46,"width":888,"height":826},"target":{"x":262,"y":1049.96875,"width":56.015625,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ chromium zh 420px: one model resting leaves the account's other models and the account in (4797.378136ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":766},"target":{"x":50,"y":1168.0625,"width":56.015625,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ chromium zh-TW 1100px: one model resting leaves the account's other models and the account in (4303.679134ms)
+  Error: control did not come clear into sight: {"view":{"x":212,"y":46,"width":888,"height":826},"target":{"x":262,"y":1049.96875,"width":56.015625,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ chromium zh-TW 420px: one model resting leaves the account's other models and the account in (4795.309502ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":766},"target":{"x":50,"y":1184.859375,"width":56.015625,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ chromium ja 1100px: one model resting leaves the account's other models and the account in (4335.885936ms)
+  Error: control did not come clear into sight: {"view":{"x":212,"y":46,"width":888,"height":826},"target":{"x":262,"y":1040.21875,"width":68.015625,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ chromium ja 420px: one model resting leaves the account's other models and the account in (4915.349517ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":766},"target":{"x":50,"y":1162.4375,"width":68.015625,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ chromium de 1100px: one model resting leaves the account's other models and the account in (4349.081478ms)
+  Error: control did not come clear into sight: {"view":{"x":212,"y":46,"width":888,"height":826},"target":{"x":262,"y":1048.09375,"width":96.109375,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ chromium de 420px: one model resting leaves the account's other models and the account in (5085.375871ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":766},"target":{"x":50,"y":1226,"width":96.109375,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ webkit en 1100px: one model resting leaves the account's other models and the account in (4742.562657ms)
+  Error: control did not come clear into sight: {"view":{"x":212,"y":46,"width":888,"height":826},"target":{"x":262,"y":1040.21875,"width":52.6875,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ webkit en 420px: one model resting leaves the account's other models and the account in (5007.30599ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":766},"target":{"x":50,"y":1179.234375,"width":52.6875,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ webkit zh 1100px: one model resting leaves the account's other models and the account in (4779.028416ms)
+  Error: control did not come clear into sight: {"view":{"x":212,"y":46,"width":888,"height":826},"target":{"x":262,"y":1042.09375,"width":56.015625,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ webkit zh 420px: one model resting leaves the account's other models and the account in (4954.140818ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":766},"target":{"x":50,"y":1160.1875,"width":56.015625,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ webkit zh-TW 1100px: one model resting leaves the account's other models and the account in (4738.424828ms)
+  Error: control did not come clear into sight: {"view":{"x":212,"y":46,"width":888,"height":826},"target":{"x":262,"y":1042.09375,"width":56.015625,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ webkit zh-TW 420px: one model resting leaves the account's other models and the account in (4981.157135ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":766},"target":{"x":50,"y":1176.984375,"width":56.015625,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ webkit ja 1100px: one model resting leaves the account's other models and the account in (4720.927459ms)
+  Error: control did not come clear into sight: {"view":{"x":212,"y":46,"width":888,"height":826},"target":{"x":262,"y":1040.21875,"width":68.015625,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ webkit ja 420px: one model resting leaves the account's other models and the account in (5044.216661ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":766},"target":{"x":50,"y":1179.234375,"width":68.015625,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ webkit de 1100px: one model resting leaves the account's other models and the account in (4766.853274ms)
+  Error: control did not come clear into sight: {"view":{"x":212,"y":46,"width":888,"height":826},"target":{"x":262,"y":1040.21875,"width":96.109375,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-model-rest.test.cjs:88:7
+✖ webkit de 420px: one model resting leaves the account's other models and the account in (5091.080665ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":766},"target":{"x":50,"y":1218.125,"width":96.109375,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-model-rest.test.cjs:148:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+
+test at internal/gui/tests/routing-pause.test.cjs:117:5
+✖ chromium en: a rule that pauses a model at some hours (7249.326862ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').nth(1).locator('.rt-addc')[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-pause.test.cjs:146:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').nth(1).locator('.rt-addc')" ]
+  }
+
+test at internal/gui/tests/routing-pause.test.cjs:117:5
+✖ chromium zh: a rule that pauses a model at some hours (7213.384442ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').nth(1).locator('.rt-addc')[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-pause.test.cjs:146:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').nth(1).locator('.rt-addc')" ]
+  }
+
+test at internal/gui/tests/routing-pause.test.cjs:188:5
+✖ chromium en: a pause rule at a narrow width (2165.988488ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-pause.test.cjs:196:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-pause.test.cjs:188:5
+✖ chromium zh: a pause rule at a narrow width (2144.565248ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-pause.test.cjs:196:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-pause.test.cjs:188:5
+✖ chromium zh-TW: a pause rule at a narrow width (2168.235798ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-pause.test.cjs:196:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-pause.test.cjs:188:5
+✖ chromium ja: a pause rule at a narrow width (2147.917594ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-pause.test.cjs:196:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-pause.test.cjs:188:5
+✖ chromium de: a pause rule at a narrow width (2170.816463ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-pause.test.cjs:196:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-pause.test.cjs:117:5
+✖ webkit en: a rule that pauses a model at some hours (7793.730926ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').nth(1).locator('.rt-addc')[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-pause.test.cjs:146:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').nth(1).locator('.rt-addc')" ]
+  }
+
+test at internal/gui/tests/routing-pause.test.cjs:117:5
+✖ webkit zh: a rule that pauses a model at some hours (7806.511139ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').nth(1).locator('.rt-addc')[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-pause.test.cjs:146:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').nth(1).locator('.rt-addc')" ]
+  }
+
+test at internal/gui/tests/routing-pause.test.cjs:188:5
+✖ webkit en: a pause rule at a narrow width (2673.031941ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-pause.test.cjs:196:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-pause.test.cjs:188:5
+✖ webkit zh: a pause rule at a narrow width (2643.795442ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-pause.test.cjs:196:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-pause.test.cjs:188:5
+✖ webkit zh-TW: a pause rule at a narrow width (2618.597818ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-pause.test.cjs:196:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-pause.test.cjs:188:5
+✖ webkit ja: a pause rule at a narrow width (2671.187592ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-pause.test.cjs:196:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-pause.test.cjs:188:5
+✖ webkit de: a pause rule at a narrow width (2656.924246ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-pause.test.cjs:196:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/routing-row-swap.test.cjs:55:3
+✖ chromium: a request done in the middle of the list swaps its own row only (6429.939465ms)
+  page.waitForFunction: Timeout 5000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-row-swap.test.cjs:80:16) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+test at internal/gui/tests/routing-row-swap.test.cjs:55:3
+✖ webkit: a request done in the middle of the list swaps its own row only (6978.249307ms)
+  page.waitForFunction: Timeout 5000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-row-swap.test.cjs:80:16) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+
+test at internal/gui/tests/routing-rule-drag.test.cjs:65:5
+✖ webkit de: a group's rules are dragged into order (4886.272738ms)
+  AssertionError [ERR_ASSERTION]: the drag moved it
+  + actual - expected
+  
+    [
+  -   'three',
+      'one',
+      'two',
+  +   'three'
+    ]
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-drag.test.cjs:113:14)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'one', 'two', 'three' ],
+    expected: [ 'three', 'one', 'two' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/routing-rule-effort.test.cjs:106:5
+✖ chromium en: a rule sets the reasoning its model is asked for (2231.385953ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 6
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-effort.test.cjs:120:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 6,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-rule-effort.test.cjs:143:5
+✖ chromium en: a pause asks for no reasoning (7163.9657ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.row-menu .rm-item').filter({ hasText: 'Pause the model instead' })[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-effort.test.cjs:149:72) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.row-menu .rm-item').filter({ hasText: 'Pause the model instead' })" ]
+  }
+
+test at internal/gui/tests/routing-rule-effort.test.cjs:160:5
+✖ chromium en: a rule's effort at a narrow width (2144.670948ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-effort.test.cjs:167:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-rule-effort.test.cjs:160:5
+✖ chromium zh: a rule's effort at a narrow width (2129.810032ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-effort.test.cjs:167:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-rule-effort.test.cjs:160:5
+✖ chromium zh-TW: a rule's effort at a narrow width (2153.585766ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-effort.test.cjs:167:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-rule-effort.test.cjs:160:5
+✖ chromium ja: a rule's effort at a narrow width (2148.990954ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-effort.test.cjs:167:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-rule-effort.test.cjs:160:5
+✖ chromium de: a rule's effort at a narrow width (2133.215669ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-effort.test.cjs:167:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-rule-effort.test.cjs:106:5
+✖ webkit en: a rule sets the reasoning its model is asked for (2615.547095ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 6
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-effort.test.cjs:120:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 6,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-rule-effort.test.cjs:143:5
+✖ webkit en: a pause asks for no reasoning (7602.921366ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.row-menu .rm-item').filter({ hasText: 'Pause the model instead' })[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-effort.test.cjs:149:72) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.row-menu .rm-item').filter({ hasText: 'Pause the model instead' })" ]
+  }
+
+test at internal/gui/tests/routing-rule-effort.test.cjs:160:5
+✖ webkit en: a rule's effort at a narrow width (2559.158983ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-effort.test.cjs:167:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-rule-effort.test.cjs:160:5
+✖ webkit zh: a rule's effort at a narrow width (2568.463583ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-effort.test.cjs:167:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-rule-effort.test.cjs:160:5
+✖ webkit zh-TW: a rule's effort at a narrow width (2536.99654ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-effort.test.cjs:167:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-rule-effort.test.cjs:160:5
+✖ webkit ja: a rule's effort at a narrow width (2546.230461ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-effort.test.cjs:167:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-rule-effort.test.cjs:160:5
+✖ webkit de: a rule's effort at a narrow width (2540.336804ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-effort.test.cjs:167:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit en 1100: a rule names several models (6364.917045ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit en 390: a rule names several models (11169.377385ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit zh 390: a rule names several models (11198.320967ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - <footer class="foot">…</footer> intercepts pointer events[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - <footer class="foot">…</footer> intercepts pointer events', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit zh-TW 1100: a rule names several models (6314.94806ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit zh-TW 390: a rule names several models (11168.974804ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit ja 1100: a rule names several models (6332.862338ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit ja 390: a rule names several models (11173.959551ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit de 1100: a rule names several models (6319.379051ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit de 390: a rule names several models (11135.808009ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+
+test at internal/gui/tests/routing-rule-remove.test.cjs:122:7
+✖ webkit en 390: a rule's ⋯ is there to remove it, and a rule with no condition says how (13544.908982ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.row-menu') to be visible[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-remove.test.cjs:154:41) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.row-menu') to be visible" ]
+  }
+
+test at internal/gui/tests/routing-rule-remove.test.cjs:122:7
+✖ webkit ja 1100: a rule's ⋯ is there to remove it, and a rule with no condition says how (12925.335551ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.row-menu') to be visible[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-remove.test.cjs:154:41) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.row-menu') to be visible" ]
+  }
+
+test at internal/gui/tests/routing-rule-remove.test.cjs:122:7
+✖ webkit de 1100: a rule's ⋯ is there to remove it, and a rule with no condition says how (12953.937728ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.row-menu') to be visible[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-remove.test.cjs:154:41) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.row-menu') to be visible" ]
+  }
+
+
+test at internal/gui/tests/routing-rules-line.test.cjs:118:7
+✖ chromium zh 1100: a rule reads as one line, its conditions added from a menu (10718.893732ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.proto-menu .pm-item').filter({ hasText: '带图片' })[22m
+  [2m    - locator resolved to <button type="button" class="pm-item" role="menuitemradio" aria-checked="false">…</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m  - element was detached from the DOM, retrying[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rules-line.test.cjs:175:50) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.proto-menu .pm-item').filter({ hasText: '带图片' })", '    - locator resolved to <button type="button" class="pm-item" role="menuitemradio" aria-checked="false">…</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '      - waiting 100ms', '    - waiting for element to be visible, enabled and stable', '  - element was detached from the DOM, retrying' ]
+  }
+
+test at internal/gui/tests/routing-rules-line.test.cjs:118:7
+✖ chromium zh-TW 1100: a rule reads as one line, its conditions added from a menu (10713.002583ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.proto-menu .pm-item').filter({ hasText: '帶圖片' })[22m
+  [2m    - locator resolved to <button type="button" class="pm-item" role="menuitemradio" aria-checked="false">…</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m  - element was detached from the DOM, retrying[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rules-line.test.cjs:175:50) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.proto-menu .pm-item').filter({ hasText: '帶圖片' })", '    - locator resolved to <button type="button" class="pm-item" role="menuitemradio" aria-checked="false">…</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '      - waiting 100ms', '    - waiting for element to be visible, enabled and stable', '  - element was detached from the DOM, retrying' ]
+  }
+
+test at internal/gui/tests/routing-rules-line.test.cjs:118:7
+✖ webkit en 1100: a rule reads as one line, its conditions added from a menu (11343.257034ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.proto-menu .pm-item').filter({ hasText: 'has an image' })[22m
+  [2m    - locator resolved to <button type="button" class="pm-item" role="menuitemradio" aria-checked="false">…</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m  - element was detached from the DOM, retrying[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rules-line.test.cjs:175:50) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.proto-menu .pm-item').filter({ hasText: 'has an image' })", '    - locator resolved to <button type="button" class="pm-item" role="menuitemradio" aria-checked="false">…</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '      - waiting 100ms', '    - waiting for element to be visible, enabled and stable', '  - element was detached from the DOM, retrying' ]
+  }
+
+test at internal/gui/tests/routing-rules-line.test.cjs:118:7
+✖ webkit zh-TW 1100: a rule reads as one line, its conditions added from a menu (11348.00152ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.proto-menu .pm-item').filter({ hasText: '帶圖片' })[22m
+  [2m    - locator resolved to <button type="button" class="pm-item" role="menuitemradio" aria-checked="false">…</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m  - element was detached from the DOM, retrying[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rules-line.test.cjs:175:50) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.proto-menu .pm-item').filter({ hasText: '帶圖片' })", '    - locator resolved to <button type="button" class="pm-item" role="menuitemradio" aria-checked="false">…</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '      - waiting 100ms', '    - waiting for element to be visible, enabled and stable', '  - element was detached from the DOM, retrying' ]
+  }
+
+test at internal/gui/tests/routing-rules-line.test.cjs:118:7
+✖ webkit ja 1100: a rule reads as one line, its conditions added from a menu (11391.431141ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.proto-menu .pm-item').filter({ hasText: '画像あり' })[22m
+  [2m    - locator resolved to <button type="button" class="pm-item" role="menuitemradio" aria-checked="false">…</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m  - element was detached from the DOM, retrying[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rules-line.test.cjs:175:50) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.proto-menu .pm-item').filter({ hasText: '画像あり' })", '    - locator resolved to <button type="button" class="pm-item" role="menuitemradio" aria-checked="false">…</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '      - waiting 100ms', '    - waiting for element to be visible, enabled and stable', '  - element was detached from the DOM, retrying' ]
+  }
+
+
+test at internal/gui/tests/routing-steady.test.cjs:81:3
+✖ chromium: requests coming in leave the routing groups where they are (11404.977348ms)
+  AssertionError [ERR_ASSERTION]: the group moved: [{"scrollTop":842,"inPage":956.578125,"onScreen":{"head":114.578125,"editor":280.59375,"group":1363.46875}},{"scrollTop":2341,"inPage":2454.609375,"onScreen":{"head":113.609375,"editor":279.625,"group":1348.625}}]
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-steady.test.cjs:169:51)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-steady.test.cjs:81:3
+✖ webkit: requests coming in leave the routing groups where they are (12078.974178ms)
+  AssertionError [ERR_ASSERTION]: the group moved: [{"scrollTop":834,"inPage":953.953125,"onScreen":{"head":119.953125,"editor":285.96875,"group":1370.015625}},{"scrollTop":2324,"inPage":2444.09375,"onScreen":{"head":120.09375,"editor":286.109375,"group":1355.109375}}]
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-steady.test.cjs:169:51)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/routing-story-shrinks.test.cjs:64:15
+✖ en 1100px (2590.396927ms)
+  AssertionError [ERR_ASSERTION]: held while under way
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-story-shrinks.test.cjs:98:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-story-shrinks.test.cjs:64:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-story-shrinks.test.cjs:124:15
+✖ en 1100px, the newest always under way (2547.617163ms)
+  AssertionError [ERR_ASSERTION]: held while the next is under way: 64.375 vs 200
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-story-shrinks.test.cjs:154:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-story-shrinks.test.cjs:124:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-story-shrinks.test.cjs:64:15
+✖ zh 420px (2494.179246ms)
+  AssertionError [ERR_ASSERTION]: held while under way
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-story-shrinks.test.cjs:98:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-story-shrinks.test.cjs:64:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-story-shrinks.test.cjs:124:15
+✖ zh 420px, the newest always under way (2509.497826ms)
+  AssertionError [ERR_ASSERTION]: held while the next is under way: 82.5 vs 200
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-story-shrinks.test.cjs:154:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-story-shrinks.test.cjs:124:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/routing-time-went.test.cjs:75:5
+✖ webkit en: a try says where its time went (5932.607359ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">By request</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    9 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-time-went.test.cjs:92:44) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">By request</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    9 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-time-went.test.cjs:75:5
+✖ webkit zh: a try says where its time went (5952.267338ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">按请求</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    9 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-time-went.test.cjs:92:44) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">按请求</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    9 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-time-went.test.cjs:75:5
+✖ webkit zh-TW: a try says where its time went (5949.136213ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day" data-label="By session"></button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    9 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-time-went.test.cjs:92:44) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day" data-label="By session"></button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    9 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-time-went.test.cjs:75:5
+✖ webkit ja: a try says where its time went (5956.698591ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">リクエスト別</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    9 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-time-went.test.cjs:92:44) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">リクエスト別</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    9 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-time-went.test.cjs:75:5
+✖ webkit de: a try says where its time went (5945.903186ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">Nach Anfrage</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    9 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-time-went.test.cjs:92:44) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">Nach Anfrage</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    9 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 500ms' ]
+  }
+
+
+test at internal/gui/tests/routing-upstream.test.cjs:74:5
+✖ webkit en: the provider behind an aggregator is named (5982.757554ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day" data-label="By session"></button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    9 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-upstream.test.cjs:92:44) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day" data-label="By session"></button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    9 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-upstream.test.cjs:74:5
+✖ webkit zh: the provider behind an aggregator is named (5994.786239ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day" data-label="By session"></button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    9 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-upstream.test.cjs:92:44) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day" data-label="By session"></button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    9 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 500ms' ]
+  }
+
+
+test at internal/gui/tests/routing-wb-restricted.test.cjs:75:7
+✖ chromium en 420px: a restricted WorkBuddy account is told as one, with the way back (4085.541231ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":764},"target":{"x":50,"y":904.734375,"width":208.328125,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-wb-restricted.test.cjs:119:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-wb-restricted.test.cjs:75:7
+✖ chromium zh 420px: a restricted WorkBuddy account is told as one, with the way back (4084.569864ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":764},"target":{"x":50,"y":868.890625,"width":128.015625,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-wb-restricted.test.cjs:119:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-wb-restricted.test.cjs:75:7
+✖ chromium zh-TW 420px: a restricted WorkBuddy account is told as one, with the way back (4082.083973ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":764},"target":{"x":50,"y":868.890625,"width":128.015625,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-wb-restricted.test.cjs:119:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-wb-restricted.test.cjs:75:7
+✖ chromium ja 420px: a restricted WorkBuddy account is told as one, with the way back (4057.447039ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":764},"target":{"x":50,"y":905.515625,"width":193.03125,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-wb-restricted.test.cjs:119:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-wb-restricted.test.cjs:75:7
+✖ chromium de 420px: a restricted WorkBuddy account is told as one, with the way back (4066.255844ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":764},"target":{"x":50,"y":940.390625,"width":260.75,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-wb-restricted.test.cjs:119:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-wb-restricted.test.cjs:75:7
+✖ webkit en 420px: a restricted WorkBuddy account is told as one, with the way back (4594.239402ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":764},"target":{"x":50,"y":905.34375,"width":208.328125,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-wb-restricted.test.cjs:119:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-wb-restricted.test.cjs:75:7
+✖ webkit zh 420px: a restricted WorkBuddy account is told as one, with the way back (4573.715263ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":764},"target":{"x":50,"y":870.5,"width":128.015625,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-wb-restricted.test.cjs:119:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-wb-restricted.test.cjs:75:7
+✖ webkit zh-TW 420px: a restricted WorkBuddy account is told as one, with the way back (4571.370733ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":764},"target":{"x":50,"y":870.5,"width":128.015625,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-wb-restricted.test.cjs:119:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-wb-restricted.test.cjs:75:7
+✖ webkit ja 420px: a restricted WorkBuddy account is told as one, with the way back (4560.969061ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":764},"target":{"x":50,"y":923.5,"width":192.109375,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-wb-restricted.test.cjs:119:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at internal/gui/tests/routing-wb-restricted.test.cjs:75:7
+✖ webkit de 420px: a restricted WorkBuddy account is told as one, with the way back (4574.439763ms)
+  Error: control did not come clear into sight: {"view":{"x":0,"y":106,"width":420,"height":764},"target":{"x":50,"y":941,"width":260.75,"height":22.796875}}
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/reader.cjs:74:9)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-wb-restricted.test.cjs:119:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+

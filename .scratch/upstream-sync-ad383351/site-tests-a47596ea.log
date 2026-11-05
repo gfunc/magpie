@@ -1,0 +1,89 @@
+✔ Termux downloads Android arm64 into PREFIX/bin even with WebKit installed (94.589665ms)
+✔ Termux prefix detection and amd64 target (88.845202ms)
+✔ Termux respects a custom bin directory containing spaces (87.234287ms)
+✔ missing Android release never falls back to Linux (48.831958ms)
+✔ a checksum mismatch leaves the existing installation intact (84.094454ms)
+✔ ordinary Linux still selects its CLI or desktop build (235.894645ms)
+✔ no proxy and no mirror unless given (87.059052ms)
+✔ --proxy takes every download through it, as does MAGPIE_PROXY (410.283318ms)
+✔ --mirror fetches the file through the mirror, the feed and its checksum from the site (173.270288ms)
+✔ a file the mirror changed is refused and the installed magpie kept (87.533701ms)
+(node:585490) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/georgefu/Projects/magpie/site/worker.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/georgefu/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ledger index Error: kv down
+    at Object.get (file:///home/georgefu/Projects/magpie/site/stable.test.mjs:95:28)
+    at readIndex (file:///home/georgefu/Projects/magpie/site/worker.js:559:33)
+    at keepLedger (file:///home/georgefu/Projects/magpie/site/worker.js:618:20)
+    at TestContext.<anonymous> (file:///home/georgefu/Projects/magpie/site/stable.test.mjs:229:9)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Test.run (node:internal/test_runner/test:1409:7)
+    at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+ledger page 1 403
+github api 403 {"message":"API rate limit exceeded"}
+ledger index Error: kv down
+    at Object.get (file:///home/georgefu/Projects/magpie/site/stable.test.mjs:95:28)
+    at readIndex (file:///home/georgefu/Projects/magpie/site/worker.js:559:33)
+    at stable (file:///home/georgefu/Projects/magpie/site/worker.js:574:20)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Object.fetch (file:///home/georgefu/Projects/magpie/site/worker.js:75:21)
+    at async ask (file:///home/georgefu/Projects/magpie/site/stable.test.mjs:279:15)
+    at async TestContext.<anonymous> (file:///home/georgefu/Projects/magpie/site/stable.test.mjs:341:17)
+    at async Test.run (node:internal/test_runner/test:1409:7)
+    at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+✔ weekStart: the Monday 00:00 UTC on or before (2.268409ms)
+✔ urgentIn: a line starting with the marker, quoted or not, in any case (0.418286ms)
+✔ stableOf: the newest release out three days before the week began (0.43882ms)
+✔ stableOf: held the whole week, and moves on as the next begins (0.35431ms)
+✔ stableOf: an urgent release is Stable at once, until a weekly pick passes it (0.327351ms)
+✔ stableOf: unknown when the list doesn't reach back to the cut (0.21295ms)
+✔ keepLedger: a new ledger is filled from GitHub's pages, three weeks back at most four asks a run (36.459036ms)
+✔ keepLedger: four asks a run at most, the next run reaching on (15.2359ms)
+✔ keepLedger: a ledger that can't be read is never written over (1.245219ms)
+✔ keepLedger: with the API limited, the feed's ten, their dates and the API's notes kept (3.204786ms)
+✔ keepLedger: a ledger left a day behind is mended past its hole (8.488081ms)
+✔ latest?channel=stable: the week's pick from the ledger; without channel, the newest as before (6.806696ms)
+✔ latest?channel=stable: unknown (503, never kept) without a ledger that reaches the cut (1.090868ms)
+✔ notes: a range older than the hundred newest is read on from the ledger, one list (8.376961ms)
+(node:585491) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/georgefu/Projects/magpie/site/worker.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/georgefu/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ latest: the English alone without lang, the Chinese with zh (30.779386ms)
+✔ notes: each release in the language, English where it has no Chinese (2.638435ms)
+✔ notes: limit keeps the newest that many up to upto (1.888467ms)
+github api 403 {"message":"API rate limit exceeded"}
+github api releases 403 {"message":"API rate limit exceeded"}
+github api releases 403 {"message":"API rate limit exceeded"}
+github feed 503
+github api 403 {"message":"API rate limit exceeded"}
+github latest redirect 503
+github api releases 403 {"message":"API rate limit exceeded"}
+github feed 503
+✔ i18n: every string the home page marks has its Chinese, and no other (6.709266ms)
+✔ home: / sends a browser that prefers Chinese, Japanese or German to its page, until a language is picked (2.918083ms)
+✔ docs: the bare docs paths open each language's guide (0.29278ms)
+✔ latest: with the API limited, the notes come from the releases feed, kept briefly (2.823866ms)
+✔ notes: with the API limited, the releases feed's notes, in either language (1.16958ms)
+✔ notes and latest: GitHub failing altogether is an error never kept, then the last whole answer (2.522776ms)
+✔ api: a GITHUB_TOKEN secret is sent to GitHub's API, and none without it (1.197586ms)
+✔ cache: what an older worker kept, in its own shape, is never read as this one's (1.297322ms)
+✔ download: a platform's link goes to that asset of the latest release (0.448947ms)
+✔ docs: an English docs page sends a browser that prefers Chinese or Japanese to its own, until a language is picked (1.873591ms)
+✔ partners (1.535764ms)
+✔ partners: links go through /go (0.238582ms)
+✔ partners: /go sends the browser on, saying it came from magpie (0.413257ms)
+✔ partners: /go counts the click (1.79844ms)
+✔ partners: the list's fetches are counted, one in ten (5.582919ms)
+✔ icon proxy passes on a picture and nothing of the asker (6.716879ms)
+✔ sponsors: /go/<id>/home and /readme send the browser to the sponsor's own link, counted per place (2.920877ms)
+✔ sponsors: the home page and the READMEs link every sponsor through /go (2.24173ms)
+ℹ tests 45
+ℹ suites 0
+ℹ pass 45
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1468.449105

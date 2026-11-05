@@ -1,0 +1,95 @@
+?   	github.com/yetone/magpie	[no test files]
+ok  	github.com/yetone/magpie/internal/access	0.152s
+ok  	github.com/yetone/magpie/internal/agent	49.748s
+ok  	github.com/yetone/magpie/internal/agentenv	0.559s
+ok  	github.com/yetone/magpie/internal/agentplug	0.182s
+ok  	github.com/yetone/magpie/internal/appdir	0.030s
+ok  	github.com/yetone/magpie/internal/autostart	0.018s
+ok  	github.com/yetone/magpie/internal/awake	1.831s
+ok  	github.com/yetone/magpie/internal/backup	3.663s
+ok  	github.com/yetone/magpie/internal/beat	0.009s
+?   	github.com/yetone/magpie/internal/budget	[no test files]
+ok  	github.com/yetone/magpie/internal/catalog	0.432s
+ok  	github.com/yetone/magpie/internal/claudebridge	0.240s
+ok  	github.com/yetone/magpie/internal/claudecode	0.027s
+?   	github.com/yetone/magpie/internal/claudeseal	[no test files]
+ok  	github.com/yetone/magpie/internal/cli	20.534s
+ok  	github.com/yetone/magpie/internal/codexcat	0.078s
+ok  	github.com/yetone/magpie/internal/codexsummary	0.009s
+ok  	github.com/yetone/magpie/internal/daemon	0.446s
+ok  	github.com/yetone/magpie/internal/davsync	30.365s
+ok  	github.com/yetone/magpie/internal/desktopdir	0.013s
+ok  	github.com/yetone/magpie/internal/dirent	0.135s
+ok  	github.com/yetone/magpie/internal/edit	0.526s
+ok  	github.com/yetone/magpie/internal/filelock	0.376s
+ok  	github.com/yetone/magpie/internal/filememo	0.045s
+ok  	github.com/yetone/magpie/internal/fonts	0.008s
+ok  	github.com/yetone/magpie/internal/fx	0.023s
+ok  	github.com/yetone/magpie/internal/gateway	314.323s
+ok  	github.com/yetone/magpie/internal/ghtoken	0.026s
+ok  	github.com/yetone/magpie/internal/gui	37.881s
+?   	github.com/yetone/magpie/internal/gui/genpurposes	[no test files]
+?   	github.com/yetone/magpie/internal/gui/windowshape	[no test files]
+?   	github.com/yetone/magpie/internal/gwbudget	[no test files]
+ok  	github.com/yetone/magpie/internal/gwmw	0.005s
+?   	github.com/yetone/magpie/internal/gwtool	[no test files]
+ok  	github.com/yetone/magpie/internal/handoff	0.011s
+ok  	github.com/yetone/magpie/internal/iconproxy	0.004s
+ok  	github.com/yetone/magpie/internal/imagemcp	6.385s
+?   	github.com/yetone/magpie/internal/jsmod	[no test files]
+ok  	github.com/yetone/magpie/internal/lastgood	0.009s
+ok  	github.com/yetone/magpie/internal/libc	0.004s
+ok  	github.com/yetone/magpie/internal/library	38.774s
+ok  	github.com/yetone/magpie/internal/masking	0.013s
+ok  	github.com/yetone/magpie/internal/maskrec	0.093s
+ok  	github.com/yetone/magpie/internal/mcpauth	0.149s
+?   	github.com/yetone/magpie/internal/mcpauth/mcpauthtest	[no test files]
+ok  	github.com/yetone/magpie/internal/middleware	0.658s
+ok  	github.com/yetone/magpie/internal/netguard	0.007s
+ok  	github.com/yetone/magpie/internal/netproxy	2.633s
+ok  	github.com/yetone/magpie/internal/omarchy	0.013s
+ok  	github.com/yetone/magpie/internal/otlp	11.119s
+ok  	github.com/yetone/magpie/internal/pii	9.728s
+ok  	github.com/yetone/magpie/internal/pii/guard	0.015s
+?   	github.com/yetone/magpie/internal/pii/guard/coreml	[no test files]
+ok  	github.com/yetone/magpie/internal/plugin	17.141s
+ok  	github.com/yetone/magpie/internal/pluginrt	0.103s
+ok  	github.com/yetone/magpie/internal/probelog	0.013s
+ok  	github.com/yetone/magpie/internal/proc	4.238s
+ok  	github.com/yetone/magpie/internal/profile	1.325s
+ok  	github.com/yetone/magpie/internal/provider	48.521s
+?   	github.com/yetone/magpie/internal/qoder	[no test files]
+ok  	github.com/yetone/magpie/internal/redact	2.384s
+ok  	github.com/yetone/magpie/internal/routes	0.019s
+ok  	github.com/yetone/magpie/internal/sessions	11.129s
+ok  	github.com/yetone/magpie/internal/settings	0.746s
+ok  	github.com/yetone/magpie/internal/shortcut	0.005s
+ok  	github.com/yetone/magpie/internal/source	5.221s
+ok  	github.com/yetone/magpie/internal/sqlitedb	0.053s
+ok  	github.com/yetone/magpie/internal/stats	0.036s
+ok  	github.com/yetone/magpie/internal/steady	0.029s
+ok  	github.com/yetone/magpie/internal/testenv	0.019s
+ok  	github.com/yetone/magpie/internal/tui	6.814s
+ok  	github.com/yetone/magpie/internal/tune	0.026s
+ok  	github.com/yetone/magpie/internal/update	7.513s
+ok  	github.com/yetone/magpie/internal/update/launcher	0.003s
+ok  	github.com/yetone/magpie/internal/upstream	0.233s
+ok  	github.com/yetone/magpie/internal/usage	13.816s
+ok  	github.com/yetone/magpie/internal/usageapi	0.017s
+?   	github.com/yetone/magpie/internal/webview2env	[no test files]
+ok  	github.com/yetone/magpie/internal/wslrun	0.013s
+?   	github.com/yetone/magpie/plugins/all	[no test files]
+ok  	github.com/yetone/magpie/plugins/budget	0.014s
+?   	github.com/yetone/magpie/plugins/gateway	[no test files]
+ok  	github.com/yetone/magpie/plugins/groups	0.020s
+?   	github.com/yetone/magpie/plugins/library	[no test files]
+ok  	github.com/yetone/magpie/plugins/middleware	0.019s
+ok  	github.com/yetone/magpie/plugins/otel	0.126s
+ok  	github.com/yetone/magpie/plugins/redact	0.018s
+ok  	github.com/yetone/magpie/plugins/rotation	0.022s
+?   	github.com/yetone/magpie/plugins/routing	[no test files]
+ok  	github.com/yetone/magpie/plugins/search	0.013s
+?   	github.com/yetone/magpie/plugins/sessions	[no test files]
+ok  	github.com/yetone/magpie/plugins/tools	0.008s
+?   	github.com/yetone/magpie/plugins/usage	[no test files]
+?   	github.com/yetone/magpie/plugins/warmups	[no test files]

@@ -1,0 +1,397 @@
+2026-10-28T01:01:11.608Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-u0hOHh --remote-debugging-pipe --no-startup-window
+2026-10-28T01:01:11.610Z pw:browser <launched> pid=2504085
+2026-10-28T01:01:12.812Z pw:browser [pid=2504085] <gracefully close start>
+2026-10-28T01:01:12.866Z pw:browser [pid=2504085] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:12.866Z pw:browser [pid=2504085] starting temporary directories cleanup
+2026-10-28T01:01:12.871Z pw:browser [pid=2504085] finished temporary directories cleanup
+2026-10-28T01:01:12.871Z pw:browser [pid=2504085] <gracefully close end>
+✔ chromium: a balance token on /api/usage/token is moved to /api/user/self (1279.268212ms)
+2026-10-28T01:01:12.873Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-pNyc32 --remote-debugging-pipe --no-startup-window
+2026-10-28T01:01:12.874Z pw:browser <launched> pid=2504228
+2026-10-28T01:01:13.574Z pw:browser [pid=2504228] <gracefully close start>
+2026-10-28T01:01:13.630Z pw:browser [pid=2504228] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:13.630Z pw:browser [pid=2504228] starting temporary directories cleanup
+2026-10-28T01:01:13.634Z pw:browser [pid=2504228] finished temporary directories cleanup
+2026-10-28T01:01:13.634Z pw:browser [pid=2504228] <gracefully close end>
+✔ chromium: a token on a new custom provider with no Balance URL is pointed at /api/user/self (761.99853ms)
+2026-10-28T01:01:13.635Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-ecmo6l --remote-debugging-pipe --no-startup-window
+2026-10-28T01:01:13.636Z pw:browser <launched> pid=2504368
+2026-10-28T01:01:14.278Z pw:browser [pid=2504368] <gracefully close start>
+2026-10-28T01:01:14.332Z pw:browser [pid=2504368] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:14.332Z pw:browser [pid=2504368] starting temporary directories cleanup
+2026-10-28T01:01:14.336Z pw:browser [pid=2504368] finished temporary directories cleanup
+2026-10-28T01:01:14.336Z pw:browser [pid=2504368] <gracefully close end>
+✔ chromium: a login token on sub2api's /v1/usage is moved to /api/v1/user/profile (702.257403ms)
+2026-10-28T01:01:14.337Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-WY6sxm --remote-debugging-pipe --no-startup-window
+2026-10-28T01:01:14.338Z pw:browser <launched> pid=2504508
+▶ chromium: Sub2API balance shortcut saves the profile endpoint (en, 900px)
+  ✔ saved token without a Balance URL (608.842948ms)
+  ✔ saved token with the key-only Balance URL (591.297071ms)
+  ✔ new provider with a token and no Balance URL (670.22131ms)
+2026-10-28T01:01:16.315Z pw:browser [pid=2504508] <gracefully close start>
+2026-10-28T01:01:16.369Z pw:browser [pid=2504508] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:16.369Z pw:browser [pid=2504508] starting temporary directories cleanup
+2026-10-28T01:01:16.372Z pw:browser [pid=2504508] finished temporary directories cleanup
+2026-10-28T01:01:16.372Z pw:browser [pid=2504508] <gracefully close end>
+✔ chromium: Sub2API balance shortcut saves the profile endpoint (en, 900px) (2035.529959ms)
+2026-10-28T01:01:16.373Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-KF6Q4u --remote-debugging-pipe --no-startup-window
+2026-10-28T01:01:16.374Z pw:browser <launched> pid=2504720
+▶ chromium: Sub2API balance shortcut saves the profile endpoint (en, 440px)
+  ✔ saved token without a Balance URL (595.792037ms)
+  ✔ saved token with the key-only Balance URL (566.932925ms)
+  ✔ new provider with a token and no Balance URL (599.417328ms)
+2026-10-28T01:01:18.242Z pw:browser [pid=2504720] <gracefully close start>
+2026-10-28T01:01:18.293Z pw:browser [pid=2504720] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:18.293Z pw:browser [pid=2504720] starting temporary directories cleanup
+2026-10-28T01:01:18.296Z pw:browser [pid=2504720] finished temporary directories cleanup
+2026-10-28T01:01:18.296Z pw:browser [pid=2504720] <gracefully close end>
+✔ chromium: Sub2API balance shortcut saves the profile endpoint (en, 440px) (1923.552157ms)
+2026-10-28T01:01:18.297Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-ufCtLf --remote-debugging-pipe --no-startup-window
+2026-10-28T01:01:18.297Z pw:browser <launched> pid=2504897
+▶ chromium: Sub2API balance shortcut saves the profile endpoint (zh, 900px)
+  ✔ saved token without a Balance URL (626.917587ms)
+  ✔ saved token with the key-only Balance URL (578.034045ms)
+  ✔ new provider with a token and no Balance URL (644.228999ms)
+2026-10-28T01:01:20.251Z pw:browser [pid=2504897] <gracefully close start>
+2026-10-28T01:01:20.302Z pw:browser [pid=2504897] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:20.302Z pw:browser [pid=2504897] starting temporary directories cleanup
+2026-10-28T01:01:20.304Z pw:browser [pid=2504897] finished temporary directories cleanup
+2026-10-28T01:01:20.304Z pw:browser [pid=2504897] <gracefully close end>
+✔ chromium: Sub2API balance shortcut saves the profile endpoint (zh, 900px) (2008.614943ms)
+2026-10-28T01:01:20.305Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-U7HnId --remote-debugging-pipe --no-startup-window
+2026-10-28T01:01:20.306Z pw:browser <launched> pid=2505073
+▶ chromium: Sub2API balance shortcut saves the profile endpoint (zh, 440px)
+  ✔ saved token without a Balance URL (580.637477ms)
+  ✔ saved token with the key-only Balance URL (560.585735ms)
+  ✔ new provider with a token and no Balance URL (623.282926ms)
+2026-10-28T01:01:22.176Z pw:browser [pid=2505073] <gracefully close start>
+2026-10-28T01:01:22.230Z pw:browser [pid=2505073] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:22.230Z pw:browser [pid=2505073] starting temporary directories cleanup
+2026-10-28T01:01:22.233Z pw:browser [pid=2505073] finished temporary directories cleanup
+2026-10-28T01:01:22.233Z pw:browser [pid=2505073] <gracefully close end>
+✔ chromium: Sub2API balance shortcut saves the profile endpoint (zh, 440px) (1928.429131ms)
+2026-10-28T01:01:22.234Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-4PxNA3 --remote-debugging-pipe --no-startup-window
+2026-10-28T01:01:22.234Z pw:browser <launched> pid=2505292
+▶ chromium: Sub2API balance shortcut saves the profile endpoint (ja, 900px)
+  ✔ saved token without a Balance URL (614.546165ms)
+  ✔ saved token with the key-only Balance URL (583.131462ms)
+  ✔ new provider with a token and no Balance URL (653.114092ms)
+2026-10-28T01:01:24.192Z pw:browser [pid=2505292] <gracefully close start>
+2026-10-28T01:01:24.245Z pw:browser [pid=2505292] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:24.245Z pw:browser [pid=2505292] starting temporary directories cleanup
+2026-10-28T01:01:24.248Z pw:browser [pid=2505292] finished temporary directories cleanup
+2026-10-28T01:01:24.248Z pw:browser [pid=2505292] <gracefully close end>
+✔ chromium: Sub2API balance shortcut saves the profile endpoint (ja, 900px) (2014.826738ms)
+2026-10-28T01:01:24.249Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-VxuVkN --remote-debugging-pipe --no-startup-window
+2026-10-28T01:01:24.249Z pw:browser <launched> pid=2505497
+▶ chromium: Sub2API balance shortcut saves the profile endpoint (ja, 440px)
+  ✔ saved token without a Balance URL (603.698563ms)
+  ✔ saved token with the key-only Balance URL (550.501224ms)
+  ✔ new provider with a token and no Balance URL (599.119433ms)
+2026-10-28T01:01:26.109Z pw:browser [pid=2505497] <gracefully close start>
+2026-10-28T01:01:26.160Z pw:browser [pid=2505497] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:26.160Z pw:browser [pid=2505497] starting temporary directories cleanup
+2026-10-28T01:01:26.163Z pw:browser [pid=2505497] finished temporary directories cleanup
+2026-10-28T01:01:26.163Z pw:browser [pid=2505497] <gracefully close end>
+✔ chromium: Sub2API balance shortcut saves the profile endpoint (ja, 440px) (1915.19437ms)
+2026-10-28T01:01:26.164Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-EFedDZ --remote-debugging-pipe --no-startup-window
+2026-10-28T01:01:26.165Z pw:browser <launched> pid=2505672
+▶ chromium: Sub2API balance shortcut saves the profile endpoint (de, 900px)
+  ✔ saved token without a Balance URL (613.356116ms)
+  ✔ saved token with the key-only Balance URL (565.420682ms)
+  ✔ new provider with a token and no Balance URL (659.46245ms)
+2026-10-28T01:01:28.114Z pw:browser [pid=2505672] <gracefully close start>
+2026-10-28T01:01:28.165Z pw:browser [pid=2505672] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:28.165Z pw:browser [pid=2505672] starting temporary directories cleanup
+2026-10-28T01:01:28.168Z pw:browser [pid=2505672] finished temporary directories cleanup
+2026-10-28T01:01:28.168Z pw:browser [pid=2505672] <gracefully close end>
+✔ chromium: Sub2API balance shortcut saves the profile endpoint (de, 900px) (2005.161257ms)
+2026-10-28T01:01:28.169Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-qyKoeg --remote-debugging-pipe --no-startup-window
+2026-10-28T01:01:28.170Z pw:browser <launched> pid=2505866
+▶ chromium: Sub2API balance shortcut saves the profile endpoint (de, 440px)
+  ✔ saved token without a Balance URL (597.164406ms)
+  ✔ saved token with the key-only Balance URL (566.294752ms)
+  ✔ new provider with a token and no Balance URL (650.818786ms)
+2026-10-28T01:01:30.093Z pw:browser [pid=2505866] <gracefully close start>
+2026-10-28T01:01:30.145Z pw:browser [pid=2505866] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:30.145Z pw:browser [pid=2505866] starting temporary directories cleanup
+2026-10-28T01:01:30.148Z pw:browser [pid=2505866] finished temporary directories cleanup
+2026-10-28T01:01:30.148Z pw:browser [pid=2505866] <gracefully close end>
+✔ chromium: Sub2API balance shortcut saves the profile endpoint (de, 440px) (1979.801922ms)
+2026-10-28T01:01:30.149Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/chromium-1248/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,AvoidCorsURLLoaderRestartOnRedirect,Translate,AutoDeElevate,OptimizationHints,NetworkTimeServiceQuerying,AimEnabled,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-0UZtux --remote-debugging-pipe --no-startup-window
+2026-10-28T01:01:30.150Z pw:browser <launched> pid=2506045
+▶ chromium: account balance shortcuts preserve a user-written Balance field
+  ✔ /api/user/self: "" (554.515179ms)
+  ✔ /api/user/self: "   " (533.499618ms)
+  ✔ /api/user/self: "$data.total_available / 500000" (532.832415ms)
+  ✔ /api/user/self: "$data.total_granted - data.total_used" (533.208862ms)
+  ✔ /api/user/self: "unlimited_quota" (550.792241ms)
+  ✔ /api/user/self: "$credits.remaining" (532.273675ms)
+  ✔ /api/user/self: "$data.balance * 0.5" (533.180644ms)
+  ✔ /api/v1/user/profile: "" (567.06007ms)
+  ✔ /api/v1/user/profile: "   " (566.305634ms)
+  ✔ /api/v1/user/profile: "$data.total_available / 500000" (532.601788ms)
+  ✔ /api/v1/user/profile: "$data.total_granted - data.total_used" (567.636054ms)
+  ✔ /api/v1/user/profile: "unlimited_quota" (515.669266ms)
+  ✔ /api/v1/user/profile: "$credits.remaining" (582.91038ms)
+  ✔ /api/v1/user/profile: "$data.balance * 0.5" (566.534221ms)
+2026-10-28T01:01:37.925Z pw:browser [pid=2506045] <gracefully close start>
+2026-10-28T01:01:37.976Z pw:browser [pid=2506045] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:37.976Z pw:browser [pid=2506045] starting temporary directories cleanup
+2026-10-28T01:01:37.979Z pw:browser [pid=2506045] finished temporary directories cleanup
+2026-10-28T01:01:37.979Z pw:browser [pid=2506045] <gracefully close end>
+✔ chromium: account balance shortcuts preserve a user-written Balance field (7831.014621ms)
+2026-10-28T01:01:37.980Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/webkit-2370/pw_run.sh --inspector-pipe --headless --no-startup-window
+2026-10-28T01:01:37.981Z pw:browser <launched> pid=2506455
+2026-10-28T01:01:38.056Z pw:browser [pid=2506455][err] 
+2026-10-28T01:01:38.056Z pw:browser [pid=2506455][err] ** (MiniBrowser:2506461): CRITICAL **: 09:01:38.056: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+2026-10-28T01:01:39.584Z pw:browser [pid=2506455] <gracefully close start>
+2026-10-28T01:01:39.668Z pw:browser [pid=2506455] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:39.668Z pw:browser [pid=2506455] starting temporary directories cleanup
+2026-10-28T01:01:39.669Z pw:browser [pid=2506455] finished temporary directories cleanup
+2026-10-28T01:01:39.669Z pw:browser [pid=2506455] <gracefully close end>
+✔ webkit: a balance token on /api/usage/token is moved to /api/user/self (1690.027233ms)
+2026-10-28T01:01:39.670Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/webkit-2370/pw_run.sh --inspector-pipe --headless --no-startup-window
+2026-10-28T01:01:39.671Z pw:browser <launched> pid=2506530
+2026-10-28T01:01:39.744Z pw:browser [pid=2506530][err] 
+2026-10-28T01:01:39.744Z pw:browser [pid=2506530][err] ** (MiniBrowser:2506536): CRITICAL **: 09:01:39.744: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+2026-10-28T01:01:40.755Z pw:browser [pid=2506530] <gracefully close start>
+2026-10-28T01:01:40.844Z pw:browser [pid=2506530] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:40.844Z pw:browser [pid=2506530] starting temporary directories cleanup
+2026-10-28T01:01:40.844Z pw:browser [pid=2506530] finished temporary directories cleanup
+2026-10-28T01:01:40.844Z pw:browser [pid=2506530] <gracefully close end>
+✔ webkit: a token on a new custom provider with no Balance URL is pointed at /api/user/self (1175.269894ms)
+2026-10-28T01:01:40.845Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/webkit-2370/pw_run.sh --inspector-pipe --headless --no-startup-window
+2026-10-28T01:01:40.846Z pw:browser <launched> pid=2506606
+2026-10-28T01:01:40.920Z pw:browser [pid=2506606][err] 
+2026-10-28T01:01:40.920Z pw:browser [pid=2506606][err] ** (MiniBrowser:2506612): CRITICAL **: 09:01:40.920: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+2026-10-28T01:01:41.869Z pw:browser [pid=2506606] <gracefully close start>
+2026-10-28T01:01:41.957Z pw:browser [pid=2506606] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:41.957Z pw:browser [pid=2506606] starting temporary directories cleanup
+2026-10-28T01:01:41.957Z pw:browser [pid=2506606] finished temporary directories cleanup
+2026-10-28T01:01:41.957Z pw:browser [pid=2506606] <gracefully close end>
+✔ webkit: a login token on sub2api's /v1/usage is moved to /api/v1/user/profile (1112.576194ms)
+2026-10-28T01:01:41.958Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/webkit-2370/pw_run.sh --inspector-pipe --headless --no-startup-window
+2026-10-28T01:01:41.959Z pw:browser <launched> pid=2506685
+2026-10-28T01:01:42.033Z pw:browser [pid=2506685][err] 
+2026-10-28T01:01:42.033Z pw:browser [pid=2506685][err] ** (MiniBrowser:2506691): CRITICAL **: 09:01:42.033: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+▶ webkit: Sub2API balance shortcut saves the profile endpoint (en, 900px)
+  ✔ saved token without a Balance URL (1013.470104ms)
+2026-10-28T01:01:43.047Z pw:browser [pid=2506685][err] 
+2026-10-28T01:01:43.047Z pw:browser [pid=2506685][err] ** (MiniBrowser:2506691): CRITICAL **: 09:01:43.046: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ saved token with the key-only Balance URL (995.406907ms)
+2026-10-28T01:01:44.042Z pw:browser [pid=2506685][err] 
+2026-10-28T01:01:44.042Z pw:browser [pid=2506685][err] ** (MiniBrowser:2506691): CRITICAL **: 09:01:44.042: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ new provider with a token and no Balance URL (1127.104175ms)
+2026-10-28T01:01:45.169Z pw:browser [pid=2506685] <gracefully close start>
+2026-10-28T01:01:45.263Z pw:browser [pid=2506685] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:45.263Z pw:browser [pid=2506685] starting temporary directories cleanup
+2026-10-28T01:01:45.263Z pw:browser [pid=2506685] finished temporary directories cleanup
+2026-10-28T01:01:45.263Z pw:browser [pid=2506685] <gracefully close end>
+✔ webkit: Sub2API balance shortcut saves the profile endpoint (en, 900px) (3306.380763ms)
+2026-10-28T01:01:45.265Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/webkit-2370/pw_run.sh --inspector-pipe --headless --no-startup-window
+2026-10-28T01:01:45.265Z pw:browser <launched> pid=2506854
+2026-10-28T01:01:45.341Z pw:browser [pid=2506854][err] 
+2026-10-28T01:01:45.341Z pw:browser [pid=2506854][err] ** (MiniBrowser:2506860): CRITICAL **: 09:01:45.340: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+▶ webkit: Sub2API balance shortcut saves the profile endpoint (en, 440px)
+  ✔ saved token without a Balance URL (1042.758377ms)
+2026-10-28T01:01:46.383Z pw:browser [pid=2506854][err] 
+2026-10-28T01:01:46.383Z pw:browser [pid=2506854][err] ** (MiniBrowser:2506860): CRITICAL **: 09:01:46.383: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ saved token with the key-only Balance URL (1029.190496ms)
+2026-10-28T01:01:47.412Z pw:browser [pid=2506854][err] 
+2026-10-28T01:01:47.412Z pw:browser [pid=2506854][err] ** (MiniBrowser:2506860): CRITICAL **: 09:01:47.412: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ new provider with a token and no Balance URL (1141.20137ms)
+2026-10-28T01:01:48.553Z pw:browser [pid=2506854] <gracefully close start>
+2026-10-28T01:01:48.644Z pw:browser [pid=2506854] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:48.644Z pw:browser [pid=2506854] starting temporary directories cleanup
+2026-10-28T01:01:48.645Z pw:browser [pid=2506854] finished temporary directories cleanup
+2026-10-28T01:01:48.645Z pw:browser [pid=2506854] <gracefully close end>
+✔ webkit: Sub2API balance shortcut saves the profile endpoint (en, 440px) (3388.81682ms)
+2026-10-28T01:01:48.654Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/webkit-2370/pw_run.sh --inspector-pipe --headless --no-startup-window
+2026-10-28T01:01:48.654Z pw:browser <launched> pid=2507029
+2026-10-28T01:01:48.728Z pw:browser [pid=2507029][err] 
+2026-10-28T01:01:48.728Z pw:browser [pid=2507029][err] ** (MiniBrowser:2507035): CRITICAL **: 09:01:48.728: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+▶ webkit: Sub2API balance shortcut saves the profile endpoint (zh, 900px)
+  ✔ saved token without a Balance URL (1015.273192ms)
+2026-10-28T01:01:49.743Z pw:browser [pid=2507029][err] 
+2026-10-28T01:01:49.743Z pw:browser [pid=2507029][err] ** (MiniBrowser:2507035): CRITICAL **: 09:01:49.743: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ saved token with the key-only Balance URL (1013.171011ms)
+2026-10-28T01:01:50.756Z pw:browser [pid=2507029][err] 
+2026-10-28T01:01:50.756Z pw:browser [pid=2507029][err] ** (MiniBrowser:2507035): CRITICAL **: 09:01:50.756: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✖ new provider with a token and no Balance URL (958.318696ms)
+2026-10-28T01:01:51.715Z pw:browser [pid=2507029] <gracefully close start>
+2026-10-28T01:01:51.807Z pw:browser [pid=2507029] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:51.807Z pw:browser [pid=2507029] starting temporary directories cleanup
+2026-10-28T01:01:51.807Z pw:browser [pid=2507029] finished temporary directories cleanup
+2026-10-28T01:01:51.807Z pw:browser [pid=2507029] <gracefully close end>
+✖ webkit: Sub2API balance shortcut saves the profile endpoint (zh, 900px) (3154.334354ms)
+2026-10-28T01:01:51.808Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/webkit-2370/pw_run.sh --inspector-pipe --headless --no-startup-window
+2026-10-28T01:01:51.809Z pw:browser <launched> pid=2507240
+2026-10-28T01:01:51.883Z pw:browser [pid=2507240][err] 
+2026-10-28T01:01:51.883Z pw:browser [pid=2507240][err] ** (MiniBrowser:2507246): CRITICAL **: 09:01:51.883: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+▶ webkit: Sub2API balance shortcut saves the profile endpoint (zh, 440px)
+  ✔ saved token without a Balance URL (1010.231488ms)
+2026-10-28T01:01:52.893Z pw:browser [pid=2507240][err] 
+2026-10-28T01:01:52.893Z pw:browser [pid=2507240][err] ** (MiniBrowser:2507246): CRITICAL **: 09:01:52.893: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ saved token with the key-only Balance URL (1065.533576ms)
+2026-10-28T01:01:53.959Z pw:browser [pid=2507240][err] 
+2026-10-28T01:01:53.959Z pw:browser [pid=2507240][err] ** (MiniBrowser:2507246): CRITICAL **: 09:01:53.959: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ new provider with a token and no Balance URL (1107.157438ms)
+2026-10-28T01:01:55.066Z pw:browser [pid=2507240] <gracefully close start>
+2026-10-28T01:01:55.155Z pw:browser [pid=2507240] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:55.155Z pw:browser [pid=2507240] starting temporary directories cleanup
+2026-10-28T01:01:55.156Z pw:browser [pid=2507240] finished temporary directories cleanup
+2026-10-28T01:01:55.156Z pw:browser [pid=2507240] <gracefully close end>
+✔ webkit: Sub2API balance shortcut saves the profile endpoint (zh, 440px) (3349.149846ms)
+2026-10-28T01:01:55.157Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/webkit-2370/pw_run.sh --inspector-pipe --headless --no-startup-window
+2026-10-28T01:01:55.158Z pw:browser <launched> pid=2507427
+2026-10-28T01:01:55.231Z pw:browser [pid=2507427][err] 
+2026-10-28T01:01:55.231Z pw:browser [pid=2507427][err] ** (MiniBrowser:2507433): CRITICAL **: 09:01:55.231: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+▶ webkit: Sub2API balance shortcut saves the profile endpoint (ja, 900px)
+  ✔ saved token without a Balance URL (1064.792263ms)
+2026-10-28T01:01:56.295Z pw:browser [pid=2507427][err] 
+2026-10-28T01:01:56.296Z pw:browser [pid=2507427][err] ** (MiniBrowser:2507433): CRITICAL **: 09:01:56.295: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ saved token with the key-only Balance URL (1029.219792ms)
+2026-10-28T01:01:57.325Z pw:browser [pid=2507427][err] 
+2026-10-28T01:01:57.325Z pw:browser [pid=2507427][err] ** (MiniBrowser:2507433): CRITICAL **: 09:01:57.325: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ new provider with a token and no Balance URL (1124.479732ms)
+2026-10-28T01:01:58.449Z pw:browser [pid=2507427] <gracefully close start>
+2026-10-28T01:01:58.543Z pw:browser [pid=2507427] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:01:58.544Z pw:browser [pid=2507427] starting temporary directories cleanup
+2026-10-28T01:01:58.544Z pw:browser [pid=2507427] finished temporary directories cleanup
+2026-10-28T01:01:58.544Z pw:browser [pid=2507427] <gracefully close end>
+✔ webkit: Sub2API balance shortcut saves the profile endpoint (ja, 900px) (3388.11485ms)
+2026-10-28T01:01:58.545Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/webkit-2370/pw_run.sh --inspector-pipe --headless --no-startup-window
+2026-10-28T01:01:58.546Z pw:browser <launched> pid=2507624
+2026-10-28T01:01:58.619Z pw:browser [pid=2507624][err] 
+2026-10-28T01:01:58.619Z pw:browser [pid=2507624][err] ** (MiniBrowser:2507630): CRITICAL **: 09:01:58.619: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+▶ webkit: Sub2API balance shortcut saves the profile endpoint (ja, 440px)
+  ✔ saved token without a Balance URL (1027.311278ms)
+2026-10-28T01:01:59.646Z pw:browser [pid=2507624][err] 
+2026-10-28T01:01:59.646Z pw:browser [pid=2507624][err] ** (MiniBrowser:2507630): CRITICAL **: 09:01:59.646: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ saved token with the key-only Balance URL (998.666934ms)
+2026-10-28T01:02:00.645Z pw:browser [pid=2507624][err] 
+2026-10-28T01:02:00.645Z pw:browser [pid=2507624][err] ** (MiniBrowser:2507630): CRITICAL **: 09:02:00.645: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ new provider with a token and no Balance URL (1109.183181ms)
+2026-10-28T01:02:01.754Z pw:browser [pid=2507624] <gracefully close start>
+2026-10-28T01:02:01.846Z pw:browser [pid=2507624] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:02:01.846Z pw:browser [pid=2507624] starting temporary directories cleanup
+2026-10-28T01:02:01.846Z pw:browser [pid=2507624] finished temporary directories cleanup
+2026-10-28T01:02:01.846Z pw:browser [pid=2507624] <gracefully close end>
+✔ webkit: Sub2API balance shortcut saves the profile endpoint (ja, 440px) (3301.855276ms)
+2026-10-28T01:02:01.847Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/webkit-2370/pw_run.sh --inspector-pipe --headless --no-startup-window
+2026-10-28T01:02:01.848Z pw:browser <launched> pid=2507785
+2026-10-28T01:02:01.922Z pw:browser [pid=2507785][err] 
+2026-10-28T01:02:01.922Z pw:browser [pid=2507785][err] ** (MiniBrowser:2507791): CRITICAL **: 09:02:01.921: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+▶ webkit: Sub2API balance shortcut saves the profile endpoint (de, 900px)
+  ✔ saved token without a Balance URL (1057.666527ms)
+2026-10-28T01:02:02.979Z pw:browser [pid=2507785][err] 
+2026-10-28T01:02:02.979Z pw:browser [pid=2507785][err] ** (MiniBrowser:2507791): CRITICAL **: 09:02:02.979: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ saved token with the key-only Balance URL (1048.837853ms)
+2026-10-28T01:02:04.028Z pw:browser [pid=2507785][err] 
+2026-10-28T01:02:04.028Z pw:browser [pid=2507785][err] ** (MiniBrowser:2507791): CRITICAL **: 09:02:04.028: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ new provider with a token and no Balance URL (1126.033551ms)
+2026-10-28T01:02:05.154Z pw:browser [pid=2507785] <gracefully close start>
+2026-10-28T01:02:05.253Z pw:browser [pid=2507785] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:02:05.253Z pw:browser [pid=2507785] starting temporary directories cleanup
+2026-10-28T01:02:05.253Z pw:browser [pid=2507785] finished temporary directories cleanup
+2026-10-28T01:02:05.253Z pw:browser [pid=2507785] <gracefully close end>
+✔ webkit: Sub2API balance shortcut saves the profile endpoint (de, 900px) (3407.045606ms)
+2026-10-28T01:02:05.254Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/webkit-2370/pw_run.sh --inspector-pipe --headless --no-startup-window
+2026-10-28T01:02:05.255Z pw:browser <launched> pid=2507947
+2026-10-28T01:02:05.329Z pw:browser [pid=2507947][err] 
+2026-10-28T01:02:05.329Z pw:browser [pid=2507947][err] ** (MiniBrowser:2507953): CRITICAL **: 09:02:05.329: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+▶ webkit: Sub2API balance shortcut saves the profile endpoint (de, 440px)
+  ✔ saved token without a Balance URL (1005.585051ms)
+2026-10-28T01:02:06.334Z pw:browser [pid=2507947][err] 
+2026-10-28T01:02:06.334Z pw:browser [pid=2507947][err] ** (MiniBrowser:2507953): CRITICAL **: 09:02:06.334: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ saved token with the key-only Balance URL (1014.400728ms)
+2026-10-28T01:02:07.349Z pw:browser [pid=2507947][err] 
+2026-10-28T01:02:07.349Z pw:browser [pid=2507947][err] ** (MiniBrowser:2507953): CRITICAL **: 09:02:07.349: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ new provider with a token and no Balance URL (1143.084856ms)
+2026-10-28T01:02:08.492Z pw:browser [pid=2507947] <gracefully close start>
+2026-10-28T01:02:08.582Z pw:browser [pid=2507947] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:02:08.582Z pw:browser [pid=2507947] starting temporary directories cleanup
+2026-10-28T01:02:08.583Z pw:browser [pid=2507947] finished temporary directories cleanup
+2026-10-28T01:02:08.583Z pw:browser [pid=2507947] <gracefully close end>
+✔ webkit: Sub2API balance shortcut saves the profile endpoint (de, 440px) (3329.521254ms)
+2026-10-28T01:02:08.584Z pw:browser <launching> /home/georgefu/.cache/ms-playwright/webkit-2370/pw_run.sh --inspector-pipe --headless --no-startup-window
+2026-10-28T01:02:08.584Z pw:browser <launched> pid=2508133
+2026-10-28T01:02:08.658Z pw:browser [pid=2508133][err] 
+2026-10-28T01:02:08.658Z pw:browser [pid=2508133][err] ** (MiniBrowser:2508139): CRITICAL **: 09:02:08.657: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+▶ webkit: account balance shortcuts preserve a user-written Balance field
+  ✔ /api/user/self: "" (1025.517136ms)
+2026-10-28T01:02:09.683Z pw:browser [pid=2508133][err] 
+2026-10-28T01:02:09.683Z pw:browser [pid=2508133][err] ** (MiniBrowser:2508139): CRITICAL **: 09:02:09.683: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ /api/user/self: "   " (1003.171642ms)
+2026-10-28T01:02:10.686Z pw:browser [pid=2508133][err] 
+2026-10-28T01:02:10.686Z pw:browser [pid=2508133][err] ** (MiniBrowser:2508139): CRITICAL **: 09:02:10.686: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ /api/user/self: "$data.total_available / 500000" (1011.617783ms)
+2026-10-28T01:02:11.698Z pw:browser [pid=2508133][err] 
+2026-10-28T01:02:11.698Z pw:browser [pid=2508133][err] ** (MiniBrowser:2508139): CRITICAL **: 09:02:11.698: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ /api/user/self: "$data.total_granted - data.total_used" (1029.217987ms)
+2026-10-28T01:02:12.727Z pw:browser [pid=2508133][err] 
+2026-10-28T01:02:12.727Z pw:browser [pid=2508133][err] ** (MiniBrowser:2508139): CRITICAL **: 09:02:12.727: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ /api/user/self: "unlimited_quota" (1027.431911ms)
+2026-10-28T01:02:13.755Z pw:browser [pid=2508133][err] 
+2026-10-28T01:02:13.755Z pw:browser [pid=2508133][err] ** (MiniBrowser:2508139): CRITICAL **: 09:02:13.755: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ /api/user/self: "$credits.remaining" (1060.591118ms)
+2026-10-28T01:02:14.815Z pw:browser [pid=2508133][err] 
+2026-10-28T01:02:14.815Z pw:browser [pid=2508133][err] ** (MiniBrowser:2508139): CRITICAL **: 09:02:14.815: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ /api/user/self: "$data.balance * 0.5" (1018.767992ms)
+2026-10-28T01:02:15.834Z pw:browser [pid=2508133][err] 
+2026-10-28T01:02:15.834Z pw:browser [pid=2508133][err] ** (MiniBrowser:2508139): CRITICAL **: 09:02:15.834: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ /api/v1/user/profile: "" (1011.503572ms)
+2026-10-28T01:02:16.846Z pw:browser [pid=2508133][err] 
+2026-10-28T01:02:16.846Z pw:browser [pid=2508133][err] ** (MiniBrowser:2508139): CRITICAL **: 09:02:16.846: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ /api/v1/user/profile: "   " (1033.491815ms)
+2026-10-28T01:02:17.879Z pw:browser [pid=2508133][err] 
+2026-10-28T01:02:17.880Z pw:browser [pid=2508133][err] ** (MiniBrowser:2508139): CRITICAL **: 09:02:17.879: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ /api/v1/user/profile: "$data.total_available / 500000" (1021.569137ms)
+2026-10-28T01:02:18.901Z pw:browser [pid=2508133][err] 
+2026-10-28T01:02:18.902Z pw:browser [pid=2508133][err] ** (MiniBrowser:2508139): CRITICAL **: 09:02:18.901: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ /api/v1/user/profile: "$data.total_granted - data.total_used" (1027.607541ms)
+2026-10-28T01:02:19.929Z pw:browser [pid=2508133][err] 
+2026-10-28T01:02:19.929Z pw:browser [pid=2508133][err] ** (MiniBrowser:2508139): CRITICAL **: 09:02:19.929: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ /api/v1/user/profile: "unlimited_quota" (1004.939937ms)
+2026-10-28T01:02:20.934Z pw:browser [pid=2508133][err] 
+2026-10-28T01:02:20.934Z pw:browser [pid=2508133][err] ** (MiniBrowser:2508139): CRITICAL **: 09:02:20.934: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ /api/v1/user/profile: "$credits.remaining" (1029.385644ms)
+2026-10-28T01:02:21.964Z pw:browser [pid=2508133][err] 
+2026-10-28T01:02:21.964Z pw:browser [pid=2508133][err] ** (MiniBrowser:2508139): CRITICAL **: 09:02:21.964: WebKitWebView is-controlled-by-automation set but automation is not allowed in the context, falling back to default session.
+  ✔ /api/v1/user/profile: "$data.balance * 0.5" (1024.3964ms)
+2026-10-28T01:02:22.988Z pw:browser [pid=2508133] <gracefully close start>
+2026-10-28T01:02:23.078Z pw:browser [pid=2508133] <process did exit: exitCode=0, signal=null>
+2026-10-28T01:02:23.078Z pw:browser [pid=2508133] starting temporary directories cleanup
+2026-10-28T01:02:23.078Z pw:browser [pid=2508133] finished temporary directories cleanup
+2026-10-28T01:02:23.079Z pw:browser [pid=2508133] <gracefully close end>
+✔ webkit: account balance shortcuts preserve a user-written Balance field (14495.665468ms)
+ℹ tests 100
+ℹ suites 0
+ℹ pass 98
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 71835.568388
+
+✖ failing tests:
+
+test at internal/gui/tests/balance-fix.test.cjs:232:19
+✖ new provider with a token and no Balance URL (958.318696ms)
+  AssertionError [ERR_ASSERTION]: both account balance shortcuts are offered
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/balance-fix.test.cjs:256:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/balance-fix.test.cjs:232:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

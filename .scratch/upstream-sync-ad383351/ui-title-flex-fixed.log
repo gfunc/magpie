@@ -1,0 +1,446 @@
+✔ chromium zh: the title bar's tools never lie over where the reader is (26900.886459ms)
+✔ chromium zh-TW: the title bar's tools never lie over where the reader is (26927.168893ms)
+✔ chromium ja: the title bar's tools never lie over where the reader is (27197.691449ms)
+title-debug library instructions [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 381,
+    y: 0,
+    width: 101,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 381
+  },
+  left: '381px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    {
+      text: 'Anweisungen',
+      hidden: false,
+      width: 89.046875,
+      scroll: 89
+    }
+  ]
+}
+title-debug library mcp [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 381,
+    y: 0,
+    width: 101,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 381
+  },
+  left: '381px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 490,
+  need: 97,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'MCP-Server', hidden: false, width: 77.328125, scroll: 77 }
+  ]
+}
+title-debug library skills [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 385,
+    y: 0,
+    width: 97,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 385
+  },
+  left: '385px',
+  right: '78px',
+  crumbMax: '131px',
+  actionsLeft: 490,
+  need: 97,
+  kids: [
+    { text: 'Arbeit', hidden: true, width: 0, scroll: 0 },
+    { text: '/', hidden: true, width: 0, scroll: 0 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Skills', hidden: false, width: 35.875, scroll: 36 }
+  ]
+}
+title-debug library hooks [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 381,
+    y: 0,
+    width: 101,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 381
+  },
+  left: '381px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Hooks', hidden: false, width: 41.96875, scroll: 42 }
+  ]
+}
+title-debug library subagents [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 381,
+    y: 0,
+    width: 101,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 381
+  },
+  left: '381px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Subagenten', hidden: false, width: 79.734375, scroll: 80 }
+  ]
+}
+title-debug library rtk [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 381,
+    y: 0,
+    width: 101,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 381
+  },
+  left: '381px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'RTK', hidden: false, width: 26.65625, scroll: 27 }
+  ]
+}
+title-debug plugins builtin [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 421,
+    y: 0,
+    width: 61,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 421
+  },
+  left: '421px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 490,
+  need: 0,
+  kids: [
+    { text: 'Zusätze', hidden: false, width: 48.546875, scroll: 49 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    {
+      text: 'Erweiterungen',
+      hidden: false,
+      width: 92.609375,
+      scroll: 93
+    },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Eingebaut', hidden: false, width: 64.25, scroll: 67 }
+  ]
+}
+✖ chromium de: the title bar's tools never lie over where the reader is (3562.293971ms)
+✔ chromium en: the title bar's tools never lie over where the reader is (26853.225601ms)
+✔ webkit zh: the title bar's tools never lie over where the reader is (34743.415011ms)
+✔ webkit zh-TW: the title bar's tools never lie over where the reader is (34883.171741ms)
+✔ webkit ja: the title bar's tools never lie over where the reader is (35366.318255ms)
+title-debug library instructions [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 381,
+    y: 0,
+    width: 101,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 381
+  },
+  left: '381px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    {
+      text: 'Anweisungen',
+      hidden: false,
+      width: 89.046875,
+      scroll: 89
+    }
+  ]
+}
+title-debug library mcp [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 381,
+    y: 0,
+    width: 101,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 381
+  },
+  left: '381px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'MCP-Server', hidden: false, width: 77.71875, scroll: 78 }
+  ]
+}
+title-debug library skills [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 381,
+    y: 0,
+    width: 101,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 381
+  },
+  left: '381px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Skills', hidden: false, width: 35.875, scroll: 36 }
+  ]
+}
+title-debug library hooks [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 381,
+    y: 0,
+    width: 101,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 381
+  },
+  left: '381px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Hooks', hidden: false, width: 41.96875, scroll: 42 }
+  ]
+}
+title-debug library subagents [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 381,
+    y: 0,
+    width: 101,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 381
+  },
+  left: '381px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Subagenten', hidden: false, width: 79.734375, scroll: 80 }
+  ]
+}
+title-debug library rtk [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 381,
+    y: 0,
+    width: 101,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 381
+  },
+  left: '381px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 490,
+  need: 62,
+  kids: [
+    { text: 'Arbeit', hidden: false, width: 38.078125, scroll: 38 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Bibliothek', hidden: false, width: 64.625, scroll: 65 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'RTK', hidden: false, width: 26.65625, scroll: 27 }
+  ]
+}
+title-debug plugins builtin [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 421,
+    y: 0,
+    width: 61,
+    height: 46,
+    top: 0,
+    right: 482,
+    bottom: 46,
+    left: 421
+  },
+  left: '421px',
+  right: '78px',
+  crumbMax: 'none',
+  actionsLeft: 490,
+  need: 0,
+  kids: [
+    { text: 'Zusätze', hidden: false, width: 48.546875, scroll: 49 },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    {
+      text: 'Erweiterungen',
+      hidden: false,
+      width: 92.609375,
+      scroll: 93
+    },
+    { text: '/', hidden: false, width: 5.296875, scroll: 5 },
+    { text: 'Eingebaut', hidden: false, width: 64.25, scroll: 67 }
+  ]
+}
+✖ webkit de: the title bar's tools never lie over where the reader is (4787.939453ms)
+✔ webkit en: the title bar's tools never lie over where the reader is (34961.645948ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 8
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 256549.770347
+
+✖ failing tests:
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ chromium de: the title bar's tools never lie over where the reader is (3562.293971ms)
+  AssertionError [ERR_ASSERTION]: the page's name is cut while parts before it show at 560px plugins builtin: {"parts":[{"text":"Zusätze","shown":true,"right":286.546875,"cut":false},{"text":"/","shown":true,"right":298.84375,"cut":false},{"text":"Erweiterungen","shown":true,"right":398.453125,"cut":false},{"text":"/","shown":true,"right":410.75,"cut":false},{"text":"Eingebaut","shown":true,"right":482,"cut":true}],"crumb":{"left":238,"right":482,"top":14,"bottom":32},"tools":[],"acts":{"left":490,"right":550,"top":10,"bottom":36},"side":184,"view":560}
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:144:26)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit de: the title bar's tools never lie over where the reader is (4787.939453ms)
+  AssertionError [ERR_ASSERTION]: the page's name is cut while parts before it show at 560px plugins builtin: {"parts":[{"text":"Zusätze","shown":true,"right":286.546875,"cut":false},{"text":"/","shown":true,"right":298.84375,"cut":false},{"text":"Erweiterungen","shown":true,"right":398.453125,"cut":false},{"text":"/","shown":true,"right":410.75,"cut":false},{"text":"Eingebaut","shown":true,"right":482,"cut":true}],"crumb":{"left":238,"right":482,"top":14,"bottom":32},"tools":[],"acts":{"left":490,"right":550,"top":10,"bottom":36},"side":184,"view":560}
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:144:26)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

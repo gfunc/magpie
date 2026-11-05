@@ -1,0 +1,527 @@
+✔ chromium: account dragging uses the routing order in every mode (19083.092316ms)
+✔ webkit: account dragging uses the routing order in every mode (15205.8599ms)
+✔ chromium en: disconnect previews use the full body width (6491.621687ms)
+✔ chromium zh: disconnect previews use the full body width (5844.847805ms)
+✖ webkit en: disconnect previews use the full body width (4379.582848ms)
+✖ webkit zh: disconnect previews use the full body width (4379.33625ms)
+✔ chromium en 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2138.387021ms)
+✔ chromium en 440: an agent's own settings are in its opened row, and Settings' search finds them there (2672.113175ms)
+✔ chromium en: in the panel a Settings line and the agent's menu open its sheet (1926.943767ms)
+✔ chromium zh 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2018.826075ms)
+✔ chromium zh 440: an agent's own settings are in its opened row, and Settings' search finds them there (2673.014928ms)
+✔ chromium zh: in the panel a Settings line and the agent's menu open its sheet (1921.404551ms)
+✔ chromium zh-TW 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2512.138165ms)
+✔ chromium zh-TW 440: an agent's own settings are in its opened row, and Settings' search finds them there (2683.279507ms)
+✔ chromium zh-TW: in the panel a Settings line and the agent's menu open its sheet (1926.997891ms)
+✔ chromium ja 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2033.130022ms)
+✔ chromium ja 440: an agent's own settings are in its opened row, and Settings' search finds them there (2789.433459ms)
+✔ chromium ja: in the panel a Settings line and the agent's menu open its sheet (1888.032779ms)
+✔ chromium de 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2074.835319ms)
+✔ chromium de 440: an agent's own settings are in its opened row, and Settings' search finds them there (2702.984884ms)
+✔ chromium de: in the panel a Settings line and the agent's menu open its sheet (1938.333134ms)
+✔ chromium: gateway mode shows none of an agent's settings (775.523151ms)
+✔ chromium: gateway mode keeps Long conversations in Settings (615.987817ms)
+✔ chromium: no Codex or Claude Code keeps Long conversations in Settings (660.720948ms)
+✖ webkit en 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2148.630699ms)
+✖ webkit en 440: an agent's own settings are in its opened row, and Settings' search finds them there (2381.643173ms)
+✔ webkit en: in the panel a Settings line and the agent's menu open its sheet (1765.076781ms)
+✖ webkit zh 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2134.188214ms)
+✖ webkit zh 440: an agent's own settings are in its opened row, and Settings' search finds them there (2415.631818ms)
+✔ webkit zh: in the panel a Settings line and the agent's menu open its sheet (1756.959698ms)
+✖ webkit zh-TW 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2109.599482ms)
+✖ webkit zh-TW 440: an agent's own settings are in its opened row, and Settings' search finds them there (2397.338304ms)
+✔ webkit zh-TW: in the panel a Settings line and the agent's menu open its sheet (1756.523784ms)
+✖ webkit ja 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2116.647918ms)
+✖ webkit ja 440: an agent's own settings are in its opened row, and Settings' search finds them there (2430.746488ms)
+✔ webkit ja: in the panel a Settings line and the agent's menu open its sheet (1796.880645ms)
+✖ webkit de 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2153.102692ms)
+✖ webkit de 440: an agent's own settings are in its opened row, and Settings' search finds them there (2429.508776ms)
+✔ webkit de: in the panel a Settings line and the agent's menu open its sheet (1766.962335ms)
+✔ webkit: gateway mode shows none of an agent's settings (1307.42258ms)
+✔ webkit: gateway mode keeps Long conversations in Settings (988.555809ms)
+✔ webkit: no Codex or Claude Code keeps Long conversations in Settings (1009.845159ms)
+▶ chromium: allowed addresses are listed under Share on local network (lc)
+  ✔ every language has the strings (454.711976ms)
+  ✔ hidden while magpie answers only this computer (428.017889ms)
+  ✔ en (1325.637746ms)
+  ✔ zh (1248.258231ms)
+  ✔ a list that shuts out this page is refused (826.6573ms)
+  ✔ set by MAGPIE_ALLOW_IPS: shown, not edited (403.000288ms)
+✔ chromium: allowed addresses are listed under Share on local network (lc) (4866.801631ms)
+▶ webkit: allowed addresses are listed under Share on local network (lc)
+  ✔ every language has the strings (725.579229ms)
+  ✔ hidden while magpie answers only this computer (733.647253ms)
+  ✖ en (6312.821494ms)
+  ✖ zh (1565.20702ms)
+  ✖ a list that shuts out this page is refused (6024.694526ms)
+  ✔ set by MAGPIE_ALLOW_IPS: shown, not edited (791.392712ms)
+✖ webkit: allowed addresses are listed under Share on local network (lc) (16406.704317ms)
+✔ chromium: Plugins › Built-in (20151.968814ms)
+✔ chromium: Plugins › Built-in, plugins.yml broken (3027.091175ms)
+✖ webkit: Plugins › Built-in (10723.869762ms)
+✔ webkit: Plugins › Built-in, plugins.yml broken (4991.190826ms)
+✔ chromium 1100 en: each WorkBuddy account's check-in on its own in Settings (800.216563ms)
+✔ chromium 1100 en: an account left out says so on its Usage card (590.015965ms)
+✔ chromium 1100 zh: each WorkBuddy account's check-in on its own in Settings (771.418553ms)
+✔ chromium 1100 zh: an account left out says so on its Usage card (572.678491ms)
+✔ chromium 1100 zh-TW: each WorkBuddy account's check-in on its own in Settings (762.460179ms)
+✔ chromium 1100 zh-TW: an account left out says so on its Usage card (571.290867ms)
+✔ chromium 1100 ja: each WorkBuddy account's check-in on its own in Settings (777.799116ms)
+✔ chromium 1100 ja: an account left out says so on its Usage card (569.059827ms)
+✔ chromium 1100 de: each WorkBuddy account's check-in on its own in Settings (760.958499ms)
+✔ chromium 1100 de: an account left out says so on its Usage card (561.827323ms)
+✔ chromium 420 en: each WorkBuddy account's check-in on its own in Settings (1271.467632ms)
+✔ chromium 420 en: an account left out says so on its Usage card (545.901358ms)
+✔ chromium 420 zh: each WorkBuddy account's check-in on its own in Settings (1286.014068ms)
+✔ chromium 420 zh: an account left out says so on its Usage card (568.98076ms)
+✔ chromium 420 zh-TW: each WorkBuddy account's check-in on its own in Settings (1283.239026ms)
+✔ chromium 420 zh-TW: an account left out says so on its Usage card (549.855676ms)
+✔ chromium 420 ja: each WorkBuddy account's check-in on its own in Settings (1272.454697ms)
+✔ chromium 420 ja: an account left out says so on its Usage card (549.194269ms)
+✔ chromium 420 de: each WorkBuddy account's check-in on its own in Settings (1277.639772ms)
+✔ chromium 420 de: an account left out says so on its Usage card (554.102632ms)
+✔ webkit 1100 en: each WorkBuddy account's check-in on its own in Settings (1140.580445ms)
+✔ webkit 1100 en: an account left out says so on its Usage card (968.439486ms)
+✔ webkit 1100 zh: each WorkBuddy account's check-in on its own in Settings (1097.66203ms)
+✔ webkit 1100 zh: an account left out says so on its Usage card (988.351893ms)
+✔ webkit 1100 zh-TW: each WorkBuddy account's check-in on its own in Settings (1129.911839ms)
+✔ webkit 1100 zh-TW: an account left out says so on its Usage card (979.489481ms)
+✔ webkit 1100 ja: each WorkBuddy account's check-in on its own in Settings (1098.59071ms)
+✔ webkit 1100 ja: an account left out says so on its Usage card (1000.030118ms)
+✔ webkit 1100 de: each WorkBuddy account's check-in on its own in Settings (1123.978181ms)
+✔ webkit 1100 de: an account left out says so on its Usage card (987.488282ms)
+✖ webkit 420 en: each WorkBuddy account's check-in on its own in Settings (1603.205628ms)
+✔ webkit 420 en: an account left out says so on its Usage card (880.785771ms)
+✖ webkit 420 zh: each WorkBuddy account's check-in on its own in Settings (1606.861506ms)
+✔ webkit 420 zh: an account left out says so on its Usage card (881.630856ms)
+✖ webkit 420 zh-TW: each WorkBuddy account's check-in on its own in Settings (1601.240743ms)
+✔ webkit 420 zh-TW: an account left out says so on its Usage card (890.063661ms)
+✖ webkit 420 ja: each WorkBuddy account's check-in on its own in Settings (1654.886755ms)
+✔ webkit 420 ja: an account left out says so on its Usage card (889.934378ms)
+✖ webkit 420 de: each WorkBuddy account's check-in on its own in Settings (1723.876175ms)
+✔ webkit 420 de: an account left out says so on its Usage card (917.373043ms)
+ℹ tests 100
+ℹ suites 0
+ℹ pass 78
+ℹ fail 22
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 227488.389323
+
+✖ failing tests:
+
+test at internal/gui/tests/agent-disconnect-preview.test.cjs:63:5
+✖ webkit en: disconnect previews use the full body width (4379.582848ms)
+  AssertionError [ERR_ASSERTION]: the preview spans the body at 560x420, 100%: {"content":{"left":42,"right":508},"diff":{"left":42,"right":518,"top":128.75,"bottom":321.9375,"width":476},"note":{"left":42,"right":518,"top":341.9375,"bottom":358.734375,"width":476},"code":{"left":71,"right":507,"top":162.03125,"bottom":178.03125,"width":436},"lineHeight":18.4,"dialog":{"left":24,"right":536,"top":16,"bottom":396,"width":512},"head":{"left":24,"right":536,"top":16,"bottom":64,"width":512},"bar":{"left":24,"right":536,"top":348,"bottom":396,"width":512},"overflow":10}
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/agent-disconnect-preview.test.cjs:101:18)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/agent-disconnect-preview.test.cjs:63:5
+✖ webkit zh: disconnect previews use the full body width (4379.33625ms)
+  AssertionError [ERR_ASSERTION]: the preview spans the body at 560x420, 100%: {"content":{"left":42,"right":508},"diff":{"left":42,"right":518,"top":109.375,"bottom":302.5625,"width":476},"note":{"left":42,"right":518,"top":322.5625,"bottom":339.359375,"width":476},"code":{"left":71,"right":507,"top":142.65625,"bottom":158.65625,"width":436},"lineHeight":18.4,"dialog":{"left":24,"right":536,"top":16,"bottom":396,"width":512},"head":{"left":24,"right":536,"top":16,"bottom":64,"width":512},"bar":{"left":24,"right":536,"top":348,"bottom":396,"width":512},"overflow":10}
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/agent-disconnect-preview.test.cjs:101:18)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/agent-prefs.test.cjs:98:7
+✖ webkit en 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2148.630699ms)
+  AssertionError [ERR_ASSERTION]: en: fullContextRow not in Settings
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/agent-prefs.test.cjs:113:40)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/agent-prefs.test.cjs:98:7
+✖ webkit en 440: an agent's own settings are in its opened row, and Settings' search finds them there (2381.643173ms)
+  AssertionError [ERR_ASSERTION]: en: fullContextRow not in Settings
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/agent-prefs.test.cjs:113:40)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/agent-prefs.test.cjs:98:7
+✖ webkit zh 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2134.188214ms)
+  AssertionError [ERR_ASSERTION]: zh: fullContextRow not in Settings
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/agent-prefs.test.cjs:113:40)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/agent-prefs.test.cjs:98:7
+✖ webkit zh 440: an agent's own settings are in its opened row, and Settings' search finds them there (2415.631818ms)
+  AssertionError [ERR_ASSERTION]: zh: fullContextRow not in Settings
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/agent-prefs.test.cjs:113:40)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/agent-prefs.test.cjs:98:7
+✖ webkit zh-TW 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2109.599482ms)
+  AssertionError [ERR_ASSERTION]: zh-TW: fullContextRow not in Settings
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/agent-prefs.test.cjs:113:40)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/agent-prefs.test.cjs:98:7
+✖ webkit zh-TW 440: an agent's own settings are in its opened row, and Settings' search finds them there (2397.338304ms)
+  AssertionError [ERR_ASSERTION]: zh-TW: fullContextRow not in Settings
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/agent-prefs.test.cjs:113:40)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/agent-prefs.test.cjs:98:7
+✖ webkit ja 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2116.647918ms)
+  AssertionError [ERR_ASSERTION]: ja: fullContextRow not in Settings
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/agent-prefs.test.cjs:113:40)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/agent-prefs.test.cjs:98:7
+✖ webkit ja 440: an agent's own settings are in its opened row, and Settings' search finds them there (2430.746488ms)
+  AssertionError [ERR_ASSERTION]: ja: fullContextRow not in Settings
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/agent-prefs.test.cjs:113:40)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/agent-prefs.test.cjs:98:7
+✖ webkit de 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2153.102692ms)
+  AssertionError [ERR_ASSERTION]: de: fullContextRow not in Settings
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/agent-prefs.test.cjs:113:40)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/agent-prefs.test.cjs:98:7
+✖ webkit de 440: an agent's own settings are in its opened row, and Settings' search finds them there (2429.508776ms)
+  AssertionError [ERR_ASSERTION]: de: fullContextRow not in Settings
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/agent-prefs.test.cjs:113:40)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/allow-ips.test.cjs:146:15
+✖ en (6312.821494ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#allowList').locator('.rule-row').locator('button').filter({ hasText: 'Add' })[22m
+  [2m    - locator resolved to <button class="text">Add</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m    - element is not stable[22m
+  [2m  2 × retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <input id="setQ" data-tp="" type="search" spellcheck="false" autocomplete="off" class="sess-filter set-q" aria-label="Find a setting" placeholder="Find a setting" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events[22m
+  [2m  8 × retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <input id="setQ" data-tp="" type="search" spellcheck="false" autocomplete="off" class="sess-filter set-q" aria-label="Find a setting" placeholder="Find a setting" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events[22m
+  [2m  - retrying click action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/allow-ips.test.cjs:179:57)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/allow-ips.test.cjs:146:7) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#allowList').locator('.rule-row').locator('button').filter({ hasText: 'Add' })", '    - locator resolved to <button class="text">Add</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '    - waiting 20ms', '    - waiting for element to be visible, enabled and stable', '    - element is not stable', '  2 × retrying click action', '      - waiting 100ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <input id="setQ" data-tp="" type="search" spellcheck="false" autocomplete="off" class="sess-filter set-q" aria-label="Find a setting" placeholder="Find a setting" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events', '  8 × retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <input id="setQ" data-tp="" type="search" spellcheck="false" autocomplete="off" class="sess-filter set-q" aria-label="Find a setting" placeholder="Find a setting" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events', '  - retrying click action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/allow-ips.test.cjs:146:15
+✖ zh (1565.20702ms)
+  AssertionError [ERR_ASSERTION]: Add moved the page
+  
+  955 !== 733
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/allow-ips.test.cjs:183:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/allow-ips.test.cjs:146:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 955,
+    expected: 733,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/allow-ips.test.cjs:227:13
+✖ a list that shuts out this page is refused (6024.694526ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#allowList').locator('.allow-ip-row').filter({ hasText: '203.0.113.50' }).locator('button')[22m
+  [2m    - locator resolved to <button class="text">移除</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m    - element is not stable[22m
+  [2m  2 × retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <div class="row-head set-head stuck">…</div> intercepts pointer events[22m
+  [2m  8 × retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <div class="row-head set-head stuck">…</div> intercepts pointer events[22m
+  [2m  - retrying click action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/allow-ips.test.cjs:245:96)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/allow-ips.test.cjs:227:5) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#allowList').locator('.allow-ip-row').filter({ hasText: '203.0.113.50' }).locator('button')", '    - locator resolved to <button class="text">移除</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '    - waiting 20ms', '    - waiting for element to be visible, enabled and stable', '    - element is not stable', '  2 × retrying click action', '      - waiting 100ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <div class="row-head set-head stuck">…</div> intercepts pointer events', '  8 × retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <div class="row-head set-head stuck">…</div> intercepts pointer events', '  - retrying click action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/builtins.test.cjs:130:3
+✖ webkit: Plugins › Built-in (10723.869762ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#builtinList [data-id="otel"] [role="switch"]')[22m
+  [2m    - locator resolved to <button type="button" role="switch" aria-checked="false" aria-label="Observability" class="lib-switch use-credits">…</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m    - element is not stable[22m
+  [2m  2 × retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <div class="lib-head pm-head stuck">…</div> intercepts pointer events[22m
+  [2m  8 × retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <div class="lib-head pm-head stuck">…</div> intercepts pointer events[22m
+  [2m  - retrying click action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/builtins.test.cjs:229:77) {
+    name: 'TimeoutError',
+    log: [ `  - waiting for locator('#builtinList [data-id="otel"] [role="switch"]')`, '    - locator resolved to <button type="button" role="switch" aria-checked="false" aria-label="Observability" class="lib-switch use-credits">…</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '    - waiting 20ms', '    - waiting for element to be visible, enabled and stable', '    - element is not stable', '  2 × retrying click action', '      - waiting 100ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <div class="lib-head pm-head stuck">…</div> intercepts pointer events', '  8 × retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <div class="lib-head pm-head stuck">…</div> intercepts pointer events', '  - retrying click action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/checkin-account.test.cjs:81:7
+✖ webkit 420 en: each WorkBuddy account's check-in on its own in Settings (1603.205628ms)
+  AssertionError [ERR_ASSERTION]: the switch moved the page
+  
+  '0,894' !== '0,893'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/checkin-account.test.cjs:119:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '0,894',
+    expected: '0,893',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/checkin-account.test.cjs:81:7
+✖ webkit 420 zh: each WorkBuddy account's check-in on its own in Settings (1606.861506ms)
+  AssertionError [ERR_ASSERTION]: the switch moved the page
+  
+  '0,892' !== '0,891'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/checkin-account.test.cjs:119:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '0,892',
+    expected: '0,891',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/checkin-account.test.cjs:81:7
+✖ webkit 420 zh-TW: each WorkBuddy account's check-in on its own in Settings (1601.240743ms)
+  AssertionError [ERR_ASSERTION]: the switch moved the page
+  
+  '0,892' !== '0,891'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/checkin-account.test.cjs:119:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '0,892',
+    expected: '0,891',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/checkin-account.test.cjs:81:7
+✖ webkit 420 ja: each WorkBuddy account's check-in on its own in Settings (1654.886755ms)
+  AssertionError [ERR_ASSERTION]: the switch moved the page
+  
+  '0,851' !== '0,883'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/checkin-account.test.cjs:119:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '0,851',
+    expected: '0,883',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/checkin-account.test.cjs:81:7
+✖ webkit 420 de: each WorkBuddy account's check-in on its own in Settings (1723.876175ms)
+  AssertionError [ERR_ASSERTION]: the switch moved the page
+  
+  '0,974' !== '0,973'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/checkin-account.test.cjs:119:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '0,974',
+    expected: '0,973',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

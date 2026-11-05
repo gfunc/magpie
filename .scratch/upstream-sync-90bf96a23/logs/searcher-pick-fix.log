@@ -1,0 +1,70 @@
+✔ chromium en: the picked searcher that didn't search is said first (1693.245642ms)
+✔ chromium zh: the picked searcher that didn't search is said first (1630.779665ms)
+✔ chromium zh-TW: the picked searcher that didn't search is said first (1678.446885ms)
+✔ chromium ja: the picked searcher that didn't search is said first (1651.353881ms)
+✔ chromium de: the picked searcher that didn't search is said first (1646.674232ms)
+✔ chromium en: the provider that searches for other models is picked in Settings (7766.738448ms)
+✖ chromium zh: the provider that searches for other models is picked in Settings (881.001898ms)
+✔ chromium en: search help preserves ellipsis and hover titles (5619.862321ms)
+✔ chromium zh: search help preserves ellipsis and hover titles (5681.590814ms)
+✔ chromium ja: search help preserves ellipsis and hover titles (5270.95848ms)
+✔ chromium de: search help preserves ellipsis and hover titles (6580.025107ms)
+✔ webkit en: the picked searcher that didn't search is said first (2435.50033ms)
+✔ webkit zh: the picked searcher that didn't search is said first (2385.754368ms)
+✔ webkit zh-TW: the picked searcher that didn't search is said first (2407.064991ms)
+✔ webkit ja: the picked searcher that didn't search is said first (2408.669252ms)
+✔ webkit de: the picked searcher that didn't search is said first (2491.963179ms)
+✔ webkit en: the provider that searches for other models is picked in Settings (8929.477635ms)
+✖ webkit zh: the provider that searches for other models is picked in Settings (1108.363305ms)
+✔ webkit en: search help preserves ellipsis and hover titles (6403.917154ms)
+✔ webkit zh: search help preserves ellipsis and hover titles (6349.635071ms)
+✔ webkit ja: search help preserves ellipsis and hover titles (6808.496742ms)
+✔ webkit de: search help preserves ellipsis and hover titles (7776.761678ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 20
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 89969.591628
+
+✖ failing tests:
+
+test at internal/gui/tests/searcher-pick.test.cjs:181:5
+✖ chromium zh: the provider that searches for other models is picked in Settings (881.001898ms)
+  AssertionError [ERR_ASSERTION]: DeepSeek and Remote magpie are said to be manual-only services
+  + actual - expected
+  
+  + '这些键控搜索服务仅在此处选中时使用：DeepSeek, Remote magpie。'
+  - '这些键控搜索服务仅在此处选中时使用：DeepSeek、Remote magpie。'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/searcher-pick.test.cjs:203:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '这些键控搜索服务仅在此处选中时使用：DeepSeek, Remote magpie。',
+    expected: '这些键控搜索服务仅在此处选中时使用：DeepSeek、Remote magpie。',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/searcher-pick.test.cjs:181:5
+✖ webkit zh: the provider that searches for other models is picked in Settings (1108.363305ms)
+  AssertionError [ERR_ASSERTION]: DeepSeek and Remote magpie are said to be manual-only services
+  + actual - expected
+  
+  + '这些键控搜索服务仅在此处选中时使用：DeepSeek, Remote magpie。'
+  - '这些键控搜索服务仅在此处选中时使用：DeepSeek、Remote magpie。'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/searcher-pick.test.cjs:203:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '这些键控搜索服务仅在此处选中时使用：DeepSeek, Remote magpie。',
+    expected: '这些键控搜索服务仅在此处选中时使用：DeepSeek、Remote magpie。',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

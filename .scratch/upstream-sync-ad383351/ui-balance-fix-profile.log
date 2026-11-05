@@ -1,0 +1,166 @@
+✔ chromium: a balance token on /api/usage/token is moved to /api/user/self (1277.990157ms)
+✔ chromium: a token on a new custom provider with no Balance URL is pointed at /api/user/self (740.482794ms)
+✔ chromium: a login token on sub2api's /v1/usage is moved to /api/v1/user/profile (707.073712ms)
+▶ chromium: Sub2API balance shortcut saves the profile endpoint (en, 900px)
+  ✔ saved token without a Balance URL (598.130462ms)
+  ✔ saved token with the key-only Balance URL (585.468168ms)
+  ✔ new provider with a token and no Balance URL (690.812177ms)
+✔ chromium: Sub2API balance shortcut saves the profile endpoint (en, 900px) (2036.400762ms)
+▶ chromium: Sub2API balance shortcut saves the profile endpoint (en, 440px)
+  ✔ saved token without a Balance URL (593.462007ms)
+  ✔ saved token with the key-only Balance URL (568.586646ms)
+  ✔ new provider with a token and no Balance URL (615.197198ms)
+✔ chromium: Sub2API balance shortcut saves the profile endpoint (en, 440px) (1938.1601ms)
+▶ chromium: Sub2API balance shortcut saves the profile endpoint (zh, 900px)
+  ✔ saved token without a Balance URL (609.857564ms)
+  ✔ saved token with the key-only Balance URL (576.780442ms)
+  ✔ new provider with a token and no Balance URL (664.907199ms)
+✔ chromium: Sub2API balance shortcut saves the profile endpoint (zh, 900px) (2012.901203ms)
+▶ chromium: Sub2API balance shortcut saves the profile endpoint (zh, 440px)
+  ✔ saved token without a Balance URL (573.657244ms)
+  ✔ saved token with the key-only Balance URL (568.06995ms)
+  ✔ new provider with a token and no Balance URL (648.340734ms)
+✔ chromium: Sub2API balance shortcut saves the profile endpoint (zh, 440px) (1954.086514ms)
+▶ chromium: Sub2API balance shortcut saves the profile endpoint (ja, 900px)
+  ✔ saved token without a Balance URL (603.237162ms)
+  ✔ saved token with the key-only Balance URL (613.579929ms)
+  ✔ new provider with a token and no Balance URL (680.823705ms)
+✔ chromium: Sub2API balance shortcut saves the profile endpoint (ja, 900px) (2074.286263ms)
+▶ chromium: Sub2API balance shortcut saves the profile endpoint (ja, 440px)
+  ✔ saved token without a Balance URL (596.196662ms)
+  ✔ saved token with the key-only Balance URL (551.584848ms)
+  ✔ new provider with a token and no Balance URL (614.641594ms)
+✔ chromium: Sub2API balance shortcut saves the profile endpoint (ja, 440px) (1925.363538ms)
+▶ chromium: Sub2API balance shortcut saves the profile endpoint (de, 900px)
+  ✔ saved token without a Balance URL (614.924314ms)
+  ✔ saved token with the key-only Balance URL (588.913112ms)
+  ✔ new provider with a token and no Balance URL (651.936403ms)
+✔ chromium: Sub2API balance shortcut saves the profile endpoint (de, 900px) (2021.100764ms)
+▶ chromium: Sub2API balance shortcut saves the profile endpoint (de, 440px)
+  ✔ saved token without a Balance URL (582.432189ms)
+  ✔ saved token with the key-only Balance URL (567.026291ms)
+  ✔ new provider with a token and no Balance URL (616.097587ms)
+✔ chromium: Sub2API balance shortcut saves the profile endpoint (de, 440px) (1929.995237ms)
+▶ chromium: account balance shortcuts preserve a user-written Balance field
+  ✔ /api/user/self: "" (569.160801ms)
+  ✔ /api/user/self: "   " (583.355496ms)
+  ✔ /api/user/self: "$data.total_available / 500000" (516.275011ms)
+  ✔ /api/user/self: "$data.total_granted - data.total_used" (516.587763ms)
+  ✔ /api/user/self: "unlimited_quota" (534.713308ms)
+  ✔ /api/user/self: "$credits.remaining" (548.408283ms)
+  ✔ /api/user/self: "$data.balance * 0.5" (566.563442ms)
+  ✔ /api/v1/user/profile: "" (533.322402ms)
+  ✔ /api/v1/user/profile: "   " (517.631759ms)
+  ✔ /api/v1/user/profile: "$data.total_available / 500000" (581.823297ms)
+  ✔ /api/v1/user/profile: "$data.total_granted - data.total_used" (566.815639ms)
+  ✔ /api/v1/user/profile: "unlimited_quota" (516.132738ms)
+  ✔ /api/v1/user/profile: "$credits.remaining" (583.423236ms)
+  ✔ /api/v1/user/profile: "$data.balance * 0.5" (532.570829ms)
+✔ chromium: account balance shortcuts preserve a user-written Balance field (7842.046666ms)
+✔ webkit: a balance token on /api/usage/token is moved to /api/user/self (1620.917498ms)
+✔ webkit: a token on a new custom provider with no Balance URL is pointed at /api/user/self (1172.023506ms)
+✔ webkit: a login token on sub2api's /v1/usage is moved to /api/v1/user/profile (1086.703772ms)
+▶ webkit: Sub2API balance shortcut saves the profile endpoint (en, 900px)
+  ✔ saved token without a Balance URL (1027.953065ms)
+  ✔ saved token with the key-only Balance URL (1013.551635ms)
+  ✖ new provider with a token and no Balance URL (949.386356ms)
+✖ webkit: Sub2API balance shortcut saves the profile endpoint (en, 900px) (3155.61937ms)
+▶ webkit: Sub2API balance shortcut saves the profile endpoint (en, 440px)
+  ✔ saved token without a Balance URL (1063.473462ms)
+  ✔ saved token with the key-only Balance URL (1029.945301ms)
+  ✔ new provider with a token and no Balance URL (1158.1794ms)
+✔ webkit: Sub2API balance shortcut saves the profile endpoint (en, 440px) (3403.082539ms)
+▶ webkit: Sub2API balance shortcut saves the profile endpoint (zh, 900px)
+  ✔ saved token without a Balance URL (1028.556697ms)
+  ✔ saved token with the key-only Balance URL (1031.518975ms)
+  ✔ new provider with a token and no Balance URL (1140.633397ms)
+✔ webkit: Sub2API balance shortcut saves the profile endpoint (zh, 900px) (3373.988279ms)
+▶ webkit: Sub2API balance shortcut saves the profile endpoint (zh, 440px)
+  ✔ saved token without a Balance URL (1023.160345ms)
+  ✔ saved token with the key-only Balance URL (1043.755432ms)
+  ✔ new provider with a token and no Balance URL (1159.193491ms)
+✔ webkit: Sub2API balance shortcut saves the profile endpoint (zh, 440px) (3397.993662ms)
+▶ webkit: Sub2API balance shortcut saves the profile endpoint (ja, 900px)
+  ✔ saved token without a Balance URL (1084.092067ms)
+  ✔ saved token with the key-only Balance URL (1013.821408ms)
+  ✔ new provider with a token and no Balance URL (1141.771526ms)
+✔ webkit: Sub2API balance shortcut saves the profile endpoint (ja, 900px) (3405.457099ms)
+▶ webkit: Sub2API balance shortcut saves the profile endpoint (ja, 440px)
+  ✔ saved token without a Balance URL (1029.328431ms)
+  ✔ saved token with the key-only Balance URL (1031.400362ms)
+  ✔ new provider with a token and no Balance URL (1158.189217ms)
+✔ webkit: Sub2API balance shortcut saves the profile endpoint (ja, 440px) (3390.510811ms)
+▶ webkit: Sub2API balance shortcut saves the profile endpoint (de, 900px)
+  ✔ saved token without a Balance URL (1055.233742ms)
+  ✔ saved token with the key-only Balance URL (1044.835868ms)
+  ✔ new provider with a token and no Balance URL (1148.780788ms)
+✔ webkit: Sub2API balance shortcut saves the profile endpoint (de, 900px) (3416.125285ms)
+▶ webkit: Sub2API balance shortcut saves the profile endpoint (de, 440px)
+  ✔ saved token without a Balance URL (1031.020689ms)
+  ✔ saved token with the key-only Balance URL (1029.209614ms)
+  ✖ new provider with a token and no Balance URL (984.005682ms)
+✖ webkit: Sub2API balance shortcut saves the profile endpoint (de, 440px) (3209.952485ms)
+▶ webkit: account balance shortcuts preserve a user-written Balance field
+  ✔ /api/user/self: "" (1023.204522ms)
+  ✔ /api/user/self: "   " (1016.791973ms)
+  ✔ /api/user/self: "$data.total_available / 500000" (1028.759404ms)
+  ✔ /api/user/self: "$data.total_granted - data.total_used" (1014.561354ms)
+  ✔ /api/user/self: "unlimited_quota" (1017.614566ms)
+  ✔ /api/user/self: "$credits.remaining" (996.837746ms)
+  ✔ /api/user/self: "$data.balance * 0.5" (1027.265683ms)
+  ✔ /api/v1/user/profile: "" (1014.610375ms)
+  ✔ /api/v1/user/profile: "   " (1030.944539ms)
+  ✔ /api/v1/user/profile: "$data.total_available / 500000" (1013.764165ms)
+  ✔ /api/v1/user/profile: "$data.total_granted - data.total_used" (1030.192126ms)
+  ✔ /api/v1/user/profile: "unlimited_quota" (1025.847391ms)
+  ✔ /api/v1/user/profile: "$credits.remaining" (1025.862825ms)
+  ✔ /api/v1/user/profile: "$data.balance * 0.5" (1031.919105ms)
+✔ webkit: account balance shortcuts preserve a user-written Balance field (14446.756321ms)
+ℹ tests 100
+ℹ suites 0
+ℹ pass 96
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 71896.819534
+
+✖ failing tests:
+
+test at Projects/magpie/internal/gui/tests/balance-fix.test.cjs:232:19
+✖ new provider with a token and no Balance URL (949.386356ms)
+  AssertionError [ERR_ASSERTION]: both account balance shortcuts are offered
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/balance-fix.test.cjs:256:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/balance-fix.test.cjs:232:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at Projects/magpie/internal/gui/tests/balance-fix.test.cjs:232:19
+✖ new provider with a token and no Balance URL (984.005682ms)
+  AssertionError [ERR_ASSERTION]: both account balance shortcuts are offered
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/balance-fix.test.cjs:256:20)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/balance-fix.test.cjs:232:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

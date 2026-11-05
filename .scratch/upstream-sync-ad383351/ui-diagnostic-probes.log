@@ -1,0 +1,298 @@
+✔ chromium en: independent installed fonts, real styles, persistence and reset (8041.454395ms)
+✔ chromium zh: independent installed fonts, real styles, persistence and reset (7965.902522ms)
+✔ chromium: queued choices and failed writes restore the saved face (4967.612596ms)
+✔ chromium: refresh errors, missing faces, empty lists and literal names (5527.007101ms)
+font-hover-debug {
+  active: '<button class="pm-item" type="button" role="menuitemradio" aria-checked="false"><span class="pm-tick"></span><span class="pm-words"><span class="pm-name">Consolas</span><span class="pm-note"></span></span></button>',
+  items: [
+    { text: '系统默认', focused: false, rect: [Object] },
+    { text: 'HarmonyOS Sans SC', focused: false, rect: [Object] },
+    { text: 'Consolas', focused: true, rect: [Object] },
+    { text: `Reader's "中文" \\ family`, focused: false, rect: [Object] },
+    { text: 'Test Family 0', focused: false, rect: [Object] },
+    { text: 'Test Family 1', focused: false, rect: [Object] },
+    { text: 'Test Family 2', focused: false, rect: [Object] },
+    { text: 'Test Family 3', focused: false, rect: [Object] },
+    { text: 'Test Family 4', focused: false, rect: [Object] },
+    { text: 'Test Family 5', focused: false, rect: [Object] },
+    { text: 'Test Family 6', focused: false, rect: [Object] },
+    { text: 'Test Family 7', focused: false, rect: [Object] },
+    { text: 'Test Family 8', focused: false, rect: [Object] },
+    { text: 'Test Family 9', focused: false, rect: [Object] },
+    { text: 'Test Family 10', focused: false, rect: [Object] },
+    { text: 'Test Family 11', focused: false, rect: [Object] },
+    { text: 'Test Family 12', focused: false, rect: [Object] },
+    { text: 'Test Family 13', focused: false, rect: [Object] },
+    { text: 'Test Family 14', focused: false, rect: [Object] },
+    { text: 'Test Family 15', focused: false, rect: [Object] },
+    { text: 'Test Family 16', focused: false, rect: [Object] },
+    { text: 'Test Family 17', focused: false, rect: [Object] },
+    { text: 'Test Family 18', focused: false, rect: [Object] },
+    { text: 'Test Family 19', focused: false, rect: [Object] },
+    { text: 'Test Family 20', focused: false, rect: [Object] },
+    { text: 'Test Family 21', focused: false, rect: [Object] },
+    { text: 'Test Family 22', focused: false, rect: [Object] },
+    { text: 'Test Family 23', focused: false, rect: [Object] },
+    { text: 'Test Family 24', focused: false, rect: [Object] },
+    { text: 'Test Family 25', focused: false, rect: [Object] },
+    { text: 'Test Family 26', focused: false, rect: [Object] },
+    { text: 'Test Family 27', focused: false, rect: [Object] },
+    { text: 'Test Family 28', focused: false, rect: [Object] },
+    { text: 'Test Family 29', focused: false, rect: [Object] },
+    { text: 'Test Family 30', focused: false, rect: [Object] },
+    { text: 'Test Family 31', focused: false, rect: [Object] },
+    { text: 'Test Family 32', focused: false, rect: [Object] },
+    { text: 'Test Family 33', focused: false, rect: [Object] },
+    { text: 'Test Family 34', focused: false, rect: [Object] },
+    { text: 'Test Family 35', focused: false, rect: [Object] },
+    { text: 'Test Family 36', focused: false, rect: [Object] },
+    { text: 'Test Family 37', focused: false, rect: [Object] },
+    { text: 'Test Family 38', focused: false, rect: [Object] },
+    { text: 'Test Family 39', focused: false, rect: [Object] },
+    { text: 'Test Family 40', focused: false, rect: [Object] },
+    { text: 'Test Family 41', focused: false, rect: [Object] },
+    { text: 'Test Family 42', focused: false, rect: [Object] },
+    { text: 'Test Family 43', focused: false, rect: [Object] },
+    { text: 'Test Family 44', focused: false, rect: [Object] },
+    { text: 'Test Family 45', focused: false, rect: [Object] },
+    { text: 'Test Family 46', focused: false, rect: [Object] },
+    { text: 'Test Family 47', focused: false, rect: [Object] },
+    { text: 'Test Family 48', focused: false, rect: [Object] },
+    { text: 'Test Family 49', focused: false, rect: [Object] },
+    { text: 'Test Family 50', focused: false, rect: [Object] },
+    { text: 'Test Family 51', focused: false, rect: [Object] },
+    { text: 'Test Family 52', focused: false, rect: [Object] },
+    { text: 'Test Family 53', focused: false, rect: [Object] },
+    { text: 'Test Family 54', focused: false, rect: [Object] },
+    { text: 'Test Family 55', focused: false, rect: [Object] },
+    { text: 'Test Family 56', focused: false, rect: [Object] },
+    { text: 'Test Family 57', focused: false, rect: [Object] },
+    { text: 'Test Family 58', focused: false, rect: [Object] },
+    { text: 'Test Family 59', focused: false, rect: [Object] },
+    { text: 'Test Family 60', focused: false, rect: [Object] },
+    { text: 'Test Family 61', focused: false, rect: [Object] },
+    { text: 'Test Family 62', focused: false, rect: [Object] },
+    { text: 'Test Family 63', focused: false, rect: [Object] },
+    { text: 'Test Family 64', focused: false, rect: [Object] },
+    { text: 'Test Family 65', focused: false, rect: [Object] },
+    { text: 'Test Family 66', focused: false, rect: [Object] },
+    { text: 'Test Family 67', focused: false, rect: [Object] },
+    { text: 'Test Family 68', focused: false, rect: [Object] },
+    { text: 'Test Family 69', focused: false, rect: [Object] },
+    { text: 'Test Family 70', focused: false, rect: [Object] },
+    { text: 'Test Family 71', focused: false, rect: [Object] },
+    { text: 'Test Family 72', focused: false, rect: [Object] },
+    { text: 'Test Family 73', focused: false, rect: [Object] },
+    { text: 'Test Family 74', focused: false, rect: [Object] },
+    { text: 'Test Family 75', focused: false, rect: [Object] },
+    { text: 'Test Family 76', focused: false, rect: [Object] },
+    { text: 'Test Family 77', focused: false, rect: [Object] },
+    { text: 'Test Family 78', focused: false, rect: [Object] },
+    { text: 'Test Family 79', focused: false, rect: [Object] },
+    { text: 'Test Family 80', focused: false, rect: [Object] },
+    { text: 'Test Family 81', focused: false, rect: [Object] },
+    { text: 'Test Family 82', focused: false, rect: [Object] },
+    { text: 'Test Family 83', focused: false, rect: [Object] },
+    { text: 'Test Family 84', focused: false, rect: [Object] },
+    { text: 'Test Family 85', focused: false, rect: [Object] },
+    { text: 'Test Family 86', focused: false, rect: [Object] },
+    { text: 'Test Family 87', focused: false, rect: [Object] },
+    { text: 'Test Family 88', focused: false, rect: [Object] },
+    { text: 'Test Family 89', focused: false, rect: [Object] },
+    { text: 'Test Family 90', focused: false, rect: [Object] },
+    { text: 'Test Family 91', focused: false, rect: [Object] },
+    { text: 'Test Family 92', focused: false, rect: [Object] },
+    { text: 'Test Family 93', focused: false, rect: [Object] },
+    { text: 'Test Family 94', focused: false, rect: [Object] },
+    { text: 'Test Family 95', focused: false, rect: [Object] },
+    ... 105 more items
+  ]
+}
+✔ chromium: a search narrowing the menu under a still pointer keeps the typing in its field (1366.065977ms)
+✔ chromium: font menu search and keys fit narrow windows without scrolling the page (1786.873793ms)
+✔ chromium: explicit fonts override Omarchy and browser mode keeps its defaults (1970.813575ms)
+✔ chromium: native notifications update the other webview without another save (1707.971604ms)
+✔ chromium: named variable traits retain fractional weight and custom width (2560.844065ms)
+✔ webkit en: independent installed fonts, real styles, persistence and reset (8402.934936ms)
+✔ webkit zh: independent installed fonts, real styles, persistence and reset (8437.010381ms)
+✔ webkit: queued choices and failed writes restore the saved face (5313.599936ms)
+✔ webkit: refresh errors, missing faces, empty lists and literal names (5294.925509ms)
+font-hover-debug {
+  active: '<input class="sc-q" placeholder="搜索字体…" aria-label="搜索字体…">',
+  items: [
+    { text: '系统默认', focused: false, rect: [Object] },
+    { text: 'HarmonyOS Sans SC', focused: false, rect: [Object] },
+    { text: 'Consolas', focused: false, rect: [Object] },
+    { text: `Reader's "中文" \\ family`, focused: false, rect: [Object] },
+    { text: 'Test Family 0', focused: false, rect: [Object] },
+    { text: 'Test Family 1', focused: false, rect: [Object] },
+    { text: 'Test Family 2', focused: false, rect: [Object] },
+    { text: 'Test Family 3', focused: false, rect: [Object] },
+    { text: 'Test Family 4', focused: false, rect: [Object] },
+    { text: 'Test Family 5', focused: false, rect: [Object] },
+    { text: 'Test Family 6', focused: false, rect: [Object] },
+    { text: 'Test Family 7', focused: false, rect: [Object] },
+    { text: 'Test Family 8', focused: false, rect: [Object] },
+    { text: 'Test Family 9', focused: false, rect: [Object] },
+    { text: 'Test Family 10', focused: false, rect: [Object] },
+    { text: 'Test Family 11', focused: false, rect: [Object] },
+    { text: 'Test Family 12', focused: false, rect: [Object] },
+    { text: 'Test Family 13', focused: false, rect: [Object] },
+    { text: 'Test Family 14', focused: false, rect: [Object] },
+    { text: 'Test Family 15', focused: false, rect: [Object] },
+    { text: 'Test Family 16', focused: false, rect: [Object] },
+    { text: 'Test Family 17', focused: false, rect: [Object] },
+    { text: 'Test Family 18', focused: false, rect: [Object] },
+    { text: 'Test Family 19', focused: false, rect: [Object] },
+    { text: 'Test Family 20', focused: false, rect: [Object] },
+    { text: 'Test Family 21', focused: false, rect: [Object] },
+    { text: 'Test Family 22', focused: false, rect: [Object] },
+    { text: 'Test Family 23', focused: false, rect: [Object] },
+    { text: 'Test Family 24', focused: false, rect: [Object] },
+    { text: 'Test Family 25', focused: false, rect: [Object] },
+    { text: 'Test Family 26', focused: false, rect: [Object] },
+    { text: 'Test Family 27', focused: false, rect: [Object] },
+    { text: 'Test Family 28', focused: false, rect: [Object] },
+    { text: 'Test Family 29', focused: false, rect: [Object] },
+    { text: 'Test Family 30', focused: false, rect: [Object] },
+    { text: 'Test Family 31', focused: false, rect: [Object] },
+    { text: 'Test Family 32', focused: false, rect: [Object] },
+    { text: 'Test Family 33', focused: false, rect: [Object] },
+    { text: 'Test Family 34', focused: false, rect: [Object] },
+    { text: 'Test Family 35', focused: false, rect: [Object] },
+    { text: 'Test Family 36', focused: false, rect: [Object] },
+    { text: 'Test Family 37', focused: false, rect: [Object] },
+    { text: 'Test Family 38', focused: false, rect: [Object] },
+    { text: 'Test Family 39', focused: false, rect: [Object] },
+    { text: 'Test Family 40', focused: false, rect: [Object] },
+    { text: 'Test Family 41', focused: false, rect: [Object] },
+    { text: 'Test Family 42', focused: false, rect: [Object] },
+    { text: 'Test Family 43', focused: false, rect: [Object] },
+    { text: 'Test Family 44', focused: false, rect: [Object] },
+    { text: 'Test Family 45', focused: false, rect: [Object] },
+    { text: 'Test Family 46', focused: false, rect: [Object] },
+    { text: 'Test Family 47', focused: false, rect: [Object] },
+    { text: 'Test Family 48', focused: false, rect: [Object] },
+    { text: 'Test Family 49', focused: false, rect: [Object] },
+    { text: 'Test Family 50', focused: false, rect: [Object] },
+    { text: 'Test Family 51', focused: false, rect: [Object] },
+    { text: 'Test Family 52', focused: false, rect: [Object] },
+    { text: 'Test Family 53', focused: false, rect: [Object] },
+    { text: 'Test Family 54', focused: false, rect: [Object] },
+    { text: 'Test Family 55', focused: false, rect: [Object] },
+    { text: 'Test Family 56', focused: false, rect: [Object] },
+    { text: 'Test Family 57', focused: false, rect: [Object] },
+    { text: 'Test Family 58', focused: false, rect: [Object] },
+    { text: 'Test Family 59', focused: false, rect: [Object] },
+    { text: 'Test Family 60', focused: false, rect: [Object] },
+    { text: 'Test Family 61', focused: false, rect: [Object] },
+    { text: 'Test Family 62', focused: false, rect: [Object] },
+    { text: 'Test Family 63', focused: false, rect: [Object] },
+    { text: 'Test Family 64', focused: false, rect: [Object] },
+    { text: 'Test Family 65', focused: false, rect: [Object] },
+    { text: 'Test Family 66', focused: false, rect: [Object] },
+    { text: 'Test Family 67', focused: false, rect: [Object] },
+    { text: 'Test Family 68', focused: false, rect: [Object] },
+    { text: 'Test Family 69', focused: false, rect: [Object] },
+    { text: 'Test Family 70', focused: false, rect: [Object] },
+    { text: 'Test Family 71', focused: false, rect: [Object] },
+    { text: 'Test Family 72', focused: false, rect: [Object] },
+    { text: 'Test Family 73', focused: false, rect: [Object] },
+    { text: 'Test Family 74', focused: false, rect: [Object] },
+    { text: 'Test Family 75', focused: false, rect: [Object] },
+    { text: 'Test Family 76', focused: false, rect: [Object] },
+    { text: 'Test Family 77', focused: false, rect: [Object] },
+    { text: 'Test Family 78', focused: false, rect: [Object] },
+    { text: 'Test Family 79', focused: false, rect: [Object] },
+    { text: 'Test Family 80', focused: false, rect: [Object] },
+    { text: 'Test Family 81', focused: false, rect: [Object] },
+    { text: 'Test Family 82', focused: false, rect: [Object] },
+    { text: 'Test Family 83', focused: false, rect: [Object] },
+    { text: 'Test Family 84', focused: false, rect: [Object] },
+    { text: 'Test Family 85', focused: false, rect: [Object] },
+    { text: 'Test Family 86', focused: false, rect: [Object] },
+    { text: 'Test Family 87', focused: false, rect: [Object] },
+    { text: 'Test Family 88', focused: false, rect: [Object] },
+    { text: 'Test Family 89', focused: false, rect: [Object] },
+    { text: 'Test Family 90', focused: false, rect: [Object] },
+    { text: 'Test Family 91', focused: false, rect: [Object] },
+    { text: 'Test Family 92', focused: false, rect: [Object] },
+    { text: 'Test Family 93', focused: false, rect: [Object] },
+    { text: 'Test Family 94', focused: false, rect: [Object] },
+    { text: 'Test Family 95', focused: false, rect: [Object] },
+    ... 105 more items
+  ]
+}
+✖ webkit: a search narrowing the menu under a still pointer keeps the typing in its field (7129.294591ms)
+✔ webkit: font menu search and keys fit narrow windows without scrolling the page (2548.42264ms)
+✔ webkit: explicit fonts override Omarchy and browser mode keeps its defaults (3023.994337ms)
+✔ webkit: native notifications update the other webview without another save (1898.106537ms)
+✔ webkit: named variable traits retain fractional weight and custom width (2696.949962ms)
+plugin-move-debug {
+  before: 452,
+  after: {
+    top: 452,
+    height: 2045,
+    client: 564,
+    html: '"false" autocomplete="off" class="queue-limit" min="0" max="10000" step="1" inputmode="numeric" id="field-99" aria-label="Queue size" aria-describedby="field-help-100"><div class="hint" id="field-help-100">How many requests may wait for each key or account; one more is turned away at once. 0 or empty is no bound</div></div><label for="field-101">Queue wait</label><div><input type="number" placeholder="As long as it takes" spellcheck="false" autocomplete="off" class="queue-wait" min="0" max="3600" step="1" inputmode="numeric" id="field-101" aria-label="Queue wait" aria-describedby="field-help-102"><div class="hint" id="field-help-102">Seconds a request waits for a free slot before it is turned away. 0 or empty waits as long as it takes</div></div><label for="field-103">Price rate</label><div><input type="text" placeholder="1, the official price" spellcheck="false" autocomplete="off" class="price-rate" inputmode="decimal" id="field-103" aria-label="Price rate" aria-describedby="field-help-104"><div class="hint" id="field-help-104">Costs are counted at the official price times this, as a relay bills, like 0.8 or 1.5; a price you set for a model stays as set</div></div></div></details>'
+  }
+}
+✔ chromium en: a built-in subscription moves to its plugin for good (2803.266976ms)
+✔ chromium en: the Plugins tab opened as the page offers Zed's accounts (1714.818615ms)
+plugin-move-debug {
+  before: 345,
+  after: {
+    top: 345,
+    height: 1830,
+    client: 564,
+    html: 'de="numeric" id="field-97" aria-label="每分钟请求数" aria-describedby="field-help-98"><div class="hint" id="field-help-98">每个密钥或账号在任意一分钟内最多发出的请求数，重试也计入；超出的请求等待空位，最多等 2 分钟。0 或留空为不限制</div></div><label for="field-99">排队上限</label><div><input type="number" placeholder="不限" spellcheck="false" autocomplete="off" class="queue-limit" min="0" max="10000" step="1" inputmode="numeric" id="field-99" aria-label="排队上限" aria-describedby="field-help-100"><div class="hint" id="field-help-100">每个 Key 或账号最多可排队的请求数，再多的请求会立刻被拒绝。0 或留空为不限</div></div><label for="field-101">排队等待</label><div><input type="number" placeholder="一直等" spellcheck="false" autocomplete="off" class="queue-wait" min="0" max="3600" step="1" inputmode="numeric" id="field-101" aria-label="排队等待" aria-describedby="field-help-102"><div class="hint" id="field-help-102">请求等待空位的最长秒数，超时即被拒绝。0 或留空为一直等</div></div><label for="field-103">价格倍率</label><div><input type="text" placeholder="1，即官方价格" spellcheck="false" autocomplete="off" class="price-rate" inputmode="decimal" id="field-103" aria-label="价格倍率" aria-describedby="field-help-104"><div class="hint" id="field-help-104">费用按官方价格乘以此倍率计算，同中转站计费方式，例如 0.8 或 1.5；你为某个模型单独设置的价格保持不变</div></div></div></details>'
+  }
+}
+✔ chromium zh: a built-in subscription moves to its plugin for good (2693.980896ms)
+✔ chromium zh: the Plugins tab opened as the page offers Zed's accounts (1696.534707ms)
+plugin-move-debug {
+  before: 491,
+  after: {
+    top: 521,
+    height: 2061,
+    client: 554,
+    html: '"false" autocomplete="off" class="queue-limit" min="0" max="10000" step="1" inputmode="numeric" id="field-99" aria-label="Queue size" aria-describedby="field-help-100"><div class="hint" id="field-help-100">How many requests may wait for each key or account; one more is turned away at once. 0 or empty is no bound</div></div><label for="field-101">Queue wait</label><div><input type="number" placeholder="As long as it takes" spellcheck="false" autocomplete="off" class="queue-wait" min="0" max="3600" step="1" inputmode="numeric" id="field-101" aria-label="Queue wait" aria-describedby="field-help-102"><div class="hint" id="field-help-102">Seconds a request waits for a free slot before it is turned away. 0 or empty waits as long as it takes</div></div><label for="field-103">Price rate</label><div><input type="text" placeholder="1, the official price" spellcheck="false" autocomplete="off" class="price-rate" inputmode="decimal" id="field-103" aria-label="Price rate" aria-describedby="field-help-104"><div class="hint" id="field-help-104">Costs are counted at the official price times this, as a relay bills, like 0.8 or 1.5; a price you set for a model stays as set</div></div></div></details>'
+  }
+}
+✖ webkit en: a built-in subscription moves to its plugin for good (2245.063159ms)
+✔ webkit en: the Plugins tab opened as the page offers Zed's accounts (1942.094857ms)
+plugin-move-debug {
+  before: 359,
+  after: {
+    top: 359,
+    height: 1830,
+    client: 564,
+    html: 'de="numeric" id="field-97" aria-label="每分钟请求数" aria-describedby="field-help-98"><div class="hint" id="field-help-98">每个密钥或账号在任意一分钟内最多发出的请求数，重试也计入；超出的请求等待空位，最多等 2 分钟。0 或留空为不限制</div></div><label for="field-99">排队上限</label><div><input type="number" placeholder="不限" spellcheck="false" autocomplete="off" class="queue-limit" min="0" max="10000" step="1" inputmode="numeric" id="field-99" aria-label="排队上限" aria-describedby="field-help-100"><div class="hint" id="field-help-100">每个 Key 或账号最多可排队的请求数，再多的请求会立刻被拒绝。0 或留空为不限</div></div><label for="field-101">排队等待</label><div><input type="number" placeholder="一直等" spellcheck="false" autocomplete="off" class="queue-wait" min="0" max="3600" step="1" inputmode="numeric" id="field-101" aria-label="排队等待" aria-describedby="field-help-102"><div class="hint" id="field-help-102">请求等待空位的最长秒数，超时即被拒绝。0 或留空为一直等</div></div><label for="field-103">价格倍率</label><div><input type="text" placeholder="1，即官方价格" spellcheck="false" autocomplete="off" class="price-rate" inputmode="decimal" id="field-103" aria-label="价格倍率" aria-describedby="field-help-104"><div class="hint" id="field-help-104">费用按官方价格乘以此倍率计算，同中转站计费方式，例如 0.8 或 1.5；你为某个模型单独设置的价格保持不变</div></div></div></details>'
+  }
+}
+✔ webkit zh: a built-in subscription moves to its plugin for good (3199.827422ms)
+✔ webkit zh: the Plugins tab opened as the page offers Zed's accounts (1901.618681ms)
+✔ chromium zh: the title bar's tools never lie over where the reader is (27017.59497ms)
+✔ chromium zh-TW: the title bar's tools never lie over where the reader is (27191.993742ms)
+✔ chromium ja: the title bar's tools never lie over where the reader is (27219.538056ms)
+title-debug plugins builtin [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 501,
+    y: 0,
+    width: 0,
+    height: 46,
+    top: 0,
+    right: 501,
+    bottom: 46,
+    left: 501
+  },
+  body: 'window linux side-nav',
+  html: '<div class="lib-head pm-head"><div class="segs lib-tabs" data-kind="builtin|discover|installed"><span class="thumb"></span><button class="opt on" type="button" aria-pressed="true">Eingebaut</button><button class="opt" type="button" aria-pressed="false">Entdecken</button><button class="opt" type="button" aria-pressed="false" data-sub="installed">Installiert</button></div><span class="grow"></span><button class="pm-mirror" type="button" role="switch" aria-checked="false" aria-label="Spiegel in China" title="Erweiterungsliste, Erweiterungen und Bun zuerst von Spiegeln in China (npmmirror, jsDelivr) laden, danach von den offiziellen Adressen. Jede ist eine Kopie genau derselben Datei und wird wie das Original geprüft" hidden=""><span>Spiegel in China</span><span class="lib-switch"><i></i></spa'
+}
+✖ chromium de: the title bar's tools never lie over where the reader is (8589.199046ms)
+✔ chromium en: the title bar's tools never lie over where the reader is (26922.944501ms)
+✔ webkit zh: the title bar's tools never lie over where the reader is (34775.957739ms)
+✔ webkit zh-TW: the title bar's tools never lie over where the reader is (35019.459237ms)

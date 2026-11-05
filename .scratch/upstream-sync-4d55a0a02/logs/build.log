@@ -1,0 +1,1 @@
+CGO_ENABLED=0 go build -tags nogui -trimpath -ldflags="-s -w -X main.version=v0.1.2663-fork.103a00a2a" -o magpie .

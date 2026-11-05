@@ -1,0 +1,16 @@
+✔ chromium en: web search can go to the search APIs first (3363.670582ms)
+✔ chromium en: with no provider that searches there is nothing to choose (623.282812ms)
+✔ chromium zh: web search can go to the search APIs first (2364.975407ms)
+✔ chromium zh: with no provider that searches there is nothing to choose (613.832261ms)
+✔ webkit en: web search can go to the search APIs first (3704.815464ms)
+✔ webkit en: with no provider that searches there is nothing to choose (941.543985ms)
+✔ webkit zh: web search can go to the search APIs first (2740.687923ms)
+✔ webkit zh: with no provider that searches there is nothing to choose (991.694974ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15692.294081

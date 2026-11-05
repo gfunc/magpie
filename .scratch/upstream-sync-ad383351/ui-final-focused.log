@@ -1,0 +1,1016 @@
+node --test --test-concurrency=6 internal/gui/tests/title-bar-tools.test.cjs internal/gui/tests/last-page.test.cjs internal/gui/tests/routing-rule-models.test.cjs internal/gui/tests/side-toggle.test.cjs internal/gui/tests/usage-focus-steady.test.cjs internal/gui/tests/usage-agents-hide.test.cjs internal/gui/tests/search-api.test.cjs internal/gui/tests/searcher-pick.test.cjs internal/gui/tests/search-first.test.cjs
+✔ chromium: the window opens on the page last left (14076.664773ms)
+✖ webkit: the window opens on the page last left (12893.586544ms)
+✔ chromium en 1100: a rule names several models (10632.18105ms)
+✔ chromium en 390: a rule names several models (15174.032441ms)
+✔ chromium zh 1100: a rule names several models (9694.01806ms)
+✔ chromium zh 390: a rule names several models (15012.974363ms)
+✔ chromium zh-TW 1100: a rule names several models (9835.601066ms)
+✔ chromium zh-TW 390: a rule names several models (14943.48204ms)
+✔ chromium ja 1100: a rule names several models (9666.565367ms)
+✔ chromium ja 390: a rule names several models (14993.009021ms)
+✔ chromium de 1100: a rule names several models (9457.063948ms)
+✔ chromium de 390: a rule names several models (15120.481795ms)
+✖ webkit en 1100: a rule names several models (6313.710624ms)
+✖ webkit en 390: a rule names several models (11106.114318ms)
+✖ webkit zh 1100: a rule names several models (6357.510648ms)
+✖ webkit zh 390: a rule names several models (11199.040464ms)
+✖ webkit zh-TW 1100: a rule names several models (6363.799379ms)
+✖ webkit zh-TW 390: a rule names several models (11191.577075ms)
+✖ webkit ja 1100: a rule names several models (6358.12703ms)
+✖ webkit ja 390: a rule names several models (11118.981632ms)
+✔ webkit de 1100: a rule names several models (10276.095368ms)
+✖ webkit de 390: a rule names several models (11178.95261ms)
+✔ chromium en 980px: search APIs are added and removed in Settings (9707.285575ms)
+✔ chromium en 420px: search APIs are added and removed in Settings (9879.483854ms)
+✔ chromium zh 980px: search APIs are added and removed in Settings (8509.663084ms)
+✔ chromium zh 420px: search APIs are added and removed in Settings (9848.689531ms)
+✔ webkit en 980px: search APIs are added and removed in Settings (8938.209098ms)
+✔ webkit en 420px: search APIs are added and removed in Settings (10449.50608ms)
+✔ webkit zh 980px: search APIs are added and removed in Settings (8859.40289ms)
+✔ webkit zh 420px: search APIs are added and removed in Settings (10347.635341ms)
+✔ chromium en: web search can go to the search APIs first (2519.982733ms)
+✔ chromium en: with no provider that searches there is nothing to choose (915.03061ms)
+✔ chromium zh: web search can go to the search APIs first (1782.051243ms)
+✔ chromium zh: with no provider that searches there is nothing to choose (934.299482ms)
+✔ webkit en: web search can go to the search APIs first (2330.345047ms)
+✔ webkit en: with no provider that searches there is nothing to choose (1372.13301ms)
+✔ webkit zh: web search can go to the search APIs first (2104.780001ms)
+✔ webkit zh: with no provider that searches there is nothing to choose (1199.460768ms)
+✔ chromium en: the picked searcher that didn't search is said first (2929.970202ms)
+✔ chromium zh: the picked searcher that didn't search is said first (2201.26066ms)
+✔ chromium zh-TW: the picked searcher that didn't search is said first (2141.203374ms)
+✔ chromium ja: the picked searcher that didn't search is said first (2204.096893ms)
+✔ chromium de: the picked searcher that didn't search is said first (2169.713569ms)
+✔ chromium en: the provider that searches for other models is picked in Settings (3734.402151ms)
+✔ chromium zh: the provider that searches for other models is picked in Settings (3798.929792ms)
+✔ chromium en: search help preserves ellipsis and hover titles (4858.300668ms)
+✔ chromium zh: search help preserves ellipsis and hover titles (4606.236033ms)
+✔ chromium ja: search help preserves ellipsis and hover titles (4740.648977ms)
+✔ chromium de: search help preserves ellipsis and hover titles (5027.936501ms)
+✔ webkit en: the picked searcher that didn't search is said first (2561.624461ms)
+✔ webkit zh: the picked searcher that didn't search is said first (2786.571149ms)
+✔ webkit zh-TW: the picked searcher that didn't search is said first (2652.591395ms)
+✔ webkit ja: the picked searcher that didn't search is said first (2456.859338ms)
+✔ webkit de: the picked searcher that didn't search is said first (2737.425681ms)
+✔ webkit en: the provider that searches for other models is picked in Settings (4827.624474ms)
+✔ webkit zh: the provider that searches for other models is picked in Settings (4179.545932ms)
+✔ webkit en: search help preserves ellipsis and hover titles (5199.135016ms)
+✔ webkit zh: search help preserves ellipsis and hover titles (4863.637546ms)
+✔ webkit ja: search help preserves ellipsis and hover titles (5401.862845ms)
+✔ webkit de: search help preserves ellipsis and hover titles (5272.48396ms)
+▶ chromium: the sidebar's button
+  ✔ en (1832.693184ms)
+  ✔ zh (1370.3326ms)
+  ✔ zh-TW (1330.553377ms)
+  ✔ ja (1425.205651ms)
+  ✔ de (1239.67173ms)
+  ✖ the two trade places as one motion (614.526269ms)
+  ✔ Linux: at once, no transition (636.479843ms)
+  ✖ a transition that never ends is cut short (30567.890862ms)
+  ✔ less motion: at once (461.976045ms)
+✖ chromium: the sidebar's button (39793.177781ms)
+▶ webkit: the sidebar's button
+  ✔ en (1692.352031ms)
+  ✔ zh (1750.951551ms)
+  ✔ zh-TW (1796.243393ms)
+  ✔ ja (1711.603609ms)
+  ✔ de (1598.021971ms)
+  ✖ the two trade places as one motion (870.784259ms)
+  ✔ Linux: at once, no transition (1014.510086ms)
+  ✖ a transition that never ends is cut short (31080.218476ms)
+  ✔ less motion: at once (889.808716ms)
+✖ webkit: the sidebar's button (42653.326445ms)
+✖ chromium zh: the title bar's tools never lie over where the reader is (9265.880654ms)
+✖ chromium zh-TW: the title bar's tools never lie over where the reader is (9299.798839ms)
+✖ chromium ja: the title bar's tools never lie over where the reader is (9166.012221ms)
+✖ chromium de: the title bar's tools never lie over where the reader is (9635.677947ms)
+✖ chromium en: the title bar's tools never lie over where the reader is (9200.245423ms)
+✖ webkit zh: the title bar's tools never lie over where the reader is (10490.584944ms)
+✖ webkit zh-TW: the title bar's tools never lie over where the reader is (10560.872977ms)
+✖ webkit ja: the title bar's tools never lie over where the reader is (10722.759692ms)
+✖ webkit de: the title bar's tools never lie over where the reader is (10158.253786ms)
+✖ webkit en: the title bar's tools never lie over where the reader is (9994.217715ms)
+▶ chromium: the Usage page's Agents list hides a client, and brings it back
+  ✖ en 1200 (2406.815736ms)
+  ✖ en 560 (2181.587296ms)
+  ✔ en 390 web (6332.581326ms)
+  ✖ zh 1200 (2322.112206ms)
+  ✖ zh 560 (2348.737435ms)
+  ✔ zh 390 web (6360.086171ms)
+  ✖ zh-TW 1200 (2464.449956ms)
+  ✖ zh-TW 560 (2390.020389ms)
+  ✔ zh-TW 390 web (6267.754423ms)
+  ✖ ja 1200 (2397.290551ms)
+  ✖ ja 560 (2282.285964ms)
+  ✔ ja 390 web (6269.69815ms)
+  ✖ de 1200 (2413.236731ms)
+  ✖ de 560 (2317.315648ms)
+  ✔ de 390 web (6484.767463ms)
+✖ chromium: the Usage page's Agents list hides a client, and brings it back (55800.438187ms)
+▶ webkit: the Usage page's Agents list hides a client, and brings it back
+  ✖ en 1200 (3058.904444ms)
+  ✖ en 560 (2773.089803ms)
+  ✔ en 390 web (7759.749269ms)
+  ✖ zh 1200 (2821.806284ms)
+  ✖ zh 560 (2882.322983ms)
+  ✔ zh 390 web (7828.922947ms)
+  ✖ zh-TW 1200 (2979.079156ms)
+  ✖ zh-TW 560 (2883.02977ms)
+  ✔ zh-TW 390 web (7894.100572ms)
+  ✖ ja 1200 (3094.071487ms)
+  ✖ ja 560 (2969.860299ms)
+  ✔ ja 390 web (8005.978049ms)
+  ✖ de 1200 (3066.311552ms)
+  ✖ de 560 (3013.944853ms)
+  ✔ de 390 web (8206.128167ms)
+✖ webkit: the Usage page's Agents list hides a client, and brings it back (70205.765729ms)
+✔ chromium en: focusing the window keeps the Usage charts and the Routing groups (6469.54998ms)
+✔ chromium zh: focusing the window keeps the Usage charts and the Routing groups (6432.312416ms)
+✖ webkit en: focusing the window keeps the Usage charts and the Routing groups (1088.681977ms)
+✖ webkit zh: focusing the window keeps the Usage charts and the Routing groups (1106.905602ms)
+ℹ tests 126
+ℹ suites 0
+ℹ pass 76
+ℹ fail 50
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 216422.873012
+
+✖ failing tests:
+
+test at internal/gui/tests/last-page.test.cjs:58:3
+✖ webkit: the window opens on the page last left (12893.586544ms)
+  AssertionError [ERR_ASSERTION]: webkit 420
+  + actual - expected
+  
+  + [
+  +   '/magpie.test/api/web-page due to access control checks.',
+  +   '/magpie.test/api/davsync due to access control checks.',
+  +   '/magpie.test/api/update?fresh=1&lang=en due to access control checks.',
+  +   '/magpie.test/api/cli due to access control checks.'
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/last-page.test.cjs:99:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ '/magpie.test/api/web-page due to access control checks.', '/magpie.test/api/davsync due to access control checks.', '/magpie.test/api/update?fresh=1&lang=en due to access control checks.', '/magpie.test/api/cli due to access control checks.' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit en 1100: a rule names several models (6313.710624ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit en 390: a rule names several models (11106.114318ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit zh 1100: a rule names several models (6357.510648ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit zh 390: a rule names several models (11199.040464ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - <footer class="foot">…</footer> intercepts pointer events[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - <footer class="foot">…</footer> intercepts pointer events', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit zh-TW 1100: a rule names several models (6363.799379ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit zh-TW 390: a rule names several models (11191.577075ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - <footer class="foot">…</footer> intercepts pointer events[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - <footer class="foot">…</footer> intercepts pointer events', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit ja 1100: a rule names several models (6358.12703ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit ja 390: a rule names several models (11118.981632ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/routing-rule-models.test.cjs:109:7
+✖ webkit de 390: a rule names several models (11178.95261ms)
+  locator.hover: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })[22m
+  [2m    - locator resolved to <span class="rt-c">…</span>[22m
+  [2m  - attempting hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is visible and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying hover action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible and stable[22m
+  [2m    - element is not stable[22m
+  [2m  8 × retrying hover action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible and stable[22m
+  [2m      - element is visible and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying hover action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/routing-rule-models.test.cjs:132:94) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-gedit').locator('.rt-rule').first().locator('.rt-c').filter({ has: locator('.rt-model').filter({ hasText: 'flash' }) })", '    - locator resolved to <span class="rt-c">…</span>', '  - attempting hover action', '    - waiting for element to be visible and stable', '    - element is visible and stable', '    - scrolling into view if needed', '    - done scrolling', '    - element is outside of the viewport', '  - retrying hover action', '    - waiting for element to be visible and stable', '    - element is not stable', '  - retrying hover action', '    - waiting 20ms', '    2 × waiting for element to be visible and stable', '      - element is not stable', '    - retrying hover action', '      - waiting 100ms', '    - waiting for element to be visible and stable', '    - element is not stable', '  8 × retrying hover action', '      - waiting 500ms', '      - waiting for element to be visible and stable', '      - element is visible and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying hover action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/side-toggle.test.cjs:146:13
+✖ the two trade places as one motion (614.526269ms)
+  AssertionError [ERR_ASSERTION]: the layouts trade places
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/side-toggle.test.cjs:162:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/side-toggle.test.cjs:146:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/side-toggle.test.cjs:225:13
+✖ a transition that never ends is cut short (30567.890862ms)
+  page.waitForFunction: Timeout 30000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/side-toggle.test.cjs:244:18)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/side-toggle.test.cjs:225:5) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+test at internal/gui/tests/side-toggle.test.cjs:146:13
+✖ the two trade places as one motion (870.784259ms)
+  AssertionError [ERR_ASSERTION]: the layouts trade places
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/side-toggle.test.cjs:162:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/side-toggle.test.cjs:146:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/side-toggle.test.cjs:225:13
+✖ a transition that never ends is cut short (31080.218476ms)
+  page.waitForFunction: Timeout 30000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/side-toggle.test.cjs:244:18)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/side-toggle.test.cjs:225:5) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ chromium zh: the title bar's tools never lie over where the reader is (9265.880654ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#view-plugins .pm-head') to be visible[22m
+  [2m    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:108:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#view-plugins .pm-head') to be visible", '    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ chromium zh-TW: the title bar's tools never lie over where the reader is (9299.798839ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#view-plugins .pm-head') to be visible[22m
+  [2m    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:108:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#view-plugins .pm-head') to be visible", '    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ chromium ja: the title bar's tools never lie over where the reader is (9166.012221ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#view-plugins .pm-head') to be visible[22m
+  [2m    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:108:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#view-plugins .pm-head') to be visible", '    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ chromium de: the title bar's tools never lie over where the reader is (9635.677947ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#view-plugins .pm-head') to be visible[22m
+  [2m    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:108:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#view-plugins .pm-head') to be visible", '    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ chromium en: the title bar's tools never lie over where the reader is (9200.245423ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#view-plugins .pm-head') to be visible[22m
+  [2m    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:108:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#view-plugins .pm-head') to be visible", '    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit zh: the title bar's tools never lie over where the reader is (10490.584944ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#view-plugins .pm-head') to be visible[22m
+  [2m    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:108:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#view-plugins .pm-head') to be visible", '    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit zh-TW: the title bar's tools never lie over where the reader is (10560.872977ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#view-plugins .pm-head') to be visible[22m
+  [2m    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:108:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#view-plugins .pm-head') to be visible", '    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit ja: the title bar's tools never lie over where the reader is (10722.759692ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#view-plugins .pm-head') to be visible[22m
+  [2m    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:108:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#view-plugins .pm-head') to be visible", '    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit de: the title bar's tools never lie over where the reader is (10158.253786ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#view-plugins .pm-head') to be visible[22m
+  [2m    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:108:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#view-plugins .pm-head') to be visible", '    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit en: the title bar's tools never lie over where the reader is (9994.217715ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#view-plugins .pm-head') to be visible[22m
+  [2m    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:108:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#view-plugins .pm-head') to be visible", '    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>' ]
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ en 1200 (2406.815736ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ en 560 (2181.587296ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 552.703125 → 602.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh 1200 (2322.112206ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh 560 (2348.737435ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 561.6875 → 611.96875
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh-TW 1200 (2464.449956ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh-TW 560 (2390.020389ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 561.6875 → 611.96875
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ ja 1200 (2397.290551ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ ja 560 (2282.285964ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 568.09375 → 618.375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ de 1200 (2413.236731ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ de 560 (2317.315648ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 583.484375 → 633.765625
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ en 1200 (3058.904444ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ en 560 (2773.089803ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 552.703125 → 602.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh 1200 (2821.806284ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh 560 (2882.322983ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 561.6875 → 611.96875
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh-TW 1200 (2979.079156ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh-TW 560 (2883.02977ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 561.6875 → 611.96875
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ ja 1200 (3094.071487ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ ja 560 (2969.860299ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 583.484375 → 633.765625
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ de 1200 (3066.311552ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ de 560 (3013.944853ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 583.484375 → 633.765625
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-focus-steady.test.cjs:117:5
+✖ webkit en: focusing the window keeps the Usage charts and the Routing groups (1088.681977ms)
+  locator.evaluate: TypeError: null is not an object (evaluating 'b.parentElement.firstElementChild')
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-focus-steady.test.cjs:133:48) {
+    log: []
+  }
+
+test at internal/gui/tests/usage-focus-steady.test.cjs:117:5
+✖ webkit zh: focusing the window keeps the Usage charts and the Routing groups (1106.905602ms)
+  locator.evaluate: TypeError: null is not an object (evaluating 'b.parentElement.firstElementChild')
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-focus-steady.test.cjs:133:48) {
+    log: []
+  }
+make: *** [Makefile:57：test-ui] 错误 1

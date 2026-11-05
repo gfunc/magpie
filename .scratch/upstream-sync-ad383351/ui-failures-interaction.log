@@ -1,0 +1,1631 @@
+test at internal/gui/tests/bare-ids.test.cjs:76:7
+✖ webkit 900 en: the gateway lists bare model ids, or not (1925.931093ms)
+  AssertionError [ERR_ASSERTION]: the click scrolled the page
+  
+  256 !== 544
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/bare-ids.test.cjs:127:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 256,
+    expected: 544,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/bare-ids.test.cjs:76:7
+✖ webkit 900 zh: the gateway lists bare model ids, or not (1901.764046ms)
+  AssertionError [ERR_ASSERTION]: the click scrolled the page
+  
+  212 !== 450
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/bare-ids.test.cjs:127:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 212,
+    expected: 450,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/bare-ids.test.cjs:76:7
+✖ webkit 900 zh-TW: the gateway lists bare model ids, or not (1900.999077ms)
+  AssertionError [ERR_ASSERTION]: the click scrolled the page
+  
+  212 !== 467
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/bare-ids.test.cjs:127:16)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 212,
+    expected: 467,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/bare-ids.test.cjs:76:7
+✖ webkit 900 ja: the gateway lists bare model ids, or not (1953.917887ms)
+  AssertionError [ERR_ASSERTION]: the click scrolled the page
+  
+  248 !== 550
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/bare-ids.test.cjs:127:16)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 248,
+    expected: 550,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/bare-ids.test.cjs:76:7
+✖ webkit 900 de: the gateway lists bare model ids, or not (1967.911593ms)
+  AssertionError [ERR_ASSERTION]: the click scrolled the page
+  
+  300 !== 588
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/bare-ids.test.cjs:127:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 300,
+    expected: 588,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/click-scroll.test.cjs:286:13
+✖ a wheel the page hears of after its scroll is still the reader's (717.753772ms)
+  AssertionError [ERR_ASSERTION]: the late-heard wheel must scroll the view
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/click-scroll.test.cjs:317:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/click-scroll.test.cjs:286:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/codex-predictions.test.cjs:85:7
+✖ webkit en 1100: Codex's composer predictions go where Codex's settings say (2523.409771ms)
+  AssertionError [ERR_ASSERTION]: picking a model scrolled the page
+  
+  309 !== 401
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/codex-predictions.test.cjs:153:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 309,
+    expected: 401,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/codex-predictions.test.cjs:85:7
+✖ webkit zh 1100: Codex's composer predictions go where Codex's settings say (2518.251689ms)
+  AssertionError [ERR_ASSERTION]: picking a model scrolled the page
+  
+  309 !== 400
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/codex-predictions.test.cjs:153:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 309,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/codex-predictions.test.cjs:85:7
+✖ webkit zh-TW 1100: Codex's composer predictions go where Codex's settings say (2438.900434ms)
+  AssertionError [ERR_ASSERTION]: picking a model scrolled the page
+  
+  119 !== 418
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/codex-predictions.test.cjs:153:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 119,
+    expected: 418,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/codex-predictions.test.cjs:85:7
+✖ webkit ja 1100: Codex's composer predictions go where Codex's settings say (2500.861461ms)
+  AssertionError [ERR_ASSERTION]: picking a model scrolled the page
+  
+  326 !== 402
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/codex-predictions.test.cjs:153:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 326,
+    expected: 402,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/codex-predictions.test.cjs:85:7
+✖ webkit de 1100: Codex's composer predictions go where Codex's settings say (2482.474862ms)
+  AssertionError [ERR_ASSERTION]: picking a model scrolled the page
+  
+  342 !== 404
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/codex-predictions.test.cjs:153:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 342,
+    expected: 404,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/codex-predictions.test.cjs:85:7
+✖ webkit en 420: Codex's composer predictions go where Codex's settings say (2804.548647ms)
+  AssertionError [ERR_ASSERTION]: picking a model scrolled the page
+  
+  627 !== 700
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/codex-predictions.test.cjs:153:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 627,
+    expected: 700,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/codex-predictions.test.cjs:85:7
+✖ webkit zh 420: Codex's composer predictions go where Codex's settings say (2940.998002ms)
+  AssertionError [ERR_ASSERTION]: picking a model scrolled the page
+  
+  783 !== 689
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/codex-predictions.test.cjs:153:16)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 783,
+    expected: 689,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/codex-predictions.test.cjs:85:7
+✖ webkit zh-TW 420: Codex's composer predictions go where Codex's settings say (2937.913804ms)
+  AssertionError [ERR_ASSERTION]: picking a model scrolled the page
+  
+  783 !== 690
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/codex-predictions.test.cjs:153:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 783,
+    expected: 690,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/codex-predictions.test.cjs:85:7
+✖ webkit ja 420: Codex's composer predictions go where Codex's settings say (2971.377027ms)
+  AssertionError [ERR_ASSERTION]: picking a model scrolled the page
+  
+  850 !== 778
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/codex-predictions.test.cjs:153:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 850,
+    expected: 778,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/codex-predictions.test.cjs:85:7
+✖ webkit de 420: Codex's composer predictions go where Codex's settings say (2985.468941ms)
+  AssertionError [ERR_ASSERTION]: picking a model scrolled the page
+  
+  882 !== 787
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/codex-predictions.test.cjs:153:16)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 882,
+    expected: 787,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/codex-titles.test.cjs:78:5
+✖ webkit en: Codex's title requests go where Codex's settings say (2396.131612ms)
+  AssertionError [ERR_ASSERTION]: picking Off scrolled the page
+  
+  207 !== 445
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/codex-titles.test.cjs:122:14)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 207,
+    expected: 445,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/codex-titles.test.cjs:78:5
+✖ webkit zh: Codex's title requests go where Codex's settings say (2345.721519ms)
+  AssertionError [ERR_ASSERTION]: picking Off scrolled the page
+  
+  207 !== 445
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/codex-titles.test.cjs:122:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 207,
+    expected: 445,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/fonts.test.cjs:191:3
+✖ webkit: a search narrowing the menu under a still pointer keeps the typing in its field (1740.138361ms)
+  AssertionError [ERR_ASSERTION]: a moved pointer focuses the item it's on
+  
+  false !== true
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/fonts.test.cjs:215:14)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/last-page.test.cjs:58:3
+✖ webkit: the window opens on the page last left (4549.549079ms)
+  AssertionError [ERR_ASSERTION]: webkit 1100
+  + actual - expected
+  
+  + [
+  +   '/magpie.test/api/web-page due to access control checks.',
+  +   '/magpie.test/api/davsync due to access control checks.',
+  +   '/magpie.test/api/update?fresh=1&lang=en due to access control checks.',
+  +   '/magpie.test/api/cli due to access control checks.'
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/last-page.test.cjs:99:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ '/magpie.test/api/web-page due to access control checks.', '/magpie.test/api/davsync due to access control checks.', '/magpie.test/api/update?fresh=1&lang=en due to access control checks.', '/magpie.test/api/cli due to access control checks.' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/menu-input-scroll.test.cjs:64:5
+✖ chromium en: a menu opened from a long text box's rule stays open (1148.280514ms)
+  AssertionError [ERR_ASSERTION]: .rt-rmore's menu stays open
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/menu-input-scroll.test.cjs:84:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/menu-input-scroll.test.cjs:64:5
+✖ chromium zh: a menu opened from a long text box's rule stays open (1090.660414ms)
+  AssertionError [ERR_ASSERTION]: .rt-rmore's menu stays open
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/menu-input-scroll.test.cjs:84:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/menu-input-scroll.test.cjs:64:5
+✖ webkit en: a menu opened from a long text box's rule stays open (1624.771273ms)
+  AssertionError [ERR_ASSERTION]: .rt-rmore's menu stays open
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/menu-input-scroll.test.cjs:84:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/menu-input-scroll.test.cjs:64:5
+✖ webkit zh: a menu opened from a long text box's rule stays open (1582.727847ms)
+  AssertionError [ERR_ASSERTION]: .rt-rmore's menu stays open
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/menu-input-scroll.test.cjs:84:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/phone-rows.test.cjs:129:5
+✖ webkit en: a row at 360px keeps its text and its controls (8797.773004ms)
+  locator.click: Timeout 6000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">By request</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    11 × waiting for element to be visible, enabled and stable[22m
+  [2m       - element is not visible[22m
+  [2m     - retrying click action[22m
+  [2m       - waiting 500ms[22m
+  
+      at Object.open (/home/georgefu/Projects/magpie/internal/gui/tests/phone-rows.test.cjs:122:112)
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/phone-rows.test.cjs:140:31) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">By request</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    11 × waiting for element to be visible, enabled and stable', '       - element is not visible', '     - retrying click action', '       - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/phone-rows.test.cjs:129:5
+✖ webkit zh: a row at 360px keeps its text and its controls (8850.388203ms)
+  locator.click: Timeout 6000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">按请求</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    11 × waiting for element to be visible, enabled and stable[22m
+  [2m       - element is not visible[22m
+  [2m     - retrying click action[22m
+  [2m       - waiting 500ms[22m
+  
+      at Object.open (/home/georgefu/Projects/magpie/internal/gui/tests/phone-rows.test.cjs:122:112)
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/phone-rows.test.cjs:140:31) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">按请求</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    11 × waiting for element to be visible, enabled and stable', '       - element is not visible', '     - retrying click action', '       - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/phone-rows.test.cjs:129:5
+✖ webkit zh-TW: a row at 360px keeps its text and its controls (8830.989047ms)
+  locator.click: Timeout 6000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">按請求</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    11 × waiting for element to be visible, enabled and stable[22m
+  [2m       - element is not visible[22m
+  [2m     - retrying click action[22m
+  [2m       - waiting 500ms[22m
+  
+      at Object.open (/home/georgefu/Projects/magpie/internal/gui/tests/phone-rows.test.cjs:122:112)
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/phone-rows.test.cjs:140:31) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">按請求</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    11 × waiting for element to be visible, enabled and stable', '       - element is not visible', '     - retrying click action', '       - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/phone-rows.test.cjs:129:5
+✖ webkit ja: a row at 360px keeps its text and its controls (8822.969283ms)
+  locator.click: Timeout 6000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">リクエスト別</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    11 × waiting for element to be visible, enabled and stable[22m
+  [2m       - element is not visible[22m
+  [2m     - retrying click action[22m
+  [2m       - waiting 500ms[22m
+  
+      at Object.open (/home/georgefu/Projects/magpie/internal/gui/tests/phone-rows.test.cjs:122:112)
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/phone-rows.test.cjs:140:31) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">リクエスト別</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    11 × waiting for element to be visible, enabled and stable', '       - element is not visible', '     - retrying click action', '       - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/phone-rows.test.cjs:129:5
+✖ webkit de: a row at 360px keeps its text and its controls (8832.878994ms)
+  locator.click: Timeout 6000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('.rt-day').nth(1)[22m
+  [2m    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">Nach Anfrage</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not visible[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    11 × waiting for element to be visible, enabled and stable[22m
+  [2m       - element is not visible[22m
+  [2m     - retrying click action[22m
+  [2m       - waiting 500ms[22m
+  
+      at Object.open (/home/georgefu/Projects/magpie/internal/gui/tests/phone-rows.test.cjs:122:112)
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/phone-rows.test.cjs:140:31) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('.rt-day').nth(1)", '    - locator resolved to <button class="rt-day on" aria-pressed="true" data-label="By request">Nach Anfrage</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is not visible', '    - retrying click action', '      - waiting 100ms', '    11 × waiting for element to be visible, enabled and stable', '       - element is not visible', '     - retrying click action', '       - waiting 500ms' ]
+  }
+
+
+test at internal/gui/tests/phone-web.test.cjs:87:3
+✖ chromium: magpie web on a phone (3898.27406ms)
+  AssertionError [ERR_ASSERTION]: a tap's click is no flick
+  
+  591 !== 711
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/phone-web.test.cjs:145:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 591,
+    expected: 711,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/phone-web.test.cjs:87:3
+✖ webkit: magpie web on a phone (4909.186937ms)
+  AssertionError [ERR_ASSERTION]: a tap's click is no flick
+  
+  591 !== 711
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/phone-web.test.cjs:145:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 591,
+    expected: 711,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/segs-press-redraw.test.cjs:177:7
+✖ webkit en 900px: every Settings option pressed through a redraw clicks its new self once (5014.387044ms)
+  AssertionError [ERR_ASSERTION]: usage: 0|60|180|600@turnDoneSegs:0 option 1
+  + actual - expected
+  
+  + []
+  - [
+  -   {
+  -     i: 1,
+  -     live: true,
+  -     place: '0|60|180|600@turnDoneSegs:0'
+  -   }
+  - ]
+  
+      at sweep (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:223:20)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:241:15)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ { place: '0|60|180|600@turnDoneSegs:0', i: 1, live: true } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/segs-press-redraw.test.cjs:86:7
+✖ webkit en 440px: an option pressed while Settings is redrawn is picked once, and nothing when dragged off (3180.241591ms)
+  AssertionError [ERR_ASSERTION]: posted []
+  + actual - expected
+  
+  + []
+  - [
+  -   true
+  - ]
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:108:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ true ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/segs-press-redraw.test.cjs:177:7
+✖ webkit en 440px: every Settings option pressed through a redraw clicks its new self once (2198.171887ms)
+  AssertionError [ERR_ASSERTION]: general: off|on@lightweightSegs:0 option 1
+  + actual - expected
+  
+  + []
+  - [
+  -   {
+  -     i: 1,
+  -     live: true,
+  -     place: 'off|on@lightweightSegs:0'
+  -   }
+  - ]
+  
+      at sweep (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:223:20)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:248:18)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ { place: 'off|on@lightweightSegs:0', i: 1, live: true } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/segs-press-redraw.test.cjs:177:7
+✖ webkit zh 900px: every Settings option pressed through a redraw clicks its new self once (9140.215606ms)
+  AssertionError [ERR_ASSERTION]: network: |local|lan@webPageList:0 option 1
+  + actual - expected
+  
+  + []
+  - [
+  -   {
+  -     i: 1,
+  -     live: true,
+  -     place: '|local|lan@webPageList:0'
+  -   }
+  - ]
+  
+      at sweep (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:223:20)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:248:18)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ { place: '|local|lan@webPageList:0', i: 1, live: true } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/segs-press-redraw.test.cjs:177:7
+✖ webkit zh 440px: every Settings option pressed through a redraw clicks its new self once (3952.280449ms)
+  AssertionError [ERR_ASSERTION]: usage: 1|3|5|10|30@trayEverySegs:0 option 2
+  + actual - expected
+  
+  + []
+  - [
+  -   {
+  -     i: 2,
+  -     live: true,
+  -     place: '1|3|5|10|30@trayEverySegs:0'
+  -   }
+  - ]
+  
+      at sweep (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:223:20)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:241:15)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ { place: '1|3|5|10|30@trayEverySegs:0', i: 2, live: true } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/segs-press-redraw.test.cjs:177:7
+✖ webkit ja 900px: every Settings option pressed through a redraw clicks its new self once (3130.235517ms)
+  AssertionError [ERR_ASSERTION]: usage: 1|3|5|10|30@trayEverySegs:0 option 2
+  + actual - expected
+  
+  + []
+  - [
+  -   {
+  -     i: 2,
+  -     live: true,
+  -     place: '1|3|5|10|30@trayEverySegs:0'
+  -   }
+  - ]
+  
+      at sweep (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:223:20)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:241:15)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ { place: '1|3|5|10|30@trayEverySegs:0', i: 2, live: true } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/segs-press-redraw.test.cjs:177:7
+✖ webkit ja 440px: every Settings option pressed through a redraw clicks its new self once (2231.795052ms)
+  AssertionError [ERR_ASSERTION]: general: off|on@lightweightSegs:0 option 1
+  + actual - expected
+  
+  + []
+  - [
+  -   {
+  -     i: 1,
+  -     live: true,
+  -     place: 'off|on@lightweightSegs:0'
+  -   }
+  - ]
+  
+      at sweep (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:223:20)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:248:18)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ { place: 'off|on@lightweightSegs:0', i: 1, live: true } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/segs-press-redraw.test.cjs:177:7
+✖ webkit de 900px: every Settings option pressed through a redraw clicks its new self once (3225.390571ms)
+  AssertionError [ERR_ASSERTION]: usage: 1|3|5|10|30@trayEverySegs:0 option 2
+  + actual - expected
+  
+  + []
+  - [
+  -   {
+  -     i: 2,
+  -     live: true,
+  -     place: '1|3|5|10|30@trayEverySegs:0'
+  -   }
+  - ]
+  
+      at sweep (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:223:20)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:241:15)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ { place: '1|3|5|10|30@trayEverySegs:0', i: 2, live: true } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/segs-press-redraw.test.cjs:86:7
+✖ webkit de 440px: an option pressed while Settings is redrawn is picked once, and nothing when dragged off (3513.40422ms)
+  AssertionError [ERR_ASSERTION]: posted []
+  + actual - expected
+  
+  + []
+  - [
+  -   true
+  - ]
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:108:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ true ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/segs-press-redraw.test.cjs:177:7
+✖ webkit de 440px: every Settings option pressed through a redraw clicks its new self once (1919.458158ms)
+  AssertionError [ERR_ASSERTION]: general: off|on@fullContextSegs:0 option 1
+  + actual - expected
+  
+  + []
+  - [
+  -   {
+  -     i: 1,
+  -     live: true,
+  -     place: 'off|on@fullContextSegs:0'
+  -   }
+  - ]
+  
+      at sweep (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:223:20)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/segs-press-redraw.test.cjs:248:18)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [],
+    expected: [ { place: 'off|on@fullContextSegs:0', i: 1, live: true } ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/side-toggle.test.cjs:146:13
+✖ the two trade places as one motion (408.329308ms)
+  AssertionError [ERR_ASSERTION]: the layouts trade places
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/side-toggle.test.cjs:162:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/side-toggle.test.cjs:146:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/side-toggle.test.cjs:225:13
+✖ a transition that never ends is cut short (30377.350566ms)
+  page.waitForFunction: Timeout 30000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/side-toggle.test.cjs:244:18)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/side-toggle.test.cjs:225:5) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+test at internal/gui/tests/side-toggle.test.cjs:146:13
+✖ the two trade places as one motion (754.199885ms)
+  AssertionError [ERR_ASSERTION]: the layouts trade places
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/side-toggle.test.cjs:162:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/side-toggle.test.cjs:146:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/side-toggle.test.cjs:225:13
+✖ a transition that never ends is cut short (30737.033ms)
+  page.waitForFunction: Timeout 30000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/side-toggle.test.cjs:244:18)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/side-toggle.test.cjs:225:5) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ chromium de: the title bar's tools never lie over where the reader is (8482.053989ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#view-plugins .pm-head') to be visible[22m
+  [2m    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:108:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#view-plugins .pm-head') to be visible", '    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit zh: the title bar's tools never lie over where the reader is (6372.768439ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at prefetchProviders (http://magpie.test/app.js:5890:41)\n' +
+  +     '    at load (http://magpie.test/app.js:4168:94)',
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/update?lang=zh due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/icons/claudecode-color.svg due to access control checks.\n' +
+  +     '    at greyCopy (http://magpie.test/plugins/library/client.js:195:26)\n' +
+  +     '    at greyIcon (http://magpie.test/plugins/library/client.js:157:13)\n' +
+  +     '    at agentIcon (http://magpie.test/plugins/library/client.js:131:15)\n' +
+  +     '    at agentChips (http://magpie.test/plugins/library/client.js:253:25)\n' +
+  +     '    at skillRow (http://magpie.test/plugins/library/client.js:4692:64)\n' +
+  +     '    at make (http://magpie.test/plugins/library/client.js:3164:101)\n' +
+  +     '    at node (http://magpie.test/plugins/library/client.js:3718:26)\n' +
+  +     '    at show (http://magpie.test/plugins/library/client.js:3745:53)\n' +
+  +     '    at unknown (http://magpie.test/plugins/library/client.js:3770:16)\n' +
+  +     '    at drawSkills (http://magpie.test/plugins/library/client.js:3146:14)\n' +
+  +     '    at renderSkills (http://magpie.test/plugins/library/client.js:2779:17)\n' +
+  +     '    at render (http://magpie.test/plugins/library/client.js:812:22)\n' +
+  +     '    at load (http://magpie.test/plugins/library/client.js:462:17)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/library due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at load (http://magpie.test/plugins/library/client.js:468:26)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/library/market/skills?q= due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at fetchMarket (http://magpie.test/plugins/library/client.js:5014:26)\n' +
+  +     '    at unknown (http://magpie.test/plugins/library/client.js:5088:65)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at prefetchProviders (http://magpie.test/app.js:5890:41)\n' +
+  +     '    at load (http://magpie.test/app.js:4168:94)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/update?lang=zh due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)',
+  +   '560px library subagents: Fetch API cannot load http://magpie.test/api/library due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at load (http://magpie.test/plugins/library/client.js:468:26)',
+  +   '560px library subagents: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px library subagents: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px library subagents: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at prefetchProviders (http://magpie.test/app.js:5890:41)\n' +
+  +     '    at load (http://magpie.test/app.js:4168:94)',
+  +   '560px library subagents: Fetch API cannot load http://magpie.test/api/update?lang=zh due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px library subagents: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)',
+  +   '560px plugins builtin: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px plugins builtin: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px plugins builtin: Fetch API cannot load http://magpie.test/api/update?lang=zh due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px plugins builtin: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)',
+  +   '560px plugins discover: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px plugins discover: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px plugins discover: Fetch API cannot load http://magpie.test/api/update?lang=zh due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px plugins discover: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)'
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:148:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ '560px library mcp: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px library mcp: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px library mcp: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at prefetchProviders (http://magpie.test/app.js:5890:41)\n    at load (http://magpie.test/app.js:4168:94)', '560px library mcp: Fetch API cannot load http://magpie.test/api/update?lang=zh due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px library mcp: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)', '560px library skills: Fetch API cannot load http://magpie.test/icons/claudecode-color.svg due to access control checks.\n    at greyCopy (http://magpie.test/plugins/library/client.js:195:26)\n    at greyIcon (http://magpie.test/plugins/library/client.js:157:13)\n    at agentIcon (http://magpie.test/plugins/library/client.js:131:15)\n    at agentChips (http://magpie.test/plugins/library/client.js:253:25)\n    at skillRow (http://magpie.test/plugins/library/client.js:4692:64)\n    at make (http://magpie.test/plugins/library/client.js:3164:101)\n    at node (http://magpie.test/plugins/library/client.js:3718:26)\n    at show (http://magpie.test/plugins/library/client.js:3745:53)\n    at unknown (http://magpie.test/plugins/library/client.js:3770:16)\n    at drawSkills (http://magpie.test/plugins/library/client.js:3146:14)\n    at renderSkills (http://magpie.test/plugins/library/client.js:2779:17)\n    at render (http://magpie.test/plugins/library/client.js:812:22)\n    at load (http://magpie.test/plugins/library/client.js:462:17)', '560px library skills: Fetch API cannot load http://magpie.test/api/library due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at load (http://magpie.test/plugins/library/client.js:468:26)', '560px library skills: Fetch API cannot load http://magpie.test/api/library/market/skills?q= due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at fetchMarket (http://magpie.test/plugins/library/client.js:5014:26)\n    at unknown (http://magpie.test/plugins/library/client.js:5088:65)', '560px library skills: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px library skills: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px library skills: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at prefetchProviders (http://magpie.test/app.js:5890:41)\n    at load (http://magpie.test/app.js:4168:94)', '560px library skills: Fetch API cannot load http://magpie.test/api/update?lang=zh due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px library skills: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)', '560px library subagents: Fetch API cannot load http://magpie.test/api/library due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at load (http://magpie.test/plugins/library/client.js:468:26)', '560px library subagents: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px library subagents: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px library subagents: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at prefetchProviders (http://magpie.test/app.js:5890:41)\n    at load (http://magpie.test/app.js:4168:94)', '560px library subagents: Fetch API cannot load http://magpie.test/api/update?lang=zh due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px library subagents: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)', '560px plugins builtin: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px plugins builtin: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px plugins builtin: Fetch API cannot load http://magpie.test/api/update?lang=zh due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px plugins builtin: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)', '560px plugins discover: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px plugins discover: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px plugins discover: Fetch API cannot load http://magpie.test/api/update?lang=zh due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px plugins discover: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit zh-TW: the title bar's tools never lie over where the reader is (6313.790447ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at prefetchProviders (http://magpie.test/app.js:5890:41)\n' +
+  +     '    at load (http://magpie.test/app.js:4168:94)',
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/update?lang=zh-TW due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh-TW due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/icons/claudecode-color.svg due to access control checks.\n' +
+  +     '    at greyCopy (http://magpie.test/plugins/library/client.js:195:26)\n' +
+  +     '    at greyIcon (http://magpie.test/plugins/library/client.js:157:13)\n' +
+  +     '    at agentIcon (http://magpie.test/plugins/library/client.js:131:15)\n' +
+  +     '    at agentChips (http://magpie.test/plugins/library/client.js:253:25)\n' +
+  +     '    at skillRow (http://magpie.test/plugins/library/client.js:4692:64)\n' +
+  +     '    at make (http://magpie.test/plugins/library/client.js:3164:101)\n' +
+  +     '    at node (http://magpie.test/plugins/library/client.js:3718:26)\n' +
+  +     '    at show (http://magpie.test/plugins/library/client.js:3745:53)\n' +
+  +     '    at unknown (http://magpie.test/plugins/library/client.js:3770:16)\n' +
+  +     '    at drawSkills (http://magpie.test/plugins/library/client.js:3146:14)\n' +
+  +     '    at renderSkills (http://magpie.test/plugins/library/client.js:2779:17)\n' +
+  +     '    at render (http://magpie.test/plugins/library/client.js:812:22)\n' +
+  +     '    at load (http://magpie.test/plugins/library/client.js:462:17)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/library due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at load (http://magpie.test/plugins/library/client.js:468:26)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/library/market/skills?q= due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at fetchMarket (http://magpie.test/plugins/library/client.js:5014:26)\n' +
+  +     '    at unknown (http://magpie.test/plugins/library/client.js:5088:65)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at prefetchProviders (http://magpie.test/app.js:5890:41)\n' +
+  +     '    at load (http://magpie.test/app.js:4168:94)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/update?lang=zh-TW due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh-TW due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)',
+  +   '560px plugins builtin: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px plugins builtin: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px plugins builtin: Fetch API cannot load http://magpie.test/api/update?lang=zh-TW due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px plugins builtin: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh-TW due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)',
+  +   '560px plugins discover: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px plugins discover: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px plugins discover: Fetch API cannot load http://magpie.test/api/update?lang=zh-TW due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px plugins discover: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh-TW due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)'
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:148:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ '560px library mcp: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px library mcp: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px library mcp: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at prefetchProviders (http://magpie.test/app.js:5890:41)\n    at load (http://magpie.test/app.js:4168:94)', '560px library mcp: Fetch API cannot load http://magpie.test/api/update?lang=zh-TW due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px library mcp: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh-TW due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)', '560px library skills: Fetch API cannot load http://magpie.test/icons/claudecode-color.svg due to access control checks.\n    at greyCopy (http://magpie.test/plugins/library/client.js:195:26)\n    at greyIcon (http://magpie.test/plugins/library/client.js:157:13)\n    at agentIcon (http://magpie.test/plugins/library/client.js:131:15)\n    at agentChips (http://magpie.test/plugins/library/client.js:253:25)\n    at skillRow (http://magpie.test/plugins/library/client.js:4692:64)\n    at make (http://magpie.test/plugins/library/client.js:3164:101)\n    at node (http://magpie.test/plugins/library/client.js:3718:26)\n    at show (http://magpie.test/plugins/library/client.js:3745:53)\n    at unknown (http://magpie.test/plugins/library/client.js:3770:16)\n    at drawSkills (http://magpie.test/plugins/library/client.js:3146:14)\n    at renderSkills (http://magpie.test/plugins/library/client.js:2779:17)\n    at render (http://magpie.test/plugins/library/client.js:812:22)\n    at load (http://magpie.test/plugins/library/client.js:462:17)', '560px library skills: Fetch API cannot load http://magpie.test/api/library due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at load (http://magpie.test/plugins/library/client.js:468:26)', '560px library skills: Fetch API cannot load http://magpie.test/api/library/market/skills?q= due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at fetchMarket (http://magpie.test/plugins/library/client.js:5014:26)\n    at unknown (http://magpie.test/plugins/library/client.js:5088:65)', '560px library skills: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px library skills: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px library skills: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at prefetchProviders (http://magpie.test/app.js:5890:41)\n    at load (http://magpie.test/app.js:4168:94)', '560px library skills: Fetch API cannot load http://magpie.test/api/update?lang=zh-TW due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px library skills: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh-TW due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)', '560px plugins builtin: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px plugins builtin: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px plugins builtin: Fetch API cannot load http://magpie.test/api/update?lang=zh-TW due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px plugins builtin: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh-TW due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)', '560px plugins discover: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px plugins discover: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px plugins discover: Fetch API cannot load http://magpie.test/api/update?lang=zh-TW due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px plugins discover: Fetch API cannot load http://magpie.test/api/whatsnew?lang=zh-TW due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit ja: the title bar's tools never lie over where the reader is (6458.961109ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at prefetchProviders (http://magpie.test/app.js:5890:41)\n' +
+  +     '    at load (http://magpie.test/app.js:4168:94)',
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/update?lang=ja due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/whatsnew?lang=ja due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at prefetchProviders (http://magpie.test/app.js:5890:41)\n' +
+  +     '    at load (http://magpie.test/app.js:4168:94)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/update?lang=ja due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/whatsnew?lang=ja due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)',
+  +   '560px library rtk: Fetch API cannot load http://magpie.test/api/library/rtk due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadRTK (http://magpie.test/plugins/library/client.js:846:22)\n' +
+  +     '    at renderRTK (http://magpie.test/plugins/library/client.js:857:14)\n' +
+  +     '    at render (http://magpie.test/plugins/library/client.js:809:38)\n' +
+  +     '    at load (http://magpie.test/plugins/library/client.js:462:17)',
+  +   '560px library rtk: Fetch API cannot load http://magpie.test/api/library due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at load (http://magpie.test/plugins/library/client.js:468:26)',
+  +   '560px library rtk: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px library rtk: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px library rtk: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at prefetchProviders (http://magpie.test/app.js:5890:41)\n' +
+  +     '    at load (http://magpie.test/app.js:4168:94)',
+  +   '560px library rtk: Fetch API cannot load http://magpie.test/api/update?lang=ja due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px library rtk: Fetch API cannot load http://magpie.test/api/whatsnew?lang=ja due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)',
+  +   '560px plugins builtin: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px plugins builtin: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px plugins builtin: Fetch API cannot load http://magpie.test/api/update?lang=ja due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px plugins builtin: Fetch API cannot load http://magpie.test/api/whatsnew?lang=ja due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)',
+  +   '560px plugins discover: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px plugins discover: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px plugins discover: Fetch API cannot load http://magpie.test/api/update?lang=ja due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px plugins discover: Fetch API cannot load http://magpie.test/api/whatsnew?lang=ja due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)'
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:148:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ '560px library mcp: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px library mcp: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px library mcp: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at prefetchProviders (http://magpie.test/app.js:5890:41)\n    at load (http://magpie.test/app.js:4168:94)', '560px library mcp: Fetch API cannot load http://magpie.test/api/update?lang=ja due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px library mcp: Fetch API cannot load http://magpie.test/api/whatsnew?lang=ja due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)', '560px library skills: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px library skills: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px library skills: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at prefetchProviders (http://magpie.test/app.js:5890:41)\n    at load (http://magpie.test/app.js:4168:94)', '560px library skills: Fetch API cannot load http://magpie.test/api/update?lang=ja due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px library skills: Fetch API cannot load http://magpie.test/api/whatsnew?lang=ja due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)', '560px library rtk: Fetch API cannot load http://magpie.test/api/library/rtk due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadRTK (http://magpie.test/plugins/library/client.js:846:22)\n    at renderRTK (http://magpie.test/plugins/library/client.js:857:14)\n    at render (http://magpie.test/plugins/library/client.js:809:38)\n    at load (http://magpie.test/plugins/library/client.js:462:17)', '560px library rtk: Fetch API cannot load http://magpie.test/api/library due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at load (http://magpie.test/plugins/library/client.js:468:26)', '560px library rtk: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px library rtk: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px library rtk: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at prefetchProviders (http://magpie.test/app.js:5890:41)\n    at load (http://magpie.test/app.js:4168:94)', '560px library rtk: Fetch API cannot load http://magpie.test/api/update?lang=ja due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px library rtk: Fetch API cannot load http://magpie.test/api/whatsnew?lang=ja due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)', '560px plugins builtin: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px plugins builtin: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px plugins builtin: Fetch API cannot load http://magpie.test/api/update?lang=ja due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px plugins builtin: Fetch API cannot load http://magpie.test/api/whatsnew?lang=ja due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)', '560px plugins discover: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px plugins discover: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px plugins discover: Fetch API cannot load http://magpie.test/api/update?lang=ja due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px plugins discover: Fetch API cannot load http://magpie.test/api/whatsnew?lang=ja due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit de: the title bar's tools never lie over where the reader is (9760.830423ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#view-plugins .pm-head') to be visible[22m
+  [2m    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:108:38) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#view-plugins .pm-head') to be visible", '    14 × locator resolved to hidden <div class="lib-head pm-head">…</div>' ]
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit en: the title bar's tools never lie over where the reader is (6395.834109ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at prefetchProviders (http://magpie.test/app.js:5890:41)\n' +
+  +     '    at load (http://magpie.test/app.js:4168:94)',
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/update?lang=en due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px library mcp: Fetch API cannot load http://magpie.test/api/whatsnew?lang=en due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at prefetchProviders (http://magpie.test/app.js:5890:41)\n' +
+  +     '    at load (http://magpie.test/app.js:4168:94)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/update?lang=en due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px library skills: Fetch API cannot load http://magpie.test/api/whatsnew?lang=en due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)',
+  +   '560px library hooks: Fetch API cannot load http://magpie.test/api/library due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at load (http://magpie.test/plugins/library/client.js:468:26)',
+  +   '560px library hooks: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px library hooks: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px library hooks: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at prefetchProviders (http://magpie.test/app.js:5890:41)\n' +
+  +     '    at load (http://magpie.test/app.js:4168:94)',
+  +   '560px library hooks: Fetch API cannot load http://magpie.test/api/update?lang=en due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px library hooks: Fetch API cannot load http://magpie.test/api/whatsnew?lang=en due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)',
+  +   '560px library rtk: Fetch API cannot load http://magpie.test/api/library/rtk due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadRTK (http://magpie.test/plugins/library/client.js:846:22)\n' +
+  +     '    at renderRTK (http://magpie.test/plugins/library/client.js:857:14)\n' +
+  +     '    at render (http://magpie.test/plugins/library/client.js:809:38)\n' +
+  +     '    at load (http://magpie.test/plugins/library/client.js:462:17)',
+  +   '560px library rtk: Fetch API cannot load http://magpie.test/api/library due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at load (http://magpie.test/plugins/library/client.js:468:26)',
+  +   '560px library rtk: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px library rtk: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px library rtk: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at prefetchProviders (http://magpie.test/app.js:5890:41)\n' +
+  +     '    at load (http://magpie.test/app.js:4168:94)',
+  +   '560px library rtk: Fetch API cannot load http://magpie.test/api/update?lang=en due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px library rtk: Fetch API cannot load http://magpie.test/api/whatsnew?lang=en due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)',
+  +   '560px plugins builtin: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px plugins builtin: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px plugins builtin: Fetch API cannot load http://magpie.test/api/update?lang=en due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px plugins builtin: Fetch API cannot load http://magpie.test/api/whatsnew?lang=en due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)',
+  +   '560px plugins discover: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at unknown (http://magpie.test/app.js:2374:24)\n' +
+  +     '    at loadCLIs (http://magpie.test/app.js:2384:5)\n' +
+  +     '    at load (http://magpie.test/app.js:4165:13)',
+  +   '560px plugins discover: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at loadInstalls (http://magpie.test/app.js:2528:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4166:17)',
+  +   '560px plugins discover: Fetch API cannot load http://magpie.test/api/update?lang=en due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4185:20)',
+  +   '560px plugins discover: Fetch API cannot load http://magpie.test/api/whatsnew?lang=en due to access control checks.\n' +
+  +     '    at api (http://magpie.test/app.js:119:26)\n' +
+  +     '    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n' +
+  +     '    at load (http://magpie.test/app.js:4187:15)'
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:148:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ '560px library mcp: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px library mcp: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px library mcp: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at prefetchProviders (http://magpie.test/app.js:5890:41)\n    at load (http://magpie.test/app.js:4168:94)', '560px library mcp: Fetch API cannot load http://magpie.test/api/update?lang=en due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px library mcp: Fetch API cannot load http://magpie.test/api/whatsnew?lang=en due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)', '560px library skills: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px library skills: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px library skills: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at prefetchProviders (http://magpie.test/app.js:5890:41)\n    at load (http://magpie.test/app.js:4168:94)', '560px library skills: Fetch API cannot load http://magpie.test/api/update?lang=en due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px library skills: Fetch API cannot load http://magpie.test/api/whatsnew?lang=en due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)', '560px library hooks: Fetch API cannot load http://magpie.test/api/library due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at load (http://magpie.test/plugins/library/client.js:468:26)', '560px library hooks: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px library hooks: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px library hooks: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at prefetchProviders (http://magpie.test/app.js:5890:41)\n    at load (http://magpie.test/app.js:4168:94)', '560px library hooks: Fetch API cannot load http://magpie.test/api/update?lang=en due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px library hooks: Fetch API cannot load http://magpie.test/api/whatsnew?lang=en due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)', '560px library rtk: Fetch API cannot load http://magpie.test/api/library/rtk due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadRTK (http://magpie.test/plugins/library/client.js:846:22)\n    at renderRTK (http://magpie.test/plugins/library/client.js:857:14)\n    at render (http://magpie.test/plugins/library/client.js:809:38)\n    at load (http://magpie.test/plugins/library/client.js:462:17)', '560px library rtk: Fetch API cannot load http://magpie.test/api/library due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at load (http://magpie.test/plugins/library/client.js:468:26)', '560px library rtk: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px library rtk: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px library rtk: Fetch API cannot load http://magpie.test/api/providers due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at prefetchProviders (http://magpie.test/app.js:5890:41)\n    at load (http://magpie.test/app.js:4168:94)', '560px library rtk: Fetch API cannot load http://magpie.test/api/update?lang=en due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px library rtk: Fetch API cannot load http://magpie.test/api/whatsnew?lang=en due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)', '560px plugins builtin: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px plugins builtin: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px plugins builtin: Fetch API cannot load http://magpie.test/api/update?lang=en due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px plugins builtin: Fetch API cannot load http://magpie.test/api/whatsnew?lang=en due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)', '560px plugins discover: Fetch API cannot load http://magpie.test/api/agents/cli due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at unknown (http://magpie.test/app.js:2374:24)\n    at loadCLIs (http://magpie.test/app.js:2384:5)\n    at load (http://magpie.test/app.js:4165:13)', '560px plugins discover: Fetch API cannot load http://magpie.test/api/agents/install due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at loadInstalls (http://magpie.test/app.js:2528:22)\n    at load (http://magpie.test/app.js:4166:17)', '560px plugins discover: Fetch API cannot load http://magpie.test/api/update?lang=en due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at renderUpdateBadge (http://magpie.test/app.js:4236:22)\n    at load (http://magpie.test/app.js:4185:20)', '560px plugins discover: Fetch API cannot load http://magpie.test/api/whatsnew?lang=en due to access control checks.\n    at api (http://magpie.test/app.js:119:26)\n    at whatsNewOnce (http://magpie.test/app.js:4421:22)\n    at load (http://magpie.test/app.js:4187:15)' ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/user-select.test.cjs:88:7
+✖ webkit en 1100: what a request said can be selected, its controls can't (1255.513347ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'auto' !== 'text'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/user-select.test.cjs:106:16)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'auto',
+    expected: 'text',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/user-select.test.cjs:88:7
+✖ webkit en 420: what a request said can be selected, its controls can't (1181.127222ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'auto' !== 'text'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/user-select.test.cjs:106:16)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'auto',
+    expected: 'text',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/user-select.test.cjs:88:7
+✖ webkit zh 1100: what a request said can be selected, its controls can't (1303.393546ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'auto' !== 'text'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/user-select.test.cjs:106:16)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'auto',
+    expected: 'text',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/user-select.test.cjs:88:7
+✖ webkit zh 420: what a request said can be selected, its controls can't (1197.925738ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'auto' !== 'text'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/user-select.test.cjs:106:16)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'auto',
+    expected: 'text',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/user-select.test.cjs:88:7
+✖ webkit ja 1100: what a request said can be selected, its controls can't (1222.272422ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'auto' !== 'text'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/user-select.test.cjs:106:16)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'auto',
+    expected: 'text',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/user-select.test.cjs:88:7
+✖ webkit ja 420: what a request said can be selected, its controls can't (1205.457207ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'auto' !== 'text'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/user-select.test.cjs:106:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'auto',
+    expected: 'text',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/user-select.test.cjs:88:7
+✖ webkit de 1100: what a request said can be selected, its controls can't (1204.440725ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'auto' !== 'text'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/user-select.test.cjs:106:16)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'auto',
+    expected: 'text',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/user-select.test.cjs:88:7
+✖ webkit de 420: what a request said can be selected, its controls can't (1181.826466ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  'auto' !== 'text'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/user-select.test.cjs:106:16)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'auto',
+    expected: 'text',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/zcode-site-layout.test.cjs:53:15
+✖ en window 440 (1376.646724ms)
+  AssertionError [ERR_ASSERTION]: the click scrolled
+  
+  '0,546' !== '0,523'
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/zcode-site-layout.test.cjs:102:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/zcode-site-layout.test.cjs:53:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '0,546',
+    expected: '0,523',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+

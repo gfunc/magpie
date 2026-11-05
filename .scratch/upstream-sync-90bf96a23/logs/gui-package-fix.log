@@ -1,0 +1,187 @@
+2026/11/04 09:32:00 allow list: could not read settings at /tmp/TestAllowIPsUnreadableSettingsNotSavedOver2711222388/001/.config/magpie/settings.json: unexpected end of JSON input; the list read last stays in force
+2026/11/04 09:32:00 magpie: the page is served to browsers on 127.0.0.1:32849
+2026/11/04 09:32:00 magpie web: turned away / from 127.0.0.1:38674: no cookie sent
+2026/11/04 09:32:00 refused GET /v1/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:00 refused GET /v1/models from 127.0.0.1:38674: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:00 refused GET /v1/models from 127.0.0.1:38674: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:00 magpie: the page is served to browsers on 127.0.0.1:45577
+2026/11/04 09:32:01 magpie: could not migrate LAN key: open /tmp/TestReadOnlyLANMigrationDoesNotBlockSettingsOrKeys2956918591/001/.config/magpie/settings.json: permission denied
+2026/11/04 09:32:04 gateway: magpie 0.1.2400 (app, pid 3145307) serves http://127.0.0.1:43537, older than this one (0.1.2500); agents' requests go through it until this one takes it over, once it has no request in flight
+2026/11/04 09:32:06 gateway: magpie 0.1.2400 (pid 3145307), an older copy of this app, serves http://127.0.0.1:43537 with nothing in flight; quitting it for this one (0.1.2500) to serve
+2026/11/04 09:32:06 gateway: magpie 0.1.2400 (serve, pid 3145340) serves http://127.0.0.1:40827, older than this one (0.1.2500); agents' requests go through it until it quits
+2026/11/04 09:32:07 gateway: magpie 0.1.2600 (app, pid 3145359) serves http://127.0.0.1:39417, newer than this one (0.1.2500); agents' requests go through it until it quits
+2026/11/04 09:32:07 gateway: magpie 0.1.2400-3-gabcdef1 (app, pid 3145395) serves http://127.0.0.1:39003, older than this one (0.1.2500); agents' requests go through it until it quits
+=== RUN   TestHandoverSuccessor
+2026/11/04 09:32:09 update: took the gateway on 127.0.0.1:38121 over from pid 3144871
+2026/11/04 09:32:09 update: magpie dev (pid 3145445) serves the gateway now; this one finishes its requests and quits
+2026/11/04 09:32:15 update: the gateway wasn't handed over, restarting as before once its requests have finished: context deadline exceeded
+2026/11/04 09:32:15 update: the gateway wasn't handed over, restarting as before once its requests have finished: the new version didn't start beside this one: no such file
+2026/11/04 09:32:17 update: still running 20ms after handing the gateway over; exiting
+2026/11/04 09:32:21 ollama-2: Get "http://127.0.0.1:1/api/tags": dial tcp 127.0.0.1:1: connect: connection refused
+2026/11/04 09:32:21 omlx: Get "http://localhost:8000/v1/models/status": dial tcp 127.0.0.1:8000: connect: connection refused
+2026/11/04 09:32:21 omlx-2: Get "http://127.0.0.1:2/v1/models/status": dial tcp 127.0.0.1:2: connect: connection refused
+2026/11/04 09:32:22 plugin page: page-chat's service on 127.0.0.1:40835: EOF
+2026/11/04 09:32:22 plugin page: page-chat's service on 127.0.0.1:40835: EOF
+2026/11/04 09:32:24 codex: ChatGPT models: 401 Unauthorized
+2026/11/04 09:32:28 update: Windows didn't let the new version start (fork/exec /tmp/TestRestartBySelfComesBackQuietly388677507/002/magpie: errno 4551): Smart App Control or another application control policy blocks magpie's unsigned builds; download it from https://usemagpie.ai and run it yourself, or turn Smart App Control off, then check for updates again
+2026/11/04 09:32:32 gateway: http://127.0.0.1:36283 is taken but doesn't answer as magpie yet; this magpie serves the gateway once it is free
+2026/11/04 09:32:36 restart to update to "v0.1.2" asked from 127.0.0.1:58596: restarting
+=== RUN   TestHandoverSuccessor
+2026/11/04 09:32:36 update: took the gateway on 127.0.0.1:43473 over from pid 3144871
+2026/11/04 09:32:36 update: magpie dev (pid 3146244) serves the gateway now; this one finishes its requests and quits
+2026/11/04 09:32:41 update: Windows didn't let the new version start (fork/exec /tmp/TestUpdateThatWontStart340640908/001/magpie: errno 4551): Smart App Control or another application control policy blocks magpie's unsigned builds; download it from https://usemagpie.ai and run it yourself, or turn Smart App Control off, then check for updates again
+2026/11/04 09:32:41 release notes: Get "http://127.0.0.1:1/?after=0.1.100&lang=en&upto=0.1.200": dial tcp 127.0.0.1:1: connect: connection refused
+2026/11/04 09:32:41 release notes: Get "http://127.0.0.1:1/?after=0.1.100&lang=en&upto=0.1.200": dial tcp 127.0.0.1:1: connect: connection refused
+2026/11/04 09:32:43 update: download gui.test.new through the mirror http://127.0.0.1:38559/: 404 Not Found
+2026/11/04 09:32:43 release notes: Get "http://127.0.0.1:1/?after=0.1.604&lang=en&upto=0.1.607": dial tcp 127.0.0.1:1: connect: connection refused
+2026/11/04 09:32:44 update: the release lists no checksum for gui.test.new
+--- FAIL: TestSteadyGCRetunesAfterACollection (10.00s)
+    warm_gc_test.go:219: GOGC after collections = 50, want 100
+2026/11/04 09:32:56 refused POST /v1/chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/responses on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/messages on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1beta/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /mcp/github on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /mcp/magpie/web-search on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /backend-api/codex/responses on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/responses on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/messages on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1beta/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /mcp/github on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /mcp/magpie/web-search on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /backend-api/codex/responses on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/responses on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/messages on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1beta/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /mcp/github on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /mcp/magpie/web-search on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /backend-api/codex/responses on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/responses on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/messages on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1beta/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /mcp/github on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /mcp/magpie/web-search on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /backend-api/codex/responses on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/chat/completions from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /chat/completions from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/responses from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/messages from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused GET /v1/models from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused GET /v1beta/models from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /mcp/github from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /mcp/magpie/web-search from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /backend-api/codex/responses from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/chat/completions from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /chat/completions from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/responses from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/messages from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused GET /v1/models from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused GET /v1beta/models from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /mcp/github from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /mcp/magpie/web-search from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /backend-api/codex/responses from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/chat/completions from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /chat/completions from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/responses from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/messages from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused GET /v1/models from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused GET /v1beta/models from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /mcp/github from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /mcp/magpie/web-search from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /backend-api/codex/responses from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/chat/completions from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /chat/completions from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/responses from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/messages from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused GET /v1/models from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused GET /v1beta/models from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /mcp/github from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /mcp/magpie/web-search from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /backend-api/codex/responses from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/chat/completions from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/chat/completions from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/chat/completions from [::1]:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused GET /v1/models from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/chat/completions from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/chat/completions from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/chat/completions from the web page https://evil.example: not one listed in Settings
+2026/11/04 09:32:56 refused GET /v1/models from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/chat/completions from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused GET /v1/models from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused GET /v1/models from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused GET /v1/models from 127.0.0.1:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused GET /v1/models from 10.0.0.5:50001: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused GET /v1/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/responses on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/messages on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1beta/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /mcp/github on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /mcp/magpie/web-search on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /backend-api/codex/responses on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/responses on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/messages on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1beta/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /mcp/github on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /mcp/magpie/web-search on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /backend-api/codex/responses on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/responses on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/messages on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1beta/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /mcp/github on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /mcp/magpie/web-search on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /backend-api/codex/responses on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/responses on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/messages on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1beta/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /mcp/github on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /mcp/magpie/web-search on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /backend-api/codex/responses on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/chat/completions from 127.0.0.1:40010: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /chat/completions from 127.0.0.1:40010: no API key was sent: send a magpie gateway key as Authorization: Bearer <key> (or x-api-key)
+2026/11/04 09:32:56 refused POST /v1/chat/completions from the web page https://evil.example: not one listed in Settings
+2026/11/04 09:32:56 refused GET /v1/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused GET /v1/models on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 refused POST /v1/chat/completions on magpie web's page port: magpie isn't shared
+2026/11/04 09:32:56 magpie web: turned away / from 192.0.2.1:1234: no cookie sent
+2026/11/04 09:32:56 magpie web: turned away / from 192.0.2.1:1234: its cookie holds another key
+2026/11/04 09:32:56 release notes: release notes: 503 Service Unavailable
+2026/11/04 09:32:56 release notes: release notes: 503 Service Unavailable
+2026/11/04 09:32:56 release notes: release notes: 503 Service Unavailable
+2026/11/04 09:32:56 release notes: release notes: 502 Bad Gateway
+2026/11/04 09:32:56 release notes: release notes: 502 Bad Gateway
+2026/11/04 09:32:56 release notes: Get "http://127.0.0.1:34557?after=0.1.603&lang=en&upto=0.1.604": dial tcp 127.0.0.1:34557: connect: connection refused
+2026/11/04 09:32:56 release notes: Get "http://127.0.0.1:44705?after=0.1.1398&lang=en&upto=0.1.1409": dial tcp 127.0.0.1:44705: connect: connection refused
+FAIL
+FAIL	github.com/yetone/magpie/internal/gui	60.976s
+FAIL

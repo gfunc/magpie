@@ -1,0 +1,5 @@
+--- FAIL: TestAPIJSONServesNativeBuckets (0.01s)
+    apijson_test.go:114: group daily: cost <nil>, want the members' shared manual price
+FAIL
+FAIL	github.com/yetone/magpie/internal/gateway	0.024s
+FAIL

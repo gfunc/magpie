@@ -1,0 +1,10 @@
+--- FAIL: TestRemoteMagpieFetchMarkedReadsHere (0.00s)
+    search_pass_test.go:427: the marked fetch was not read here: {ID:[55] Result:{ProtocolVersion: ServerInfo:{Name:} Tools:[] Content:[{Type:text Text:URL: http://magpie.example/page
+        Title: Example Domain
+        
+        # Example Domain
+        
+        This domain is for use in illustrative examples in documents.}] IsError:false} Error:<nil>}
+FAIL
+FAIL	github.com/yetone/magpie/internal/gateway	0.021s
+FAIL

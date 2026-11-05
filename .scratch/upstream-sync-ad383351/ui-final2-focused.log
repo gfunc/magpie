@@ -1,0 +1,140 @@
+node --test --test-concurrency=4 internal/gui/tests/search-api.test.cjs internal/gui/tests/searcher-pick.test.cjs internal/gui/tests/search-first.test.cjs internal/gui/tests/fonts.test.cjs
+✔ chromium en: independent installed fonts, real styles, persistence and reset (8067.629812ms)
+✔ chromium zh: independent installed fonts, real styles, persistence and reset (8167.123139ms)
+✔ chromium: queued choices and failed writes restore the saved face (5124.249707ms)
+✔ chromium: refresh errors, missing faces, empty lists and literal names (4037.693253ms)
+✔ chromium: a search narrowing the menu under a still pointer keeps the typing in its field (1109.52138ms)
+✔ chromium: font menu search and keys fit narrow windows without scrolling the page (2266.630369ms)
+✔ chromium: explicit fonts override Omarchy and browser mode keeps its defaults (1590.896057ms)
+✔ chromium en: a browser tab picks its own font from the ones it draws (7385.474752ms)
+✔ chromium zh: a browser tab picks its own font from the ones it draws (6978.517373ms)
+✔ chromium en: a browser tab's font rows show on a nogui magpie and nothing flashes (4564.029917ms)
+✔ chromium zh: a browser tab's font rows show on a nogui magpie and nothing flashes (4498.359666ms)
+✔ chromium: native notifications update the other webview without another save (1739.484665ms)
+✔ chromium: named variable traits retain fractional weight and custom width (2628.474215ms)
+✔ webkit en: independent installed fonts, real styles, persistence and reset (8025.972896ms)
+✔ webkit zh: independent installed fonts, real styles, persistence and reset (9437.174469ms)
+✔ webkit: queued choices and failed writes restore the saved face (5344.94044ms)
+✔ webkit: refresh errors, missing faces, empty lists and literal names (5338.739127ms)
+✖ webkit: a search narrowing the menu under a still pointer keeps the typing in its field (6809.111205ms)
+✔ webkit: font menu search and keys fit narrow windows without scrolling the page (2540.674349ms)
+✔ webkit: explicit fonts override Omarchy and browser mode keeps its defaults (3004.84653ms)
+✖ webkit en: a browser tab picks its own font from the ones it draws (4557.162603ms)
+✖ webkit zh: a browser tab picks its own font from the ones it draws (4595.032651ms)
+✖ webkit en: a browser tab's font rows show on a nogui magpie and nothing flashes (2687.842727ms)
+✖ webkit zh: a browser tab's font rows show on a nogui magpie and nothing flashes (2692.849259ms)
+✔ webkit: native notifications update the other webview without another save (1922.665097ms)
+✔ webkit: named variable traits retain fractional weight and custom width (2723.460871ms)
+✔ chromium en 980px: search APIs are added and removed in Settings (8829.417534ms)
+✔ chromium en 420px: search APIs are added and removed in Settings (9959.207741ms)
+✔ chromium zh 980px: search APIs are added and removed in Settings (8692.496965ms)
+✔ chromium zh 420px: search APIs are added and removed in Settings (9109.809917ms)
+✔ webkit en 980px: search APIs are added and removed in Settings (8684.405532ms)
+✔ webkit en 420px: search APIs are added and removed in Settings (10077.638864ms)
+✔ webkit zh 980px: search APIs are added and removed in Settings (8607.458437ms)
+✔ webkit zh 420px: search APIs are added and removed in Settings (10048.29314ms)
+✔ chromium en: web search can go to the search APIs first (1942.590782ms)
+✔ chromium en: with no provider that searches there is nothing to choose (713.550094ms)
+✔ chromium zh: web search can go to the search APIs first (1469.656404ms)
+✔ chromium zh: with no provider that searches there is nothing to choose (756.026691ms)
+✔ webkit en: web search can go to the search APIs first (1854.126928ms)
+✔ webkit en: with no provider that searches there is nothing to choose (1111.291096ms)
+✔ webkit zh: web search can go to the search APIs first (1996.888783ms)
+✔ webkit zh: with no provider that searches there is nothing to choose (1070.748417ms)
+✔ chromium en: the picked searcher that didn't search is said first (1957.748873ms)
+✔ chromium zh: the picked searcher that didn't search is said first (1768.681839ms)
+✔ chromium zh-TW: the picked searcher that didn't search is said first (1803.186427ms)
+✔ chromium ja: the picked searcher that didn't search is said first (1753.804652ms)
+✔ chromium de: the picked searcher that didn't search is said first (1754.95278ms)
+✔ chromium en: the provider that searches for other models is picked in Settings (3613.589246ms)
+✔ chromium zh: the provider that searches for other models is picked in Settings (3546.706543ms)
+✔ chromium en: search help preserves ellipsis and hover titles (5014.810089ms)
+✔ chromium zh: search help preserves ellipsis and hover titles (4684.599921ms)
+✔ chromium ja: search help preserves ellipsis and hover titles (5528.84267ms)
+✔ chromium de: search help preserves ellipsis and hover titles (5242.980368ms)
+✔ webkit en: the picked searcher that didn't search is said first (2382.967903ms)
+✔ webkit zh: the picked searcher that didn't search is said first (2225.798406ms)
+✔ webkit zh-TW: the picked searcher that didn't search is said first (2206.347147ms)
+✔ webkit ja: the picked searcher that didn't search is said first (2339.678839ms)
+✔ webkit de: the picked searcher that didn't search is said first (2230.494771ms)
+✔ webkit en: the provider that searches for other models is picked in Settings (3950.703271ms)
+✔ webkit zh: the provider that searches for other models is picked in Settings (4530.420142ms)
+✔ webkit en: search help preserves ellipsis and hover titles (4745.601543ms)
+✔ webkit zh: search help preserves ellipsis and hover titles (4539.240171ms)
+✔ webkit ja: search help preserves ellipsis and hover titles (4802.81753ms)
+✔ webkit de: search help preserves ellipsis and hover titles (4790.941441ms)
+ℹ tests 64
+ℹ suites 0
+ℹ pass 59
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 118239.186324
+
+✖ failing tests:
+
+test at internal/gui/tests/fonts.test.cjs:204:3
+✖ webkit: a search narrowing the menu under a still pointer keeps the typing in its field (6809.111205ms)
+  page.waitForFunction: Timeout 5000ms exceeded.
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/fonts.test.cjs:228:18) {
+    name: 'TimeoutError',
+    log: []
+  }
+
+test at internal/gui/tests/fonts.test.cjs:294:36
+✖ webkit en: a browser tab picks its own font from the ones it draws (4557.162603ms)
+  AssertionError [ERR_ASSERTION]: a family this browser doesn't draw isn't offered: No Such Family Here,Georgia,Courier New,DejaVu Serif,Liberation Serif
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/fonts.test.cjs:308:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/fonts.test.cjs:294:36
+✖ webkit zh: a browser tab picks its own font from the ones it draws (4595.032651ms)
+  AssertionError [ERR_ASSERTION]: a family this browser doesn't draw isn't offered: No Such Family Here,Georgia,Courier New,DejaVu Serif,Liberation Serif
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/fonts.test.cjs:308:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/fonts.test.cjs:338:36
+✖ webkit en: a browser tab's font rows show on a nogui magpie and nothing flashes (2687.842727ms)
+  AssertionError [ERR_ASSERTION]: a family this browser doesn't draw isn't offered: Georgia,No Such Family Here
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/fonts.test.cjs:358:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/fonts.test.cjs:338:36
+✖ webkit zh: a browser tab's font rows show on a nogui magpie and nothing flashes (2692.849259ms)
+  AssertionError [ERR_ASSERTION]: a family this browser doesn't draw isn't offered: Georgia,No Such Family Here
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/fonts.test.cjs:358:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+make: *** [Makefile:57：test-ui] 错误 1

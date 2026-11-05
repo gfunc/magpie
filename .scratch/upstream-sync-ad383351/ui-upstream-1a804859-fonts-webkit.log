@@ -1,0 +1,96 @@
+✔ webkit en: independent installed fonts, real styles, persistence and reset (9059.600497ms)
+✔ webkit zh: independent installed fonts, real styles, persistence and reset (8489.478687ms)
+✔ webkit: queued choices and failed writes restore the saved face (5253.520766ms)
+✔ webkit: refresh errors, missing faces, empty lists and literal names (5289.190384ms)
+✖ webkit: a search narrowing the menu under a still pointer keeps the typing in its field (1752.030547ms)
+✔ webkit: font menu search and keys fit narrow windows without scrolling the page (2508.346597ms)
+✔ webkit: explicit fonts override Omarchy and browser mode keeps its defaults (2999.063929ms)
+✖ webkit en: a browser tab picks its own font from the ones it draws (4473.045291ms)
+✖ webkit zh: a browser tab picks its own font from the ones it draws (4511.431611ms)
+✖ webkit en: a browser tab's font rows show on a nogui magpie and nothing flashes (2681.059224ms)
+✖ webkit zh: a browser tab's font rows show on a nogui magpie and nothing flashes (2690.562862ms)
+✔ webkit: native notifications update the other webview without another save (1890.582906ms)
+✔ webkit: named variable traits retain fractional weight and custom width (2210.213597ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 8
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 54161.177884
+
+✖ failing tests:
+
+test at internal/gui/tests/fonts.test.cjs:204:3
+✖ webkit: a search narrowing the menu under a still pointer keeps the typing in its field (1752.030547ms)
+  AssertionError [ERR_ASSERTION]: a moved pointer focuses the item it's on
+  
+  false !== true
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/.scratch/upstream-sync-ad383351/lanes/upstream-1a804859/internal/gui/tests/fonts.test.cjs:228:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/fonts.test.cjs:293:36
+✖ webkit en: a browser tab picks its own font from the ones it draws (4473.045291ms)
+  AssertionError [ERR_ASSERTION]: a family this browser doesn't draw isn't offered: No Such Family Here,Georgia,Courier New,DejaVu Serif,Liberation Serif
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/.scratch/upstream-sync-ad383351/lanes/upstream-1a804859/internal/gui/tests/fonts.test.cjs:307:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/fonts.test.cjs:293:36
+✖ webkit zh: a browser tab picks its own font from the ones it draws (4511.431611ms)
+  AssertionError [ERR_ASSERTION]: a family this browser doesn't draw isn't offered: No Such Family Here,Georgia,Courier New,DejaVu Serif,Liberation Serif
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/.scratch/upstream-sync-ad383351/lanes/upstream-1a804859/internal/gui/tests/fonts.test.cjs:307:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/fonts.test.cjs:337:36
+✖ webkit en: a browser tab's font rows show on a nogui magpie and nothing flashes (2681.059224ms)
+  AssertionError [ERR_ASSERTION]: a family this browser doesn't draw isn't offered: Georgia,No Such Family Here
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/.scratch/upstream-sync-ad383351/lanes/upstream-1a804859/internal/gui/tests/fonts.test.cjs:357:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/fonts.test.cjs:337:36
+✖ webkit zh: a browser tab's font rows show on a nogui magpie and nothing flashes (2690.562862ms)
+  AssertionError [ERR_ASSERTION]: a family this browser doesn't draw isn't offered: Georgia,No Such Family Here
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/.scratch/upstream-sync-ad383351/lanes/upstream-1a804859/internal/gui/tests/fonts.test.cjs:357:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

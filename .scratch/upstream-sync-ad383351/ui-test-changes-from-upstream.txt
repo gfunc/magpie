@@ -1,0 +1,2 @@
+internal/gui/tests/search-api.test.cjs
+internal/gui/tests/searcher-pick.test.cjs

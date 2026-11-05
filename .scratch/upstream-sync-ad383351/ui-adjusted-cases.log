@@ -1,0 +1,107 @@
+✔ chromium en: independent installed fonts, real styles, persistence and reset (8039.19937ms)
+✔ chromium zh: independent installed fonts, real styles, persistence and reset (7998.309506ms)
+✔ chromium: queued choices and failed writes restore the saved face (4951.444643ms)
+✔ chromium: refresh errors, missing faces, empty lists and literal names (5508.993964ms)
+font-hover-debug {
+  box: {
+    x: 119.13999938964844,
+    y: 165.86717224121094,
+    width: 310.1999969482422,
+    height: 35.720001220703125
+  },
+  hit: '<button class="pm-item" type="button" role="menuitemradio" aria-checked="false"><span class="pm-tick"></span><span class="pm-words"><span class="pm-name">Consolas</span><span class="pm-note"></span></span></button>',
+  active: '<button class="pm-item" type="button" role="menuitemradio" aria-checked="false"><span class="pm-tick"></span><span class="pm-words"><span class="pm-name">Consolas</span><span class="pm-note"></span></span></button>'
+}
+✔ chromium: a search narrowing the menu under a still pointer keeps the typing in its field (1312.163574ms)
+✔ chromium: font menu search and keys fit narrow windows without scrolling the page (1780.966994ms)
+✔ chromium: explicit fonts override Omarchy and browser mode keeps its defaults (1967.07837ms)
+✔ chromium: native notifications update the other webview without another save (1705.337481ms)
+✔ chromium: named variable traits retain fractional weight and custom width (2542.312749ms)
+✔ webkit en: independent installed fonts, real styles, persistence and reset (8451.486314ms)
+✔ webkit zh: independent installed fonts, real styles, persistence and reset (8358.215238ms)
+✔ webkit: queued choices and failed writes restore the saved face (5750.765644ms)
+✔ webkit: refresh errors, missing faces, empty lists and literal names (5257.370959ms)
+font-hover-debug {
+  box: {
+    x: 108.8062515258789,
+    y: 161.04345703125,
+    width: 306.4210433959961,
+    height: 36.38749694824219
+  },
+  hit: '<button class="pm-item" type="button" role="menuitemradio" aria-checked="false"><span class="pm-tick"></span><span class="pm-words"><span class="pm-name">Consolas</span><span class="pm-note"></span></span></button>',
+  active: '<input class="sc-q" placeholder="搜索字体…" aria-label="搜索字体…">'
+}
+✖ webkit: a search narrowing the menu under a still pointer keeps the typing in its field (7103.738999ms)
+✔ webkit: font menu search and keys fit narrow windows without scrolling the page (2554.439359ms)
+✔ webkit: explicit fonts override Omarchy and browser mode keeps its defaults (2987.064469ms)
+✔ webkit: native notifications update the other webview without another save (1879.236982ms)
+✔ webkit: named variable traits retain fractional weight and custom width (2175.628674ms)
+▶ chromium: counts in K/M/B or, picked in Settings in Chinese, 万/亿
+  ✔ en (1366.122401ms)
+  ✔ zh (2953.465046ms)
+✔ chromium: counts in K/M/B or, picked in Settings in Chinese, 万/亿 (4492.82149ms)
+▶ webkit: counts in K/M/B or, picked in Settings in Chinese, 万/亿
+  ✔ en (2392.18334ms)
+  ✔ zh (4602.986178ms)
+✔ webkit: counts in K/M/B or, picked in Settings in Chinese, 万/亿 (7133.045871ms)
+plugin-move-debug {
+  before: 452,
+  after: {
+    top: 452,
+    height: 2045,
+    client: 564,
+    html: '"false" autocomplete="off" class="queue-limit" min="0" max="10000" step="1" inputmode="numeric" id="field-99" aria-label="Queue size" aria-describedby="field-help-100"><div class="hint" id="field-help-100">How many requests may wait for each key or account; one more is turned away at once. 0 or empty is no bound</div></div><label for="field-101">Queue wait</label><div><input type="number" placeholder="As long as it takes" spellcheck="false" autocomplete="off" class="queue-wait" min="0" max="3600" step="1" inputmode="numeric" id="field-101" aria-label="Queue wait" aria-describedby="field-help-102"><div class="hint" id="field-help-102">Seconds a request waits for a free slot before it is turned away. 0 or empty waits as long as it takes</div></div><label for="field-103">Price rate</label><div><input type="text" placeholder="1, the official price" spellcheck="false" autocomplete="off" class="price-rate" inputmode="decimal" id="field-103" aria-label="Price rate" aria-describedby="field-help-104"><div class="hint" id="field-help-104">Costs are counted at the official price times this, as a relay bills, like 0.8 or 1.5; a price you set for a model stays as set</div></div></div></details>'
+  }
+}
+✔ chromium en: a built-in subscription moves to its plugin for good (2936.185536ms)
+✔ chromium en: the Plugins tab opened as the page offers Zed's accounts (1692.152599ms)
+plugin-move-debug {
+  before: 345,
+  after: {
+    top: 345,
+    height: 1830,
+    client: 564,
+    html: 'de="numeric" id="field-97" aria-label="每分钟请求数" aria-describedby="field-help-98"><div class="hint" id="field-help-98">每个密钥或账号在任意一分钟内最多发出的请求数，重试也计入；超出的请求等待空位，最多等 2 分钟。0 或留空为不限制</div></div><label for="field-99">排队上限</label><div><input type="number" placeholder="不限" spellcheck="false" autocomplete="off" class="queue-limit" min="0" max="10000" step="1" inputmode="numeric" id="field-99" aria-label="排队上限" aria-describedby="field-help-100"><div class="hint" id="field-help-100">每个 Key 或账号最多可排队的请求数，再多的请求会立刻被拒绝。0 或留空为不限</div></div><label for="field-101">排队等待</label><div><input type="number" placeholder="一直等" spellcheck="false" autocomplete="off" class="queue-wait" min="0" max="3600" step="1" inputmode="numeric" id="field-101" aria-label="排队等待" aria-describedby="field-help-102"><div class="hint" id="field-help-102">请求等待空位的最长秒数，超时即被拒绝。0 或留空为一直等</div></div><label for="field-103">价格倍率</label><div><input type="text" placeholder="1，即官方价格" spellcheck="false" autocomplete="off" class="price-rate" inputmode="decimal" id="field-103" aria-label="价格倍率" aria-describedby="field-help-104"><div class="hint" id="field-help-104">费用按官方价格乘以此倍率计算，同中转站计费方式，例如 0.8 或 1.5；你为某个模型单独设置的价格保持不变</div></div></div></details>'
+  }
+}
+✔ chromium zh: a built-in subscription moves to its plugin for good (2869.593079ms)
+✔ chromium zh: the Plugins tab opened as the page offers Zed's accounts (1686.426324ms)
+plugin-move-debug {
+  before: 491,
+  after: {
+    top: 521,
+    height: 2061,
+    client: 554,
+    html: '"false" autocomplete="off" class="queue-limit" min="0" max="10000" step="1" inputmode="numeric" id="field-99" aria-label="Queue size" aria-describedby="field-help-100"><div class="hint" id="field-help-100">How many requests may wait for each key or account; one more is turned away at once. 0 or empty is no bound</div></div><label for="field-101">Queue wait</label><div><input type="number" placeholder="As long as it takes" spellcheck="false" autocomplete="off" class="queue-wait" min="0" max="3600" step="1" inputmode="numeric" id="field-101" aria-label="Queue wait" aria-describedby="field-help-102"><div class="hint" id="field-help-102">Seconds a request waits for a free slot before it is turned away. 0 or empty waits as long as it takes</div></div><label for="field-103">Price rate</label><div><input type="text" placeholder="1, the official price" spellcheck="false" autocomplete="off" class="price-rate" inputmode="decimal" id="field-103" aria-label="Price rate" aria-describedby="field-help-104"><div class="hint" id="field-help-104">Costs are counted at the official price times this, as a relay bills, like 0.8 or 1.5; a price you set for a model stays as set</div></div></div></details>'
+  }
+}
+✖ webkit en: a built-in subscription moves to its plugin for good (2413.361871ms)
+✔ webkit en: the Plugins tab opened as the page offers Zed's accounts (1905.370268ms)
+plugin-move-debug {
+  before: 359,
+  after: {
+    top: 359,
+    height: 1830,
+    client: 564,
+    html: 'de="numeric" id="field-97" aria-label="每分钟请求数" aria-describedby="field-help-98"><div class="hint" id="field-help-98">每个密钥或账号在任意一分钟内最多发出的请求数，重试也计入；超出的请求等待空位，最多等 2 分钟。0 或留空为不限制</div></div><label for="field-99">排队上限</label><div><input type="number" placeholder="不限" spellcheck="false" autocomplete="off" class="queue-limit" min="0" max="10000" step="1" inputmode="numeric" id="field-99" aria-label="排队上限" aria-describedby="field-help-100"><div class="hint" id="field-help-100">每个 Key 或账号最多可排队的请求数，再多的请求会立刻被拒绝。0 或留空为不限</div></div><label for="field-101">排队等待</label><div><input type="number" placeholder="一直等" spellcheck="false" autocomplete="off" class="queue-wait" min="0" max="3600" step="1" inputmode="numeric" id="field-101" aria-label="排队等待" aria-describedby="field-help-102"><div class="hint" id="field-help-102">请求等待空位的最长秒数，超时即被拒绝。0 或留空为一直等</div></div><label for="field-103">价格倍率</label><div><input type="text" placeholder="1，即官方价格" spellcheck="false" autocomplete="off" class="price-rate" inputmode="decimal" id="field-103" aria-label="价格倍率" aria-describedby="field-help-104"><div class="hint" id="field-help-104">费用按官方价格乘以此倍率计算，同中转站计费方式，例如 0.8 或 1.5；你为某个模型单独设置的价格保持不变</div></div></div></details>'
+  }
+}
+✔ webkit zh: a built-in subscription moves to its plugin for good (3315.011007ms)
+✔ webkit zh: the Plugins tab opened as the page offers Zed's accounts (1942.791506ms)
+✖ chromium en 1100: a rule names several models (15878.285103ms)
+✖ chromium en 390: a rule names several models (38414.395443ms)
+✖ chromium zh 1100: a rule names several models (15065.075523ms)
+✖ chromium zh 390: a rule names several models (35145.291467ms)
+✖ chromium zh-TW 1100: a rule names several models (15066.967786ms)
+✖ chromium zh-TW 390: a rule names several models (35129.174012ms)
+✖ chromium ja 1100: a rule names several models (16734.527819ms)
+✖ chromium ja 390: a rule names several models (37501.386765ms)
+✖ chromium de 1100: a rule names several models (16695.354531ms)
+✖ chromium de 390: a rule names several models (43564.751212ms)
+✖ webkit en 1100: a rule names several models (16903.275012ms)
+✖ webkit en 390: a rule names several models (40739.552943ms)
+✖ webkit zh 1100: a rule names several models (16165.858595ms)
+✖ webkit zh 390: a rule names several models (37476.3028ms)
+✖ webkit zh-TW 1100: a rule names several models (16157.294003ms)
+✖ webkit zh-TW 390: a rule names several models (37545.510916ms)
+✖ webkit ja 1100: a rule names several models (17881.978912ms)

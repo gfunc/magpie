@@ -1,0 +1,82 @@
+✔ chromium zh: the title bar's tools never lie over where the reader is (26847.304949ms)
+✔ chromium zh-TW: the title bar's tools never lie over where the reader is (26914.554743ms)
+✔ chromium ja: the title bar's tools never lie over where the reader is (26948.952862ms)
+title-debug plugins builtin [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 501,
+    y: 0,
+    width: 0,
+    height: 46,
+    top: 0,
+    right: 501,
+    bottom: 46,
+    left: 501
+  },
+  body: 'window linux side-nav',
+  html: '<div class="lib-head pm-head"><div class="segs lib-tabs" data-kind="builtin|discover|installed"><span class="thumb"></span><button class="opt on" type="button" aria-pressed="true">Eingebaut</button><button class="opt" type="button" aria-pressed="false">Entdecken</button><button class="opt" type="button" aria-pressed="false" data-sub="installed">Installiert</button></div><span class="grow"></span><button class="pm-mirror" type="button" role="switch" aria-checked="false" aria-label="Spiegel in China" title="Erweiterungsliste, Erweiterungen und Bun zuerst von Spiegeln in China (npmmirror, jsDelivr) laden, danach von den offiziellen Adressen. Jede ist eine Kopie genau derselben Datei und wird wie das Original geprüft" hidden=""><span>Spiegel in China</span><span class="lib-switch"><i></i></spa'
+}
+✖ chromium de: the title bar's tools never lie over where the reader is (3619.584926ms)
+✔ chromium en: the title bar's tools never lie over where the reader is (26849.168194ms)
+✔ webkit zh: the title bar's tools never lie over where the reader is (34899.557991ms)
+✔ webkit zh-TW: the title bar's tools never lie over where the reader is (35161.279607ms)
+✔ webkit ja: the title bar's tools never lie over where the reader is (35616.683317ms)
+title-debug plugins builtin [] {
+  hidden: false,
+  viewHidden: false,
+  display: 'flex',
+  rect: {
+    x: 501,
+    y: 0,
+    width: 0,
+    height: 46,
+    top: 0,
+    right: 501,
+    bottom: 46,
+    left: 501
+  },
+  body: 'window linux side-nav',
+  html: '<div class="lib-head pm-head"><div class="segs lib-tabs" data-kind="builtin|discover|installed"><span class="thumb"></span><button class="opt on" type="button" aria-pressed="true">Eingebaut</button><button class="opt" type="button" aria-pressed="false">Entdecken</button><button class="opt" type="button" aria-pressed="false" data-sub="installed">Installiert</button></div><span class="grow"></span><button class="pm-mirror" type="button" hidden="" role="switch" aria-checked="false" aria-label="Spiegel in China" title="Erweiterungsliste, Erweiterungen und Bun zuerst von Spiegeln in China (npmmirror, jsDelivr) laden, danach von den offiziellen Adressen. Jede ist eine Kopie genau derselben Datei und wird wie das Original geprüft"><span>Spiegel in China</span><span class="lib-switch"><i></i></spa'
+}
+✖ webkit de: the title bar's tools never lie over where the reader is (4859.31826ms)
+✔ webkit en: the title bar's tools never lie over where the reader is (35050.029126ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 8
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 257131.800683
+
+✖ failing tests:
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ chromium de: the title bar's tools never lie over where the reader is (3619.584926ms)
+  AssertionError [ERR_ASSERTION]: the page's name is cut while parts before it show at 560px plugins builtin: {"parts":[{"text":"Zusätze","shown":true,"right":286.546875,"cut":false},{"text":"/","shown":true,"right":298.84375,"cut":false},{"text":"Erweiterungen","shown":true,"right":398.453125,"cut":false},{"text":"/","shown":true,"right":410.75,"cut":false},{"text":"Eingebaut","shown":true,"right":482,"cut":true}],"crumb":{"left":238,"right":482,"top":14,"bottom":32},"tools":[],"acts":{"left":490,"right":550,"top":10,"bottom":36},"side":184,"view":560}
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:144:26)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/title-bar-tools.test.cjs:85:5
+✖ webkit de: the title bar's tools never lie over where the reader is (4859.31826ms)
+  AssertionError [ERR_ASSERTION]: the page's name is cut while parts before it show at 560px plugins builtin: {"parts":[{"text":"Zusätze","shown":true,"right":286.546875,"cut":false},{"text":"/","shown":true,"right":298.84375,"cut":false},{"text":"Erweiterungen","shown":true,"right":398.453125,"cut":false},{"text":"/","shown":true,"right":410.75,"cut":false},{"text":"Eingebaut","shown":true,"right":482,"cut":true}],"crumb":{"left":238,"right":482,"top":14,"bottom":32},"tools":[],"acts":{"left":490,"right":550,"top":10,"bottom":36},"side":184,"view":560}
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/title-bar-tools.test.cjs:144:26)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

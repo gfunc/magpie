@@ -1,0 +1,851 @@
+test at internal/gui/tests/recent-calls-more.test.cjs:39:3
+✖ webkit: recent calls can show the calls the gateway kept (1384.49037ms)
+  AssertionError [ERR_ASSERTION]: the click doesn't move the page
+  
+  736 !== 462
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/recent-calls-more.test.cjs:63:12)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 736,
+    expected: 462,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/rest-try-now.test.cjs:140:7
+✖ webkit en 420px: a resting key in the provider's list is tried again (1413.052392ms)
+  AssertionError [ERR_ASSERTION]: the button can't be reached
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/rest-try-now.test.cjs:93:3)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/rest-try-now.test.cjs:149:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/rest-try-now.test.cjs:118:7
+✖ webkit ja 420px: a key resting for its quota is tried again from Routing (1727.63506ms)
+  AssertionError [ERR_ASSERTION]: the click scrolled
+  + actual - expected
+  
+  + '0 view:1053 rt-steps:18'
+  - '0 view:1098 rt-steps:18'
+              ^
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/rest-try-now.test.cjs:136:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '0 view:1053 rt-steps:18',
+    expected: '0 view:1098 rt-steps:18',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/rest-try-now.test.cjs:140:7
+✖ webkit de 420px: a resting key in the provider's list is tried again (1426.917415ms)
+  AssertionError [ERR_ASSERTION]: the button can't be reached
+      at reach (/home/georgefu/Projects/magpie/internal/gui/tests/rest-try-now.test.cjs:93:3)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/rest-try-now.test.cjs:149:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/usage-accounts.test.cjs:71:5
+✖ webkit en: usage by subscription account (941.532962ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-accounts.test.cjs:86:14)
+      at runNextTicks (node:internal/process/task_queues:65:5)
+      at process.processImmediate (node:internal/timers:541:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-accounts.test.cjs:71:5
+✖ webkit zh: usage by subscription account (885.633655ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-accounts.test.cjs:86:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ en 1200 (2325.82172ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ en 560 (2145.475411ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 552.703125 → 602.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh 1200 (2133.237493ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh 560 (2134.679156ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 561.6875 → 611.96875
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh-TW 1200 (2150.908909ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh-TW 560 (2116.06968ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 561.6875 → 611.96875
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ ja 1200 (2151.116682ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ ja 560 (2135.263582ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 568.09375 → 618.375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ de 1200 (2149.671576ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ de 560 (2118.930539ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 583.484375 → 633.765625
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ en 1200 (2755.307342ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ en 560 (2679.17152ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 552.703125 → 602.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh 1200 (2766.160184ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh 560 (2695.722424ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 561.6875 → 611.96875
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh-TW 1200 (2837.107302ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ zh-TW 560 (2839.008166ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 561.6875 → 611.96875
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ ja 1200 (2887.507462ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ ja 560 (2910.277179ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 583.484375 → 633.765625
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ de 1200 (3029.047486ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 532.703125 → 582.984375
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-agents-hide.test.cjs:86:17
+✖ de 560 (2967.834949ms)
+  AssertionError [ERR_ASSERTION]: unhiding a row leaves the hidden line where it was: 583.484375 → 633.765625
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:176:11)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-agents-hide.test.cjs:86:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/usage-alert.test.cjs:111:15
+✖ en (1735.941756ms)
+  AssertionError [ERR_ASSERTION]: turning the alert on must not scroll the settings page
+  
+  249 !== 473
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-alert.test.cjs:151:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-alert.test.cjs:111:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 249,
+    expected: 473,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-alert.test.cjs:215:15
+✖ en: notifications turned off in the system (5965.557305ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#usageAlertSegs .opt').nth(1)[22m
+  [2m    - locator resolved to <button class="opt" type="button" aria-pressed="false">On</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is not stable[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m    - element is not stable[22m
+  [2m  2 × retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <div class="row-head set-head stuck">…</div> intercepts pointer events[22m
+  [2m  8 × retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <div class="row-head set-head stuck">…</div> intercepts pointer events[22m
+  [2m  - retrying click action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-alert.test.cjs:230:59)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-alert.test.cjs:215:7) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#usageAlertSegs .opt').nth(1)", '    - locator resolved to <button class="opt" type="button" aria-pressed="false">On</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is not stable', '    - retrying click action', '    - waiting 20ms', '    - waiting for element to be visible, enabled and stable', '    - element is not stable', '  2 × retrying click action', '      - waiting 100ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <div class="row-head set-head stuck">…</div> intercepts pointer events', '  8 × retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <div class="row-head set-head stuck">…</div> intercepts pointer events', '  - retrying click action', '    - waiting 500ms' ]
+  }
+
+test at internal/gui/tests/usage-alert.test.cjs:111:15
+✖ zh (6410.616493ms)
+  locator.click: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#usageAlertSegs .opt').nth(1)[22m
+  [2m    - locator resolved to <button class="opt" type="button" aria-pressed="false">开启</button>[22m
+  [2m  - attempting click action[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events[22m
+  [2m    - retrying click action[22m
+  [2m    - waiting 20ms[22m
+  [2m    2 × waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events[22m
+  [2m    - retrying click action[22m
+  [2m      - waiting 100ms[22m
+  [2m    - waiting for element to be visible, enabled and stable[22m
+  [2m    - element is visible, enabled and stable[22m
+  [2m    - scrolling into view if needed[22m
+  [2m    - done scrolling[22m
+  [2m    - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events[22m
+  [2m  8 × retrying click action[22m
+  [2m      - waiting 500ms[22m
+  [2m      - waiting for element to be visible, enabled and stable[22m
+  [2m      - element is visible, enabled and stable[22m
+  [2m      - scrolling into view if needed[22m
+  [2m      - done scrolling[22m
+  [2m      - element is outside of the viewport[22m
+  [2m  - retrying click action[22m
+  [2m    - waiting 500ms[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-alert.test.cjs:146:32)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-alert.test.cjs:111:7) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#usageAlertSegs .opt').nth(1)", '    - locator resolved to <button class="opt" type="button" aria-pressed="false">开启</button>', '  - attempting click action', '    2 × waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events', '    - retrying click action', '    - waiting 20ms', '    2 × waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events', '    - retrying click action', '      - waiting 100ms', '    - waiting for element to be visible, enabled and stable', '    - element is visible, enabled and stable', '    - scrolling into view if needed', '    - done scrolling', '    - <input id="setQ" data-tp="" type="search" aria-label="查找设置" spellcheck="false" autocomplete="off" placeholder="查找设置" class="sess-filter set-q" data-en-placeholder="Find a setting"/> from <div class="row-head set-head stuck">…</div> subtree intercepts pointer events', '  8 × retrying click action', '      - waiting 500ms', '      - waiting for element to be visible, enabled and stable', '      - element is visible, enabled and stable', '      - scrolling into view if needed', '      - done scrolling', '      - element is outside of the viewport', '  - retrying click action', '    - waiting 500ms' ]
+  }
+
+
+test at internal/gui/tests/usage-focus-steady.test.cjs:117:5
+✖ webkit en: focusing the window keeps the Usage charts and the Routing groups (1019.363468ms)
+  locator.evaluate: TypeError: null is not an object (evaluating 'b.parentElement.firstElementChild')
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-focus-steady.test.cjs:133:48) {
+    log: []
+  }
+
+test at internal/gui/tests/usage-focus-steady.test.cjs:117:5
+✖ webkit zh: focusing the window keeps the Usage charts and the Routing groups (997.558734ms)
+  locator.evaluate: TypeError: null is not an object (evaluating 'b.parentElement.firstElementChild')
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-focus-steady.test.cjs:133:48) {
+    log: []
+  }
+
+
+test at internal/gui/tests/usage-fold.test.cjs:74:5
+✖ chromium en: several accounts: one in full, the others in brief, each remembered (2805.632278ms)
+  AssertionError [ERR_ASSERTION]: the view didn't scroll
+  
+  184 !== 180
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-fold.test.cjs:143:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 184,
+    expected: 180,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-fold.test.cjs:74:5
+✖ chromium zh: several accounts: one in full, the others in brief, each remembered (2782.019247ms)
+  AssertionError [ERR_ASSERTION]: the view didn't scroll
+  
+  184 !== 180
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-fold.test.cjs:143:14)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 184,
+    expected: 180,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/usage-heatmap.test.cjs:109:15
+✖ en at 420 (6491.142477ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#ledHeat').locator('#ledHeatTip') to be visible[22m
+  [2m    14 × locator resolved to hidden <div hidden="" id="ledHeatTip" class="heat-tip"></div>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-heatmap.test.cjs:167:19)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-heatmap.test.cjs:109:7) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#ledHeat').locator('#ledHeatTip') to be visible", '    14 × locator resolved to hidden <div hidden="" id="ledHeatTip" class="heat-tip"></div>' ]
+  }
+
+test at internal/gui/tests/usage-heatmap.test.cjs:109:15
+✖ zh at 420 (6352.235078ms)
+  locator.waitFor: Timeout 5000ms exceeded.
+  Call log:
+  [2m  - waiting for locator('#ledHeat').locator('#ledHeatTip') to be visible[22m
+  [2m    14 × locator resolved to hidden <div hidden="" id="ledHeatTip" class="heat-tip"></div>[22m
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-heatmap.test.cjs:167:19)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-heatmap.test.cjs:109:7) {
+    name: 'TimeoutError',
+    log: [ "  - waiting for locator('#ledHeat').locator('#ledHeatTip') to be visible", '    14 × locator resolved to hidden <div hidden="" id="ledHeatTip" class="heat-tip"></div>' ]
+  }
+
+test at internal/gui/tests/usage-heatmap.test.cjs:109:15
+✖ ja at 420 (1070.214488ms)
+  AssertionError [ERR_ASSERTION]: no sideways scroll outside the card: {"over":true,"left":357,"sw":705,"cw":348,"lr":[369,379,31,379],"inView":true,"inCard":true,"page":true,"view":false}
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-heatmap.test.cjs:149:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-heatmap.test.cjs:109:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-heatmap.test.cjs:109:15
+✖ de at 420 (1565.731075ms)
+  AssertionError [ERR_ASSERTION]: a click scrolled
+  + actual - expected
+  
+    [
+      0,
+  +   480,
+  -   479,
+      361
+    ]
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-heatmap.test.cjs:192:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-heatmap.test.cjs:109:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 0, 480, 361 ],
+    expected: [ 0, 479, 361 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/usage-ledger.test.cjs:411:15
+✖ en: newest live route needs no return-to-live button (6387.02352ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:423:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:411:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-ledger.test.cjs:411:15
+✖ zh: newest live route needs no return-to-live button (6354.223051ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:423:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:411:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-ledger.test.cjs:411:15
+✖ en: newest live route needs no return-to-live button (7697.860972ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:423:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:411:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-ledger.test.cjs:340:15
+✖ zh: request routing links (12796.542829ms)
+  AssertionError [ERR_ASSERTION]: return keeps the Usage view position: left at 277, back at 291, room 291
+      at /home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:373:37
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:371:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:340:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'fail',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-ledger.test.cjs:411:15
+✖ zh: newest live route needs no return-to-live button (7575.600134ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:423:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:411:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-ledger.test.cjs:133:3
+✖ webkit: the Usage page's Requests (83092.197347ms)
+  Error: "page.waitForTimeout: Target page, context or browser has been closed" while running route callback.
+  Consider awaiting `await page.unrouteAll({ behavior: 'ignoreErrors' })`
+  before the end of the test to ignore remaining routes in flight.
+      at /home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger.test.cjs:415:22 {
+    log: []
+  }
+
+
+test at internal/gui/tests/usage-ledger-ttft.test.cjs:67:15
+✖ zh (2480.177467ms)
+  AssertionError [ERR_ASSERTION]: a narrow window leaves it out
+  
+  true !== false
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger-ttft.test.cjs:111:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger-ttft.test.cjs:67:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-ledger-ttft.test.cjs:67:15
+✖ zh-TW (2460.144057ms)
+  AssertionError [ERR_ASSERTION]: a narrow window leaves it out
+  
+  true !== false
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger-ttft.test.cjs:111:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-ledger-ttft.test.cjs:67:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+
+test at internal/gui/tests/usage-speed.test.cjs:110:15
+✖ en (944.289646ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + "Sent, Effort and the cache are in each row's details"
+  - "Sent, Effort, the first token and the cache are in each row's details"
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-speed.test.cjs:143:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-speed.test.cjs:110:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: "Sent, Effort and the cache are in each row's details",
+    expected: "Sent, Effort, the first token and the cache are in each row's details",
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-speed.test.cjs:110:15
+✖ zh (854.067281ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + '窗口较窄：发送模型、推理强度和缓存在每行的详情里'
+  - '窗口较窄：发送模型、推理强度、首字和缓存在每行的详情里'
+                   ^
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-speed.test.cjs:143:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-speed.test.cjs:110:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '窗口较窄：发送模型、推理强度和缓存在每行的详情里',
+    expected: '窗口较窄：发送模型、推理强度、首字和缓存在每行的详情里',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at internal/gui/tests/usage-speed.test.cjs:110:15
+✖ zh (1397.614046ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + '窗口较窄：发送模型、推理强度和缓存在每行的详情里'
+  - '窗口较窄：发送模型、推理强度、首字和缓存在每行的详情里'
+                   ^
+  
+      at TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-speed.test.cjs:143:16)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/home/georgefu/Projects/magpie/internal/gui/tests/usage-speed.test.cjs:110:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '窗口较窄：发送模型、推理强度和缓存在每行的详情里',
+    expected: '窗口较窄：发送模型、推理强度、首字和缓存在每行的详情里',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+

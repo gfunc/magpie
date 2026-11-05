@@ -1,0 +1,158 @@
+2026-10-27T11:37:25.646Z pw:api => browserType.launch started
+2026-10-27T11:37:25.724Z pw:api <= browserType.launch succeeded
+2026-10-27T11:37:25.726Z pw:api => browser.newContext started
+2026-10-27T11:37:25.734Z pw:api <= browser.newContext succeeded
+2026-10-27T11:37:25.734Z pw:api => browserContext.newPage started
+2026-10-27T11:37:26.002Z pw:api <= browserContext.newPage succeeded
+2026-10-27T11:37:26.003Z pw:api => page.route started
+2026-10-27T11:37:26.005Z pw:api <= page.route succeeded
+2026-10-27T11:37:26.006Z pw:api => page.goto started
+2026-10-27T11:37:26.006Z pw:api navigating to "http://magpie.test/", waiting until "load"
+2026-10-27T11:37:26.012Z pw:api => route.fulfill started
+2026-10-27T11:37:26.015Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.016Z pw:api   "commit" event fired
+2026-10-27T11:37:26.016Z pw:api   navigated to "http://magpie.test/"
+2026-10-27T11:37:26.018Z pw:api => route.fulfill started
+2026-10-27T11:37:26.018Z pw:api => route.fulfill started
+2026-10-27T11:37:26.025Z pw:api => route.fulfill started
+2026-10-27T11:37:26.025Z pw:api => route.fulfill started
+2026-10-27T11:37:26.025Z pw:api => route.fulfill started
+2026-10-27T11:37:26.026Z pw:api => route.fulfill started
+2026-10-27T11:37:26.026Z pw:api => route.fulfill started
+2026-10-27T11:37:26.033Z pw:api => route.fulfill started
+2026-10-27T11:37:26.034Z pw:api => route.fulfill started
+2026-10-27T11:37:26.034Z pw:api => route.fulfill started
+2026-10-27T11:37:26.034Z pw:api => route.fulfill started
+2026-10-27T11:37:26.035Z pw:api => route.fulfill started
+2026-10-27T11:37:26.035Z pw:api => route.fulfill started
+2026-10-27T11:37:26.035Z pw:api => route.fulfill started
+2026-10-27T11:37:26.035Z pw:api => route.fulfill started
+2026-10-27T11:37:26.036Z pw:api => route.fulfill started
+2026-10-27T11:37:26.036Z pw:api => route.fulfill started
+2026-10-27T11:37:26.037Z pw:api => route.fulfill started
+2026-10-27T11:37:26.037Z pw:api => route.fulfill started
+2026-10-27T11:37:26.037Z pw:api => route.fulfill started
+2026-10-27T11:37:26.038Z pw:api => route.fulfill started
+2026-10-27T11:37:26.038Z pw:api => route.fulfill started
+2026-10-27T11:37:26.039Z pw:api => route.fulfill started
+2026-10-27T11:37:26.039Z pw:api => route.fulfill started
+2026-10-27T11:37:26.039Z pw:api => route.fulfill started
+2026-10-27T11:37:26.040Z pw:api => route.fulfill started
+2026-10-27T11:37:26.040Z pw:api => route.fulfill started
+2026-10-27T11:37:26.040Z pw:api => route.fulfill started
+2026-10-27T11:37:26.040Z pw:api => route.fulfill started
+2026-10-27T11:37:26.041Z pw:api => route.fulfill started
+2026-10-27T11:37:26.041Z pw:api => route.fulfill started
+2026-10-27T11:37:26.041Z pw:api => route.fulfill started
+2026-10-27T11:37:26.042Z pw:api => route.fulfill started
+2026-10-27T11:37:26.042Z pw:api => route.fulfill started
+2026-10-27T11:37:26.042Z pw:api => route.fulfill started
+2026-10-27T11:37:26.042Z pw:api => route.fulfill started
+2026-10-27T11:37:26.043Z pw:api => route.fulfill started
+2026-10-27T11:37:26.043Z pw:api => route.fulfill started
+2026-10-27T11:37:26.047Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.047Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.057Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.058Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.058Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.060Z pw:api => route.fulfill started
+2026-10-27T11:37:26.066Z pw:api => route.fulfill started
+2026-10-27T11:37:26.074Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.086Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.086Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.086Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.086Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.087Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.100Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.100Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.100Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.100Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.101Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.101Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.101Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.101Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.101Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.101Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.102Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.102Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.102Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.102Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.103Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.103Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.104Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.104Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.104Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.105Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.105Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.106Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.108Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.108Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.109Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.109Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.110Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.122Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.293Z pw:api => route.fulfill started
+2026-10-27T11:37:26.298Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.301Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.305Z pw:api => route.fulfill started
+2026-10-27T11:37:26.306Z pw:api => route.fulfill started
+2026-10-27T11:37:26.316Z pw:api => route.fulfill started
+2026-10-27T11:37:26.316Z pw:api => route.fulfill started
+2026-10-27T11:37:26.318Z pw:api => route.fulfill started
+2026-10-27T11:37:26.320Z pw:api => route.fulfill started
+2026-10-27T11:37:26.322Z pw:api   "load" event fired
+2026-10-27T11:37:26.322Z pw:api <= page.goto succeeded
+2026-10-27T11:37:26.322Z pw:api => locator.waitFor started
+2026-10-27T11:37:26.322Z pw:api   "domcontentloaded" event fired
+2026-10-27T11:37:26.325Z pw:api waiting for locator('.row.agent[data-id="codex"] .ag-ver').first() to be visible
+2026-10-27T11:37:26.338Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.339Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.339Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.339Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.340Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.340Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.370Z pw:api => route.fulfill started
+2026-10-27T11:37:26.370Z pw:api => route.fulfill started
+2026-10-27T11:37:26.371Z pw:api => route.fulfill started
+2026-10-27T11:37:26.372Z pw:api => route.fulfill started
+2026-10-27T11:37:26.372Z pw:api => route.fulfill started
+2026-10-27T11:37:26.432Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.433Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.433Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.433Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.433Z pw:api <= route.fulfill succeeded
+2026-10-27T11:37:26.462Z pw:api   locator resolved to visible <span class="ag-ver" title="Codex 0.130.0 is installed · 0.131.0 is out">CLI 0.130.0</span>
+2026-10-27T11:37:26.463Z pw:api <= locator.waitFor succeeded
+2026-10-27T11:37:26.463Z pw:api => locator.allTextContents started
+2026-10-27T11:37:26.480Z pw:api <= locator.allTextContents succeeded
+2026-10-27T11:37:26.481Z pw:api => locator.getAttribute started
+2026-10-27T11:37:26.482Z pw:api waiting for locator('.row.agent[data-id="codex"] .ag-app')
+2026-10-27T11:37:26.484Z pw:api   locator resolved to <span class="ag-ver ag-app" title="The Codex app 26.930.31730. It reads the same settings as the CLI: connecting Codex here connects both">App 26.930.31730</span>
+2026-10-27T11:37:26.484Z pw:api <= locator.getAttribute succeeded
+2026-10-27T11:37:26.484Z pw:api => locator.evaluateAll started
+2026-10-27T11:37:26.488Z pw:api <= locator.evaluateAll succeeded
+2026-10-27T11:37:26.488Z pw:api => locator.allTextContents started
+2026-10-27T11:37:26.490Z pw:api <= locator.allTextContents succeeded
+2026-10-27T11:37:26.490Z pw:api => page.evaluate started
+2026-10-27T11:37:26.492Z pw:api <= page.evaluate succeeded
+2026-10-27T11:37:26.492Z pw:api => page.close started
+2026-10-27T11:37:26.934Z pw:api   "networkidle" event fired
+
+Interrupted while running:
+
+⚠ internal/gui/tests/agent-app-version.test.cjs (internal/gui/tests/agent-app-version.test.cjs:1:1)
+✖ internal/gui/tests/agent-app-version.test.cjs (89961.580337ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 0
+ℹ cancelled 1
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 89968.029973
+
+✖ failing tests:
+
+test at internal/gui/tests/agent-app-version.test.cjs:1:1
+✖ internal/gui/tests/agent-app-version.test.cjs (89961.580337ms)
+  'Promise resolution is still pending but the event loop has already resolved'

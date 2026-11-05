@@ -1,0 +1,26 @@
+✔ chromium en 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2103.336318ms)
+✔ chromium en 440: an agent's own settings are in its opened row, and Settings' search finds them there (2682.69882ms)
+✔ chromium en: in the panel a Settings line and the agent's menu open its sheet (1901.876305ms)
+✔ chromium zh 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2055.726718ms)
+✔ chromium zh 440: an agent's own settings are in its opened row, and Settings' search finds them there (2663.821848ms)
+✔ chromium zh: in the panel a Settings line and the agent's menu open its sheet (1914.182633ms)
+✔ chromium zh-TW 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2044.076055ms)
+✔ chromium zh-TW 440: an agent's own settings are in its opened row, and Settings' search finds them there (2672.3616ms)
+✔ chromium zh-TW: in the panel a Settings line and the agent's menu open its sheet (1903.230417ms)
+✔ chromium ja 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2067.095928ms)
+✔ chromium ja 440: an agent's own settings are in its opened row, and Settings' search finds them there (2826.801803ms)
+✔ chromium ja: in the panel a Settings line and the agent's menu open its sheet (1938.895313ms)
+✔ chromium de 1100: an agent's own settings are in its opened row, and Settings' search finds them there (2067.149758ms)
+✔ chromium de 440: an agent's own settings are in its opened row, and Settings' search finds them there (2704.812938ms)
+✔ chromium de: in the panel a Settings line and the agent's menu open its sheet (1893.879241ms)
+✔ chromium: gateway mode shows none of an agent's settings (779.11411ms)
+✔ chromium: gateway mode keeps Long conversations in Settings (636.88649ms)
+✔ chromium: no Codex or Claude Code keeps Long conversations in Settings (633.880127ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 35839.495396

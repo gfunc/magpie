@@ -1,0 +1,5 @@
+● magpie gateway on http://127.0.0.1:58093
+  OpenAI   http://127.0.0.1:58093/v1/chat/completions · http://127.0.0.1:58093/v1/responses
+  Anthropic http://127.0.0.1:58093/v1/messages
+● magpie web on http://127.0.0.1:42391/?k=205fb7f2ed95e1806ede60547a7c7932
+  the link carries this run's key (MAGPIE_WEB_KEY keeps one across runs) · gateway http://127.0.0.1:58093 · Ctrl-C to stop

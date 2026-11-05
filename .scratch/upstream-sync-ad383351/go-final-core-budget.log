@@ -1,0 +1,6 @@
+--- FAIL: TestCoreScriptBudget (0.00s)
+    core_budget_test.go:41: app.js is 1313610 bytes, over its budget of 1312696: put the page's code in its plugin, or raise the budget and say why
+    core_budget_test.go:50: the core's scripts are 1529732 bytes, over their budget of 1528818: put the page's code in its plugin, or raise the budget and say why
+FAIL
+FAIL	github.com/yetone/magpie/internal/gui	0.021s
+FAIL
