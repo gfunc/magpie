@@ -694,6 +694,91 @@ func TestKimiEffortPickDrivesModelTables(t *testing.T) {
 	}
 }
 
+// The same re-own covers a table holding the model's vendor default with
+// no record of it (dev's gpt-6.1-sol kept ultra through a wired max sync:
+// magpie wrote that ultra before it kept records, and the record-less
+// read mistook it for the user's hand-set). A value that is neither high
+// nor the vendor default is the user's and stays.
+func TestKimiUnrecordedVendorDefaultFollowsThePick(t *testing.T) {
+	home := keptEffortHome(t)
+	if err := provider.Save(provider.Provider{ID: "uco", Name: "UCO", Chat: "https://example.test/v1", Key: "k", Models: []string{"gpt-6.1-sol", "gpt-6.1-terra"}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := catalog.SaveLive("uco", "https://example.test/v1", []catalog.Model{
+		{ID: "gpt-6.1-sol", Efforts: []string{"low", "high", "ultra", "max"}, DefaultEffort: "ultra"},
+		{ID: "gpt-6.1-terra", Efforts: []string{"low", "high", "ultra", "max"}, DefaultEffort: "ultra"},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(home, ".kimi-code", "config.toml")
+	writeFile(t, path, "")
+	a := kimi(home)
+	if err := a.Pick("model", "magpie/uco/gpt-6.1-sol"); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.Apply("effort", "max"); err != nil {
+		t.Fatal(err)
+	}
+	efforts := func() map[string]string {
+		t.Helper()
+		ms := readKimiTOML(t, path)["models"].(map[string]any)
+		out := map[string]string{}
+		for k, v := range ms {
+			m, ok := v.(map[string]any)
+			if !ok {
+				continue
+			}
+			if e, ok := m["default_effort"].(string); ok {
+				out[k] = e
+			}
+		}
+		return out
+	}
+	if got := efforts(); got["magpie/uco/gpt-6.1-sol"] != "max" {
+		t.Fatalf("pick max: %v", got)
+	}
+	// a table the record was lost from (a magpie from before records
+	// kept), holding the vendor default, follows the pick again
+	edit.SetTOMLKey(path, `models."magpie/uco/gpt-6.1-sol"`, "default_effort", "ultra")
+	wrote := kimiWrote(path)
+	delete(wrote, `models."magpie/uco/gpt-6.1-sol"`)
+	b, err := json.Marshal(wrote)
+	if err != nil {
+		t.Fatal(err)
+	}
+	stash(map[string]string{kimiWroteKey(path): string(b)})
+	if err := a.Sync(); err != nil {
+		t.Fatal(err)
+	}
+	if got := efforts(); got["magpie/uco/gpt-6.1-sol"] != "max" {
+		t.Fatalf("unrecorded vendor default followed: %v", got)
+	}
+	// a hand-set value that is neither high nor the vendor default is the
+	// user's, record or none, and stays while the model has it
+	edit.SetTOMLKey(path, `models."magpie/uco/gpt-6.1-terra"`, "default_effort", "low")
+	wrote = kimiWrote(path)
+	delete(wrote, `models."magpie/uco/gpt-6.1-terra"`)
+	b, err = json.Marshal(wrote)
+	if err != nil {
+		t.Fatal(err)
+	}
+	stash(map[string]string{kimiWroteKey(path): string(b)})
+	if err := a.Sync(); err != nil {
+		t.Fatal(err)
+	}
+	if got := efforts(); got["magpie/uco/gpt-6.1-terra"] != "low" {
+		t.Fatalf("hand-set value with no record replaced: %v", got)
+	}
+	// and with the record kept, today's semantics stand
+	edit.SetTOMLKey(path, `models."magpie/uco/gpt-6.1-sol"`, "default_effort", "ultra")
+	if err := a.Sync(); err != nil {
+		t.Fatal(err)
+	}
+	if got := efforts(); got["magpie/uco/gpt-6.1-sol"] != "ultra" {
+		t.Fatalf("recorded hand-set replaced: %v", got)
+	}
+}
+
 // The pick alone, on an agent not wired (default_model the user's own),
 // changes nothing in the model tables: only [thinking].effort moves.
 func TestKimiEffortPickWhileNotWiredChangesNoTables(t *testing.T) {

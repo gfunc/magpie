@@ -176,7 +176,7 @@ func kimiModelTables(path string, legacy bool, preferred string, wrote map[strin
 			// a default effort set by hand stays while the model has it;
 			// while an Agents-page effort is picked and the agent is
 			// wired, magpie's own follows it (kimiDefaultEffort)
-			effs, def := kimiEfforts(m.Efforts, kimiDefaultEffort(preferred, m.DefaultEffort, m.Efforts), was["default_effort"], wrote[name])
+			effs, def := kimiEfforts(m.Efforts, kimiDefaultEffort(preferred, m.DefaultEffort, m.Efforts), m.DefaultEffort, was["default_effort"], wrote[name])
 			kvs = append(kvs, effs...)
 			if def != "" {
 				setWrote(now, name, "default_effort", def)
@@ -284,12 +284,17 @@ func kimiHighestEffort(levels []string) string {
 // level at all. none is left out: Kimi Code's own off turns thinking off.
 // kimi-cli has neither key. was is the table's default_effort now and
 // wrote what magpie wrote in the table last (kimiOwn): one set by hand
-// stays while the model has it. def is magpie's own default, "" when the
-// table keeps the user's. A prefer outside the model's levels — a direct
-// caller's; kimiDefaultEffort never makes one — writes no default of its
-// own: an emitted default_effort always sits inside its table's
-// support_efforts, so Kimi Code's start-up validation takes the config.
-func kimiEfforts(efforts []string, prefer, was string, wrote map[string]string) (kvs []edit.KV, def string) {
+// stays while the model has it — except in a table magpie kept no record
+// of, where a was of high or of the model's vendor default is one magpie
+// wrote before it kept records (high on every model that had it, the
+// vendor default where the model offered one) and is re-owned; any other
+// value there is the user's hand-set. def is magpie's own default, ""
+// when the table keeps the user's. A prefer outside the model's levels —
+// a direct caller's; kimiDefaultEffort never makes one — writes no
+// default of its own: an emitted default_effort always sits inside its
+// table's support_efforts, so Kimi Code's start-up validation takes the
+// config.
+func kimiEfforts(efforts []string, prefer, vendor, was string, wrote map[string]string) (kvs []edit.KV, def string) {
 	var levels, quoted []string
 	for _, e := range efforts {
 		if e != "none" {
@@ -308,9 +313,11 @@ func kimiEfforts(efforts []string, prefer, was string, wrote map[string]string) 
 			mine = "high"
 		}
 	}
-	// high in a table magpie kept no record of is the one it wrote before
-	// it kept one (it wrote high on every model that had it)
-	if _, ok := wrote["default_effort"]; !ok && was == "high" {
+	// a default in a table magpie kept no record of is one it wrote
+	// before it kept one: high (it wrote high on every model that had
+	// it) or the model's vendor default (what it wrote where the model
+	// offered one). Anything else there is the user's hand-set and stays
+	if _, ok := wrote["default_effort"]; !ok && (was == "high" || vendor != "" && was == vendor) {
 		was = ""
 	}
 	v, by := kimiOwn(map[string]string{"default_effort": was}, wrote, "default_effort", mine)
