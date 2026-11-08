@@ -585,6 +585,24 @@ type settingsJSON struct {
 	// NotifyProblem is why a usage alert set wouldn't be seen: "denied"
 	// (notifications turned off for magpie) or "unavailable"
 	NotifyProblem string `json:"notifyProblem,omitempty"`
+	// Registry feeds the Model registry rows: the endpoint's own URL rule
+	// (raw MAGPIE_PUBLIC_URL, trailing slash trimmed — not PublicURL
+	// above, whose visibility is LAN-gated by #1551), the option ids, and
+	// the env fallback's resolved value so the effort row never lies
+	Registry modelRegistryJSON `json:"registry"`
+}
+
+// modelRegistryJSON is the Model registry section's facts, always filled.
+type modelRegistryJSON struct {
+	// PublicURL is MAGPIE_PUBLIC_URL as /api.json hangs under it
+	PublicURL string `json:"publicURL,omitempty"`
+	// Buckets are the protocol buckets' ids, canonical order
+	Buckets []string `json:"buckets"`
+	// Efforts are the default-effort row's levels, the spec's five
+	Efforts []string `json:"efforts"`
+	// EnvEffort is MAGPIE_REGISTRY_DEFAULT_EFFORT as the endpoint applies
+	// it: trimmed and lower-cased
+	EnvEffort string `json:"envEffort,omitempty"`
 }
 
 // searchAPIJSON is a search API as the Settings page shows it.
@@ -846,6 +864,16 @@ func settingsState() settingsJSON {
 	}
 	s.ProxyNow, s.ProxySource = netproxy.Describe()
 	s.NoAccountsEnv = settings.AccountDiscoveryOff() && !s.NoAccountDiscovery
+	// the registry rows' facts: always filled, whatever the switch — the
+	// page draws the section whole, greyed, while it is off. Buckets are
+	// the option ids, not the chosen list: the flat registryBuckets holds
+	// the choice
+	s.Registry = modelRegistryJSON{
+		PublicURL: strings.TrimRight(os.Getenv("MAGPIE_PUBLIC_URL"), "/"),
+		Buckets:   settings.RegistryBucketIDs,
+		Efforts:   settings.RegistryEfforts,
+		EnvEffort: strings.ToLower(strings.TrimSpace(os.Getenv("MAGPIE_REGISTRY_DEFAULT_EFFORT"))),
+	}
 	for _, name := range []string{"MAGPIE_OTEL_ENABLED", "MAGPIE_OTEL_ENDPOINT", "MAGPIE_OTEL_HEADERS", "MAGPIE_OTEL_METRICS", "MAGPIE_OTEL_BODIES", "MAGPIE_OTEL_BODIES_WHOLE", "MAGPIE_OTEL_SESSIONS"} {
 		if _, ok := os.LookupEnv(name); ok {
 			s.OTelEnv = true
@@ -3235,6 +3263,11 @@ func fail(rw http.ResponseWriter, err error) {
 		} else if admin.Err != nil {
 			out["reason"] = admin.Err.Error()
 		}
+	}
+	// a save that would leave the model registry carrying no protocol
+	// bucket: the buckets row says it, in the page's language
+	if errors.Is(err, settings.ErrRegistryBucketsOff) {
+		out["code"] = "registry_buckets_off"
 	}
 	// a bun this Windows or processor can't run at all: said, with what
 	// to do, in the reader's language (zgcwkj on Discord)

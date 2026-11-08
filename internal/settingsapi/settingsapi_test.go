@@ -188,13 +188,15 @@ func TestRefusedValueWritesNothing(t *testing.T) {
 		t.Fatal(err)
 	}
 	for key, value := range map[string]string{
-		"theme":          `"neon"`,
-		"lang":           `"xx"`,
-		"trayUsageEvery": `4`,
-		"vision":         `"nobody/nothing"`,
-		"searcher":       `"nobody/nothing"`,
-		"usageAlert":     `101`,
-		"updateChannel":  `"nightly"`,
+		"theme":           `"neon"`,
+		"lang":            `"xx"`,
+		"trayUsageEvery":  `4`,
+		"vision":          `"nobody/nothing"`,
+		"searcher":        `"nobody/nothing"`,
+		"usageAlert":      `101`,
+		"updateChannel":   `"nightly"`,
+		"registryBuckets": `[]`,      // every protocol bucket turned off
+		"registryEffort":  `"ultra"`, // not one of the five levels
 	} {
 		cur := settings.Load()
 		body, err := Body(cur, key, json.RawMessage(value))
@@ -211,6 +213,61 @@ func TestRefusedValueWritesNothing(t *testing.T) {
 	}
 	if _, err := Body(settings.Load(), "port", json.RawMessage(`1`)); err == nil {
 		t.Error("Body took port, which has a route of its own")
+	}
+}
+
+// The model registry's four settings are the Settings page's to send: a
+// save that sends none of them (a page from before the section exists)
+// keeps the user's own, and one that sends them empty turns the registry
+// off. The buckets are a list, and a list that isn't sent is the one the
+// user has — a list that is sent empty is every bucket off, which the save
+// refuses.
+func TestRegistrySettingsCarriedUnlessSent(t *testing.T) {
+	cur := settings.Defaults()
+	cur.RegistryOn = true
+	cur.RegistryEffort = "high"
+	cur.RegistryBuckets = []string{"magpie-openai"}
+	cur.RegistrySync = true
+	in, err := Merge([]byte(`{"theme":"dark"}`), cur, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !in.RegistryOn || in.RegistryEffort != "high" || !slices.Equal(in.RegistryBuckets, []string{"magpie-openai"}) || !in.RegistrySync {
+		t.Errorf("a save that sent no registry setting changed one: %+v", in)
+	}
+	// an explicit null is a value sent: the switches off and the effort
+	// empty, which is the model's own middle
+	in, err = Merge([]byte(`{"registryOn":null,"registryEffort":null,"registryBuckets":null,"registrySync":null}`), cur, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if in.RegistryOn || in.RegistrySync || in.RegistryEffort != "" {
+		t.Errorf("a save that sent the registry's settings empty left one on: %+v", in)
+	}
+	// the buckets are a list, and a null is no list said: the list the
+	// user has is kept (as the searchers after the one named are)
+	if !slices.Equal(in.RegistryBuckets, []string{"magpie-openai"}) {
+		t.Errorf("a save that sent the buckets null changed them: %v", in.RegistryBuckets)
+	}
+	// an empty list is a list said, and reaches the save, which refuses it
+	in, err = Merge([]byte(`{"registryBuckets":[]}`), cur, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if in.RegistryBuckets == nil || len(in.RegistryBuckets) != 0 {
+		t.Errorf("an empty bucket list was carried instead of sent: %v", in.RegistryBuckets)
+	}
+	// a file from before the registry existed says no buckets, and reads
+	// as all four
+	home(t)
+	if err := os.MkdirAll(settings.Dir(), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(settings.Path(), []byte(`{"theme":"dark"}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if got := settings.Load().RegistryBuckets; !slices.Equal(got, settings.RegistryBucketIDs) {
+		t.Errorf("a file with no buckets reads as %v, want all four", got)
 	}
 }
 

@@ -814,7 +814,11 @@ func run(ctx context.Context, first time.Duration) {
 func collect(c Config) (backup.Bundle, error) {
 	b, err := backup.Collect(c.Keys, "magpie")
 	if b.Settings == nil {
+		// Load is normalized: it fills the buckets in even when this
+		// machine's switch is off, which is half a state to travel — the
+		// strip a whole collect makes applies here too
 		s := settings.Load()
+		s.OwnRegistry()
 		b.Settings = &s
 	}
 	if !c.Agents {
@@ -890,6 +894,51 @@ func orEmpty[V any](m map[string]V) map[string]V {
 		return map[string]V{}
 	}
 	return m
+}
+
+// blindRegistry is b as a machine whose registry switch is off compares and
+// stores it: all four registry fields zeroed on the bundle's settings part,
+// before anything is hashed of it. Such a machine must never see the
+// registry in anyone's bundle — its own stripped one, a peer's carrying one
+// — or the difference shows as a settings change it would push or pull with
+// no reason of its own; zeroing its stored hash the same way keeps the next
+// sync from seeing a phantom change when the peer's config moves. The
+// switch and config themselves travel only through a whole bundle and the
+// restore's landing rule; this is the compare side alone, and hashes itself
+// stays as it is. A nil settings part (from an older bundle) stays nil.
+func blindRegistry(b backup.Bundle, off bool) backup.Bundle {
+	if !off || b.Settings == nil {
+		return b
+	}
+	s := *b.Settings
+	s.RegistryOn, s.RegistryEffort, s.RegistryBuckets, s.RegistrySync = false, "", nil, false
+	b.Settings = &s
+	return b
+}
+
+// registryOff is whether this machine's registry switch is off, for
+// blindRegistry at every site that hashes or stores a bundle.
+func registryOff() bool { return !settings.Shared().RegistrySync }
+
+// keepServersRegistry puts the server's registry fields — the four the
+// switch is one of — back onto the settings part a sync takes up from
+// here, when this machine's switch is off: what it pushes of its own never
+// carries the registry, so the peer's config on the server would be
+// replaced by this machine's stripped nothing (and the on peer's next sync,
+// seeing no difference, would never put it back). The local's other
+// settings changes still go up. On a machine whose switch is on the local
+// settings carry the config, and nothing is re-installed.
+func keepServersRegistry(merged *backup.Bundle, remote, local backup.Bundle) {
+	if local.Settings == nil || local.Settings.RegistrySync || merged.Settings == nil {
+		return
+	}
+	s := *merged.Settings
+	if remote.Settings == nil {
+		s.RegistryOn, s.RegistryEffort, s.RegistryBuckets, s.RegistrySync = false, "", nil, false
+	} else {
+		s.RegistryOn, s.RegistryEffort, s.RegistryBuckets, s.RegistrySync = remote.Settings.RegistryOn, remote.Settings.RegistryEffort, remote.Settings.RegistryBuckets, remote.Settings.RegistrySync
+	}
+	merged.Settings = &s
 }
 
 // take puts from's part in to. The merged bundle is a sync one (BundleVersion):
@@ -1152,7 +1201,8 @@ func syncOnce(ctx context.Context, c Config, st *state) error {
 	kept := hereOf(c, local)
 	moved := !slices.Equal(kept, st.Here)
 	keep, afterW := withHere(own, kept), withHere(after, kept)
-	L := hashesOwn(local, prev)
+	regOff := registryOff()
+	L := hashesOwn(blindRegistry(local, regOff), prev)
 	if unchanged {
 		if maps.Equal(L, st.Local) && !follow && !moved {
 			return nil // nothing changed on either side
@@ -1179,7 +1229,7 @@ func syncOnce(ctx context.Context, c Config, st *state) error {
 		if err != nil {
 			return err
 		}
-		st.Sum, st.Server, st.Remote = sum(sealed), v, hashesOwn(b, afterW)
+		st.Sum, st.Server, st.Remote = sum(sealed), v, hashesOwn(blindRegistry(b, regOff), afterW)
 		if v.Blind {
 			were.Sum = st.Sum
 			st.Blind = &were
@@ -1192,7 +1242,7 @@ func syncOnce(ctx context.Context, c Config, st *state) error {
 			return err
 		}
 		st.Own, st.Here = after, kept
-		st.Local = hashesOwn(local, afterW)
+		st.Local = hashesOwn(blindRegistry(local, regOff), afterW)
 		st.SignIns = nil
 		if c.SignIns {
 			st.SignIns = local.SignIns.Hashes()
@@ -1264,7 +1314,7 @@ func syncOnce(ctx context.Context, c Config, st *state) error {
 	// R compares with the last sync as its hashes were; Rafter is the
 	// server's file as this sync leaves it read, both before the merge
 	// below changes remote (a join's unseen gateway keys)
-	R, Rafter := hashesOwn(remote, prev), hashesOwn(remote, afterW)
+	R, Rafter := hashesOwn(blindRegistry(remote, regOff), prev), hashesOwn(blindRegistry(remote, regOff), afterW)
 	first := st.Local == nil
 	merged := remote
 	var bringIn, here, there []string
@@ -1281,6 +1331,9 @@ func syncOnce(ctx context.Context, c Config, st *state) error {
 		switch {
 		case lc && !rc:
 			take(&merged, local, p)
+			if p == "settings" {
+				keepServersRegistry(&merged, remote, local)
+			}
 			if p == "agents" {
 				keepServersOwn(&merged, remote, keep)
 			}
@@ -1295,6 +1348,9 @@ func syncOnce(ctx context.Context, c Config, st *state) error {
 		case lc && rc: // both: the newer stays
 			if changed(p, c.Keys).After(remote.Created) {
 				take(&merged, local, p)
+				if p == "settings" {
+					keepServersRegistry(&merged, remote, local)
+				}
 				if p == "agents" {
 					keepServersOwn(&merged, remote, keep)
 				}
@@ -1372,8 +1428,8 @@ func syncOnce(ctx context.Context, c Config, st *state) error {
 			}
 		}
 	}
-	now := hashesOwn(local, afterW)
-	M, pending := hashesOwn(merged, afterW), map[string]string{}
+	now := hashesOwn(blindRegistry(local, regOff), afterW)
+	M, pending := hashesOwn(blindRegistry(merged, regOff), afterW), map[string]string{}
 	for _, p := range append(slices.Clone(Parts), "signins") {
 		if _, ok := now[p]; !ok && p == "signins" {
 			continue

@@ -237,6 +237,7 @@ func Collect(keys bool, app string) (Bundle, error) {
 			s.OTel.Headers = nil
 			s.GitHubToken = ""
 		}
+		s.OwnRegistry()
 		b.Settings = &s
 	}
 	ps, err := profile.Load()
@@ -472,6 +473,14 @@ func Restore(b Bundle, parts Parts) (Result, error) {
 		s := cur
 		if b.Settings != nil {
 			s = *b.Settings
+		}
+		// the registry's config lands only when the bundle carried it (its
+		// maker's switch was on) and this machine asked for it; the switch
+		// itself is every machine's own, never another's to move
+		ride := s.RegistrySync && cur.RegistrySync && s.RegistryBuckets != nil
+		s.RegistrySync = cur.RegistrySync
+		if !ride {
+			s.RegistryOn, s.RegistryEffort, s.RegistryBuckets = cur.RegistryOn, cur.RegistryEffort, cur.RegistryBuckets
 		}
 		s.KeepOwn(cur)
 		if !keys {

@@ -38,6 +38,10 @@ var Keys = []string{
 	"currency", "chineseUnits", "usageAlert", "balanceAlert", "resetReminder", "turnDoneAlert", "maskAlert",
 	// network
 	"proxy",
+	// the model registry (GET /api.json): whether it is served, the
+	// thinking effort its models take by default, the protocol buckets it
+	// carries and whether the config rides sync
+	"registryOn", "registryEffort", "registryBuckets", "registrySync",
 	// privacy
 	"redact", "redactPersonal", "redactKinds", "redactWords", "redactWordsAnyCase", "redactWordsWhole", "redactShape",
 	"noStats", "noUsageStats", "otel",
@@ -70,6 +74,7 @@ var Choices = map[string][]string{
 	"updateEvery":    ints(settings.UpdateEveries),
 	"searchFirst":    {settings.SearchFirstModel, settings.SearchFirstAPI},
 	"replyModel":     settings.ReplyModels,
+	"registryEffort": settings.RegistryEfforts,
 }
 
 func ints(v []int) []string {
@@ -256,6 +261,25 @@ func Merge(body []byte, cur settings.Settings, web bool) (settings.Settings, err
 	// nor whether a value masked for the first time is told (Must2333)
 	if _, sent := fields["maskAlert"]; !sent {
 		in.MaskAlert = cur.MaskAlert
+	}
+	// nor the model registry's own four: whether it is served, the
+	// thinking effort its models take by default, the protocol buckets it
+	// carries and whether the config rides sync. A page from before the
+	// section exists doesn't send them, and keeps the user's own.
+	if _, sent := fields["registryOn"]; !sent {
+		in.RegistryOn = cur.RegistryOn
+	}
+	if _, sent := fields["registryEffort"]; !sent {
+		in.RegistryEffort = cur.RegistryEffort
+	}
+	if _, sent := fields["registrySync"]; !sent {
+		in.RegistrySync = cur.RegistrySync
+	}
+	// The buckets are a list, and a list that isn't sent is the one the
+	// user has (as the searchers after the one named are). A list that is
+	// sent empty is every bucket turned off, which the save refuses.
+	if in.RegistryBuckets == nil {
+		in.RegistryBuckets = cur.RegistryBuckets
 	}
 	in.AgentOrder, in.AgentsHidden, in.AgentsShown, in.AgentsHere = cur.AgentOrder, cur.AgentsHidden, cur.AgentsShown, cur.AgentsHere
 	in.Window, in.WindowMaximised, in.WindowAt = cur.Window, cur.WindowMaximised, cur.WindowAt // the window's own, as it was last resized and moved

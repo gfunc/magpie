@@ -120,6 +120,65 @@ func TestSettingsRefusesAndWritesNothing(t *testing.T) {
 	}
 }
 
+// The model registry's settings are the CLI's to set, like the window's
+// (the stacks' upgrade path is `magpie settings set registryOn true`), and
+// a registry that carries no protocol bucket is refused: nothing is
+// written.
+func TestSettingsRegistry(t *testing.T) {
+	settingsHome(t)
+	if _, err := runOut(t, "settings", "set", "registryOn", "true"); err != nil {
+		t.Fatal(err)
+	}
+	if out, err := runOut(t, "settings", "get", "registryOn"); err != nil || strings.TrimSpace(out) != "on" {
+		t.Fatalf("get registryOn = %q, %v", out, err)
+	}
+	if !settings.Load().RegistryOn {
+		t.Error("registryOn is off after it was set")
+	}
+	if _, err := runOut(t, "settings", "set", "registryEffort", "max"); err != nil {
+		t.Fatal(err)
+	}
+	if out, err := runOut(t, "settings", "get", "registryEffort"); err != nil || strings.TrimSpace(out) != "max" {
+		t.Fatalf("get registryEffort = %q, %v", out, err)
+	}
+	if _, err := runOut(t, "settings", "set", "registrySync", "on"); err != nil {
+		t.Fatal(err)
+	}
+	if !settings.Load().RegistrySync {
+		t.Error("registrySync is off after it was set")
+	}
+	if _, err := runOut(t, "settings", "set", "registryBuckets", "magpie-openai,magpie-group"); err != nil {
+		t.Fatal(err)
+	}
+	if out, err := runOut(t, "settings", "get", "registryBuckets"); err != nil || strings.TrimSpace(out) != "magpie-openai,magpie-group" {
+		t.Fatalf("get registryBuckets = %q, %v", out, err)
+	}
+	// every bucket off is refused: a registry that carries no protocol
+	// serves nothing, so one stays
+	before, err := os.ReadFile(settings.Path())
+	if err != nil {
+		t.Fatal(err)
+	}
+	out, err := runOut(t, "settings", "set", "registryBuckets", "")
+	if err == nil {
+		t.Errorf("magpie settings set registryBuckets \"\": no error (%q)", out)
+	}
+	if err != nil && !strings.Contains(err.Error(), "bucket") {
+		t.Errorf("the refused bucket list didn't say why: %v", err)
+	}
+	after, _ := os.ReadFile(settings.Path())
+	if string(after) != string(before) {
+		t.Fatal("a refused bucket list changed settings.json")
+	}
+	// back to all four
+	if _, err := runOut(t, "settings", "reset", "registryBuckets"); err != nil {
+		t.Fatal(err)
+	}
+	if out, err := runOut(t, "settings", "get", "registryBuckets"); err != nil || strings.TrimSpace(out) != "magpie-openai,magpie-anthropic,magpie-openai-responses,magpie-group" {
+		t.Fatalf("get registryBuckets after a reset = %q, %v", out, err)
+	}
+}
+
 func TestSettingsListAndJSON(t *testing.T) {
 	settingsHome(t)
 	out, err := runOut(t, "settings", "list", "--json")

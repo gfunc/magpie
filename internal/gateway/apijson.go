@@ -11,12 +11,16 @@ import (
 	"github.com/yetone/magpie/internal/settings"
 )
 
-// registryDefaultEffort is the thinking level MAGPIE_REGISTRY_DEFAULT_EFFORT
-// offers as every able model's default_effort in the registry ("max", say):
-// a client like kimi-code starts a model there instead of on the middle of
-// its levels. "" (unset) offers none, and a level the model doesn't take is
+// registryDefaultEffort is the default thinking level every able model
+// of the registry is offered: the setting's value first, else what
+// MAGPIE_REGISTRY_DEFAULT_EFFORT says ("max", say) — a client like
+// kimi-code starts a model there instead of on the middle of its levels.
+// "" (neither set) offers none, and a level the model doesn't take is
 // checked away by the caller.
-func registryDefaultEffort() string {
+func registryDefaultEffort(st settings.Settings) string {
+	if de := strings.ToLower(strings.TrimSpace(st.RegistryEffort)); de != "" {
+		return de
+	}
 	return strings.ToLower(strings.TrimSpace(os.Getenv("MAGPIE_REGISTRY_DEFAULT_EFFORT")))
 }
 
@@ -41,8 +45,16 @@ var apiJSONBuckets = []struct {
 // id, name, api and type per bucket, and per model the fields that importer
 // reads — id kept in magpie's provider/model form, unknown window sizes and
 // prices left out rather than invented. The api base is MAGPIE_PUBLIC_URL
-// when set, else the address the registry was fetched on.
+// when set, else the address the registry was fetched on. The registry is
+// off until the user serves it (RegistryOn): off, the endpoint answers
+// 404 before it walks the catalog, and on, one Shared read carries the
+// switch, the served buckets and the default effort.
 func (s *Server) apiJSON(w http.ResponseWriter, r *http.Request) {
+	st := settings.Shared()
+	if !st.RegistryOn {
+		writeJSON(w, http.StatusNotFound, map[string]any{"error": "registry disabled"})
+		return
+	}
 	base := strings.TrimSuffix(os.Getenv("MAGPIE_PUBLIC_URL"), "/")
 	if base == "" {
 		scheme := "http"
@@ -53,11 +65,12 @@ func (s *Server) apiJSON(w http.ResponseWriter, r *http.Request) {
 	}
 	var price func(provider.Entry) (catalog.Price, bool)
 	if local(r) || sharedWith(r) {
-		st, find := settings.Load(), provider.GroupFinder()
+		find := provider.GroupFinder()
 		price = func(e provider.Entry) (catalog.Price, bool) { return provider.EntryPriceIn(st, find, e) }
 	} else {
 		price = func(provider.Entry) (catalog.Price, bool) { return catalog.Price{}, false }
 	}
+	de := registryDefaultEffort(st)
 	bucketEntries := make([][]provider.Entry, len(apiJSONBuckets))
 	for _, e := range catalogFor(r) {
 		if e.Group != "" {
@@ -73,10 +86,13 @@ func (s *Server) apiJSON(w http.ResponseWriter, r *http.Request) {
 	}
 	out := map[string]any{}
 	for i, b := range apiJSONBuckets {
+		if !slices.Contains(st.RegistryBuckets, b.id) {
+			continue
+		}
 		models := map[string]any{}
 		labels := provider.Labels(bucketEntries[i])
 		for j, e := range bucketEntries[i] {
-			m := apiJSONModel(e, labels[j], price)
+			m := apiJSONModel(e, labels[j], price, de)
 			id := e.ID
 			// the registry's key and its id agree: a group's bare id
 			// (models.dev keeps a model's id equal to its key)
@@ -102,7 +118,7 @@ func (s *Server) apiJSON(w http.ResponseWriter, r *http.Request) {
 // magpie lists them, and cost when a price is known. Fields magpie
 // doesn't know are omitted, so the importer fills its own defaults
 // instead of trusting an invented number.
-func apiJSONModel(e provider.Entry, name string, price func(provider.Entry) (catalog.Price, bool)) map[string]any {
+func apiJSONModel(e provider.Entry, name string, price func(provider.Entry) (catalog.Price, bool), defaultEffort string) map[string]any {
 	m := map[string]any{"id": e.ID, "tool_call": true}
 	if name != "" {
 		m["name"] = name
@@ -124,10 +140,10 @@ func apiJSONModel(e provider.Entry, name string, price func(provider.Entry) (cat
 		m["support_efforts"] = e.Efforts
 		// kimi-code starts a model on default_effort, else the middle of
 		// support_efforts, else on; the registry's owner picks another
-		// level (max, say) through the environment, and it goes out only
-		// where the model takes it
-		if de := registryDefaultEffort(); slices.Contains(e.Efforts, de) {
-			m["default_effort"] = de
+		// level (max, say) in the settings or the environment, and it
+		// goes out only where the model takes it
+		if slices.Contains(e.Efforts, defaultEffort) {
+			m["default_effort"] = defaultEffort
 		}
 	}
 	if in, out := e.Modalities(); in != nil || out != nil {

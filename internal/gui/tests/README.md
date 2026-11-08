@@ -2685,6 +2685,22 @@ left border, nothing wider or cut off at 360px, and no such section (nor a
 read of it) in a browser on the page. Every language, Chromium and WebKit,
 with the API faked.
 
+## Model registry
+
+`registry-settings.test.cjs` checks Settings › Network and sharing › Model
+registry (registry-settings.md), the `/api.json` clients like kimi-code
+are imported on with `/provider`: the section draws from a fresh state
+(switch off, effort "Default (model's middle)", all four protocol buckets
+ticked, sync off), the URL greyed with the `/provider` hint while off and
+copied while on (the page's own origin in magpie web), the switch and sync
+posts carrying the page's keep keys, the effort pick menu listing Default
+plus the five levels — its leading label saying the env fallback applies
+when the state carries `envEffort` — a bucket's tick posting the reduced
+list, and taking the last bucket away answered with the save's refusal
+code: the reason in the row, the ticks unchanged, and no error toast
+beside it. No native select or checkbox, no coloured left border.
+Chromium and WebKit, with the API faked.
+
 ## Inner scroll boxes keep the wheel
 
 `inner-scroll-contain.test.cjs` wheels a box that scrolls inside a page past

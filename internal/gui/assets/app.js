@@ -151,6 +151,7 @@ async function api(path, body, heads, signal) {
   }
   if (!res.ok) {
     const err = new Error(data?.error || `${res.status} ${res.statusText}`);
+    if (data?.code) err.code = data.code; // what a row reads its refusal by
     if (data?.code === "runtime_unavailable") {
       err.code = data.code;
       if (data.offline === "stage" || data.offline === "disconnect") err.offline = data.offline;
@@ -20020,6 +20021,7 @@ function renderSettings() {
   renderOTel(s, keep);
   renderPort(s);
   renderBareIds(s);
+  renderRegistry(s);
   renderLAN(s);
   renderAllow(s);
   renderCORS(s);
@@ -22704,20 +22706,18 @@ function prefsKeep(s) {
     noUpdatePill: !!s.noUpdatePill, noAutoUpdate: !!s.noAutoUpdate, updateEvery: s.updateEvery || 360, autoRestart: !!s.autoRestart, noAutoDownload: !!s.noAutoDownload, updateChannel: s.updateChannel || "",
     trayUsage: s.trayUsage || "", trayUsageEvery: s.trayUsageEvery || 3, trayNoLogos: !!s.trayNoLogos, trayNoBird: !!s.trayNoBird, trayNoNumber: !!s.trayNoNumber, trayPace: !!s.trayPace, trayNoCost: !!s.trayNoCost, trayWindows: s.trayWindows || {}, vision: s.vision || "", visionEffort: s.visionEffort || "", searcherEffort: s.searcherEffort || "", imageGen: s.imageGen || "", imageTimeout: s.imageTimeout || 0, classifyTimeout: s.classifyTimeout || 0, searcher: s.searcher || "", searchFirst: s.searchFirst || "", fetch: s.fetch || "", currency: s.currency || "usd",
     chineseUnits: !!s.chineseUnits, usageAlert: s.usageAlert || 0, balanceAlert: s.balanceAlert || 0, resetReminder: s.resetReminder || 0,
-    turnDoneAlert: s.turnDoneAlert || 0, maskAlert: !!s.maskAlert };
+    turnDoneAlert: s.turnDoneAlert || 0, maskAlert: !!s.maskAlert,
+    registryOn: !!s.registryOn, registryEffort: s.registryEffort || "", registryBuckets: s.registryBuckets ?? null, registrySync: !!s.registrySync };
 }
 
 // savePrefs sends what the page was drawn with (prefsBase) and the choice
-// made on it. The saves go one after another, each with the choices before
-// it: two made quickly (a theme, then a language) each sent the page as it
-// was drawn, the second undoing the first, and their answers could come
-// back in either order. The page is painted and drawn again once the last
-// is in.
+// made on it, one after another, each with the choices before it; the page
+// is drawn again once the last is in. onError hears a refused save first:
+// its row says why, and no toast follows.
 let prefsBase = {}, prefsQueue = Promise.resolve(), prefsQueued = 0;
-function savePrefs(body) {
+function savePrefs(body, onError) {
   const change = Object.fromEntries(Object.entries(body).filter(([k, v]) => JSON.stringify(v) !== JSON.stringify(prefsBase[k])));
-  prefsQueued++;
-  // a save waiting its turn counts as under way
+  prefsQueued++; // a save waiting its turn counts as under way
   prefsQueue = writingPrefs(prefsQueue.catch(() => {}).then(async () => {
     let failed = false;
     try {
@@ -22725,7 +22725,8 @@ function savePrefs(body) {
       if (state) state.settings = prefs;
     } catch (e) {
       failed = true;
-      statusErr(e);
+      onError?.(e); // its row's reason; no toast beside it
+      if (!onError) statusErr(e);
     }
     if (--prefsQueued) return;
     // what is saved, a choice that failed put back

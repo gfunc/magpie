@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"slices"
 	"testing"
 	"time"
 
@@ -182,5 +183,67 @@ func TestPublicURLSaysItsKind(t *testing.T) {
 		if got := kind(settingsState()); got != want {
 			t.Errorf("%s: Settings' publicKind %v, want %v", u, got, want)
 		}
+	}
+}
+
+// The Model registry's URL row reads MAGPIE_PUBLIC_URL by the endpoint's
+// own rule, not the page's: raw, trailing slash trimmed, shown whether or
+// not other machines are let in (#1551 keeps PublicURL itself gated). The
+// effort row's env fallback arrives resolved as the endpoint applies it.
+func TestRegistryURLAndEffortInSettings(t *testing.T) {
+	h := t.TempDir()
+	testenv.SetHome(t, h)
+	t.Setenv("XDG_CONFIG_HOME", filepath.Join(h, ".config"))
+	t.Setenv("XDG_CACHE_HOME", filepath.Join(h, ".cache"))
+	t.Setenv("XDG_DATA_HOME", filepath.Join(h, ".local", "share"))
+	t.Setenv("MAGPIE_ADDR", "127.0.0.1:3425")
+	t.Setenv("MAGPIE_PUBLIC_URL", "https://magpie.example.com/magpie///")
+	t.Setenv("MAGPIE_REGISTRY_DEFAULT_EFFORT", "  Max ")
+
+	cache := fx.CachePath()
+	if err := os.MkdirAll(filepath.Dir(cache), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	b, err := json.Marshal(fx.Rate{CNYPerUSD: 7.25, At: time.Now()})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(cache, b, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	fx.Reset()
+	t.Cleanup(fx.Reset)
+
+	for _, shared := range []bool{false, true} {
+		if err := settings.Save(settings.Settings{LAN: shared}); err != nil {
+			t.Fatal(err)
+		}
+		s := settingsState()
+		if want := "https://magpie.example.com/magpie"; s.Registry.PublicURL != want {
+			t.Errorf("shared=%v: Registry.PublicURL %q, want %q", shared, s.Registry.PublicURL, want)
+		}
+		if got := s.PublicURL; shared && got == "" || !shared && got != "" {
+			t.Errorf("shared=%v: the gated PublicURL is %q", shared, got)
+		}
+	}
+	t.Setenv("MAGPIE_PUBLIC_URL", "")
+	if s := settingsState(); s.Registry.PublicURL != "" {
+		t.Errorf("no MAGPIE_PUBLIC_URL: Registry.PublicURL %q", s.Registry.PublicURL)
+	}
+	if s := settingsState(); s.Registry.EnvEffort != "max" {
+		t.Errorf("Registry.EnvEffort %q, want the env var trimmed and lower-cased", s.Registry.EnvEffort)
+	}
+	t.Setenv("MAGPIE_REGISTRY_DEFAULT_EFFORT", "")
+	if s := settingsState(); s.Registry.EnvEffort != "" {
+		t.Errorf("no env var: Registry.EnvEffort %q", s.Registry.EnvEffort)
+	}
+	// the rows' option lists, always: the buckets' ids in the registry's
+	// emission order and the effort row's five, whatever the switch
+	s := settingsState()
+	if !slices.Equal(s.Registry.Buckets, settings.RegistryBucketIDs) {
+		t.Errorf("Registry.Buckets %v, want %v", s.Registry.Buckets, settings.RegistryBucketIDs)
+	}
+	if !slices.Equal(s.Registry.Efforts, settings.RegistryEfforts) {
+		t.Errorf("Registry.Efforts %v, want %v", s.Registry.Efforts, settings.RegistryEfforts)
 	}
 }

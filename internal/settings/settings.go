@@ -1025,6 +1025,31 @@ type Settings struct {
 	// minimised; not at all under Wayland, where a window can't place
 	// itself. gui's openAt moves it onto a screen there now.
 	WindowAt []int `json:"windowAt,omitempty"`
+	// RegistryOn serves GET /api.json, the model registry an agent adds a
+	// magpie as a provider with. Off, the default: the endpoint answers
+	// 404, so an agent told of the URL finds nothing there — the registry
+	// is a deliberate break with what magpie served before it, and the
+	// stacks' way back is `magpie settings set registryOn true`.
+	RegistryOn bool `json:"registryOn,omitempty"`
+	// RegistryEffort is the default thinking effort the registry's models
+	// are asked for, under a request's own: "" the model's own middle,
+	// one of RegistryEfforts (the spec's five, not catalog.EffortRank's
+	// eight). MAGPIE_REGISTRY_DEFAULT_EFFORT, where set, is used while
+	// this is "".
+	RegistryEffort string `json:"registryEffort,omitempty"`
+	// RegistryBuckets are the protocol buckets the registry carries, by
+	// their ids in RegistryBucketIDs. Nil means all four (normal fills
+	// it); an empty list is every bucket turned off, which Save refuses
+	// with ErrRegistryBucketsOff — a registry that carries no protocol
+	// serves nothing. Unknown ids are refused, never dropped silently.
+	RegistryBuckets []string `json:"registryBuckets,omitempty"`
+	// RegistrySync is the registry's config riding sync. The coupling is
+	// all-ends-on: the config lands on a machine only when the sender's
+	// bundle carried it (OwnRegistry strips it from an off machine's
+	// bundle) and this machine opted in too — one box turning it on
+	// changes nothing until every synced box has. The switch itself is
+	// per-machine: no peer's disagreeing choice moves it.
+	RegistrySync bool `json:"registrySync,omitempty"`
 }
 
 // ModelPrice is the price of one model as the user states it. Each part is a
@@ -1287,7 +1312,23 @@ var (
 	// TextSizes are TextSize's values, in percent. None is under 100: the
 	// webviews' zoom on Windows and Linux (Wails' SetZoom) goes no lower.
 	TextSizes = []int{100, 110, 125, 150}
+	// RegistryBucketIDs are the protocol buckets the model registry (GET
+	// /api.json) can carry, in the registry's emission order, routing
+	// groups last. Held to the gateway's own list by
+	// TestAPIJSONBucketsAreRegistryIDs (internal/gateway): settings can't
+	// import gateway, and a parity test is the repo's convention for this
+	// shape.
+	RegistryBucketIDs = []string{"magpie-openai", "magpie-anthropic", "magpie-openai-responses", "magpie-group"}
+	// RegistryEfforts are RegistryEffort's values, the spec's five — not
+	// catalog.EffortRank's eight — and no "": the empty value is the
+	// model's own middle, not a level.
+	RegistryEfforts = []string{"low", "medium", "high", "xhigh", "max"}
 )
+
+// ErrRegistryBucketsOff is returned by Save when every protocol bucket of
+// the model registry was turned off: a registry that carries no protocol
+// serves nothing, so one stays checked.
+var ErrRegistryBucketsOff = errors.New("the registry carries at least one protocol bucket: leave one checked")
 
 // SearchFirst's values: a provider's search first, saved as "", or the
 // search APIs first.
@@ -1469,6 +1510,19 @@ func (s *Settings) KeepOwn(cur Settings) {
 	s.ClaudeRunsMost = cur.ClaudeRunsMost
 	s.RequestArchiveLocal, s.RequestArchiveLocalMB = cur.RequestArchiveLocal, cur.RequestArchiveLocalMB
 	s.AgentsHere = cur.AgentsHere
+}
+
+// OwnRegistry takes the model registry's config — whether it is served,
+// its default effort and its protocol buckets — out of s, a settings
+// bundle about to travel to another computer (backup.Collect and
+// davsync's collect call it before the bundle is sealed), while
+// RegistrySync stays as it is: the switch is per-machine, and the config
+// lands only when the sender carried it and the receiver opted in. It is
+// idempotent: an already-stripped s changes nothing.
+func (s *Settings) OwnRegistry() {
+	if !s.RegistrySync {
+		s.RegistryOn, s.RegistryEffort, s.RegistryBuckets = false, "", nil
+	}
 }
 
 // Wires is ModelWires with the provider's own id of each model the user
@@ -2352,6 +2406,25 @@ func saveOwn(s Settings, recording, reads bool) error {
 		s.CodexCreditsFirst[i] = strings.ToLower(u)
 	}
 	s.CodexCreditsFirst = ids(s.CodexCreditsFirst)
+	s.RegistryEffort = strings.ToLower(strings.TrimSpace(s.RegistryEffort))
+	if s.RegistryEffort != "" && !slices.Contains(RegistryEfforts, s.RegistryEffort) {
+		return fmt.Errorf("the registry's default thinking effort is one of %s, or empty for the model's own, not %q", strings.Join(RegistryEfforts, ", "), s.RegistryEffort)
+	}
+	for _, id := range s.RegistryBuckets {
+		if !slices.Contains(RegistryBucketIDs, id) {
+			return fmt.Errorf("the registry's protocol buckets are %s, not %q", strings.Join(RegistryBucketIDs, ", "), id)
+		}
+	}
+	buckets := make([]string, 0, len(s.RegistryBuckets))
+	for _, id := range RegistryBucketIDs {
+		if slices.Contains(s.RegistryBuckets, id) {
+			buckets = append(buckets, id)
+		}
+	}
+	s.RegistryBuckets = buckets
+	if len(s.RegistryBuckets) == 0 {
+		return ErrRegistryBucketsOff
+	}
 	s.TrayUsage = ""
 	if len(s.TrayUsages) > 0 {
 		s.TrayUsage = s.TrayUsages[0]
@@ -2502,6 +2575,12 @@ func (s Settings) normal() Settings {
 		if len(of) == 0 {
 			s.CodexWarmAtOf = nil
 		}
+	}
+	// the registry's buckets: nil (nothing said, an older file) is all
+	// four; an empty list is every one turned off on purpose, which stays
+	// for Save to refuse
+	if s.RegistryBuckets == nil {
+		s.RegistryBuckets = slices.Clone(RegistryBucketIDs)
 	}
 	return s
 }

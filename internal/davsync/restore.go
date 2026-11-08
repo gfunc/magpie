@@ -78,7 +78,8 @@ func Restore(ctx context.Context) ([]string, error) {
 			return err
 		}
 		here := withHere(nil, hereOf(c, local)) // an agent's picks kept here are no change
-		L, R := hashesOwn(local, here), hashesOwn(remote, here)
+		regOff := registryOff()
+		L, R := hashesOwn(blindRegistry(local, regOff), here), hashesOwn(blindRegistry(remote, regOff), here)
 		for _, p := range Parts {
 			if L[p] == R[p] || !c.syncs(p) || (p == "library" && remote.Library == nil) {
 				continue
@@ -131,7 +132,7 @@ func Restore(ctx context.Context) ([]string, error) {
 		// nothing to push back
 		st.Here = hereOf(c, local)
 		own := withHere(st.Own, st.Here)
-		st.Local, st.Remote, st.Sum, st.Server = hashesOwn(local, own), hashesOwn(remote, own), sum(data), ver
+		st.Local, st.Remote, st.Sum, st.Server = hashesOwn(blindRegistry(local, regOff), own), hashesOwn(blindRegistry(remote, regOff), own), sum(data), ver
 		st.Blind = nil // what is here now is what the server has
 		remember(data)
 		st.Last, st.Error = time.Now(), ""

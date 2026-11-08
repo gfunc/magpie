@@ -4908,6 +4908,15 @@ input[type="checkbox"]:disabled { opacity: .45; }
 .proxy-check[hidden] { display: none; }
 .row.pref .sub.proxy-check.err { color: var(--red); }
 
+/* Settings › Network and sharing › Model registry: the protocol buckets'
+   ticks, the account keys' dot idiom on a settings row; the registry URL
+   greyed while the registry is off */
+.registry-buckets { display: flex; flex-wrap: wrap; gap: 4px 12px; justify-content: flex-end; }
+.registry-bucket { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--fg-2); }
+.registry-bucket .dot.tick { display: grid; place-items: center; width: 16px; height: 16px; padding: 0; border: 0; border-radius: 50%; background: none; box-shadow: inset 0 0 0 1.5px var(--faint); color: var(--muted); cursor: pointer; }
+.registry-bucket .dot.tick[aria-pressed="true"] { background: var(--fg); box-shadow: none; color: var(--card); }
+.registry-bucket .dot.tick:hover { box-shadow: inset 0 0 0 1.5px var(--fg); }
+
 /* an agent's own settings (AGENT_PREFS): Settings' rows, in the agent's
    opened row or its sheet (openAgentPrefs), one column, their lines
    wrapped rather than cut */

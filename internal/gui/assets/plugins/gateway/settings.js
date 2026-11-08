@@ -129,6 +129,131 @@ function renderBusyLoad(s) {
   }));
 }
 
+// renderRegistry: Settings' Model registry section, GET /api.json for
+// clients like kimi-code imported on /provider (registry-settings.md).
+// The switch stops serving it (a 404): the models a client imported keep
+// working until its next successful refresh, and off is the fresh default
+// — a magpie upgraded from serving it always turns the row back on here.
+// The URL row stays visible greyed while off, with the /provider hint, so
+// the section explains itself either way. The effort row's leading choice
+// is the model's own middle, or says the env fallback applies when
+// MAGPIE_REGISTRY_DEFAULT_EFFORT is set; the buckets row ticks the
+// protocol wires the registry carries, at least one of which stays.
+// regSays: a save's refusal in the page's language, by its code. Anything
+// but registry_buckets_off is no row's own: it goes to statusErr, the toast
+// every failed save gets (savePrefs stays quiet once onError is given, so
+// the row hands on what it doesn't say itself)
+let registryErrors = {};
+function regSays(e) {
+  if (e?.code === "registry_buckets_off") return t("Leave at least one protocol bucket checked: the registry carries models to a client only on a wire it speaks");
+  statusErr(e);
+  return "";
+}
+// registryURL: where a client reaches /api.json — MAGPIE_PUBLIC_URL when
+// set (its own rule, not the page's addresses), else where the page
+// itself was opened (magpie web serves /api.json on the same port, and a
+// reverse proxy passes it on), else the gateway's address
+function registryURL(s) {
+  return (s.registry?.publicURL || (web ? location.origin : s.gateway)) + "/api.json";
+}
+function renderRegistry(s) {
+  const box = $("#registryList");
+  box.replaceChildren(); // swapped whole: the list is never laid out empty
+  const reg = s.registry || {};
+  const buckets = reg.buckets || [], efforts = reg.efforts || [];
+  const on = !!s.registryOn;
+  const row = (name, sub, ...tools) => {
+    const r = el("div", "row pref registry-row");
+    const who = el("div", "who");
+    who.append(el("div", "name", name));
+    if (sub) who.append(sub instanceof Node ? sub : el("div", "sub", sub));
+    const val = el("div", "val");
+    val.append(...tools);
+    r.append(who, val);
+    box.append(r);
+    return r;
+  };
+  // one refusal line per row's name: set by the failed save, cleared only
+  // by a save that works — the clear redraws, as savePrefs' own redraw (the
+  // promise's, before this) still read the map set
+  const save = (body, rowKey) => {
+    let failed = false;
+    return savePrefs({ ...prefsKeep(s), ...body }, (e) => { failed = true; registryErrors[rowKey] = regSays(e); })
+      .then(() => { if (!failed) { registryErrors = {}; renderSettings(); } })
+      .catch(() => {});
+  };
+  const sw = (name, sub, checked, body) => {
+    const b = el("button", "lib-switch use-credits registry-sw" + (checked ? " on" : ""));
+    b.type = "button";
+    b.setAttribute("role", "switch");
+    b.setAttribute("aria-checked", String(checked));
+    b.setAttribute("aria-label", name);
+    b.append(el("i"));
+    b.onclick = () => save(body, name);
+    row(name, sub, b);
+  };
+  sw(t("Serve the registry"),
+    t("Apps imported on this URL read magpie’s models from it. Turned off, it answers nothing: models an app already imported keep working there until its next successful refresh. New magpies start with it off; turn it on here"),
+    on, { registryOn: !on });
+  const url = registryURL(s);
+  const urlCode = el("code", "", url);
+  const hint = el("div", "sub", t("Add it in kimi-code with /provider, as a custom OpenAI-compatible registry"));
+  const urlRow = row(t("Registry URL"), hint, urlCode);
+  if (on) urlRow.querySelector(".val").append(copyBtn(url, t("Registry URL"), t("Copied Registry URL")));
+  else { urlCode.style.color = "var(--faint)"; hint.style.color = "var(--faint)"; }
+  const effort = s.registryEffort || "";
+  const lead = reg.envEffort
+    ? t("(model’s middle; MAGPIE_REGISTRY_DEFAULT_EFFORT={env} applies)", { env: reg.envEffort })
+    : t("Default (model’s middle)");
+  const effortBtn = el("button", "proto pick registry-effort");
+  effortBtn.type = "button";
+  effortBtn.setAttribute("aria-label", t("Default thinking effort"));
+  effortBtn.append(el("span", "", effort || lead), svg(CHEV, 11, 1.6));
+  effortBtn.onclick = (e) => {
+    e.stopPropagation();
+    if (effortBtn.classList.contains("open")) return closeProtoMenu();
+    openProtoMenu(effortBtn, [{ v: "", name: lead }, ...efforts.map((id) => ({ v: id, name: id, literalName: true }))], effort,
+      (v) => save({ registryEffort: v || "" }, t("Default thinking effort")), t("Default thinking effort"), "registry-effort-menu");
+  };
+  row(t("Default thinking effort"),
+    t("The thinking level every registry model able to think is started at; Default leaves it to the model’s own middle"), effortBtn);
+  const bucketsKey = t("Protocol buckets");
+  const chosen = s.registryBuckets || [];
+  const bucketsSub = el("div", "sub");
+  if (registryErrors[bucketsKey]) { bucketsSub.textContent = registryErrors[bucketsKey]; bucketsSub.classList.add("err"); }
+  else bucketsSub.textContent = t("Which wires the registry carries models on, named for the client that speaks each; at least one stays checked");
+  const ticks = el("div", "registry-buckets");
+  for (const id of buckets) {
+    const pressed = chosen.includes(id);
+    const label = el("span", "registry-bucket");
+    label.append(el("span", "", t(BUCKET_NAMES[id] || id)));
+    const b = el("button", "dot tick");
+    b.type = "button";
+    b.dataset.bucket = id;
+    b.setAttribute("aria-pressed", String(pressed));
+    b.setAttribute("aria-label", t(BUCKET_NAMES[id] || id));
+    b.title = b.getAttribute("aria-label");
+    if (pressed) b.append(svg(CHECK, 10, 2.2));
+    // unpressed adds the wire back; taking the last one away posts an
+    // empty list, which the save refuses into the row above
+    b.onclick = () => save({ registryBuckets: pressed ? chosen.filter((o) => o !== id) : [...chosen, id] }, bucketsKey);
+    label.append(b);
+    ticks.append(label);
+  }
+  row(bucketsKey, bucketsSub, ticks);
+  sw(t("Sync across machines"),
+    t("The registry’s config — on or off, the effort, the protocol buckets — rides sync, while this switch stays on each computer’s own: the config lands only where the switch is on, so the coupling needs every synced box’s switch on"),
+    !!s.registrySync, { registrySync: !s.registrySync });
+}
+// BUCKET_NAMES: the protocol buckets' labels, translated here from their
+// ids — the server sends ids only
+const BUCKET_NAMES = {
+  "magpie-openai": "OpenAI (chat)",
+  "magpie-anthropic": "Anthropic (messages)",
+  "magpie-openai-responses": "OpenAI (responses)",
+  "magpie-group": "Routing groups",
+};
+
 // renderCORS: the web pages whose scripts may call the gateway from a
 // browser (#1051), by origin — a row to add one, and one row each to take
 // it away. A page listed calls with a gateway key; none listed, no page
