@@ -1,0 +1,32 @@
+PR1 · Perf probe — one wired takeover sync, trunk vs head (RE-RUN at fix commit 3c6076eb1)
+Gate step 4 of .scratch/subagent-effort/briefs/merge.md · re-run 2026-11-07
+Host: dev (10.2.1.180, user jason, hostname bi-dev)
+Supersedes the abefa2ff2 run of this file (same verdict, re-measured at the final commit).
+
+PROBE PATH (same driver as lane 1 and lane 2)
+  ~/.local/bin/magpie.bak-pr1-gate  kimi model magpie/bi-dev/uco/deepseek-flash   (trunk build)
+  ~/.local/bin/magpie               kimi model magpie/bi-dev/uco/deepseek-flash   (fix build)
+  The sync is timed end to end around the CLI process (start-up, catalog load, the kimi
+  config write). The daemon ran the trunk build for the whole first probe and the fix build
+  for this one; the binary doing the sync is what differs.
+
+MEASUREMENTS (date +%s%N around the command, exit code from the command)
+  === trunk (dev's backed-up trunk build) ===
+  trunk1 exit=0 ms=1081
+      ✓ Kimi Code model magpie/bi-dev/uco/deepseek-flash (unchanged)
+  trunk2 exit=0 ms=959
+      ✓ Kimi Code model magpie/bi-dev/uco/deepseek-flash (unchanged)
+  === head (fix build 3c6076eb1, installed) ===
+  head1 exit=0 ms=1126
+      ✓ Kimi Code model magpie/bi-dev/uco/deepseek-flash (unchanged)
+  head2 exit=0 ms=1009
+      ✓ Kimi Code model magpie/bi-dev/uco/deepseek-flash (unchanged)
+
+RULE (head never more than 25% slower than trunk; smaller of each pair)
+  trunk smaller = 959 ms
+  head  smaller = 1009 ms
+  head/trunk = 1009/959 = 1.052 → the head is 5.2% slower (threshold would be 1078.9 ms)
+  slowdown = (1009 - 959)/959 = +5.2%  →  PASS (limit +25%)
+
+VERDICT: PASS — the head's sync is not more than 25% slower than the trunk's.
+Raw run logs: /tmp/magpie-lane1/perf-dev.log (abefa2ff2), /tmp/magpie-lane1/perf-dev-rerun.log (3c6076eb1)

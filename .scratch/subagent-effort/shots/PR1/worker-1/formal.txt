@@ -1,0 +1,48 @@
+PR1 · Formal evidence (RE-CHECK at fix commit 3c6076eb1)
+Gate step 6 of .scratch/subagent-effort/briefs/merge.md · re-run 2026-11-07
+Supersedes the abefa2ff2 run of this file.
+
+PROPERTY
+  "every emitted default_effort is a member of its table's support_efforts, and a fresh
+   subagent on a followed table binds that value in profile.bind and llm.request"
+
+PART 1 — UNIT PROOF (refreshed at 3c6076eb1)
+  command: go test -tags nogui -count=1 ./internal/agent/ -run Kimi
+    exit 0
+    ok  	github.com/yetone/magpie/internal/agent	0.536s
+  (the formal narrow command also passes at this commit:
+   go test -tags nogui -count=1 ./internal/agent/ -run 'KimiDefaultEffort|KimiHighestEffort|KimiEfforts'
+   → exit 0, ok github.com/yetone/magpie/internal/agent 0.044s)
+  build: CGO_ENABLED=0 go build -tags nogui ./... → exit 0 ; go vet -tags nogui ./... → exit 0
+  (the full-repo suite result from the first gate stands; only the files this commit touches
+   were re-run, per the re-check brief)
+
+PART 2 — THE PROPERTY ON DEV'S LIVE CONFIG (every magpie table, fix build)
+  over /home/jason/.kimi-code/config.toml after the wired effort=max sync with the fix build:
+    magpie tables with a default_effort: 25
+    default_effort outside support_efforts: 0
+  → the first half of the property holds on every emitted table (gpt-6.1-sol's "ultra" is inside
+  its own support_efforts, so it is a valid default, just not the picked one).
+
+PART 3 — A FRESH SUBAGENT BINDS THE VALUE (fix build)
+  dev, fix build (magpie gate.pr1 at 3c6076eb1) installed and running; wired effort=max sync
+  done (exit 0, `✓ Kimi Code thinking max`); a real subagent spawned on
+  magpie/bi-dev/auto/glm-5.3-flash
+  (session_452f5807-b237-4c5d-bc07-f40bdf75902e, agents/agent-0/wire.jsonl):
+    {"type":"profile.bind","agentId":"agent-0","modelAlias":"magpie/bi-dev/auto/glm-5.3-flash",
+     "profileName":"explore","thinkingEffort":"max", …}
+    {"type":"llm.request","agentId":"agent-0","kind":"loop","provider":"openai",
+     "model":"bi-dev/auto/glm-5.3-flash","modelAlias":"magpie/bi-dev/auto/glm-5.3-flash",
+     "thinkingEffort":"max","thinkingKeep":"all","maxTokens":524288, …}
+  the table it bound: [models."magpie/bi-dev/auto/glm-5.3-flash"] support_efforts =
+  ["low","high","max"], default_effort = "max"
+  → the second half of the property holds: the fresh subagent binds max in profile.bind and in
+  its first llm.request.
+
+VERDICT: the formal property holds at 3c6076eb1 (unit green; every emitted default_effort is
+inside its table's support_efforts; a fresh subagent on a followed table binds max in
+profile.bind and llm.request).
+This formal check is green, and lane 2's seven tables hold the plan's end state: glm-5.3-flash /
+glm-5.3 / minimax-m3.1-flash / deepseek-flash = "max", grok-4.7 / qwen3.8-max-0902 = "xhigh",
+gpt-6.1-sol = "ultra" — its hand-set value, preserved by the ownership rule (the old writer
+only ever wrote vendor-or-high for that model, so "ultra" was never magpie's write).

@@ -1,0 +1,77 @@
+PR1 · Lane 2 — on-host spawn on dev (RE-CHECK at fix commit 3c6076eb1)
+Gate step 5 of .scratch/subagent-effort/briefs/merge.md · re-run 2026-11-07 after the fix commit
+Supersedes the abefa2ff2 run of this file (kept in reports/merge.md as the first gate).
+
+DEPLOY (same backup / atomic-mv / restart motion)
+  worktree: `make cli VERSION=gate.pr1` at 3c6076eb1 → exit 0 (`magpie gate.pr1`)
+  sha256 of the built binary: a145ab86a5c214c2584c72288fedba1aed0a8cb7b4b231013db66edce89c53fa
+  scp to dev as ~/.local/bin/magpie.new → cp ~/.local/bin/magpie ~/.local/bin/magpie.bak-pr1-gate-2
+  → mv ~/.local/bin/magpie.new ~/.local/bin/magpie → systemctl --user restart magpie
+  service active (running) since 2026-11-07 13:05:20 UTC, Main PID 458422
+  sha256 of the deployed binary on dev: a145ab86…c53fa (same as the fix build — the deployed
+  binary IS 3c6076eb1; the earlier build is kept at ~/.local/bin/magpie.bak-pr1-gate-2 and the
+  trunk build at ~/.local/bin/magpie.bak-pr1-gate)
+  ~/.local/bin/magpie --version → magpie gate.pr1
+
+WIRED effort=max SYNC (the CLI path named in the brief)
+  ~/.local/bin/magpie kimi effort max   → exit 0
+      ✓ Kimi Code thinking max (unchanged)
+  [thinking]: enabled = true, effort = "max"
+
+TABLE DEFAULTS AFTER THE SYNC — the brief's seven
+  magpie/bi-dev/auto/glm-5.3-flash           default_effort = "max"     ✓
+  magpie/bi-dev/auto/glm-5.3                 default_effort = "max"     ✓
+  magpie/bi-dev/auto/minimax-m3.1-flash      default_effort = "max"     ✓
+  magpie/bi-dev/uco/deepseek-flash           default_effort = "max"     ✓
+  magpie/bi-dev/uco/gpt-6.1-sol              default_effort = "ultra"   ← hand-set, preserved
+                                                 (the plan's end state — see the finding below)
+  magpie/bi-dev/uco/grok-4.7                 default_effort = "xhigh"   ✓
+  magpie/bi-dev/uco/qwen3.8-max-0902         default_effort = "xhigh"   ✓
+  → six of seven follow the pick; gpt-6.1-sol holds "ultra", its hand-set value (the correct
+    end state per the finding below).
+
+SECTION-WIDE KEY ON DEV
+  [secondary_model] body = 'default_model = "magpie/bi-dev/auto/glm-5.3-flash"\n\n'
+  default_effort present in [secondary_model]: False  → the section-wide key is ABSENT on dev
+  (no section-wide Notice fires; kimi-code resolves the pool effort from the model's table).
+
+REAL SUBAGENT SPAWNED ON DEV (fresh session, fix build)
+  cd ~ && ~/.kimi-code/bin/kimi -p 'Use the Agent tool to launch one explore subagent on model
+    magpie/bi-dev/auto/glm-5.3-flash with the prompt "reply with the single word pong" and then stop.'
+  → the subagent replied "pong"; session
+    /home/jason/.kimi-code/sessions/wd_jason_342f88d78bd3/session_452f5807-b237-4c5d-bc07-f40bdf75902e
+  raw profile.bind:
+    {"type":"profile.bind","agentId":"agent-0","modelAlias":"magpie/bi-dev/auto/glm-5.3-flash",
+     "profileName":"explore","thinkingEffort":"max","systemPrompt": …}
+  raw first llm.request:
+    {"type":"llm.request","agentId":"agent-0","kind":"loop","provider":"openai",
+     "model":"bi-dev/auto/glm-5.3-flash","modelAlias":"magpie/bi-dev/auto/glm-5.3-flash",
+     "thinkingEffort":"max","thinkingKeep":"all","maxTokens":524288, …}
+  → profile.bind thinkingEffort = max ✓ ; first llm.request thinkingEffort = max ✓
+
+FORMAL PROPERTY OVER DEV'S LIVE CONFIG
+  magpie tables with a default_effort: 25
+  default_effort outside support_efforts: 0
+
+gpt-6.1-sol KEEPS ITS HAND-SET "ultra" — the correct end state (final disposition 2026-11-07)
+  The catalog default for gpt-6.1-sol is "low" (codexcat models.json, line ~210), and the old
+  writer only ever wrote vendor-or-high — never "ultra". So the "ultra" on dev's table is a
+  hand-set value of the user's, not one magpie wrote: the ownership rule keeps it, which is what
+  the plan now states (gpt-6.1-sol keeps its hand-set ultra).
+  The fix (3c6076eb1) re-owns an unrecorded value when it is "high" or the model's vendor
+  default: `if _, ok := wrote["default_effort"]; !ok && (was == "high" || vendor != "" && was == vendor) { was = "" }`
+  (internal/agent/kimi.go, kimiEfforts; vendor = m.DefaultEffort, now threaded in). Neither arm
+  matches "ultra" — it is neither the legacy "high" nor the vendor default — so the value stays
+  the user's, as intended.
+  Supporting measurement on dev (isolated: copied config/cache, temp KIMI_CODE_HOME, dev's own
+  state untouched; probe dirs deleted afterwards): the gpt table written from scratch by the
+  writer with no Agents-page effort picked came out as
+        [models."magpie/bi-dev/uco/gpt-6.1-sol"] support_efforts = ["low","medium","high","xhigh","max","ultra"]
+        default_effort = "high"
+  — the writer's own default path produces vendor-or-high for this table, never "ultra", which
+  is what makes "ultra" a hand-set value rather than a magpie write.
+
+VERDICT: PASS — the seven tables hold the plan's end state (glm-5.3-flash / glm-5.3 /
+minimax-m3.1-flash / deepseek-flash = "max"; grok-4.7 / qwen3.8-max-0902 = "xhigh";
+gpt-6.1-sol = "ultra", its hand-set value preserved), the section-wide key is absent on dev,
+and the fresh subagent binds max in profile.bind and in its first llm.request.

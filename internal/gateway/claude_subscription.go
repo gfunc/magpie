@@ -64,6 +64,7 @@ import (
 	"github.com/yetone/magpie/internal/appdir"
 	"github.com/yetone/magpie/internal/claudecode"
 	"github.com/yetone/magpie/internal/claudetui"
+	"github.com/yetone/magpie/internal/edit"
 	"github.com/yetone/magpie/internal/netproxy"
 	"github.com/yetone/magpie/internal/proc"
 	"github.com/yetone/magpie/internal/provider"
@@ -127,9 +128,9 @@ func (b *subscriptionBridge) passedOver(configDir, dir string) bool {
 //
 // It waits as long as the prompt cache it wrote lasts: on a subscription
 // within its limits Claude Code writes Anthropic's cache for an hour
-// (claudeCacheTTL; cleanClaudeEnv pins its CLAUDE_CODE_PROMPT_CACHE_TTL to
-// 1h), and a run let go sooner has its conversation told to a new one in one message, a
-// prefix the cache has never seen, so the whole of it is written again
+// (claudeCacheTTL; claudeRunTTL unless the user picked 5m, when a run kept
+// the hour only holds its process longer), and a run let go sooner has its
+// conversation told to a new one in one message, a prefix the cache has never seen, so the whole of it is written again
 // while what the old run wrote is still there to read (#463: a turn
 // after 39 minutes idle wrote the conversation again). Past the hour the cache is gone
 // either way, and the run would only hold a process.
@@ -1161,9 +1162,12 @@ func (b *subscriptionBridge) startRun(ctx context.Context, req *Request, model, 
 	var prompt []map[string]any
 	var prefix cachePrefix
 	if from != nil {
+		// the session's first message has the marks it was started with:
+		// its cache is kept as long as before, whatever the pick is now
 		prefix = from.cachePrefix
 		prompt = renderClaudeTurn(req.Messages[len(req.Messages)-len(from.since):], req.Tools)
 	} else {
+		req.cacheTTL = runTTLFor(req, os.Environ())
 		prompt, err = renderClaudePrompt(req)
 		if err != nil {
 			cleanup()
@@ -1172,6 +1176,7 @@ func (b *subscriptionBridge) startRun(ctx context.Context, req *Request, model, 
 		if req.clientCache != nil {
 			prefix = promptCachePrefix(prompt)
 		}
+		prefix.ttl = req.cacheTTL
 	}
 	// Claude Code's interactive mode unless the user turned it off
 	// (claudeTUI): the shim (claudetui) is handed the -p arguments, and
@@ -1182,6 +1187,19 @@ func (b *subscriptionBridge) startRun(ctx context.Context, req *Request, model, 
 		cleanup()
 		return nil, nil, &tuiRefusal{claudeTUIErr(claudeNotTUIWhy(req, binary))}
 	}
+	// the interactive mode's start takes its turn (tuiStarts); held till
+	// this run has been started and answered, and given back however this
+	// goes
+	turn := func() {}
+	if tui {
+		release, err := tuiStartTurn(ctx, "a Claude Code run on "+model)
+		if err != nil {
+			cleanup()
+			return nil, nil, err
+		}
+		turn = release
+	}
+	defer turn()
 	noteClaudeRun(code)
 	var cmd *exec.Cmd
 	if tui {
@@ -1193,7 +1211,7 @@ func (b *subscriptionBridge) startRun(ctx context.Context, req *Request, model, 
 		cmd = binary.command(context.Background(), args...)
 	}
 	cmd.Dir = work
-	env, err := binary.proxied(ctx, cleanClaudeEnv(os.Environ()))
+	env, err := binary.proxied(ctx, cleanClaudeEnvTTL(os.Environ(), prefix.runTTL()))
 	if err != nil {
 		cleanup()
 		return nil, nil, err
@@ -1339,6 +1357,14 @@ func (b *subscriptionBridge) startRun(ctx context.Context, req *Request, model, 
 				// the helper hung: the turn fails (start)
 				return nil, nil, &tuiNoStart{err}
 			}
+			if tui && run.saidOnEnd("claude-tui: ") && !run.saidOnEnd(claudetui.EndedEarly) {
+				// the helper ended saying why Claude Code didn't come up,
+				// and Claude Code hadn't ended itself, as one that can't
+				// load the session does: a new one told the whole
+				// conversation waited out the same 45s, and the turn was
+				// answered 502 after twice that (sowhynot)
+				return nil, nil, &tuiNoStart{err}
+			}
 			return nil, nil, err
 		}
 	}
@@ -1366,6 +1392,40 @@ func (b *subscriptionBridge) startRun(ctx context.Context, req *Request, model, 
 // claudeTUIHelper, when set, is run as the interactive mode's helper in
 // place of magpie's executable: a test's stand-in.
 var claudeTUIHelper string
+
+// tuiStarts is the interactive mode's starts, one at a time: a Claude Code
+// takes longer to come up the more start with it, and on a machine of cold
+// ones none showed its prompt in the 45s a start alone fits in, so each
+// was ended at the deadline and answered 502, and every caller's next try
+// started the pile again — 531 interactive starts in an hour, 420 of them
+// ending "showed no prompt" (#5579). The turn taken (tuiStartTurn) is held
+// till the run has been started and its helper has answered initialize —
+// its prompt shown — and given back however the start goes; a start that
+// missed the wait holds it until magpie has given up on it (its stop is
+// under way, not waited out), so the retries behind it land on a machine
+// with one start to do, not a pile.
+// Runs already up are none of it: a -p run starts without a prompt to
+// wait for, and a start that fits in the wait alone holds the turn only
+// as long as coming up takes.
+var tuiStarts = make(chan struct{}, 1)
+
+// tuiStartTurn takes the one start's turn, waiting as long as ctx lasts.
+func tuiStartTurn(ctx context.Context, what string) (func(), error) {
+	select {
+	case tuiStarts <- struct{}{}:
+		return func() { <-tuiStarts }, nil
+	default:
+	}
+	began := time.Now()
+	log.Printf("claude: %s waits for another interactive start to show its prompt", what)
+	select {
+	case tuiStarts <- struct{}{}:
+		log.Printf("claude: %s had its start's turn after %s", what, time.Since(began).Round(time.Millisecond))
+		return func() { <-tuiStarts }, nil
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	}
+}
 
 // controlWait is how long Claude Code may take to answer a control
 // request; tuiInitWait the interactive mode's helper its initialize: as
@@ -2411,6 +2471,10 @@ type savedSession struct {
 	// run that resumes it is given them so again
 	appended bool
 
+	// cachePrefix is the marks, and the cache lifetime, of the run whose
+	// session this is: the run that goes on from it keeps both. Every
+	// savedSession is given its run's, a branch's too: one without it ran
+	// an hour's cache under a 5m pick (linkaww)
 	cachePrefix cachePrefix
 
 	mu   sync.Mutex
@@ -2638,7 +2702,7 @@ func (b *subscriptionBridge) branch(req *Request, owner string) *savedSession {
 				at, seq, said = l.uuid, l.seq, l.told
 			}
 		}
-		sid, sessions := run.sessionID, slices.Clone(run.sessions)
+		sid, sessions, prefix := run.sessionID, slices.Clone(run.sessions), run.cachePrefix
 		usable := !run.closed && !run.rewound && run.lean == req.leanPrompt && !run.clientMarks && (run.tui || !wantTUI(req))
 		run.mu.Unlock()
 		if at == "" {
@@ -2650,7 +2714,7 @@ func (b *subscriptionBridge) branch(req *Request, owner string) *savedSession {
 		if !usable || sid == "" || len(sessions) == 0 || said != told {
 			return nil
 		}
-		return &savedSession{session: sid, sessions: sessions, owner: owner, at: time.Now(), since: msgs[i:], cut: at, tui: run.tui, appended: run.appended, gone: true}
+		return &savedSession{session: sid, sessions: sessions, owner: owner, at: time.Now(), since: msgs[i:], cut: at, tui: run.tui, appended: run.appended, cachePrefix: prefix, gone: true}
 	}
 	return nil
 }
@@ -2696,7 +2760,7 @@ func (b *subscriptionBridge) retryBranch(req *Request, owner string) *savedSessi
 		// whose reply the client has is no retry of it
 		busy := !run.closed && run.rewinding == nil && !run.rewound && run.lean == req.leanPrompt &&
 			!run.clientMarks && (run.tui || !wantTUI(req)) && run.told == want
-		sid, sessions, backLine, backMsg, appended, tui := run.sessionID, slices.Clone(run.sessions), run.backLine, run.backMsg, run.appended, run.tui
+		sid, sessions, backLine, backMsg, appended, tui, prefix := run.sessionID, slices.Clone(run.sessions), run.backLine, run.backMsg, run.appended, run.tui, run.cachePrefix
 		started := run.started
 		run.mu.Unlock()
 		if !busy || sid == "" || backLine == "" && backMsg == "" || len(sessions) == 0 {
@@ -2713,7 +2777,7 @@ func (b *subscriptionBridge) retryBranch(req *Request, owner string) *savedSessi
 		if found != nil {
 			found.discard() // a newer run's copy is taken: the older one's goes
 		}
-		found, at = &savedSession{session: cut, sessions: sessions, owner: owner, at: time.Now(), since: since, tui: tui, appended: appended}, started
+		found, at = &savedSession{session: cut, sessions: sessions, owner: owner, at: time.Now(), since: since, tui: tui, appended: appended, cachePrefix: prefix}, started
 	}
 	if found == nil {
 		return nil
@@ -2753,7 +2817,7 @@ func (r *subscriptionRun) branchAt(at, msg, owner string, since []Message) *save
 		return nil
 	}
 	log.Printf("claude: the conversation's next turn goes on in a branch of its interactive run's session, cut before the side question it answered since")
-	return &savedSession{session: cut, sessions: sessions, owner: owner, at: time.Now(), since: since, tui: true, appended: r.appended}
+	return &savedSession{session: cut, sessions: sessions, owner: owner, at: time.Now(), since: since, tui: true, appended: r.appended, cachePrefix: r.cachePrefix}
 }
 
 // cutWait is how long cutSession waits for the line it cuts after to be
@@ -3439,11 +3503,121 @@ func inClaudeDir(env []string, configDir string) []string {
 	return out
 }
 
+func forced(v string) bool { return v != "" && v != "0" && v != "false" }
+
+// claudeForced5m: FORCE_PROMPT_CACHING_5M is set, in env or in Claude
+// Code's settings.json's env, as claudeRunTTL reads it.
+func claudeForced5m(env []string) bool {
+	if v, _ := edit.GetJSON(filepath.Join(claudeConfigDir(), "settings.json"), "env.FORCE_PROMPT_CACHING_5M"); v != "" {
+		return forced(v)
+	}
+	for _, e := range env {
+		if v, ok := strings.CutPrefix(e, "FORCE_PROMPT_CACHING_5M="); ok {
+			return forced(v)
+		}
+	}
+	return false
+}
+
+// claudeRunTTL is how long the prompt cache of a bridge's Claude Code run
+// is kept, "5m" or "1h": the user's own pick for Claude Code's main
+// conversation, as Claude Code resolves it (FORCE_PROMPT_CACHING_5M, then
+// CLAUDE_CODE_PROMPT_CACHE_TTL, in env or in settings.json's env, then
+// settings.json's promptCacheTtl, which the Agents page writes), and an
+// hour with none set, as Claude Code writes it on a subscription within
+// its limits. The run is given it in its environment, since a saved
+// account's Claude Code reads the settings of the account's folder, not
+// the user's (linkaww: 5m picked, every relayed write an hour's).
+func claudeRunTTL(env []string) string {
+	if ttl := claudePickedTTL(env); ttl != "" {
+		return ttl
+	}
+	return "1h"
+}
+
+// claudePickedTTL is the user's pick claudeRunTTL reads, "" for none.
+func claudePickedTTL(env []string) string {
+	settingsPath := filepath.Join(claudeConfigDir(), "settings.json")
+	envOf := func(k string) string {
+		if v, _ := edit.GetJSON(settingsPath, "env."+k); v != "" {
+			return v
+		}
+		for _, e := range env {
+			if v, found := strings.CutPrefix(e, k+"="); found {
+				return v
+			}
+		}
+		return ""
+	}
+	if forced(envOf("FORCE_PROMPT_CACHING_5M")) {
+		return "5m"
+	}
+	if v := envOf("CLAUDE_CODE_PROMPT_CACHE_TTL"); v == "5m" || v == "1h" {
+		return v
+	}
+	if v, _ := edit.GetJSON(settingsPath, "promptCacheTtl"); v == "5m" || v == "1h" {
+		return v
+	}
+	return ""
+}
+
+// claudeSettingsKnown: Claude Code's settings.json here is missing or
+// reads and parses, so claudePickedTTL is the pick; a file that can't be
+// read says nothing of one.
+func claudeSettingsKnown() bool {
+	b, err := edit.Read(filepath.Join(claudeConfigDir(), "settings.json"))
+	return err == nil && (len(bytes.TrimSpace(b)) == 0 || edit.ValidJSONC(b))
+}
+
+// runTTLFor is how long a bridge run started for req keeps its prompt
+// cache:
+//   - five minutes when FORCE_PROMPT_CACHING_5M says so, as Claude Code
+//     itself would;
+//   - an hour when the request's marks name it: its client picked it;
+//   - the pick of the user of the computer the request's Claude Code runs
+//     on (pickedTTL: this one's, or what the magpie it came through
+//     named), and with none picked this computer's or an hour, as Claude
+//     Code keeps it on a subscription. Claude Code marks five minutes with
+//     no ttl, picked or as its default off a subscription, so its marks
+//     can't say which (linkaww: a 5m pick, relayed side calls an hour's;
+//     nothing picked, every relayed write five minutes');
+//   - else what the marks ask for, five minutes for a mark with no ttl (a
+//     remote magpie's relay was given the hour of its own setting, never
+//     the Mac's, Linka);
+//   - else, for a request with no marks, this computer's pick or an hour
+//     (claudeRunTTL).
+func runTTLFor(req *Request, env []string) string {
+	if claudeForced5m(env) {
+		return "5m"
+	}
+	if req != nil {
+		if req.askedTTL == "1h" {
+			return "1h"
+		}
+		switch req.pickedTTL {
+		case "5m", "1h":
+			return req.pickedTTL
+		case "default":
+			return claudeRunTTL(env)
+		}
+		if req.askedTTL != "" {
+			return req.askedTTL
+		}
+	}
+	return claudeRunTTL(env)
+}
+
 func cleanClaudeEnv(env []string) []string {
+	return cleanClaudeEnvTTL(env, claudeRunTTL(env))
+}
+
+// cleanClaudeEnvTTL is cleanClaudeEnv with the run's cache kept ttl
+// (claudeRunTTL).
+func cleanClaudeEnvTTL(env []string, ttl string) []string {
 	blocked := map[string]bool{
 		"ANTHROPIC_BASE_URL": true, "ANTHROPIC_API_KEY": true, "ANTHROPIC_AUTH_TOKEN": true,
 		"CLAUDECODE": true, "CLAUDE_CODE_ENTRYPOINT": true, "CLAUDE_CODE_SSE_PORT": true,
-		"CLAUDE_CODE_OAUTH_TOKEN": true, "CLAUDE_CODE_PROMPT_CACHE_TTL": true,
+		"CLAUDE_CODE_OAUTH_TOKEN": true, "CLAUDE_CODE_PROMPT_CACHE_TTL": true, "FORCE_PROMPT_CACHING_5M": true,
 		"CLAUDE_CODE_EXTRA_BODY": true, "ANTHROPIC_BETAS": true,
 	}
 	out := make([]string, 0, len(env)+3)
@@ -3463,10 +3637,11 @@ func cleanClaudeEnv(env []string) []string {
 		// model that itself, and a status changing with each commit undoes
 		// the cache from there on
 		"CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS=1",
-		// an hour's cache, as Claude Code writes it on a subscription within
-		// its limits, always: the mark on the caller's instructions
-		// (renderClaudePrompt) is an hour's, which may not follow a 5m one
-		"CLAUDE_CODE_PROMPT_CACHE_TTL=1h")
+		// the cache kept as the user picked (claudeRunTTL), stated so that
+		// the marks magpie puts in the first message (renderClaudePrompt,
+		// Request.cacheTTL) are the same: Anthropic refuses a 1h mark after
+		// a 5m one
+		"CLAUDE_CODE_PROMPT_CACHE_TTL="+ttl)
 }
 
 type lockedWriter struct{ run *subscriptionRun }
@@ -3579,7 +3754,8 @@ func (r *subscriptionRun) readOutput(rd io.Reader) {
 	var refusedDetails []byte // its stop_details, told only if it stands
 	replyModel := ""          // the model the reply began with
 	// what the messages before cost, as each message's usage counts only
-	// itself and the client keeps the last it is told
+	// itself and the client keeps the last it is told: their output is
+	// told with this one's, their prompt billed only (after)
 	var before, this Usage
 	var lateUsage cliUsage    // a message left out as told by its call (onCall)
 	var reqID, errKind string // the last request's id, and how it failed
@@ -3714,7 +3890,10 @@ func (r *subscriptionRun) readOutput(rd io.Reader) {
 			before, this = before.plus(this, false), Usage{}
 			// Claude Code's fallback model answering: a reply told
 			// whole names it; a stream named its model as it began
+			// its prompt is the reply's, the messages before billed as
+			// its Deferred (after)
 			v := usage(u)
+			v.restart = true
 			if model == replyModel {
 				model = ""
 			}
@@ -4273,8 +4452,6 @@ type cliUsage struct {
 	} `json:"output_tokens_details"`
 }
 
-// plus adds v's counts to u's; only to those u has, when it only updates
-// what the client was told.
 // claudeLimits are the allowance windows a rate_limit_event's info tells:
 // each of its unifiedWindows, and the one it is about, when that says how
 // much is used or that it turned the request away.
@@ -4309,14 +4486,48 @@ func claudeLimits(raw json.RawMessage) []provider.ClaudeLimit {
 }
 
 // carryUpdate keeps this message's known 1h writes when a partial split
-// reports only 5m counts, then adds usage from earlier messages.
+// reports only 5m counts, then adds usage from earlier messages
+// (after).
 func (u Usage) carryUpdate(this, before Usage) Usage {
 	if u.CacheWrite1h == 0 && u.cacheCreationHasCounts {
 		u.CacheWrite1h = this.CacheWrite1h
 	}
-	return u.plus(before, true)
+	return u.after(before, true)
 }
 
+// after is u, the usage of the request answering now, as told the
+// client of a reply that earlier requests began (before): another try,
+// the message after Claude Code's own tool call, a search round. What
+// they wrote out was streamed to the client as it came, so their output
+// and reasoning are added to this one's. Their prompt (input, cache
+// reads and writes) is billed as the reply's Deferred and never told as
+// its own: a client reads the last reply's prompt back as how full its
+// conversation is, and each later request re-sent what the earlier one
+// had, so a reply told the sum read twice its size and Claude Code
+// compacted early (sleepy_shibe on Discord; WorkBuddy, #5115). update
+// is whether u only updates what the client was told (a message_delta),
+// so only the counts it has are added to.
+func (u Usage) after(before Usage, update bool) Usage {
+	b := before.billed()
+	u = u.plus(Usage{Output: b.Output, Reasoning: b.Reasoning}, update)
+	if b.Input+b.CacheRead+b.CacheWrite+b.CacheWrite1h == 0 {
+		return u
+	}
+	d := Usage{Input: b.Input, CacheRead: b.CacheRead, CacheWrite: b.CacheWrite, CacheWrite1h: b.CacheWrite1h}
+	if own := u.Deferred; own != nil {
+		d.Input += own.Input
+		d.Output += own.Output
+		d.CacheRead += own.CacheRead
+		d.CacheWrite += own.CacheWrite
+		d.CacheWrite1h += own.CacheWrite1h
+		d.Reasoning += own.Reasoning
+	}
+	u.Deferred = &d
+	return u
+}
+
+// plus adds v's counts to u's; only to those u has, when it only updates
+// what the client was told.
 func (u Usage) plus(v Usage, only bool) Usage {
 	if only && u.CacheWrite > 0 && !u.cacheCreationHasCounts && u.CacheWrite1h == 0 {
 		u.cacheCreationReported = false
@@ -4391,11 +4602,11 @@ func renderClaudePromptAt(req *Request, split int) ([]map[string]any, error) {
 		// in one block with the conversation a request whose messages differ
 		// (the next item of a batch, a new conversation under the same
 		// instructions) found nothing cached past Claude Code's own prompt.
-		// The mark's TTL is the one Claude Code uses (claudeCacheTTL, pinned
-		// in cleanClaudeEnv): Anthropic refuses a 1h mark after a 5m one.
+		// The mark's TTL is the one Claude Code uses (runMark): Anthropic
+		// refuses a 1h mark after a 5m one.
 		block := map[string]any{"type": "text", "text": text.String()}
 		if req.clientCache == nil {
-			block["cache_control"] = cacheMark1h()
+			block["cache_control"] = req.runMark()
 		}
 		blocks = append(blocks, block)
 		text.Reset()
@@ -4475,7 +4686,7 @@ func renderClaudePromptAt(req *Request, split int) ([]map[string]any, error) {
 		if instructions >= 0 {
 			delete(blocks[instructions], "cache_control")
 		}
-		blocks[chunk]["cache_control"] = cacheMark1h()
+		blocks[chunk]["cache_control"] = req.runMark()
 	}
 	return closeBlocks(blocks, &text), nil
 }
@@ -4580,11 +4791,19 @@ func leanSystem(req *Request) string {
 // mark reach a mark 320 messages earlier.
 const historyChunk = 16
 
-// cacheMark1h is the prompt-cache mark on what magpie gives a run: an
-// hour's, as Claude Code's own (claudeCacheTTL, pinned in cleanClaudeEnv),
-// since Anthropic refuses a 1h mark after a 5m one.
+// cacheMark1h is an hour's prompt-cache mark.
 func cacheMark1h() map[string]string {
 	return map[string]string{"type": "ephemeral", "ttl": "1h"}
+}
+
+// runMark is the prompt-cache mark on what magpie gives a run: kept as
+// long as Claude Code's own (Request.cacheTTL, given to the run by
+// cleanClaudeEnvTTL), since Anthropic refuses a 1h mark after a 5m one.
+func (r *Request) runMark() map[string]string {
+	if r.cacheTTL == "5m" {
+		return cacheMark("5m")
+	}
+	return cacheMark1h()
 }
 
 // historyOpen and historyClose wrap the turns a run started anew is told
@@ -6343,6 +6562,9 @@ func (s *Server) serveSubscriptionAs(w http.ResponseWriter, r *http.Request, fro
 	// the tools of a caller on another computer run there, not where
 	// Claude Code runs (envUnknownNote)
 	req.remoteCaller = !local(r)
+	// how long the user of the computer the request's Claude Code runs on
+	// keeps its cache, which its marks don't say (runTTLFor)
+	req.pickedTTL = claudeTTLOf(callerOf(r))
 	if req.Format != nil && req.Format.schema() == nil {
 		// --json-schema takes a schema only: any JSON object is asked for
 		// in words

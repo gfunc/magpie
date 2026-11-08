@@ -1,0 +1,8 @@
+2026-11-07	spec-intake	spec accepted; run root .scratch/subagent-effort/
+2026-11-07	arena	base A + grafts B (pure seam, rank clamp) — judge A 27:26
+2026-11-07	design-review	FIX(12) → v2 answers all findings (out-of-levels guard, degrade-on-error, atomic stash, section-wide Notice, formal property)
+2026-11-07	readiness	drivable (Go CLI/gateway + existing go test harness); app-skill generation operator-declined (setup-workspace run) → final gate = go test suites + on-host spawn check; formal = state machine/protocol property in design.md
+2026-11-07	gate-finding	gpt-6.1-sol's ultra is a genuine hand-set (catalog default is low; old writer only wrote vendor/high) → preserved by design; spec's ultra→max assumption falsified; plan updated to preserve. Vendor-aware unrecorded re-own (3c6076eb1) kept for high/vendor cases.
+2026-11-07	review	PASS with notes (F1 spec gpt premise corrected, F3 re-own ambiguity accepted, F5 degrade Notice unit-only) — merge recommended
+2026-11-07	land	PR #1 squash-merged (490209507); deployed to all four on v0.1.3212-fork.490209507; ui-preview record job fails on missing DEEPSEEK_API_KEY secret (fork infra, not this change)
+2026-11-07	close	CI on merge result all green (ubuntu 37m7s, macOS 26m35s, windows, cli builds, detect, publish); only ui-preview record fails on missing DEEPSEEK_API_KEY (pre-existing fork infra). PR #1 merged 2026-11-07T13:42:54Z; goal complete.

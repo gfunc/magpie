@@ -1012,6 +1012,8 @@ func (s *Server) routes() *routeMux {
 	mux.HandleFunc("GET "+GoroutinesPath, s.goroutineDump)
 	// a restart into the version magpie update put in (loopback only)
 	mux.HandleFunc("POST "+RestartPath, s.restartToUpdate)
+	// an update another magpie using this one asks for (a full-access key)
+	mux.HandleFunc("POST "+provider.RemoteUpdatePath, s.remoteUpdate)
 	mux.HandleFunc("GET /v1/magpie/omarchy", s.omarchyTheme)
 	mux.HandleFunc("OPTIONS /v1/magpie/omarchy", s.omarchyTheme)
 	mux.HandleFunc("POST /v1/chat/completions", s.handle(provider.Chat))
@@ -1035,6 +1037,9 @@ func (s *Server) routes() *routeMux {
 	mux.HandleFunc("POST /embeddings", s.retrieve("/embeddings", "embeddings"))
 	mux.HandleFunc("POST /v1/rerank", s.retrieve("/rerank", "rerank"))
 	mux.HandleFunc("POST /rerank", s.retrieve("/rerank", "rerank"))
+	// OpenAI's Decisions API, typed answers to questions on one input
+	mux.HandleFunc("POST /v1/decisions", s.decide)
+	mux.HandleFunc("POST /decisions", s.decide)
 	// speech to text, for a client's voice input (#2053)
 	mux.HandleFunc("POST /v1/audio/transcriptions", s.transcribe("/audio/transcriptions", "transcriptions"))
 	mux.HandleFunc("POST /audio/transcriptions", s.transcribe("/audio/transcriptions", "transcriptions"))
@@ -1071,7 +1076,7 @@ func (s *Server) routes() *routeMux {
 	mux.HandleFunc("GET /v1beta/models", s.geminiModels)
 	mux.HandleFunc("POST /v1beta/models/{call...}", s.gemini)
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		writeError(w, provider.Chat, http.StatusNotFound, "magpie serves /v1/chat/completions, /v1/responses, /v1/messages, /v1/systemone, /v1/images/generations, /v1/images/edits, /v1/videos, /v1/embeddings, /v1/rerank, /v1/audio/transcriptions, /v1/audio/translations, /v1/audio/speech and /v1beta/models/*")
+		writeError(w, provider.Chat, http.StatusNotFound, "magpie serves /v1/chat/completions, /v1/responses, /v1/messages, /v1/systemone, /v1/images/generations, /v1/images/edits, /v1/videos, /v1/embeddings, /v1/rerank, /v1/decisions, /v1/audio/transcriptions, /v1/audio/translations, /v1/audio/speech and /v1beta/models/*")
 	})
 	return mux
 }
@@ -1100,7 +1105,7 @@ var catalogSize stamped[struct{}, int]
 
 func (s *Server) info(w http.ResponseWriter, r *http.Request) {
 	out := map[string]any{"name": "magpie", "version": Version, "models": catalogSize.get(struct{}{}, func() int { return len(provider.Catalog()) }), "window": Window,
-		"apis": []string{"/v1/chat/completions", "/v1/responses", "/v1/messages", "/v1/systemone", "/v1beta/models/{model}:generateContent", "/v1/images/generations", "/v1/images/edits", "/v1/videos", NativePath + "{provider}/{path}", "/v1/embeddings", "/v1/rerank", "/v1/audio/transcriptions", "/v1/audio/translations", "/v1/audio/speech", "/api.json", "/v1/magpie/quotas", "/v1/magpie/quotas/history", "/v1/magpie/usage", "/v1/magpie/usage/requests", "/v1/magpie/route", StatuslinePath, "/v1/magpie/trace", OwnMCPPath, SearchMCPPath, VisionMCPPath, ImageMCPPath, BrowserMCPPath, ToolsMCPPath, HubMCPAll, HubMCPPath + "{agent}"}}
+		"apis": []string{"/v1/chat/completions", "/v1/responses", "/v1/messages", "/v1/systemone", "/v1beta/models/{model}:generateContent", "/v1/images/generations", "/v1/images/edits", "/v1/videos", NativePath + "{provider}/{path}", "/v1/embeddings", "/v1/rerank", "/v1/decisions", "/v1/audio/transcriptions", "/v1/audio/translations", "/v1/audio/speech", "/api.json", "/v1/magpie/quotas", "/v1/magpie/quotas/history", "/v1/magpie/usage", "/v1/magpie/usage/requests", "/v1/magpie/route", StatuslinePath, "/v1/magpie/trace", OwnMCPPath, SearchMCPPath, VisionMCPPath, ImageMCPPath, BrowserMCPPath, ToolsMCPPath, HubMCPAll, HubMCPPath + "{agent}"}}
 	// which process serves, for another magpie on this computer to name it
 	// on its Routing page (#2606); not told to another machine
 	if local(r) {
@@ -2071,19 +2076,22 @@ func (s *Server) handle(from provider.Protocol) http.HandlerFunc {
 		// Codex with magpie as its provider asks for a thread's title
 		// here (#743)
 		if from == provider.Responses {
-			if to := codexTitlesTo(r.Header, body, true, nil); to != "" {
+			// on the conversation's model, not the one the app chose
+			// for it (codexSideTo)
+			session := func() string { return s.codexSideSession(r, body) }
+			if to := codexTitlesTo(r.Header, body, true, session); to != "" {
 				s.codexTitle(w, r, body, to)
 				return
 			}
-			if to := codexDescriptionsTo(r.Header, body, true, nil); to != "" {
+			if to := codexDescriptionsTo(r.Header, body, true, session); to != "" {
 				s.codexDescription(w, r, body, to)
 				return
 			}
-			if to := codexSummariesTo(r.Header, body, true, nil); to != "" {
+			if to := codexSummariesTo(r.Header, body, true, session); to != "" {
 				s.codexSummary(w, r, body, to)
 				return
 			}
-			if to := codexPredictionsTo(r.Header, body, true, nil); to != "" {
+			if to := codexPredictionsTo(r.Header, body, true, session); to != "" {
 				s.codexPrediction(w, r, body, to)
 				return
 			}
@@ -3431,8 +3439,12 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 			hw.reloop = reloops < loopReasks && !pass
 		}
 		// a member of a group in the group is timed by the innermost
-		// group that sets a FirstToken (#2246), else by the group asked for
-		firstToken := cmp.Or(c.firstToken, g.FirstToken)
+		// group that sets a FirstToken (#2246), else by the group asked
+		// for, which follows the default for every group when it sets none
+		firstToken := c.firstToken
+		if firstToken == 0 && isGroup {
+			firstToken = g.FirstTokenOr()
+		}
 		if isGroup && firstToken > 0 && !last && streams && !pass {
 			// slow to start, the next member is asked (Group.FirstToken)
 			hw.firstWait = time.Duration(firstToken) * time.Second
@@ -3574,7 +3586,32 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 			// one, a suffix and the turn's pick are more particular
 			fixed = withinLevels(agentPick, levels)
 		}
-		if ruled != "" {
+		// a member that sends another level than the one asked (its
+		// EffortMaps, LuckymanJC on Discord: one vendor's high is
+		// another's xhigh) is sent that, whoever asked: a suffix, the
+		// agent's pick in magpie, the turn's pick or the agent itself. A
+		// rule's effort is the user's for this member already
+		mappedFrom, mapped := "", ""
+		if c.effort == "" && ruled == "" && len(c.effortMap) > 0 {
+			in := fixed
+			if in == "" && effort != "" {
+				in = withinLevels(effort, levels)
+			}
+			if in == "" {
+				in = withinLevels(askedLevel(from, attemptBody), levels)
+			}
+			if to, ok := mappedLevel(c.effortMap, in); ok {
+				mappedFrom, mapped = in, to
+			}
+		}
+		if mapped != "" {
+			// "none" turns its reasoning off; another level is asked at
+			// the one its model has nearest, as a fixed member's is
+			if mapped != "none" {
+				mapped = fitLevel(mapped, c.p.Efforts(c.model))
+			}
+			attemptBody = withFixedEffort(from, attemptBody, mapped)
+		} else if ruled != "" {
 			// asked even of a request that asked for no reasoning, as a
 			// member fixed at an effort is; already fitted to its levels
 			attemptBody = withFixedEffort(from, attemptBody, ruled)
@@ -3679,7 +3716,7 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 		window := windowOf(c.p, c.model) // as the route's end reads it
 		s.trace.update(tr, func(t *Route) {
 			t.imageProvider = c.p.ID
-			t.Tries = append(t.Tries, Try{ID: c.rest, Model: c.model, Effort: sent, Picked: picked, Fixed: fixed, RuleEffort: ruled, Fast: fast, Start: began})
+			t.Tries = append(t.Tries, Try{ID: c.rest, Model: c.model, Effort: sent, Picked: picked, Fixed: fixed, RuleEffort: ruled, MappedFrom: mappedFrom, Fast: fast, Start: began})
 			t.window = window
 			if t.Prompt != nil && !t.Done {
 				t.Prompt = livePrompt(t.Prompt, window)
@@ -3948,7 +3985,7 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 		}
 		wentTier = at.tier
 		ended = time.Now()
-		try := Try{ID: c.rest, Model: c.model, Effort: wentAt, Picked: picked, Fixed: fixed, RuleEffort: ruled, Fast: fast, Start: began, Done: true, Status: call.Status, Millis: ended.Sub(began).Milliseconds(), Error: call.Error, Queued: queued,
+		try := Try{ID: c.rest, Model: c.model, Effort: wentAt, Picked: picked, Fixed: fixed, RuleEffort: ruled, MappedFrom: mappedFrom, Fast: fast, Start: began, Done: true, Status: call.Status, Millis: ended.Sub(began).Milliseconds(), Error: call.Error, Queued: queued,
 			Served: call.Usage.Served, Upstream: call.Usage.Upstream, Pin: c.p.ClinePassAsked(c.model), Tier: wentTier, TierServed: call.Usage.Tier, Auto: autoPicked(),
 			Net: nt.timing(began, queued), SentBy: sentBy(c.p)}
 		if resetFirst != nil {
@@ -5682,11 +5719,12 @@ func (s *Server) forwardOnce(ctx context.Context, p provider.Provider, to provid
 	defer provider.LetGo(req)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json, text/event-stream")
-	// magpie's, or the agent's own where the provider is set to pass it
-	// on (#1851); a signed-in account's signing, a client the vendor
-	// serves (OpenCode's, Cline's, Kilo's) and the user's own header put
-	// theirs on after
-	req.Header.Set("User-Agent", userAgentFor(p, in.Get("User-Agent")))
+	// the agent's own where the provider passes it on, else magpie's
+	// (#1851); a signed-in account's signing, a client the vendor serves
+	// (OpenCode's, Cline's, Kilo's) and the user's own header put theirs
+	// on after
+	ua := agentUA(ctx, in)
+	req.Header.Set("User-Agent", userAgentFor(p, ua))
 	if to == provider.Anthropic {
 		req.Header.Set("anthropic-version", "2023-06-01")
 		for _, h := range []string{"anthropic-version", "anthropic-beta"} {
@@ -5810,6 +5848,7 @@ func (s *Server) forwardOnce(ctx context.Context, p provider.Provider, to provid
 	}
 	if p.IsRemoteMagpie() {
 		passOnCaller(ctx, req)
+		passOnUA(req, ua)
 		markSearching(ctx, req)
 	}
 	if err := p.Sign(ctx, req, to, body); err != nil {

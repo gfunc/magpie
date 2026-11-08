@@ -1457,6 +1457,9 @@ func (s *Server) restAfterMarked(c candidate, status int, header http.Header, bo
 	guessed := false
 	// a failure counted past the account's, for its model alone (below)
 	modelBackoff := false
+	// a failure rested by a full window that counts some models only
+	// (below): that model is out, not the account
+	windowModel := false
 	if why == failProxy {
 		// the account is as good as it was; the proxy is the user's to start
 		return r
@@ -1665,6 +1668,15 @@ func (s *Server) restAfterMarked(c candidate, status int, header http.Header, bo
 		// until its window reset (plugins#243, zygs1083-dotcom)
 		if t := c.full(now); !t.IsZero() && c.p.Account != nil && !unserved && status != http.StatusUnauthorized && status != http.StatusForbidden {
 			d, r.By, modelBackoff = min(t.Sub(now), longestQuota), "window", false
+			// and when every full window that counts the model counts
+			// some models only (Pooled), the model rests, not the
+			// account: its other models are still in theirs
+			// (plugins#817, zane668: ZCode's GLM-5.3 bucket spent, its
+			// "exceed quota limit" read as a reply that did not stream,
+			// rested the account a day, GLM-5.3-Flash's own bucket with
+			// 71% left with it). A window of the whole account full
+			// rests the account, as before
+			windowModel = c.pooled(now)
 		}
 	}
 	// an account is kept by the agent its usage is asked of: a plugin's
@@ -1697,7 +1709,7 @@ func (s *Server) restAfterMarked(c candidate, status int, header http.Header, bo
 	// a refusal that names its reset and points to the account's other
 	// models is the model's limit: the others still answer (WorkBuddy's
 	// "您也可以切换其他模型继续使用", #1669)
-	if pooled || unserved || modelBackoff || overloaded || why == failQuota && resetsWhen.Match(wordsOf(body)) && otherModels.Match(wordsOf(body)) {
+	if pooled || unserved || modelBackoff || windowModel || overloaded || why == failQuota && resetsWhen.Match(wordsOf(body)) && otherModels.Match(wordsOf(body)) {
 		id = c.restID()
 	}
 	// Cline's daily limit of one free model is that model's: its others,
@@ -1708,6 +1720,10 @@ func (s *Server) restAfterMarked(c candidate, status int, header http.Header, bo
 	// a ZCode Start Plan trial entry ended or spent is that entry's: the
 	// account's GLM Coding Plan models still answer (#3661)
 	if why == failQuota && zcodeTrialRefused(c, status, body) {
+		id = c.restID()
+	}
+	// and so is its 3012: zcode.z.ai's, not the GLM Coding Plan's host's
+	if zcodeTrialRestricted(c, why) {
 		id = c.restID()
 	}
 	// a relay's 429 that names the model whose credentials cooled down is
@@ -2222,9 +2238,12 @@ type left struct {
 	// (Allowance.Fullest), zero when not known
 	fullest time.Time
 	soon    []time.Time // renews as Smart ranks them (Allowance.Renewal)
-	lapse   time.Time   // when the soonest of what is left is lost (Allowance.Lapse)
-	pace    float64     // weekly pace: share of its week left per hour until it renews
-	due     time.Time   // when the window that pace went by renews; zero when not known
+	// unreached: how many of soon's windows Smart passes over, as they
+	// can't be used up before they renew any more (Allowance.Unreached)
+	unreached int
+	lapse     time.Time // when the soonest of what is left is lost (Allowance.Lapse)
+	pace      float64   // weekly pace: share of its week left per hour until it renews
+	due       time.Time // when the window that pace went by renews; zero when not known
 	// restarts: when an auto-used reset starts its windows again
 	// (Allowance.Restarts), zero when none will; dueRestart: due is that,
 	// sooner than the window renews by itself; dueExpiry: due is when
@@ -2341,7 +2360,7 @@ func weighRouted(p provider.Provider, cs []candidate, model string, from provide
 			pc, due := a.Pace(c.model, now)
 			amt, of, unit := a.Count(c.model, now)
 			rs := a.Restarts(now)
-			l := left{used: u, renews: r, fullest: a.Fullest(c.model, now), soon: a.Renewal(c.model, now), lapse: a.Lapse(c.model, now), pace: pc, due: due, amount: amt, of: of, unit: unit,
+			l := left{used: u, renews: r, fullest: a.Fullest(c.model, now), soon: a.Renewal(c.model, now), unreached: a.Unreached(c.model, now), lapse: a.Lapse(c.model, now), pace: pc, due: due, amount: amt, of: of, unit: unit,
 				restarts: rs, dueRestart: !rs.IsZero() && due.Equal(rs), credits: spendsCredits(c.p, a)} // one not known counts as unused
 			l.dueExpiry = !l.dueRestart && !l.lapse.IsZero() && due.Equal(l.lapse)
 			l.weekLow = u >= lowShare && u < usedShare && a.CapUsed(c.model, now) < lowShare
@@ -2372,7 +2391,7 @@ func weighRouted(p provider.Provider, cs []candidate, model string, from provide
 			pace = provider.FreshPace
 		}
 		seats[i] = routes.Seat{Key: c.rest, Account: c.p.Account != nil, Known: known, Learns: learns(c, wg.lefts),
-			Used: l.used, WeekLow: l.weekLow, Soon: l.soon, Lapse: l.lapse, Pace: pace, Weight: keyWeight(c), Resting: resting(c), Tokens: routed.used[c.restKey()].now(now), Credits: l.credits, First: l.first,
+			Used: l.used, WeekLow: l.weekLow, Soon: l.soon, Unreached: l.unreached, Lapse: l.lapse, Pace: pace, Weight: keyWeight(c), Resting: resting(c), Tokens: routed.used[c.restKey()].now(now), Credits: l.credits, First: l.first,
 			Left: l.bal, LeftIn: l.balIn, Spent: spentRest(c), Lead: c.p.UseFirst}
 	}
 	routed.Unlock()

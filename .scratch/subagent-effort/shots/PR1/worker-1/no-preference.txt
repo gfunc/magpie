@@ -1,0 +1,57 @@
+PR1 · Lane 1 — unset-effort regression (trunk vs head)
+Gate step 3 of .scratch/subagent-effort/briefs/merge.md · RE-RUN at fix commit 3c6076eb1
+Worktree /home/georgefu/Projects/magpie/.scratch/subagent-effort/lanes/u1 (HEAD 3c6076eb1)
+Supersedes the abefa2ff2 run of this file (same result, re-run because the fix changed
+kimiEfforts' re-own rule, which this lane covers).
+
+DRIVER PATH USED (named, as the brief asks)
+  CLI: `magpie kimi model magpie/auto/glm-5.3`
+    internal/cli/main.go:668 `set()` → internal/agent/applied.go:533 `Agent.Pick()` →
+    internal/agent/kimi.go `kimiIn()`'s model field `Set` → `writeMagpie()` →
+    `kimiModelTables()` → `kimiEfforts()` → edit.SetTOMLTables.
+  The same path is used on dev in lane 2 and in the perf probe.
+
+BINARIES
+  trunk: /tmp/magpie-trunk-gate worktree (git worktree add --detach, base commit 01b76e3b0;
+         worktree removed after the build) → /tmp/magpie-lane1/magpie-trunk
+  head : worktree `make cli VERSION=gate.pr1` at 3c6076eb1 → /tmp/magpie-lane1/magpie-head
+         (sha256 a145ab86a5c214c2584c72288fedba1aed0a8cb7b4b231013db66edce89c53fa)
+
+ISOLATION (no shared state touched)
+  XDG_CONFIG_HOME=/tmp/magpie-lane1/xdg      (copy of ~/.config/magpie)
+  XDG_CACHE_HOME=/tmp/magpie-lane1/xdgcache  (copy of ~/.cache/magpie)
+  KIMI_CODE_HOME=/tmp/magpie-lane1/kimi-code (copy of ~/.kimi-code/config.toml)
+  The temp path's `wrote` record was seeded from the real path's record, so both binaries
+  start from the same state a live config has.
+
+INPUT STATE — NO Agents-page effort set
+  [thinking] table kept, its `effort = "max"` line removed (the Agents-page pick unset).
+  State A: the [models."magpie/..."] tables removed (the writer creates them).
+  State B: the tables present exactly as the live config has them.
+
+RUNS (each: restore the input config + the seeded stash, then run the binary) — RE-RUN
+  RUN binary=magpie-trunk state=pristine-A.toml exit=0 elapsed=0.205 tables_bytes=9276
+  RUN binary=magpie-head  state=pristine-A.toml exit=0 elapsed=0.200 tables_bytes=9276
+  RUN binary=magpie-trunk state=pristine-B.toml exit=0 elapsed=0.211 tables_bytes=9276
+  RUN binary=magpie-head  state=pristine-B.toml exit=0 elapsed=0.203 tables_bytes=9276
+  CLI output tail (head, state A):
+    ✓ Kimi Code model magpie/auto/glm-5.3 (unchanged)
+      ↻ Kimi Code's [secondary_model] default_effort (config.toml, now max) comes before every
+        model's own default, so the per-model defaults magpie writes don't reach its subagents
+        until it is taken out. Kimi Code reads this as it runs; ...
+    (the trunk binary prints no such Notice — the section-wide key notice is the head's new code;
+     it changes no table)
+
+DIFF OF THE EMITTED TABLES
+  state A:  diff A-trunk.txt A-head.txt  → no output (exit 0)
+  state B:  diff B-trunk.txt B-head.txt  → no output (exit 0)
+  sha256 (identical in both states):
+    07541548e34e90101ac460e5a95a6e40eee360c5404cf528bf1a6b7ea8b46ee7  A-trunk.txt
+    07541548e34e90101ac460e5a95a6e40eee360c5404cf528bf1a6b7ea8b46ee7  A-head.txt
+    07541548e34e90101ac460e5a95a6e40eee360c5404cf528bf1a6b7ea8b46ee7  B-trunk.txt
+    07541548e34e90101ac460e5a95a6e40eee360c5404cf528bf1a6b7ea8b46ee7  B-head.txt
+  30 magpie model tables emitted in each run; 9276 bytes each.
+
+VERDICT: PASS at 3c6076eb1 — trunk's and head's emitted tables are byte-identical with no
+Agents-page effort set (the vendor/high fallback is unchanged by the fix).
+Raw run logs: /tmp/magpie-lane1/lane1.log (abefa2ff2), /tmp/magpie-lane1/lane1-rerun.log (3c6076eb1)
