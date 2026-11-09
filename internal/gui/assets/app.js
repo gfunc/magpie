@@ -7174,12 +7174,15 @@ function pickForAgent(a, p, btn, ev) {
 }
 
 // shinePartners: a hairline of light runs once round the Partners heading
-// when the sheet opens, as the reader reaches it (the owner picked it, of
-// three). Once an opening: a search or a reload drawing it again doesn't.
-function shinePartners(k) {
+// and, at the same time, round its tiles, when the sheet opens, as the
+// reader reaches it (the owner picked it, of three; 标题跟这一块要一起播放).
+// Once an opening: a search or a reload drawing it again doesn't.
+function shinePartners(k, grid) {
   if (partnersShone || calm()) return;
-  k.classList.add("shine");
-  k.append(el("i", "glow"), el("i", "ring"));
+  for (const x of [k, grid]) {
+    x.classList.add("shine");
+    x.append(el("i", "glow"), el("i", "ring"));
+  }
   const seen = new IntersectionObserver(([en]) => {
     // a redraw's new heading takes over from this one
     if (!k.isConnected) return seen.disconnect();
@@ -7188,6 +7191,7 @@ function shinePartners(k) {
     if (partnersShone) return;
     partnersShone = true;
     k.classList.add("lit");
+    grid.classList.add("lit");
   }, { root: $("#view-providers"), threshold: 1 });
   seen.observe(k);
 }
@@ -7271,7 +7275,7 @@ function renderAdd() {
     if (partners.length) {
       any = true;
       const grid = section("Partners", "magpie's sponsors");
-      shinePartners(grid.previousElementSibling);
+      shinePartners(grid.previousElementSibling, grid);
       // a new one's tile keeps a dot until opened (partnerTile)
       newPartnerTiles ??= new Set();
       for (const p of partners) if (p.new && !p.added) newPartnerTiles.add(p.id);
@@ -7639,7 +7643,7 @@ function input(value, placeholder, type = "text") {
 // editor put away (Cancel, Escape, a click outside) takes it with it (#526)
 let providerDraftRef = null, providerDraftBase = "";
 function providerDraftValue() {
-  return JSON.stringify({ ...draft, headers: headersOf(draft?.headers), modelHeaderRows: undefined, modelPrefs: modelPrefsOfDraft() });
+  return JSON.stringify({ ...draft, headers: headersOf(draft?.headers), modelHeaderRows: undefined, onLimits: undefined, modelPrefs: modelPrefsOfDraft() });
 }
 function providerDirty() {
   // Price boxes parse on change; a page closed while typing hasn't blurred one yet.
@@ -10254,10 +10258,7 @@ function contextsText(cx) {
   return out.join(", ");
 }
 
-// contextPicks puts the usual windows under the context field, one click
-// each, and, when some models take more than they are said to (Codex's
-// GPT-6: 272K said, 872K taken), their own most: sizes nobody remembers
-// (#120). The pick matching what is typed is lit.
+// contextPicks: the usual windows under the context field, a model's own most too (#120)
 function contextPicks(p, cx) {
   cx.classList.add("contexts");
   const size = (n) => contextsText({ "*": n });
@@ -10292,21 +10293,21 @@ function contextPicks(p, cx) {
       cx.value = typeof pk.value === "function" ? pk.value() : pk.value;
       draft.contexts = cx.value;
       light();
+      limitsSaid();
     };
     row.append(b);
   }
-  cx.oninput = () => { draft.contexts = cx.value; light(); };
+  cx.oninput = () => { draft.contexts = cx.value; light(); limitsSaid(); };
   light();
   const wrap = el("div", "cxfield");
   wrap.append(cx, row);
   return wrap;
 }
 
-// outputField is the editor's Max output: the most a reply of its models
-// may hold, over what the vendor or models.dev says, one for all of them
-// and model=size for one, as the context window is set (ARNO on Discord: a
-// model's maxTokens was wrong, and only its window could be set here).
-// The usual sizes sit under it, one click each, as under the window (#875).
+// limitsSaid: Model settings' rows follow Advanced
+const limitsSaid = () => { for (const f of Object.values(draft?.onLimits || {})) f(); };
+
+// outputField: the editor's Max output, set as the window is (ARNO, #875)
 function outputField() {
   const ox = input(draft.outputs || "", t("e.g. 32k · or gpt-6=128k, comma separated"));
   ox.classList.add("outputs");
@@ -10319,21 +10320,18 @@ function outputField() {
   for (const v of sizes) {
     const b = el("button", "cxpick", v.toUpperCase());
     b.type = "button";
-    b.onclick = () => { ox.value = v; draft.outputs = v; light(); };
+    b.onclick = () => { ox.value = v; draft.outputs = v; light(); limitsSaid(); };
     row.append(b);
   }
-  ox.oninput = () => { draft.outputs = ox.value; light(); };
+  ox.oninput = () => { draft.outputs = ox.value; light(); limitsSaid(); };
   light();
   const wrap = el("div", "cxfield");
   wrap.append(ox, row);
   return field(t("Max output"), wrap, t("The most a reply may hold, told to the agents as their max tokens and sent as max_tokens on Anthropic's API when the agent names none; empty leaves it to the vendor and models.dev"));
 }
 
-// nativeCompactionField is the editor's Compaction (#1099): Codex's own
-// compaction asked of the provider as Codex sent it, its sealed item given
-// back as it came, in place of the summary magpie writes. Offered only
-// where the wire carries it (a Responses API, a ChatGPT account, GitHub
-// Copilot); show says when, for a custom provider whose URLs are typed.
+// nativeCompactionField: Codex's own compaction on the provider (#1099),
+// where the wire carries it; show says when, for typed URLs
 function nativeCompactionField(show) {
   const [ntk, ncb] = tick(t("Codex compacts on this provider"), !!draft.nativeCompaction);
   ntk.classList.add("native-compaction");
@@ -10408,9 +10406,7 @@ function parseContexts(text) {
   return { map };
 }
 
-// fetchImportIcon asks the server to download the vendor's own logo, named
-// by the link. It swaps the header mark when it lands; a failure is silent
-// (the generic outline stays), since the icon is decoration, not the deal.
+// fetchImportIcon: the link's logo, swapped in when it lands; a failure is silent
 function fetchImportIcon(p, head, ed) {
   const host = hostOf(p.iconUrl);
   const note = el("div", "hint", t("Fetching {host}’s icon…", { host: host || t("the vendor") }));
@@ -10425,10 +10421,8 @@ function fetchImportIcon(p, head, ed) {
   }).catch(() => note.remove());
 }
 
-// Scan off the page's loading path, at most once a minute as it is opened
-// or refreshed. A completed import forces a fresh scan; an older response
-// cannot put the pre-import hint back. Ignored configurations stay quiet
-// across launches; new or changed ones can still be offered.
+// Scan off the loading path, at most once a minute; an import forces one,
+// and an older response can't bring the hint back.
 async function discoverLocalProviders(force = false) {
   if (mode !== "window" || view !== "providers" || providers?.fileError) return;
   if (!force && (discoveryPending || Date.now() - discoveryAt < 60000)) return;
@@ -10765,12 +10759,10 @@ function renderImport(im) {
     }
     ed.append(...field(t("Models"), chips, ""));
   }
+  if (p.balanceURL) ed.append(...field(t("Balance URL"), el("code", "imp-bal", [p.balanceMethod, p.balanceURL, p.balancePath].filter(Boolean).join(" ")), ""));
   if (im.replaces) ed.append(edAligned(el("div", "warnbox soft", t("Replaces your {name}, key and all.", { name: im.replaces }))));
 
-  // The link may name the vendor's own logo — an explicit icon= wins over
-  // whatever the catalog or preset gave. magpie fetches it here (the dialog
-  // being open is the confirmation), once, quietly, and only ever into its
-  // icons folder; the fallback mark stays when it fails.
+  // icon= over the catalog's or preset's, fetched once the dialog is open
   if (p.iconUrl) fetchImportIcon(p, h, ed);
 
   const addBtn = el("button", "text primary", t(im.replaces ? "Replace" : "Add"));
@@ -11542,6 +11534,16 @@ function renderModels(p) {
         idBox.append(el("span", "", t("Listed as")), idInput);
         row.append(idBox);
       }
+      // its window and reply limit (sayagoodbyeplz on Discord), in modellimits.js
+      const limits = [];
+      const limitsAgain = () => { for (const x of limits) x.again(); drawReset(); };
+      if (!decideOnly(p)) {
+        const at = el("span", "mlimits");
+        row.append(at);
+        const fill = () => limits.push(...modelLimitsFill(at, m, p, () => drawReset()));
+        window.modelLimitsFill ? fill() : import("./modellimits.js").then(() => { fill(); limitsAgain(); }, () => {});
+        (draft.onLimits = draft.onLimits || {})[id] = limitsAgain;
+      }
       // its cost, $ / 1M tokens (#819); empty: the list's
       const parts = [["input", "Input"], ["output", "Output"], ["cache_read", "Cache read"], ["cache_write", "Cache write"], ["cache_write_1h", "Cache write 1h"]];
       const tierParts = parts.slice(0, 4);
@@ -11776,7 +11778,7 @@ function renderModels(p) {
       const unsaved = el("span", "hint munsaved", t("unsaved"));
       unsaved.title = t("Made when the provider is saved; Cancel drops it");
       const reset = el("button", "text action", t("Restore default"));
-      reset.title = t("Its own name, every reasoning level it has, whether it sees images, the API it is asked on, the model it is the same as, its own id, its list price, and no headers of its own");
+      reset.title = t("Its own name, every reasoning level it has, whether it sees images, the API it is asked on, the model it is the same as, its own id, its list price, its listed window and reply limit, and no headers of its own");
       reset.onclick = () => {
         prefs[id] = {};
         if (draft.priceTyped) delete draft.priceTyped[id];
@@ -11799,15 +11801,17 @@ function renderModels(p) {
         if (Object.keys(savedHeaders).length) prefs[id].headers = {};
         hrows[id] = [];
         if (p.takesModelHeaders) drawHeaders();
+        for (const x of limits) if (x.own()) { x.i.value = ""; x.i.onchange(); }
         drawReset();
       };
       const drawReset = () => {
         const x = prefs[id];
         if (x && !Object.keys(x).length) delete prefs[id];
-        unsaved.hidden = !prefs[id] && !draft.priceTyped?.[id];
+        const limitsMoved = limits.some((x) => (x.own() || 0) !== x.saved());
+        unsaved.hidden = !prefs[id] && !draft.priceTyped?.[id] && !limitsMoved;
         // staged back to its own already, there is nothing to restore
         const images = prefs[id]?.ownImages ? false : prefs[id]?.images !== undefined ? prefs[id].images !== !!m.ownImages : !!m.imageSet;
-        const custom = nameNow() !== "" || noneNow() || (prefs[id]?.efforts ? prefs[id].efforts.length > 0 : !!m.kept?.length) || images || apiNow() !== "" || sameNow() !== "" || idNow() !== "" || priceNow() !== null || !!draft.priceTyped?.[id] || Object.keys(headersNow()).length > 0;
+        const custom = nameNow() !== "" || noneNow() || (prefs[id]?.efforts ? prefs[id].efforts.length > 0 : !!m.kept?.length) || images || apiNow() !== "" || sameNow() !== "" || idNow() !== "" || priceNow() !== null || !!draft.priceTyped?.[id] || Object.keys(headersNow()).length > 0 || limits.some((x) => x.own());
         reset.hidden = !custom;
       };
       row.append(unsaved, reset);
@@ -11915,10 +11919,8 @@ function renderModels(p) {
     if (e.key === "Enter") take();
     else if (e.key === "Escape") cancelEdit();
   };
-  // named as the add form's, there before the Save (耍赖天都爱: 模型拉取一
-  // 次就没有这个按钮了 — a relay key moved to another group serves another
-  // list), "again" once fetched. Asked with the key typed (asTyped), merged
-  // as Refetch merges: picks the new list lacks go, ids added by hand stay
+  // there before the Save (耍赖天都爱), "again" once fetched; asked with
+  // the key typed, merged as Refetch merges
   const refresh = el("button", "text action fetch-models", t(p.fetched ? "Fetch models again" : "Fetch models"));
   refresh.title = t("Ask the vendor for its model list with the key typed here, and again after the key moves to another group: picks it no longer lists are dropped, ids added by hand stay");
   refresh.onclick = async () => {
@@ -12045,12 +12047,10 @@ function mediaChips(cls, ids, key, p, names) {
   return chips;
 }
 
-// renderRouting: how the gateway spreads requests over the keys or
-// accounts a provider has on, and how long a conversation stays with the
-// one that answered it. Both are staged in the draft and made with Save
-// (01huadalang on Discord: each click saved and redrew).
+// renderRouting: spread over keys or accounts and stickiness, staged in
+// the draft and made with Save (01huadalang on Discord)
 const ROUTINGS = [
-  ["", "Smart", "The first takes requests while it has quota to spare; when it runs low, the one with the most left takes over. One out of credit sits out half an hour, one out of quota until it resets, one rate limited as long as the vendor asks, and one that fails a minute, longer each time it fails again."],
+  ["", "Smart", "Of the accounts with quota to spare, the one whose quota renews soonest goes first, since what it has left is lost then; one not started yet renews last, so it waits, and keys go in their order. One at 90% waits until the others can't answer. One out of credit sits out half an hour, one out of quota until it resets, one rate limited as long as the vendor asks, and one that fails a minute, longer each time it fails again."],
   ["order", "In order", "Requests go to the first; the next takes over when the one before runs out of quota, hits a rate limit or fails."],
   // dzxx0496 on Discord: free accounts one after another, the first not
   // taking the requests back once it renews (routes.Drain)
@@ -12095,10 +12095,8 @@ const STAYS = [
   ["off", "Off", "Every request is routed afresh, whoever answered its conversation before."],
   ["strict", "Strict", "A conversation stays with the account or key that answered it and never moves to another, even past its usage cap: when that one is rate limited or out of quota, the error goes to the agent. New conversations are routed as usual."],
 ];
-// what one rate limited while it still has quota does then (provider.Sink,
-// 01huadalang): keeps its place, back first once its rest ends, or goes to
-// the back of the order so the load goes round — as on the Routing page
-// (routing/client.js SINK_OPTS)
+// one rate limited with quota left keeps its place or goes to the back
+// (provider.Sink, as routing/client.js SINK_OPTS)
 const SINKS = [
   [false, "Keeps its place", "One rate limited while it still has quota rests as long as the vendor asks, then takes its place in the order again."],
   [true, "Goes to the back", "One rate limited (429) while it still has quota goes to the back of the order, behind every one not rate limited since, and comes round again once those ahead of it are rate limited in turn — so the load goes round rather than back to the first each time. Out of quota, it rests as usual. Kept until magpie restarts."],
@@ -13252,10 +13250,17 @@ function renderAccounts(a, p) {
   // kept signed in to one (#524): the first is the order's
   const kept = keptLogin(p);
   const firstUser = kept ? ls.find((l) => (l.active || l.on) && !l.paused && !l.lapsed)?.user : ls.find((l) => l.active)?.user;
+  // Smart, Least used first and Weekly pace go by each account's quota and
+  // use the order only between those alike (docs/reference.md), so Make
+  // first says so there rather than that the gateway uses it first
+  // (CryptoSarom on X: a new account made first never got a request).
+  // Keys have no quota that renews, so Smart keeps them in their order.
+  const byQuota = p?.account && ["", "usage", "pace"].includes(p?.routing || "") ? ROUTINGS.find(([id]) => id === (p?.routing || ""))?.[1] : "";
+  const firstNote = (user) => t("{user} is first in the order; {routing} still goes by each account's quota, so the order only settles ties. In order uses the first first.", { user, routing: t(byQuota) });
   const makeFirst = (l) => {
     const b = el("button", "text", t("Make first"));
-    b.title = t("The gateway uses this account first; {agent} stays signed in to {user}", { agent: a.agentName, user: kept });
-    b.onclick = () => { b.classList.add("busy"); accountAction("provider/arrange", { id: p.id, accountOrder: [l.user, ...ls.filter((x) => x !== l).map((x) => x.user)] }, t("The gateway now uses {user} first", { user: l.user })); };
+    b.title = byQuota ? firstNote(l.user) : t("The gateway uses this account first; {agent} stays signed in to {user}", { agent: a.agentName, user: kept });
+    b.onclick = () => { b.classList.add("busy"); accountAction("provider/arrange", { id: p.id, accountOrder: [l.user, ...ls.filter((x) => x !== l).map((x) => x.user)] }, byQuota ? firstNote(l.user) : t("The gateway now uses {user} first", { user: l.user })); };
     return b;
   };
   // pausable while another is on (#263)
@@ -13376,8 +13381,8 @@ function renderAccounts(a, p) {
         line.append(forget, only);
       } else {
         const use = el("button", "text", on ? t("Make first") : t("Use"));
-        use.title = sub?.own ? t("The gateway uses this account first") : t("Sign {agent} in to this account", { agent: a.agentName });
-        use.onclick = () => { use.classList.add("busy"); accountAction("login/switch", { agent: a.agent, user: l.user }, sub?.own ? t("The gateway now uses {user} first", { user: l.user }) : t("{agent} is now signed in as {user}", { agent: a.agentName, user: l.user })); };
+        use.title = on && byQuota ? firstNote(l.user) : sub?.own ? t("The gateway uses this account first") : t("Sign {agent} in to this account", { agent: a.agentName });
+        use.onclick = () => { use.classList.add("busy"); accountAction("login/switch", { agent: a.agent, user: l.user }, on && byQuota ? (sub?.own ? "" : t("{agent} is now signed in as {user}", { agent: a.agentName, user: l.user }) + " ") + firstNote(l.user) : sub?.own ? t("The gateway now uses {user} first", { user: l.user }) : t("{agent} is now signed in as {user}", { agent: a.agentName, user: l.user })); };
         line.append(forget, use);
       }
     }
@@ -13416,13 +13421,13 @@ function renderAccounts(a, p) {
   if ((a.agent === "codex" || a.agent === "claude") && several && p && !p.switchOnly) {
     const box = el("div", "keep-login");
     const [keep, cb] = tick(t("Keep {agent} signed in to", { agent: a.agentName }), !!p.keepLogin);
-    keep.title = t("magpie won't sign {agent} in to another account when the first runs low; requests through magpie still go to the other ticked accounts as Routing says", { agent: a.agentName });
+    keep.title = t("{agent} stays on this account even when it runs low. Requests through magpie still follow Routing.", { agent: a.agentName });
     let keepAs = kept;
     const opts = [{ v: "", name: t("the first account"), note: "", literalName: true }];
     for (const l of ls) if (!l.lapsed) opts.push({ v: l.user, name: l.user, note: "", literalName: true });
     const as = el("button", "sess-pick keep-as" + (keepAs ? " set" : ""));
     as.type = "button";
-    as.title = t("The account {agent} stays signed in to; the first is the one the gateway uses first", { agent: a.agentName });
+    as.title = t("The account {agent} stays signed in to", { agent: a.agentName });
     as.dataset.value = keepAs;
     as.setAttribute("aria-haspopup", "menu");
     as.setAttribute("aria-expanded", "false");
@@ -13453,8 +13458,8 @@ function renderAccounts(a, p) {
   const cx = a.agent === "codex", ag = { agent: a.agentName };
   if (p && (cx && several || a.agent === "claude")) {
     const [only, cb] = tick(t("Only switch {agent}'s sign-in", ag), p.switchOnly);
-    const [tip, on, off] = cx ? [t("magpie signs {agent} in to the next account with room when the one it is on is used up, and keeps it there till that one is used up too, by writing {agent}'s own sign-in; {agent}'s requests go straight to OpenAI, never through magpie. A {agent} app or session already open stays on its account until it is opened again. Connected to magpie, {agent}'s requests go through it as before.", ag), t("magpie only switches {agent}'s sign-in; its requests go straight to OpenAI", ag), t("{agent}'s requests go through magpie to fail over to your other accounts again", ag)]
-      : [t("magpie moves {agent}'s own sign-in to the next account with room when one is used up, and keeps it there till that one is used up too. Nothing on these accounts is served through magpie.", ag), t("magpie serves no requests on these accounts"), t("magpie serves requests on these accounts again")];
+    const [tip, on, off] = cx ? [t("When an account is used up, magpie signs {agent} in to the next one, and requests go straight to OpenAI. Open {agent} sessions keep their account until reopened.", ag), t("magpie only switches {agent}'s sign-in; its requests go straight to OpenAI", ag), t("{agent}'s requests go through magpie to fail over to your other accounts again", ag)]
+      : [t("When an account is used up, magpie signs {agent} in to the next one. Requests on these accounts don't go through magpie.", ag), t("magpie serves no requests on these accounts"), t("magpie serves requests on these accounts again")];
     only.title = tip;
     cb.onchange = () => accountAction("provider/switchonly", { id: p.id, switchOnly: cb.checked }, cb.checked ? on : off);
     list.append(el("div", "switch-only", only));
@@ -13470,7 +13475,7 @@ function renderAccounts(a, p) {
   if (p && (ls.some(capped) || p.capStop || p.capCareful)) {
     const box = el("div", "pool-ends");
     for (const [k, say, tip] of [["capStop", "Stop when every account is at its cap", "On: once every account in use is at its cap, requests get 429 instead of going to the fallbacks."],
-      ["capCareful", "Check usage again near a cap", "On: an account within 5 points of its cap has its usage read again if older than 15s (any account: 5m) before a request, waiting up to 10s; one whose usage can't be read is held."]]) {
+      ["capCareful", "Check usage again near a cap", "On: an account near its cap has its usage read again before a request. One whose usage can't be read is held."]]) {
       const [l, c] = tick(t(say), !!p[k]);
       l.title = t(tip);
       c.onchange = () => accountAction("provider/" + k.toLowerCase(), { id: p.id, [k]: c.checked }, t("Saved"));
@@ -18305,23 +18310,8 @@ async function askReset(q) {
 window.askQuit = () => import("./quitask.js").then(() => askQuitSheet(), () => api("window/quit?now=1", {}));
 // closes a confirmation, nothing more (its Cancel, or an OK that only dismisses)
 function cancelAsk(e) { e.stopPropagation(); closeConfirmAsk(); }
-// THIRD_PARTY_NOTICES, which every build carries
-async function showNotices() {
-  let text;
-  try { text = (await api("notices")).text; } catch (e) { statusErr(e); return; }
-  const ed = el("div", "editor wide notices");
-  const head = el("div", "ehead");
-  head.append(el("b", "", t("Open-source licenses")));
-  const bar = el("div", "bar");
-  const ok = el("button", "text primary", t("Done"));
-  ok.onclick = cancelAsk;
-  bar.append(el("span", "grow"), ok);
-  ed.append(head, el("pre", "notices-text", text), bar);
-  confirmAsk = ed;
-  openModal(ed);
-  $("#modal").classList.add("lib");
-  ok.focus(NO_SCROLL);
-}
+// About's licenses (notices.js, loaded when opened)
+const showNotices = () => import("./notices.js").then(() => noticesSheet(), statusErr);
 function closeConfirmAsk() {
   if (!confirmAsk) return;
   // Escape and the backdrop must not expose row actions while a bulk write
@@ -19190,6 +19180,7 @@ function openSessCombo(anchor, all, opts, value, choose, head) {
   const list = el("div", "sc-list");
   box.append(top, list);
   let items = [];
+  const iconed = opts.some((o) => o.icon);
   const item = (o) => {
     const b = el("button", "pm-item" + (o.v === value ? " on" : ""));
     b.type = "button";
@@ -19200,7 +19191,8 @@ function openSessCombo(anchor, all, opts, value, choose, head) {
     const words = el("span", "pm-words");
     words.append(el("span", "pm-name", o.name), el("span", "pm-note", o.note));
     b.title = o.v;
-    b.append(tick, words);
+    // a menu of agents shows each one's icon; "All" keeps the room blank
+    b.append(tick, ...(iconed ? [o.icon ? icon(o.icon) : el("span", "ic")] : []), words);
     b.onclick = (e) => { e.stopPropagation(); closeProtoMenu(); choose(o.v); };
     hoverFocus(b);
     return b;
@@ -20268,7 +20260,7 @@ async function renderSync(v) {
   // computer's setup can go up in its place, the user choosing it
   if (v.on && v.error && v.serverFile?.replace) {
     row(t("Upload this computer's setup"), t("It replaces the file on the server. That file is kept in the sync folder first."),
-      btn(t("Upload…"), () => askUpload(v.serverFile)));
+      btn(t("Upload…"), () => syncFile("askUpload", v.serverFile)));
   }
   // agent fields set back here after a sync changed them (hayden4608)
   if (v.on && v.agents !== false && v.own?.length) {
@@ -20308,7 +20300,7 @@ async function renderSync(v) {
         renderSync(await api("davsync/auto", { minutes: m || -1 }).catch((x) => ({ ...v, error: x.message })));
       }));
     row(t("Restore from the server"), t("This computer's setup becomes the one on the server. What is here now is kept first, to undo."),
-      btn(t("Restore…"), () => askRestore(v, parts)));
+      btn(t("Restore…"), () => syncFile("askRestore", v, parts)));
   }
 
   // export and import
@@ -20321,55 +20313,14 @@ async function renderSync(v) {
   if (window.autoBackupFill) autoBackupFill(ab); else import("./autobackup.js").then(() => autoBackupFill(ab), () => {});
 }
 
-// syncFile draws the server's, Export's or Import's form, from syncfiles.js once loaded
-function syncFile(f, v) {
-  if (window[f]) return window[f](v);
+// syncFile draws the server's, Export's or Import's form, or asks before a
+// Restore or Upload, from syncfiles.js once loaded
+function syncFile(f, v, ...more) {
+  if (window[f]) return window[f](v, ...more);
+  if (f.startsWith("ask")) return import("./syncfiles.js").then(() => window[f](v, ...more), statusErr);
   const at = el("div");
   import("./syncfiles.js").then(() => at.replaceWith(window[f](v)), () => {});
   return at;
-}
-
-// askRestore asks before the server's setup replaces this computer's
-// (#847); what is here is kept, and the notice it leaves can undo it.
-function askRestore(v, parts) {
-  const ed = el("div", "editor restore-ask");
-  const head = el("div", "ehead");
-  head.append(el("b", "", t("Restore from the server?")));
-  ed.append(head);
-  const goes = ["providers", "settings", "profiles"];
-  if (v.agents !== false) goes.push("agents");
-  if (v.library !== false) goes.push("library");
-  ed.append(el("p", "lib-confirm", t("This computer's {parts} become the ones on the server, as your other computers last synced them. Whatever was changed here since is replaced.", { parts: parts(goes) })));
-  ed.append(el("p", "lib-confirm", t("What is here now is sealed into the sync folder first, and Undo puts it back.")));
-  const err = el("p", "editor-error", "");
-  ed.append(err);
-  const bar = el("div", "bar");
-  const go = el("button", "text primary danger-fill", t("Restore setup"));
-  go.onclick = async (e) => {
-    e.stopPropagation();
-    go.disabled = true;
-    go.classList.add("busy");
-    try {
-      const r = await api("davsync/restore", {});
-      closeConfirmAsk();
-      renderSync(r);
-      if (r.error) return;
-      if (r.brought?.length) refreshAfterSync();
-      else status(t("This computer's setup is already the server's: nothing to restore"), "ok");
-    } catch (x) {
-      go.disabled = false;
-      go.classList.remove("busy");
-      err.textContent = x.message;
-    }
-  };
-  const cancel = el("button", "text", t("Cancel"));
-  cancel.onclick = cancelAsk;
-  bar.append(el("span", "grow"), cancel, go);
-  ed.append(bar);
-  confirmAsk = ed;
-  openModal(ed);
-  $("#modal").classList.add("lib");
-  cancel.focus(NO_SCROLL);
 }
 
 // serverFileSaid: what the server holds where the backup should be, in the
@@ -20389,44 +20340,6 @@ function serverFileSaid(f) {
     case "json": return t("the file on the server is a JSON file that isn't a magpie backup ({size})", { size });
   }
   return t("the file on the server isn't a magpie backup: it is {type} ({size})", { type: f.type || "?", size });
-}
-
-// askUpload asks before this computer's setup replaces a server file that
-// isn't a backup; the server's file is kept in the sync folder first.
-function askUpload(f) {
-  const ed = el("div", "editor restore-ask upload-ask");
-  const head = el("div", "ehead");
-  head.append(el("b", "", t("Replace the file on the server?")));
-  ed.append(head);
-  ed.append(el("p", "lib-confirm", t("This computer's setup goes up in place of the file on the server, and your other computers sync with it from then on.")));
-  if (f.what === "cut") ed.append(el("p", "lib-confirm", t("What another computer wrote into that file and has nowhere else is lost. If one of them synced it last, Sync now there may rebuild it instead.")));
-  ed.append(el("p", "lib-confirm", t("The file on the server is kept in the sync folder first.")));
-  const err = el("p", "editor-error", "");
-  ed.append(err);
-  const bar = el("div", "bar");
-  const go = el("button", "text primary danger-fill", t("Upload this computer's setup"));
-  go.onclick = async (e) => {
-    e.stopPropagation();
-    go.disabled = true;
-    go.classList.add("busy");
-    try {
-      const r = await api("davsync/upload", {});
-      closeConfirmAsk();
-      renderSync(r);
-    } catch (x) {
-      go.disabled = false;
-      go.classList.remove("busy");
-      err.textContent = x.message;
-    }
-  };
-  const cancel = el("button", "text", t("Cancel"));
-  cancel.onclick = cancelAsk;
-  bar.append(el("span", "grow"), cancel, go);
-  ed.append(bar);
-  confirmAsk = ed;
-  openModal(ed);
-  $("#modal").classList.add("lib");
-  cancel.focus(NO_SCROLL);
 }
 
 // refreshAfterSync: what a sync or an import brought in reaches the other

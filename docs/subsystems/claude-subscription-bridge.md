@@ -202,7 +202,15 @@ talks to it as it talks to `-p`: stream-json in and out. The helper:
   show or a `[Pasted text #N` with N past the paste before (`shown`):
   images and pasted text are numbered together, and the prompt drawn
   again shows the earlier ones (`TestShimWaitsForWordsNamingImages`,
-  `TestShimPastesImages`). The transcript holds real image blocks, and
+  `TestShimPastesImages`). Both are looked for in what was drawn since
+  the paste and at the end of the prompt as the screen shows it, the rows
+  between its last two rules (`prompt`, `imageTaken`, `textTaken`): a
+  prompt grown past a row is drawn again only where it changed, so the
+  drawing after a paste can hold one digit of its mark. With nineteen
+  images between words, 2.1.319 drew "3" of `[Image #33]`, the helper
+  waited out `pasteWait` and ended with exit status 1, a 502 to the
+  client (#5654, `TestShimSeesPastesOnAPromptDrawnInPart`, a real run's
+  bytes). The transcript holds real image blocks, and
   Claude Code notes each one's path to the model (`[Image: source: …]`).
   The folder is removed once its message is sent (Claude Code has read
   the files by then), and when the helper ends, on SIGINT, SIGTERM and
@@ -1652,6 +1660,16 @@ them before judging what is left. Before, `agentNotice` dropped them
 whole, the run never heard the sub-agent finished, and the main agent
 waited for it (stones_2026 on Discord). A notification after a reply is a
 turn of its own and is told as it is.
+
+A skill's body is not the user's either. Claude Code sends a loaded
+skill's SKILL.md as a text block after the Skill call's result, starting
+"Base directory for this skill: ", and `desktopNote` counts that as an
+agent notice (#5403), so the run's model got "Launching skill: …" and
+nothing it said. `withSkillBodies` appends each such body to the result
+of its Skill call (the first that has none yet), or to the result before
+it, and the [skill router](skill-router.md)'s entry and every skill
+reach the run whole. `TestSkillBodyRealClaudeCode` holds a real Claude
+Code request.
 
 Where the result ends is said by the message's parts alone. A tool whose
 output says "Do not use tools." has it told as its output, inside the

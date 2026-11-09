@@ -3716,7 +3716,7 @@ magpie.plugin("library", (ctx) => {
       drawSkills(box, all);
       body.append(box);
       // under the list, so the skills stay where they were above it
-      if (all.length) body.append(skillHowBar(), skillWhereBar());
+      if (all.length) body.append(skillHowBar(), skillWhereBar(), ...skillRouterPart());
       if (picking) body.append(pickBar(all));
     }
     if (lib.newSkills?.length) renderNewSkills(body);
@@ -5116,6 +5116,44 @@ magpie.plugin("library", (ctx) => {
     return bar;
   }
 
+  // The skill router: each agent is given one skill, magpie-skills, whose
+  // SKILL.md lists the skills ticked for it, in place of a link of each;
+  // the agent reads one's SKILL.md when a task fits it (skill_router.go).
+  // A skill kept direct, or one only for the user to type, keeps its link.
+  function skillRouterPart() {
+    const list = el("div", "list lib-list lib-hublist lib-skillrouter");
+    const row = el("div", "row lib-row lib-hub");
+    const who = el("div", "who");
+    who.append(el("div", "name", t("Skill router")));
+    who.append(el("div", "sub wraps", lib.skillRouter
+      ? t("Each agent is given one skill, magpie-skills, that lists its skills. It reads a skill when a task fits it, so its prompt carries one description instead of every skill's. Restart an agent for it to read the change.")
+      : t("Give each agent one skill, magpie-skills, that lists its skills, in place of each one: its prompt carries one description instead of every skill's.")));
+    row.append(glyph(GLYPH.skill), who, toggle(!!lib.skillRouter, t("Skill router"), (on) =>
+      change("skills/router", { on }, on
+        ? t("The agents are given magpie-skills in place of their skills — restart them to use it")
+        : t("The agents are given each skill again — restart them to use it"))));
+    list.append(row);
+    const out = [list];
+    if (!lib.skillRouter) return out;
+    const names = (why) => skillAgents().filter((a) => !a.gone && a.skillRouter === why).map((a) => a.name).join(", ");
+    const why = [
+      ["copies", "{agents} gets copies of its skills, so it keeps each skill of its own."],
+      ["liveagent", "{agents} uses only the skills picked in its own list, so it keeps each skill of its own."],
+      ["shared", "{agents} reads ~/.agents/skills, which other agents read too, so it keeps each skill of its own."],
+      ["taken", "A skill in the library is called magpie-skills, so {agents} keeps each skill of its own: give that skill another name for the router to be used."],
+      ["own", "{agents} has a skill called magpie-skills of its own, which magpie leaves as it is, so it keeps each skill of its own."],
+    ];
+    for (const [k, text] of why) {
+      const n = names(k);
+      if (n) {
+        const p = el("p", "lib-aside lib-hub-why", t(text, { agents: n }));
+        p.dataset.why = k;
+        out.push(p);
+      }
+    }
+    return out;
+  }
+
   function openSkillHow() {
     const ed = el("div", "editor lib-editor lib-byagent-sheet lib-howsheet");
     const head = el("div", "ehead");
@@ -5649,6 +5687,7 @@ magpie.plugin("library", (ctx) => {
       nm.append(b);
     }
     if (s.manual) nm.append(manualTag(s.name));
+    if (lib.skillRouter && s.router === "direct" && !s.manual) nm.append(tag(t("Not through the router"), "lib-direct", t("Each agent is given it as its own skill, as with the skill router off.")));
     // turned off on this computer alone: no agent here gets it, the ticks
     // stay what a sync carries to the others, and a sync doesn't turn it
     // on here again. A line of its own: a narrow row's name has no room
@@ -5713,6 +5752,18 @@ magpie.plugin("library", (ctx) => {
       else if (c?.status === "update") u.title += "\n" + checkLine(c);
       if (s.edited) u.title += "\n" + t("Changed here: asks before it replaces your changes");
       acts.append(u);
+    }
+    // with the skill router on: kept out of it, each agent's own skill
+    // (to type it as /name, or keep it in the prompt); one only for the
+    // user to type is kept out anyway
+    if (lib.skillRouter && !s.manual) {
+      const direct = s.router === "direct";
+      const r = button("", "lib-icon lib-routedirect" + (direct ? " on" : ""), () => change("skills/router-direct", { name: s.name, on: !direct },
+        direct ? t("{name} is listed in the skill router", { name: s.name }) : t("{name} is given to each agent as its own skill", { name: s.name })));
+      r.append(svg(GLYPH.out, 13, 1.5));
+      r.title = direct ? t("List it in the skill router") : t("Keep it out of the skill router: each agent is given it as its own skill, to type it as /{name}", { name: s.name });
+      r.setAttribute("aria-pressed", direct ? "true" : "false");
+      acts.append(r);
     }
     const here = button("", "lib-icon lib-here" + (s.offHere ? " on" : ""), () => change("skills/here", { name: s.name, on: !!s.offHere },
       s.offHere ? t("{name} is on on this computer", { name: s.name }) : t("{name} is off on this computer", { name: s.name })));
@@ -6541,6 +6592,9 @@ magpie.plugin("library", (ctx) => {
   function browserSetup() {
     const box = el("div", "mk-browser");
     const state = el("div", "mk-browser-state");
+    // a connected extension older than magpie's: its folder has the new
+    // one, but the browser runs the old until it is reloaded
+    const update = el("p", "mk-browser-update");
     const steps = el("ol", "mk-browser-steps");
     let away = false;
     const go = button(t("Set up the extension…"), "action", async () => {
@@ -6580,6 +6634,10 @@ magpie.plugin("library", (ctx) => {
         ? t("Connected to your browser") + (b.extension ? " · " + b.extension : "")
         : away ? t("Not connected: download the extension and load it in your browser")
         : b.written ? t("Not connected: load the folder below in your browser, and keep that browser open") : t("Not set up: set up the extension in Chrome, Edge, Arc, Brave or another Chromium browser")));
+      update.hidden = !(b.connected && b.outdated);
+      update.textContent = update.hidden ? "" : away
+        ? t("Magpie Browser {v} is ready: download the extension again, unzip it over the old folder, and reload Magpie Browser on chrome://extensions (edge://extensions in Edge).", { v: b.version })
+        : t("Magpie Browser {v} is ready: reload Magpie Browser on chrome://extensions (edge://extensions in Edge).", { v: b.version });
       go.textContent = away ? t("Download the extension") : b.written ? t("Show the extension folder") : t("Set up the extension…");
       if (away) {
         steps.replaceChildren(
@@ -6620,7 +6678,8 @@ magpie.plugin("library", (ctx) => {
     folder.addEventListener("dragstart", (e) => e.preventDefault());
     steps.hidden = true;
     folder.hidden = true;
-    box.append(state, steps, folder, go);
+    update.hidden = true;
+    box.append(state, update, steps, folder, go);
     const poll = async () => {
       if (!box.isConnected) return;
       try { draw(await api("library/browser")); } catch {}

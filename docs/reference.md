@@ -3057,9 +3057,13 @@ you press *Add*. `magpie import <link>` does the same in a terminal.
 | `catalog`   | models.dev provider id, for model names and reasoning levels       |
 | `website`, `keys` | the vendor's site and its API-key page (https)               |
 | `icon`      | an https picture of the vendor's own (PNG, JPEG, GIF, WebP, ICO, SVG, at most 1 MB). magpie downloads it once, after you confirm the import, into its icons folder; without one it falls back to the catalog's logo or a plain mark |
+| `balance`   | where the key's balance is read (https), on the host of one of the base URLs, asked with the key; `{key}` in it stands for the key. Without it magpie reads the vendors it knows and asks a relay new-api's and sub2api's balance paths |
+| `balance_path` | where the amount is in the JSON reply (`data.balance`, `$ data.quota / 500000`, `;` between several); needs `balance` |
+| `balance_method` | `GET` (the default) or `POST` with no body; needs `balance` |
 
 Base URLs must be https (plain http only to this machine or the local
-network). Web pages and GitHub don't link custom schemes reliably, so link
+network). A link sets no other header or token for the balance; one that
+needs it is set up in the provider's editor. Web pages and GitHub don't link custom schemes reliably, so link
 to `https://usemagpie.ai/import#<same parameters>` instead: it opens
 magpie, and offers the download when it is not installed. The parameters
 stay in the fragment, which browsers never send to a server. The full guide,
@@ -3112,6 +3116,27 @@ magpie update --mirror https://mirror.example/
 
 No mirror is used unless you give one, and the SHA-256 every download is
 checked against still comes from usemagpie.ai, never from the mirror.
+
+Release files are downloaded from usemagpie.ai's copy on Cloudflare R2
+(`usemagpie.ai/files/<tag>/<file>`). Every five minutes the site copies the
+newest release and the Stable one from GitHub into R2, which takes a file
+only with the SHA-256 the release's `SHA256SUMS` gives; the feed names R2
+only for a file it holds, and gives each file's github.com address beside it
+(`github`). When the site's copy fails, the app, `magpie update` and the
+installer go on to github.com's address, through your mirror when one is
+set (a mirror is only ever put before a github.com address). A file R2
+doesn't hold (an older release) is redirected to github.com.
+
+When github.com's download address fails (it answered 504 for every release
+file for hours on 2026-11-08) and no mirror is set, the app, `magpie update`
+and the installer download the same file through GitHub's API
+(`api.github.com/repos/yetone/magpie-releases/releases/assets/<id>`, asked
+with `Accept: application/octet-stream`). The file is checked as before: the
+feed's SHA-256, and on the Mac the installed app's signing team. A mirror you
+set keeps precedence, and no API route is tried through it. While the
+download address fails, usemagpie.ai's feed points each file at
+`usemagpie.ai/dl/<tag>/<file>`, which redirects to the API's address, so an
+older magpie can update too.
 
 Mac releases are signed and notarised; the Windows and Linux builds are not
 signed yet (Windows SmartScreen may ask before the first run). Every build

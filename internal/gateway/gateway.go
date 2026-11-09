@@ -557,6 +557,9 @@ type Server struct {
 	// the requests out at each key or account with a MaxConcurrency, and
 	// those waiting their turn (concurrency.go)
 	lanes lanes
+	// the requests in flight of each gateway key with a MaxConcurrency,
+	// and those waiting their turn (key_slots.go)
+	keyLanes lanes
 	// each account's one turn at a time near its usage cap (cap_near.go)
 	nearCap nearCaps
 	// the requests each key or account with a MaxRPM sent in the last
@@ -937,7 +940,7 @@ func (s *Server) Handler() http.Handler {
 	// on (dumpFirst)
 	// a socket's turns go through all of it again (socketEntry); the
 	// agent's Retry-After is bounded on the way out (retryCapped)
-	return socketEntry(s.dumpFirst(retryCapped(s.counted(headerLogged(holdCatalog(corsGuard(callerGuard(readOnlyGuard(mux, withCaller(keyLimited(mux)))))))))))
+	return socketEntry(s.dumpFirst(retryCapped(s.counted(headerLogged(holdCatalog(corsGuard(callerGuard(readOnlyGuard(mux, withCaller(keyLimited(s.keySlots(mux, mux))))))))))))
 }
 
 // routes are the client APIs, each by its pattern: readOnlyGuard reads
@@ -1818,8 +1821,9 @@ func (s *Server) countTokens(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 		return
 	}
-	// counted as the HEIC photos in it will be sent (heic.go)
-	body = heicAsJPEG(provider.Anthropic, body)
+	// counted as the HEIC photos in it will be sent (heic.go), their
+	// base64 read as it will be sent (base64_input.go)
+	body = heicAsJPEG(provider.Anthropic, stdBase64Body(provider.Anthropic, body))
 	var err error
 	var model string
 	body, model, err = requestModel(body)
@@ -2066,13 +2070,15 @@ func (s *Server) handle(from provider.Protocol) http.HandlerFunc {
 		// subscription's, a Chat provider's or a translated one's request
 		// never takes them on, and Claude Code may never be on a relay's
 		// Messages model before the test is asked (neiko on Discord)
-		if from == provider.Anthropic && fromClaudeCode(r.Header) {
+		if from == provider.Anthropic && claudeCodeAsks(r) {
 			seen := http.Header{}
 			for k, vs := range r.Header {
 				if claudeCodeHeader(k) {
 					seen[k] = vs
 				}
 			}
+			// Claude Code's own, from another magpie too
+			seen.Set("User-Agent", agentUA(r.Context(), r.Header))
 			provider.SawClient(provider.ClientClaudeCode, seen)
 		}
 		// Codex with magpie as its provider asks for a thread's title
@@ -2211,6 +2217,10 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 	// a client's "off" is magpie's none, for every route and check below
 	// that reads the body's effort (plugins#334)
 	body = offAsNone(from, body)
+	// inline base64 goes in the standard alphabet, padded, which every
+	// vendor reads, on every route below and for every check that reads
+	// an image's bytes (base64_input.go, #5697)
+	body = stdBase64Body(from, body)
 	// a HEIC photo goes as JPEG (or PNG), which every vendor takes, on
 	// every route below (heic.go)
 	body = heicAsJPEG(from, body)
@@ -2352,7 +2362,7 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 		probe := desktopProbe(body)
 		desktopCheck = probe
 		var why string
-		asked, why = desktopMove(asked, body, fromClaudeCode(r.Header), sub != "")
+		asked, why = desktopMove(asked, body, claudeCodeAsks(r), sub != "")
 		move(asked, why)
 		if probe {
 			// tagged on the Routing page and in the ledger as the check it
@@ -2818,8 +2828,24 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 	if from == provider.Responses {
 		if cp, ok := checkpointOf(body); ok {
 			checkpoint = &cp
-			var left bool
-			if cands, pl, left = checkpointReaders(cands, pl, cp); !left {
+			kept, keptPl, left := checkpointReaders(cands, pl, cp)
+			if !left && compactionAside(call.Kind, asked) {
+				// a call beside the conversation (an approval's review, a
+				// memory, a subagent) on a model its writer doesn't serve:
+				// asked without the seal, which no other can read (echo_ts:
+				// a Copilot compaction sent to codex-auto-review, refused
+				// as invalid_encrypted_content every review). The
+				// conversation's own turns are still held to the writer
+				if b, ok := withoutCompaction(body); ok {
+					body, checkpoint, left = b, nil, true
+					kept, keptPl = cands, pl
+					if p, ok := withoutCompaction(plain); ok {
+						plain = p
+					}
+				}
+			}
+			cands, pl = kept, keptPl
+			if !left {
 				call.Status, call.Error = 400, "native compaction sealed elsewhere"
 				writeError(w, from, 400, checkpointError(call.Model, cp))
 				turnedAway()
@@ -2954,7 +2980,10 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 	// (#63): its reasoning, sealed by the account that wrote it, is refused
 	// by another.
 	before := len(cands)
-	inOrder := isGroup && routingOf(g.Routing) == provider.Ordered
+	inOrder := routingOf(p.Routing) == provider.Ordered
+	if isGroup {
+		inOrder = routingOf(g.Routing) == provider.Ordered
+	}
 	cands, pl, aff, stuck := affine(scope, mode, rotate, spread, inOrder, r.Header, from, body, plain, cands, pl)
 	// a strict conversation left with its own account of several: its
 	// failure rests the account as it would with the others still there,
@@ -3112,7 +3141,7 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 		capture.tools = tools
 	}
 	tierAsked := bodyTier(from, body) // the service tier the client asked for (#1784)
-	tr := s.trace.beginFor(r, Route{turn: turn, dirOf: dirOf(from, plain), tools: tools, imageTurn: drawingTurnID(metadata.Turn), imageCaller: codexTurnKey(r, call.Agent), TitleLink: link, Pinned: pinnedName(pin), Time: start, Agent: call.Agent, Session: sessionOf(r.Header), Conv: convOf(r.Header, body), ParentSession: titleParentSession(r.Header, metadata, call.Kind), Kind: call.Kind, For: call.For, Model: call.Model, Effort: requestEffort(from, body), Tier: tierAsked, Provider: p.ID, Group: group, Rule: hit, Nested: nested, SealedTask: sealedTask, LeadAccount: leadAccount, Compaction: compactionWho(checkpoint), Subagent: subagent, Moved: moved, SubagentEffort: subagentEffort, Sub: subOf(r.Header), SubagentID: subagentID, Affinity: shown, Order: pl.order, Left: append(slices.Clip(pl.left), smallW...)})
+	tr := s.trace.beginFor(r, Route{turn: turn, dirOf: dirOf(from, plain), tools: tools, imageTurn: drawingTurnID(metadata.Turn), imageCaller: codexTurnKey(r, call.Agent), TitleLink: link, Pinned: pinnedName(pin), Time: start, Agent: call.Agent, Session: sessionOf(r.Header), Conv: convOf(r.Header, body), LastConvs: dshLastConvs(call.Agent, body), ParentSession: titleParentSession(r.Header, metadata, call.Kind), Kind: call.Kind, For: call.For, Model: call.Model, Effort: requestEffort(from, body), Tier: tierAsked, Provider: p.ID, Group: group, Rule: hit, Nested: nested, SealedTask: sealedTask, LeadAccount: leadAccount, Compaction: compactionWho(checkpoint), Subagent: subagent, Moved: moved, SubagentEffort: subagentEffort, Sub: subOf(r.Header), SubagentID: subagentID, Affinity: shown, Order: pl.order, Left: append(slices.Clip(pl.left), smallW...)})
 	if watched != nil {
 		watched.routeID = tr.ID
 	}
@@ -3612,16 +3641,16 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 			if mapped != "none" {
 				mapped = fitLevel(mapped, c.p.Efforts(c.model))
 			}
-			attemptBody = withFixedEffort(from, attemptBody, mapped)
+			attemptBody = withModelEffort(from, attemptBody, c.model, mapped)
 		} else if ruled != "" {
 			// asked even of a request that asked for no reasoning, as a
 			// member fixed at an effort is; already fitted to its levels
-			attemptBody = withFixedEffort(from, attemptBody, ruled)
+			attemptBody = withModelEffort(from, attemptBody, c.model, ruled)
 		} else if fixed != "" {
 			// a member fixed at an effort is asked for it, at the level its
 			// model has nearest, whatever the agent asked or the turn's
 			// pick: even a request that asked for no reasoning
-			attemptBody = withFixedEffort(from, attemptBody, fitLevel(fixed, c.p.Efforts(c.model)))
+			attemptBody = withModelEffort(from, attemptBody, c.model, fitLevel(fixed, c.p.Efforts(c.model)))
 		} else if effort != "" {
 			// the level this model has nearest to the one picked; one whose
 			// levels aren't known isn't asked for more than high, which
@@ -3817,14 +3846,16 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 			queuedAlive := hw.keepQueued()
 			var release func()
 			var inLane time.Duration
-			var err error
 			var mate candidate
-			if handed.release != nil {
+			// the slot of its gateway key's first, once for the request
+			// (key_slots.go): its agent gone meanwhile, nothing is sent
+			inKey, err := keySlot(ctx)
+			if err == nil && handed.release != nil {
 				// it left a full lane's queue for this one, whose slot it
 				// took as it did (waitMate): the wait there is its queue
 				release, handed.release = handed.release, nil
 				inLane, handed.waited = handed.waited, 0
-			} else {
+			} else if err == nil {
 				// waiting, it goes to the first other key or account with
 				// room, not resting, once there is one (01huadalang on
 				// Discord: the requests already waiting for a third ZCode
@@ -3848,7 +3879,7 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 				if firstBegan.Equal(began) {
 					// the first try's wait is the next one's queue, not a
 					// failed try's time
-					firstBegan, handed.waited = time.Time{}, inLane
+					firstBegan, handed.waited = time.Time{}, inKey+inLane
 				}
 				gaveWay[c.who()] = true
 				cands = movedAhead(cands, i, mate)
@@ -3867,7 +3898,7 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 				}
 			}
 			queuedAlive()
-			queued = (inLane + inMinute).Milliseconds()
+			queued = (inKey + inLane + inMinute).Milliseconds()
 			var tooMany *errRPM
 			if errors.Is(err, errQueueFull) || errors.Is(err, errQueueWait) || errors.As(err, &tooMany) {
 				laneErr = err
@@ -5491,6 +5522,11 @@ func (s *Server) forward(ctx context.Context, p provider.Provider, to provider.P
 			heardNet() // the network is up (offline.go)
 		}
 	}()
+	// a way of a key's request that asks outside serve's tries waits for
+	// the key's slot here (key_slots.go); taken already, it goes on
+	if _, err := keySlot(ctx); err != nil {
+		return nil, err
+	}
 	if p.ImageFilesAt(to) {
 		// which images a try named by file (deepseek_files.go)
 		ctx = context.WithValue(ctx, dsSentKey{}, &dsSent{})
@@ -5734,15 +5770,18 @@ func (s *Server) forwardOnce(ctx context.Context, p provider.Provider, to provid
 				req.Header.Set(h, v)
 			}
 		}
-		if p.Account == nil && fromClaudeCode(in) {
+		if p.Account == nil && claudeCodeUA(ua) {
 			// a relay that serves only Claude Code (#179: "only accessible
 			// via the official Claude CLI") knows it by its own headers,
-			// which go on as it sent them; its key to magpie never does
+			// which go on as it sent them; its key to magpie never does.
+			// Its User-Agent is the agent's (agentUA): from another
+			// magpie, the one that magpie named, not magpie's own
 			for k, vs := range in {
 				if claudeCodeHeader(k) {
 					req.Header[k] = slices.Clone(vs)
 				}
 			}
+			req.Header.Set("User-Agent", ua)
 		}
 		if len(betas) > 0 {
 			req.Header.Set("anthropic-beta", strings.Join(betas, ","))
@@ -5768,6 +5807,12 @@ func (s *Server) forwardOnce(ctx context.Context, p provider.Provider, to provid
 				req.Header[k] = slices.Clone(vs)
 				seen[k] = vs
 			}
+		}
+		if ua != "" {
+			// the agent's, as agentUA has it: from another magpie, the
+			// one that magpie named, not magpie's own
+			req.Header.Set("User-Agent", ua)
+			seen.Set("User-Agent", ua)
 		}
 		if codexNamed(in) {
 			provider.SawClient(provider.ClientCodex, seen)
@@ -5849,6 +5894,12 @@ func (s *Server) forwardOnce(ctx context.Context, p provider.Provider, to provid
 		}
 	}
 	if p.IsRemoteMagpie() {
+		// as magpie, whatever a copy above put on (Claude Code's or
+		// Codex's own, #179): the other magpie takes X-Magpie-* — the
+		// agent, the computer, the hops that stop a loop, the cache
+		// lifetime, the agent's User-Agent — only from a magpie's request
+		// (magpieAsks; linkaww)
+		req.Header.Set("User-Agent", magpieUA())
 		passOnCaller(ctx, req)
 		passOnUA(req, ua)
 		markSearching(ctx, req)
@@ -5942,7 +5993,18 @@ func countsTokens(path string) bool {
 // fromClaudeCode is a request Claude Code sent, by the User-Agent it gives
 // (claude-cli/2.1.0 (external, cli)).
 func fromClaudeCode(in http.Header) bool {
-	return strings.HasPrefix(in.Get("User-Agent"), "claude-cli/")
+	return claudeCodeUA(in.Get("User-Agent"))
+}
+
+// claudeCodeUA is Claude Code's User-Agent.
+func claudeCodeUA(ua string) bool {
+	return strings.HasPrefix(ua, "claude-cli/")
+}
+
+// claudeCodeAsks is whether r is Claude Code's: by its User-Agent, or,
+// from another magpie, by the agent's that magpie named (agentUA).
+func claudeCodeAsks(r *http.Request) bool {
+	return claudeCodeUA(agentUA(r.Context(), r.Header))
 }
 
 // claudeCodeHeader is one of the headers Claude Code tells itself by: its
@@ -6283,7 +6345,7 @@ func (s *Server) passthrough(w http.ResponseWriter, r *http.Request, p provider.
 	if proto == provider.Gemini && p.IsVertex() && geminiWhole {
 		path = provider.VertexWholePath(upstream) // answered as one JSON body
 	}
-	if proto == provider.Anthropic && p.Account == nil && fromClaudeCode(r.Header) && r.URL.Query().Get("beta") == "true" {
+	if proto == provider.Anthropic && p.Account == nil && claudeCodeAsks(r) && r.URL.Query().Get("beta") == "true" {
 		path += "?beta=true" // as Claude Code asks it
 	}
 	if proto != provider.Anthropic {
@@ -6678,7 +6740,7 @@ func (s *Server) passthrough(w http.ResponseWriter, r *http.Request, p provider.
 			if offEffort(e) {
 				s.markUnfit(p.ID, offRefused(model), proto)
 			}
-			if res, err = s.forward(r.Context(), p, proto, path, p.Prepare(withFixedEffort(proto, body, onEffort(p, model))), r.Header); err != nil {
+			if res, err = s.forward(r.Context(), p, proto, path, p.Prepare(withModelEffort(proto, body, model, onEffort(p, model))), r.Header); err != nil {
 				return writeError(w, proto, 502, p.Name+": "+err.Error()), err.Error(), true
 			}
 		}
@@ -9460,6 +9522,104 @@ func conversationID(in http.Header, body []byte) string {
 		w.Flush()
 	}
 	return "magpie-" + hex.EncodeToString(h.Sum(nil)[:12])
+}
+
+// dshLastConvs are the ids of the user messages a dsh request's turn
+// carries, newest first: the run of user messages its newest one ends,
+// at most four (sessions' dshTurnKept), each hashed as sessions' TurnConvs
+// spell it (dshConvs' first, the message with its text alone). A fork
+// copies its source's opening, so the opening names both; the turn's own
+// messages, which the branch's file has before the request goes out, are
+// what tell a request still answering which one it is of (Route.LastConvs,
+// gui's ownerLast). The typed message is not always the newest: dsh sends
+// its runtime context after it, the same in every session of a folder. nil
+// for another agent, or a newest message that isn't text alone.
+func dshLastConvs(agent string, body []byte) []string {
+	if agent != "dsh" {
+		return nil
+	}
+	var m struct {
+		Messages json.RawMessage `json:"messages"`
+	}
+	if decodeJSONView(body, &m) != nil {
+		return nil
+	}
+	items := elementsOf(m.Messages)
+	var out []string
+	for i := len(items) - 1; i >= 0 && len(out) < 4; i-- {
+		// read by its members, not decoded: a long run of tool steps is
+		// passed over on the way to the turn's messages
+		user, content := false, []byte(nil)
+		if it := items[i]; len(it) > 0 && it[0] == '{' {
+			eachMember(it, func(k, v []byte) bool {
+				switch {
+				case keyIs(k, "role"):
+					user = string(v) == `"user"`
+				case keyIs(k, "content"):
+					content = v
+				}
+				return true
+			})
+		}
+		if !user {
+			if out != nil {
+				break // the run of the turn's user messages ends here
+			}
+			continue
+		}
+		t, ok := oneTextPart(content)
+		if !ok {
+			c := trimJSON(content)
+			if out == nil && toolResultsOnly(c) {
+				continue // Messages' answer to a tool call, the turn's step
+			}
+			if len(c) == 0 || c[0] != '"' {
+				if out != nil {
+					break
+				}
+				return nil
+			}
+			t = c
+		}
+		sum := sha256.Sum256(joinBytes(`{"role":"user","content":`, t, `}`))
+		out = append(out, "magpie-"+hex.EncodeToString(sum[:12]))
+	}
+	return out
+}
+
+// toolResultsOnly says content, a user message's, is a list of
+// tool_result parts and nothing else: the Messages API's answer to a tool
+// call, which a turn's later steps end on.
+func toolResultsOnly(content []byte) bool {
+	if len(content) == 0 || content[0] != '[' {
+		return false
+	}
+	n, ok := 0, true
+	eachElement(content, func(el []byte) bool {
+		n++
+		typed := false
+		if len(el) > 0 && el[0] == '{' {
+			eachMember(el, func(k, v []byte) bool {
+				if keyIs(k, "type") {
+					typed = string(v) == `"tool_result"`
+					return false
+				}
+				return true
+			})
+		}
+		ok = typed
+		return ok
+	})
+	return ok && n > 0
+}
+
+// joinBytes is a, b and c in one slice: the spelling above is written as
+// it goes, the request's own text bytes between them.
+func joinBytes(a string, b []byte, c string) []byte {
+	out := make([]byte, 0, len(a)+len(b)+len(c))
+	out = append(out, a...)
+	out = append(out, b...)
+	return append(out, c...)
 }
 
 // writeOpening writes msg, one message of an opening of several
