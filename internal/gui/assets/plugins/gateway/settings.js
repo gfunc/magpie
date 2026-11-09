@@ -203,7 +203,7 @@ function renderRegistry(s) {
   else { urlCode.style.color = "var(--faint)"; hint.style.color = "var(--faint)"; }
   const effort = s.registryEffort || "";
   const lead = reg.envEffort
-    ? t("(model’s middle; MAGPIE_REGISTRY_DEFAULT_EFFORT={env} applies)", { env: reg.envEffort })
+    ? t("(model’s middle; {env} applies)", { env: reg.envEffort })
     : t("Default (model’s middle)");
   const effortBtn = el("button", "proto pick registry-effort");
   effortBtn.type = "button";
