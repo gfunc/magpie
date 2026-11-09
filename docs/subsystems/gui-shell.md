@@ -369,10 +369,18 @@ A row says the folder's name, the folder it is in (home as `~`, from the
 manage reply's `home`), its newest session's title, when, and how many.
 Temporary folders, the disk's root and apps' hidden folders under home
 (`scratch`) wait folded under Other folders at the end; a search, or a
-session opened from elsewhere, unfolds them. Checkboxes and the Delete bar
-come only with Select, and Done lets the pick go. Relocate project and
-Delete all sessions are in a folder's ⋯ menu, shown on hover (always on a
-touch screen) and on a right-click. See `sessions-folder-list.test.cjs`.
+session opened from elsewhere, unfolds them. A ZCode session started
+without a project runs in a folder ZCode made for that one session
+(`~/.zcode/workspace/draft-<id>` or `<ms>-<uuid>`, ZCode 3.17.2's host):
+one folder each was 40 folders of one session each, folded under Other
+folders. They stand as one Draft sessions group after the projects, and a row's
+tooltip gives the folder it ran in (flandern1211_58540 on Discord, #5754;
+`sessions-zcode-drafts.test.cjs`).
+Checkboxes and the
+Delete bar come only with Select, and Done lets the pick go. Relocate
+project and Delete all sessions are in a folder's ⋯ menu, shown on hover
+(always on a touch screen) and on a right-click. See
+`sessions-folder-list.test.cjs`.
 
 ### Routing day tallies
 
