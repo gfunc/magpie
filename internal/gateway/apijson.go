@@ -24,31 +24,49 @@ func registryDefaultEffort(st settings.Settings) string {
 	return strings.ToLower(strings.TrimSpace(os.Getenv("MAGPIE_REGISTRY_DEFAULT_EFFORT")))
 }
 
-// apiJSONBuckets are the registry's entries, one per wire the gateway can
-// be imported on: each becomes a [providers] entry of the client that
-// imports the gateway as a custom registry, a model appearing under a
-// bucket only when the gateway passes it through on that wire
-// untranslated, and the routing groups on the OpenAI one alone.
-var apiJSONBuckets = []struct {
+// apiJSONWires are the registry's wire entries, one per protocol the
+// gateway can be imported on: each becomes a [providers] entry of the
+// client that imports the gateway as a custom registry, a model appearing
+// under a wire only when the gateway passes it through on that protocol
+// untranslated. Gemini's wire (type google-genai, the importer's own
+// string, api at the /v1beta root Google's SDKs build their paths on) is
+// among them; its path is per model, so membership here is by protocol,
+// never by path. The routing groups are not a wire: they ride their own
+// entry, apiJSONGroups, by their own switch.
+var apiJSONWires = []struct {
 	id, name, typ string
-	api           func(base string) string
-	native        string
+	proto         provider.Protocol
+	api           func(string) string
 }{
-	{"magpie-openai", "Magpie (OpenAI Chat)", "openai", func(b string) string { return b + "/v1" }, "/v1/chat/completions"},
-	{"magpie-anthropic", "Magpie (Anthropic Messages)", "anthropic", func(b string) string { return b }, "/v1/messages"},
-	{"magpie-openai-responses", "Magpie (OpenAI Responses)", "openai_responses", func(b string) string { return b + "/v1" }, "/v1/responses"},
-	{"magpie-group", "Magpie (Routing groups)", "openai", func(b string) string { return b + "/v1" }, ""},
+	{"magpie-openai", "Magpie (OpenAI Chat)", "openai", provider.Chat, func(b string) string { return b + "/v1" }},
+	{"magpie-anthropic", "Magpie (Anthropic Messages)", "anthropic", provider.Anthropic, func(b string) string { return b }},
+	{"magpie-openai-responses", "Magpie (OpenAI Responses)", "openai_responses", provider.Responses, func(b string) string { return b + "/v1" }},
+	{"magpie-gemini", "Magpie (Google GenAI)", "google-genai", provider.Gemini, func(b string) string { return b + "/v1beta" }},
+}
+
+// apiJSONGroups is the registry's routing-groups entry: the groups ride
+// the OpenAI-compatible API a group is served on, listed by their own
+// switch (settings.RegistryGroupsOn) rather than a wire's tick, under
+// settings' own id for them — the one constant the two share, so the
+// gateway and the settings page cannot drift apart.
+var apiJSONGroups = struct {
+	id, name, typ string
+	api           func(string) string
+}{
+	settings.RegistryGroupID, "Magpie (Routing groups)", "openai",
+	func(b string) string { return b + "/v1" },
 }
 
 // apiJSON answers GET /api.json with the gateway as a models.dev-shaped
 // custom registry (kimi-code's /provider paste, refreshed by it at startup):
-// id, name, api and type per bucket, and per model the fields that importer
+// id, name, api and type per wire, and per model the fields that importer
 // reads — id kept in magpie's provider/model form, unknown window sizes and
 // prices left out rather than invented. The api base is MAGPIE_PUBLIC_URL
 // when set, else the address the registry was fetched on. The registry is
 // off until the user serves it (RegistryOn): off, the endpoint answers
 // 404 before it walks the catalog, and on, one Shared read carries the
-// switch, the served buckets and the default effort.
+// switch, the served wires, the routing groups' own switch and the
+// default effort. The wires go out first, the routing groups' entry last.
 func (s *Server) apiJSON(w http.ResponseWriter, r *http.Request) {
 	st := settings.Shared()
 	if !st.RegistryOn {
@@ -71,40 +89,65 @@ func (s *Server) apiJSON(w http.ResponseWriter, r *http.Request) {
 		price = func(provider.Entry) (catalog.Price, bool) { return catalog.Price{}, false }
 	}
 	de := registryDefaultEffort(st)
-	bucketEntries := make([][]provider.Entry, len(apiJSONBuckets))
+	wireEntries := make([][]provider.Entry, len(apiJSONWires))
+	var groupEntries []provider.Entry
 	for _, e := range catalogFor(r) {
 		if e.Group != "" {
-			bucketEntries[len(apiJSONBuckets)-1] = append(bucketEntries[len(apiJSONBuckets)-1], e)
+			groupEntries = append(groupEntries, e)
 			continue
 		}
-		native := provider.NativeEndpoints(e)
-		for i, b := range apiJSONBuckets {
-			if b.native != "" && slices.Contains(native, b.native) {
-				bucketEntries[i] = append(bucketEntries[i], e)
+		protos := provider.NativeProtocols(e)
+		for i, w := range apiJSONWires {
+			if slices.Contains(protos, w.proto) {
+				wireEntries[i] = append(wireEntries[i], e)
 			}
 		}
 	}
 	out := map[string]any{}
-	for i, b := range apiJSONBuckets {
-		if !slices.Contains(st.RegistryBuckets, b.id) {
+	for i, w := range apiJSONWires {
+		if !slices.Contains(st.RegistryBuckets, w.id) {
 			continue
 		}
-		models := map[string]any{}
-		labels := provider.Labels(bucketEntries[i])
-		for j, e := range bucketEntries[i] {
-			m := apiJSONModel(e, labels[j], price, de)
-			id := e.ID
-			// the registry's key and its id agree: a group's bare id
-			// (models.dev keeps a model's id equal to its key)
-			if e.Group != "" {
-				id = strings.TrimPrefix(e.ID, "group/")
-				m["id"] = id
-			}
-			models[id] = m
-		}
-		out[b.id] = map[string]any{"id": b.id, "name": b.name, "api": b.api(base), "type": b.typ, "models": models}
+		out[w.id] = map[string]any{"id": w.id, "name": w.name, "api": w.api(base), "type": w.typ, "models": apiJSONModels(wireEntries[i], price, de)}
 	}
-	writeJSON(w, 200, out)
+	if settings.RegistryGroupsOn(st) {
+		g := apiJSONGroups
+		out[g.id] = map[string]any{"id": g.id, "name": g.name, "api": g.api(base), "type": g.typ, "models": apiJSONModels(groupEntries, price, de)}
+	}
+	ordered := struct {
+		OpenAI          any `json:"magpie-openai,omitempty"`
+		Anthropic       any `json:"magpie-anthropic,omitempty"`
+		OpenAIResponses any `json:"magpie-openai-responses,omitempty"`
+		Gemini          any `json:"magpie-gemini,omitempty"`
+		Groups          any `json:"magpie-group,omitempty"`
+	}{
+		OpenAI:          out["magpie-openai"],
+		Anthropic:       out["magpie-anthropic"],
+		OpenAIResponses: out["magpie-openai-responses"],
+		Gemini:          out["magpie-gemini"],
+		Groups:          out[settings.RegistryGroupID],
+	}
+	writeJSON(w, 200, ordered)
+}
+
+// apiJSONModels is one registry entry's model list: each model in the
+// shape the importer reads (apiJSONModel), keyed as the registry keys it
+// — a routing group by its bare id, its group/ prefix trimmed
+// (models.dev keeps a model's id equal to its key).
+func apiJSONModels(entries []provider.Entry, price func(provider.Entry) (catalog.Price, bool), de string) map[string]any {
+	models := map[string]any{}
+	labels := provider.Labels(entries)
+	for i, e := range entries {
+		m := apiJSONModel(e, labels[i], price, de)
+		if e.Group != "" {
+			id := strings.TrimPrefix(e.ID, "group/")
+			m["id"] = id
+			models[id] = m
+			continue
+		}
+		models[e.ID] = m
+	}
+	return models
 }
 
 // apiJSONModel is one model of the registry, in the shape the importer

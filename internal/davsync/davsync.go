@@ -943,11 +943,13 @@ func orEmpty[V any](m map[string]V) map[string]V {
 }
 
 // blindRegistry is b as a machine whose registry switch is off compares and
-// stores it: all four registry fields zeroed on the bundle's settings part,
-// before anything is hashed of it. Such a machine must never see the
-// registry in anyone's bundle — its own stripped one, a peer's carrying one
-// — or the difference shows as a settings change it would push or pull with
-// no reason of its own; zeroing its stored hash the same way keeps the next
+// stores it: the registry's whole field set — the five CopyRegistryConfig
+// owns — zeroed on the bundle's settings part, before anything is hashed
+// of it, so a blinded copy carries absent groups (nil), never false, and
+// hash-matches a peer's nil. Such a machine must never see the registry in
+// anyone's bundle — its own stripped one, a peer's carrying one — or the
+// difference shows as a settings change it would push or pull with no
+// reason of its own; zeroing its stored hash the same way keeps the next
 // sync from seeing a phantom change when the peer's config moves. The
 // switch and config themselves travel only through a whole bundle and the
 // restore's landing rule; this is the compare side alone, and hashes itself
@@ -957,7 +959,7 @@ func blindRegistry(b backup.Bundle, off bool) backup.Bundle {
 		return b
 	}
 	s := *b.Settings
-	s.RegistryOn, s.RegistryEffort, s.RegistryBuckets, s.RegistrySync = false, "", nil, false
+	s.CopyRegistryConfig(settings.Settings{})
 	b.Settings = &s
 	return b
 }
@@ -966,23 +968,29 @@ func blindRegistry(b backup.Bundle, off bool) backup.Bundle {
 // blindRegistry at every site that hashes or stores a bundle.
 func registryOff() bool { return !settings.Shared().RegistrySync }
 
-// keepServersRegistry puts the server's registry fields — the four the
+// keepServersRegistry puts the server's registry fields — the five the
 // switch is one of — back onto the settings part a sync takes up from
-// here, when this machine's switch is off: what it pushes of its own never
-// carries the registry, so the peer's config on the server would be
-// replaced by this machine's stripped nothing (and the on peer's next sync,
-// seeing no difference, would never put it back). The local's other
-// settings changes still go up. On a machine whose switch is on the local
-// settings carry the config, and nothing is re-installed.
+// here, when this machine's switch is off, through CopyRegistryConfig and
+// verbatim: a legacy remote's half (no groups switch) is re-installed as
+// the half it is, nil groups staying nil — the merge hashes and pushes but
+// never Saves, so no normal() runs on it and nothing here pre-migrates a
+// bundle. A legacy copy stays legacy on the server until an upgraded
+// peer's whole push overwrites it; the landing rule refuses the half in
+// between, so it never lands anywhere. Without the rule what this machine
+// pushes of its own never carries the registry, so the peer's config on
+// the server would be replaced by this machine's stripped nothing (and the
+// on peer's next sync, seeing no difference, would never put it back). The
+// local's other settings changes still go up. On a machine whose switch is
+// on the local settings carry the config, and nothing is re-installed.
 func keepServersRegistry(merged *backup.Bundle, remote, local backup.Bundle) {
 	if local.Settings == nil || local.Settings.RegistrySync || merged.Settings == nil {
 		return
 	}
 	s := *merged.Settings
 	if remote.Settings == nil {
-		s.RegistryOn, s.RegistryEffort, s.RegistryBuckets, s.RegistrySync = false, "", nil, false
+		s.CopyRegistryConfig(settings.Settings{})
 	} else {
-		s.RegistryOn, s.RegistryEffort, s.RegistryBuckets, s.RegistrySync = remote.Settings.RegistryOn, remote.Settings.RegistryEffort, remote.Settings.RegistryBuckets, remote.Settings.RegistrySync
+		s.CopyRegistryConfig(*remote.Settings)
 	}
 	merged.Settings = &s
 }

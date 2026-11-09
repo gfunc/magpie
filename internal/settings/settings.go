@@ -1042,12 +1042,22 @@ type Settings struct {
 	// eight). MAGPIE_REGISTRY_DEFAULT_EFFORT, where set, is used while
 	// this is "".
 	RegistryEffort string `json:"registryEffort,omitempty"`
-	// RegistryBuckets are the protocol buckets the registry carries, by
-	// their ids in RegistryBucketIDs. Nil means all four (normal fills
-	// it); an empty list is every bucket turned off, which Save refuses
-	// with ErrRegistryBucketsOff — a registry that carries no protocol
-	// serves nothing. Unknown ids are refused, never dropped silently.
-	RegistryBuckets []string `json:"registryBuckets,omitempty"`
+	// RegistryBuckets are the wires the registry lists, by their ids in
+	// RegistryWireIDs. Nil means all four (normal fills it); an empty
+	// list is every wire turned off, which Save refuses with
+	// ErrRegistryEmpty while the routing groups are off too — groups-only
+	// (an empty list with them on) is legal and round-trips, so the key
+	// is written with no omitempty: an omitted empty list would read back
+	// as nil and refill all four. Unknown ids are refused, never dropped
+	// silently.
+	RegistryBuckets []string `json:"registryBuckets"`
+	// RegistryGroups lists the registry's routing groups (the
+	// RegistryGroupID entry). Nil means absent — a pre-split file, or a
+	// bundle not carrying the config — and absent is on: MigrateRegistry
+	// is what decides a legacy file's groups, and normal's nil-fill keeps
+	// a fresh install's on, so the switch is never nil after either. Not
+	// carried in a bundle is nil, never false (CopyRegistryConfig).
+	RegistryGroups *bool `json:"registryGroups,omitempty"`
 	// RegistrySync is the registry's config riding sync. The coupling is
 	// all-ends-on: the config lands on a machine only when the sender's
 	// bundle carried it (OwnRegistry strips it from an off machine's
@@ -1317,23 +1327,35 @@ var (
 	// TextSizes are TextSize's values, in percent. None is under 100: the
 	// webviews' zoom on Windows and Linux (Wails' SetZoom) goes no lower.
 	TextSizes = []int{100, 110, 125, 150}
-	// RegistryBucketIDs are the protocol buckets the model registry (GET
-	// /api.json) can carry, in the registry's emission order, routing
-	// groups last. Held to the gateway's own list by
-	// TestAPIJSONBucketsAreRegistryIDs (internal/gateway): settings can't
-	// import gateway, and a parity test is the repo's convention for this
-	// shape.
-	RegistryBucketIDs = []string{"magpie-openai", "magpie-anthropic", "magpie-openai-responses", "magpie-group"}
+	// RegistryWireIDs are the wires the model registry (GET /api.json)
+	// lists, in the registry's emission order. The routing groups are not
+	// among them: their own switch is RegistryGroups, their entry
+	// RegistryGroupID. Held to the gateway's own wire list by the parity
+	// test in internal/gateway: settings can't import gateway, and a
+	// parity test is the repo's convention for this shape.
+	RegistryWireIDs = []string{"magpie-openai", "magpie-anthropic", "magpie-openai-responses", "magpie-gemini"}
 	// RegistryEfforts are RegistryEffort's values, the spec's five — not
 	// catalog.EffortRank's eight — and no "": the empty value is the
 	// model's own middle, not a level.
 	RegistryEfforts = []string{"low", "medium", "high", "xhigh", "max"}
 )
 
-// ErrRegistryBucketsOff is returned by Save when every protocol bucket of
-// the model registry was turned off: a registry that carries no protocol
-// serves nothing, so one stays checked.
-var ErrRegistryBucketsOff = errors.New("the registry carries at least one protocol bucket: leave one checked")
+// RegistryGroupID is the registry's routing-groups entry (the importer's
+// key for it) and the legacy tick a stored bucket list carried before
+// groups got their own switch. MigrateRegistry reads it from old lists;
+// Save refuses it after.
+const RegistryGroupID = "magpie-group"
+
+// ErrRegistryEmpty is returned by Save when the registry was left listing
+// nothing: no wire and the routing groups off. One of the two stays on.
+var ErrRegistryEmpty = errors.New("the registry lists nothing with no wire and no routing groups: leave one on")
+
+// RegistryGroupsOn says whether the registry lists its routing groups.
+// Nil groups — pre-split on disk, or not carried in a bundle — reads as
+// on: absent means on everywhere a raw Settings is seen.
+func RegistryGroupsOn(st Settings) bool {
+	return st.RegistryGroups == nil || *st.RegistryGroups
+}
 
 // SearchFirst's values: a provider's search first, saved as "", or the
 // search APIs first.
@@ -1517,16 +1539,33 @@ func (s *Settings) KeepOwn(cur Settings) {
 	s.AgentsHere = cur.AgentsHere
 }
 
-// OwnRegistry takes the model registry's config — whether it is served,
-// its default effort and its protocol buckets — out of s, a settings
+// CopyRegistryConfig is the registry's field-set owner: the whole config
+// — On, Effort, Buckets, Groups and Sync — moves only through here.
+// Strip (OwnRegistry), blind (davsync's blindRegistry) and merge
+// (keepServersRegistry) call it with a zero or a remote Settings, and
+// Groups moves as it is: not-carried is nil, never false, so a blinded
+// copy hash-matches a peer's nil. The one other site that names registry
+// fields is the landing rule beside KeepOwn in backup.Restore — its Sync
+// is per-machine and copied unconditionally, a different rule on purpose.
+func (s *Settings) CopyRegistryConfig(from Settings) {
+	s.RegistryOn = from.RegistryOn
+	s.RegistryEffort = from.RegistryEffort
+	s.RegistryBuckets = from.RegistryBuckets
+	s.RegistryGroups = from.RegistryGroups
+	s.RegistrySync = from.RegistrySync
+}
+
+// OwnRegistry takes the model registry's config out of s, a settings
 // bundle about to travel to another computer (backup.Collect and
-// davsync's collect call it before the bundle is sealed), while
-// RegistrySync stays as it is: the switch is per-machine, and the config
-// lands only when the sender carried it and the receiver opted in. It is
-// idempotent: an already-stripped s changes nothing.
+// davsync's collect call it before the bundle is sealed), while the
+// switch itself stays as it is on this machine, per-machine like every
+// registry landing decision: the config lands only when the sender
+// carried it and the receiver opted in. CopyRegistryConfig's zero zeroes
+// Sync too — no move, inside a branch that already requires it off. It
+// is idempotent: an already-stripped s changes nothing.
 func (s *Settings) OwnRegistry() {
 	if !s.RegistrySync {
-		s.RegistryOn, s.RegistryEffort, s.RegistryBuckets = false, "", nil
+		s.CopyRegistryConfig(Settings{})
 	}
 }
 
@@ -2419,20 +2458,22 @@ func saveOwn(s Settings, recording, reads bool) error {
 	if s.RegistryEffort != "" && !slices.Contains(RegistryEfforts, s.RegistryEffort) {
 		return fmt.Errorf("the registry's default thinking effort is one of %s, or empty for the model's own, not %q", strings.Join(RegistryEfforts, ", "), s.RegistryEffort)
 	}
+	// the ids are wires; the legacy group id is refused here like any
+	// other unknown one — normal's migration is the only reader it had
 	for _, id := range s.RegistryBuckets {
-		if !slices.Contains(RegistryBucketIDs, id) {
-			return fmt.Errorf("the registry's protocol buckets are %s, not %q", strings.Join(RegistryBucketIDs, ", "), id)
+		if !slices.Contains(RegistryWireIDs, id) {
+			return fmt.Errorf("the registry's wires are %s, not %q", strings.Join(RegistryWireIDs, ", "), id)
 		}
 	}
 	buckets := make([]string, 0, len(s.RegistryBuckets))
-	for _, id := range RegistryBucketIDs {
+	for _, id := range RegistryWireIDs {
 		if slices.Contains(s.RegistryBuckets, id) {
 			buckets = append(buckets, id)
 		}
 	}
 	s.RegistryBuckets = buckets
-	if len(s.RegistryBuckets) == 0 {
-		return ErrRegistryBucketsOff
+	if len(s.RegistryBuckets) == 0 && !RegistryGroupsOn(s) {
+		return ErrRegistryEmpty
 	}
 	s.TrayUsage = ""
 	if len(s.TrayUsages) > 0 {
@@ -2506,6 +2547,11 @@ func saveOwn(s Settings, recording, reads bool) error {
 }
 
 func (s Settings) normal() Settings {
+	// the registry's pre-split shape first, before the defaulting below
+	// can mask its discriminator: a bucket list with no groups switch
+	// becomes the switch, so the fills further down only ever see a
+	// config that is whole or nothing-said
+	s.MigrateRegistry()
 	if s.Theme == "" {
 		s.Theme = "system"
 	}
@@ -2585,13 +2631,50 @@ func (s Settings) normal() Settings {
 			s.CodexWarmAtOf = nil
 		}
 	}
-	// the registry's buckets: nil (nothing said, an older file) is all
-	// four; an empty list is every one turned off on purpose, which stays
-	// for Save to refuse
+	// the registry's lists: nil buckets (nothing said, an older file) is
+	// all four wires; nil groups is on, so a fresh install's first save
+	// writes the switch out true and the next load's migration cannot
+	// read that file as legacy and turn the groups off; an empty list is
+	// every wire turned off on purpose, which stays for Save to refuse
+	// unless the groups are on
 	if s.RegistryBuckets == nil {
-		s.RegistryBuckets = slices.Clone(RegistryBucketIDs)
+		s.RegistryBuckets = slices.Clone(RegistryWireIDs)
+	}
+	if s.RegistryGroups == nil {
+		on := true
+		s.RegistryGroups = &on
 	}
 	return s
+}
+
+// MigrateRegistry carries a stored pre-split registry config onto the
+// reshaped one. A bucket list with no groups switch is a file from before
+// the split, and the group tick such a list carried — or its lack —
+// becomes the groups switch, the id stripped either way (a
+// ["magpie-group"] list is the groups-only [], legal). Nothing calls it
+// but normal, before its defaulting: every path that Loads or Saves runs
+// normal, so this one hook covers them all, while a bundle in transit
+// never does — no sync path pre-migrates, and strip and blind outputs
+// stay terminal. Idempotent: once the switch is set, the discriminator
+// no longer holds.
+func (s *Settings) MigrateRegistry() {
+	if s.RegistryBuckets == nil || s.RegistryGroups != nil {
+		return
+	}
+	if slices.Contains(s.RegistryBuckets, RegistryGroupID) {
+		on := true
+		s.RegistryGroups = &on
+		wires := make([]string, 0, len(s.RegistryBuckets))
+		for _, id := range s.RegistryBuckets {
+			if id != RegistryGroupID {
+				wires = append(wires, id)
+			}
+		}
+		s.RegistryBuckets = wires
+		return
+	}
+	off := false
+	s.RegistryGroups = &off
 }
 
 // Clock reads a time of day, "06:00" (seconds, as a time field may send

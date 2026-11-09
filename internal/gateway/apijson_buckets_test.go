@@ -7,18 +7,22 @@ import (
 	"github.com/yetone/magpie/internal/settings"
 )
 
-// The registry's protocol buckets are settings' own list: a bucket the
-// page offers a checkbox for is one the endpoint serves, and in the
-// order the settings canonicalize to (routing groups last). Settings
+// The registry's wires are settings' own list: a wire the settings page
+// offers a tick for is one the endpoint serves, and in the order the
+// settings canonicalize to. The routing groups are not among them — their
+// entry's id is settings' own constant, which this holds too. Settings
 // cannot import gateway to say that at compile time, so this test holds
 // the two tables to each other — either side renaming, reordering or
-// growing a bucket goes red here first.
-func TestAPIJSONBucketsAreRegistryIDs(t *testing.T) {
+// growing a wire goes red here first.
+func TestAPIJSONWiresAreRegistryWireIDs(t *testing.T) {
 	var ids []string
-	for _, b := range apiJSONBuckets {
-		ids = append(ids, b.id)
+	for _, w := range apiJSONWires {
+		ids = append(ids, w.id)
 	}
-	if !slices.Equal(ids, settings.RegistryBucketIDs) {
-		t.Errorf("apiJSONBuckets' ids %v, want settings.RegistryBucketIDs %v", ids, settings.RegistryBucketIDs)
+	if !slices.Equal(ids, settings.RegistryWireIDs) {
+		t.Errorf("apiJSONWires' ids %v, want settings.RegistryWireIDs %v", ids, settings.RegistryWireIDs)
+	}
+	if apiJSONGroups.id != settings.RegistryGroupID {
+		t.Errorf("the groups entry's id %q, want settings.RegistryGroupID %q", apiJSONGroups.id, settings.RegistryGroupID)
 	}
 }

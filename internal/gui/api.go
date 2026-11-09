@@ -604,7 +604,8 @@ type settingsJSON struct {
 type modelRegistryJSON struct {
 	// PublicURL is MAGPIE_PUBLIC_URL as /api.json hangs under it
 	PublicURL string `json:"publicURL,omitempty"`
-	// Buckets are the protocol buckets' ids, canonical order
+	// Buckets are the wire option ids, canonical order — the routing
+	// groups are not among them
 	Buckets []string `json:"buckets"`
 	// Efforts are the default-effort row's levels, the spec's five
 	Efforts []string `json:"efforts"`
@@ -874,11 +875,12 @@ func settingsState() settingsJSON {
 	s.NoAccountsEnv = settings.AccountDiscoveryOff() && !s.NoAccountDiscovery
 	// the registry rows' facts: always filled, whatever the switch — the
 	// page draws the section whole, greyed, while it is off. Buckets are
-	// the option ids, not the chosen list: the flat registryBuckets holds
-	// the choice
+	// the wire option ids, not the chosen list: the flat registryBuckets
+	// holds the choice, and the routing groups are no wire — their own
+	// switch, registryGroups, says whether they list
 	s.Registry = modelRegistryJSON{
 		PublicURL: strings.TrimRight(os.Getenv("MAGPIE_PUBLIC_URL"), "/"),
-		Buckets:   settings.RegistryBucketIDs,
+		Buckets:   settings.RegistryWireIDs,
 		Efforts:   settings.RegistryEfforts,
 		EnvEffort: strings.ToLower(strings.TrimSpace(os.Getenv("MAGPIE_REGISTRY_DEFAULT_EFFORT"))),
 	}
@@ -3285,10 +3287,11 @@ func fail(rw http.ResponseWriter, err error) {
 			out["reason"] = admin.Err.Error()
 		}
 	}
-	// a save that would leave the model registry carrying no protocol
-	// bucket: the buckets row says it, in the page's language
-	if errors.Is(err, settings.ErrRegistryBucketsOff) {
-		out["code"] = "registry_buckets_off"
+	// a save that would leave the registry listing nothing — no wire
+	// ticked and the routing groups off: the wires row says it, naming
+	// both levers, in the page's language
+	if errors.Is(err, settings.ErrRegistryEmpty) {
+		out["code"] = "registry_empty"
 	}
 	// a bun this Windows or processor can't run at all: said, with what
 	// to do, in the reader's language (zgcwkj on Discord)

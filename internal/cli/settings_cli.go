@@ -299,6 +299,10 @@ func shown(v any) string {
 	rv := reflect.ValueOf(v)
 	if rv.Kind() == reflect.Pointer {
 		if rv.IsNil() {
+			// a switch stored absent-means-on (registryGroups): nil is on
+			if rv.Type().Elem().Kind() == reflect.Bool {
+				return "on"
+			}
 			return "-"
 		}
 		rv = rv.Elem()

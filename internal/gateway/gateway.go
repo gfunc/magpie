@@ -1452,7 +1452,12 @@ func cursorLocalModel(m map[string]any, e provider.Entry) {
 	names := map[string]string{"/v1/chat/completions": "chat_completions", "/v1/responses": "responses", "/v1/messages": "anthropic_messages"}
 	types := []string{}
 	for _, p := range provider.NativeEndpoints(e) {
-		types = append(types, names[p])
+		// a native path Cursor isn't asked on — Gemini's per-model
+		// generateContent — is skipped rather than listed as "", so a
+		// model native there alone still gets the three-name fallback
+		if n, ok := names[p]; ok {
+			types = append(types, n)
+		}
 	}
 	if len(types) == 0 {
 		types = []string{"chat_completions", "responses", "anthropic_messages"}

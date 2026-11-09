@@ -237,11 +237,11 @@ func TestRegistryURLAndEffortInSettings(t *testing.T) {
 	if s := settingsState(); s.Registry.EnvEffort != "" {
 		t.Errorf("no env var: Registry.EnvEffort %q", s.Registry.EnvEffort)
 	}
-	// the rows' option lists, always: the buckets' ids in the registry's
+	// the rows' option lists, always: the wires' ids in the registry's
 	// emission order and the effort row's five, whatever the switch
 	s := settingsState()
-	if !slices.Equal(s.Registry.Buckets, settings.RegistryBucketIDs) {
-		t.Errorf("Registry.Buckets %v, want %v", s.Registry.Buckets, settings.RegistryBucketIDs)
+	if !slices.Equal(s.Registry.Buckets, settings.RegistryWireIDs) {
+		t.Errorf("Registry.Buckets %v, want %v", s.Registry.Buckets, settings.RegistryWireIDs)
 	}
 	if !slices.Equal(s.Registry.Efforts, settings.RegistryEfforts) {
 		t.Errorf("Registry.Efforts %v, want %v", s.Registry.Efforts, settings.RegistryEfforts)

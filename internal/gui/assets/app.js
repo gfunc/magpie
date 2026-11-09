@@ -22696,7 +22696,7 @@ function prefsKeep(s) {
     trayUsage: s.trayUsage || "", trayUsageEvery: s.trayUsageEvery || 3, trayNoLogos: !!s.trayNoLogos, trayNoBird: !!s.trayNoBird, trayNoNumber: !!s.trayNoNumber, trayPace: !!s.trayPace, trayNoCost: !!s.trayNoCost, trayWindows: s.trayWindows || {}, vision: s.vision || "", visionEffort: s.visionEffort || "", searcherEffort: s.searcherEffort || "", imageGen: s.imageGen || "", videoGen: s.videoGen || "", imageTimeout: s.imageTimeout || 0, classifyTimeout: s.classifyTimeout || 0, searcher: s.searcher || "", searchFirst: s.searchFirst || "", currency: s.currency || "usd",
     chineseUnits: !!s.chineseUnits, usageAlert: s.usageAlert || 0, balanceAlert: s.balanceAlert || 0, resetReminder: s.resetReminder || 0,
     turnDoneAlert: s.turnDoneAlert || 0, maskAlert: !!s.maskAlert,
-    registryOn: !!s.registryOn, registryEffort: s.registryEffort || "", registryBuckets: s.registryBuckets ?? null, registrySync: !!s.registrySync };
+    registryOn: !!s.registryOn, registryEffort: s.registryEffort || "", registryBuckets: s.registryBuckets ?? null, registryGroups: s.registryGroups ?? null, registrySync: !!s.registrySync };
 }
 
 // savePrefs sends what the page was drawn with (prefsBase) and the choice

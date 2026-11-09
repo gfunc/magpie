@@ -3,6 +3,7 @@ package settingsapi
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -225,6 +226,8 @@ func TestRefusedValueWritesNothing(t *testing.T) {
 	home(t)
 	s := settings.Defaults()
 	s.Theme = "dark"
+	off := false
+	s.RegistryGroups = &off
 	if err := settings.Save(s); err != nil {
 		t.Fatal(err)
 	}
@@ -240,7 +243,7 @@ func TestRefusedValueWritesNothing(t *testing.T) {
 		"searcher":        `"nobody/nothing"`,
 		"usageAlert":      `101`,
 		"updateChannel":   `"nightly"`,
-		"registryBuckets": `[]`,      // every protocol bucket turned off
+		"registryBuckets": `[]`,      // every wire off while the groups are off
 		"registryEffort":  `"ultra"`, // not one of the five levels
 	} {
 		cur := settings.Load()
@@ -256,19 +259,54 @@ func TestRefusedValueWritesNothing(t *testing.T) {
 			t.Fatalf("%s=%s was refused but settings.json changed", key, value)
 		}
 	}
+	// and the empty registry's refusal is the registry's own sentinel
+	cur := settings.Load()
+	body, err := Body(cur, "registryBuckets", json.RawMessage(`[]`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := Apply(body, false); !errors.Is(err, settings.ErrRegistryEmpty) {
+		t.Fatalf("no wire and the groups off: %v", err)
+	}
 	if _, err := Body(settings.Load(), "port", json.RawMessage(`1`)); err == nil {
 		t.Error("Body took port, which has a route of its own")
 	}
 }
 
-// The model registry's four settings are the Settings page's to send: a
+func TestLightweightAndRegistryGroupsValue(t *testing.T) {
+	off, on := false, true
+	for _, tc := range []struct {
+		name string
+		key  string
+		s    settings.Settings
+		want bool
+	}{
+		{"lightweight unset", "lightweight", settings.Settings{}, false},
+		{"lightweight off", "lightweight", settings.Settings{Lightweight: &off}, false},
+		{"lightweight on", "lightweight", settings.Settings{Lightweight: &on}, true},
+		{"registry groups unset", "registryGroups", settings.Settings{}, true},
+		{"registry groups off", "registryGroups", settings.Settings{RegistryGroups: &off}, false},
+		{"registry groups on", "registryGroups", settings.Settings{RegistryGroups: &on}, true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			if got, ok := Value(tc.s, tc.key); !ok || got != tc.want {
+				t.Errorf("Value(%s) = %v, %v; want %v, true", tc.key, got, ok, tc.want)
+			}
+		})
+	}
+}
+
+// The model registry's five settings are the Settings page's to send: a
 // save that sends none of them (a page from before the section exists)
-// keeps the user's own, and one that sends them empty turns the registry
-// off. The buckets are a list, and a list that isn't sent is the one the
-// user has — a list that is sent empty is every bucket off, which the save
-// refuses.
+// keeps the user's own — the groups switch as the rest, its nil (not
+// sent, or sent null) carrying the user's own as a list that isn't sent
+// does. An empty bucket list reaches the save, and with the groups on it
+// is the groups-only save, legal; the save refuses it only when the
+// groups are off too.
 func TestRegistrySettingsCarriedUnlessSent(t *testing.T) {
 	cur := settings.Defaults()
+	off := false
+	cur.RegistryGroups = &off
 	cur.RegistryOn = true
 	cur.RegistryEffort = "high"
 	cur.RegistryBuckets = []string{"magpie-openai"}
@@ -280,27 +318,70 @@ func TestRegistrySettingsCarriedUnlessSent(t *testing.T) {
 	if !in.RegistryOn || in.RegistryEffort != "high" || !slices.Equal(in.RegistryBuckets, []string{"magpie-openai"}) || !in.RegistrySync {
 		t.Errorf("a save that sent no registry setting changed one: %+v", in)
 	}
+	if in.RegistryGroups == nil || *in.RegistryGroups {
+		t.Errorf("a save that sent no registry setting turned the groups on: %v", in.RegistryGroups)
+	}
 	// an explicit null is a value sent: the switches off and the effort
 	// empty, which is the model's own middle
-	in, err = Merge([]byte(`{"registryOn":null,"registryEffort":null,"registryBuckets":null,"registrySync":null}`), cur, false)
+	in, err = Merge([]byte(`{"registryOn":null,"registryEffort":null,"registryBuckets":null,"registryGroups":null,"registrySync":null}`), cur, false)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if in.RegistryOn || in.RegistrySync || in.RegistryEffort != "" {
 		t.Errorf("a save that sent the registry's settings empty left one on: %+v", in)
 	}
-	// the buckets are a list, and a null is no list said: the list the
-	// user has is kept (as the searchers after the one named are)
+	// the buckets and the groups are nil-said — no list, no switch — and
+	// nil keeps what the user has (as the searchers after the one named are)
 	if !slices.Equal(in.RegistryBuckets, []string{"magpie-openai"}) {
 		t.Errorf("a save that sent the buckets null changed them: %v", in.RegistryBuckets)
 	}
-	// an empty list is a list said, and reaches the save, which refuses it
+	if in.RegistryGroups == nil || *in.RegistryGroups {
+		t.Errorf("a save that sent the groups null changed them: %v", in.RegistryGroups)
+	}
+	// the groups sent are the groups saved, on either side of the switch
+	in, err = Merge([]byte(`{"registryGroups":true}`), cur, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if in.RegistryGroups == nil || !*in.RegistryGroups {
+		t.Errorf("the groups sent on stayed off: %v", in.RegistryGroups)
+	}
+	// an empty list is a list said, and reaches the save, which takes it
+	// while the groups are on
 	in, err = Merge([]byte(`{"registryBuckets":[]}`), cur, false)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if in.RegistryBuckets == nil || len(in.RegistryBuckets) != 0 {
 		t.Errorf("an empty bucket list was carried instead of sent: %v", in.RegistryBuckets)
+	}
+	// a switch stored absent-means-on is shown as its effective value:
+	// nil is on, never null
+	if v, ok := Value(settings.Settings{}, "registryGroups"); !ok || v != true {
+		t.Errorf("registryGroups nil shows as %v, want on", v)
+	}
+	// the groups-only save is legal, and its empty list round-trips on
+	// disk (the key with no omitempty: an omitted one would refill)
+	home(t)
+	if err := settings.Save(settings.Defaults()); err != nil {
+		t.Fatal(err)
+	}
+	body, err := Body(settings.Load(), "registryBuckets", json.RawMessage(`[]`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := Apply(body, false); err != nil {
+		t.Fatalf("a groups-only save was refused: %v", err)
+	}
+	b, err := os.ReadFile(settings.Path())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Contains(b, []byte(`"registryBuckets": []`)) {
+		t.Errorf("the groups-only save didn't write its empty list: %s", b)
+	}
+	if got := settings.Load().RegistryBuckets; len(got) != 0 {
+		t.Errorf("the groups-only save read back as %v", got)
 	}
 	// a file from before the registry existed says no buckets, and reads
 	// as all four
@@ -311,7 +392,7 @@ func TestRegistrySettingsCarriedUnlessSent(t *testing.T) {
 	if err := os.WriteFile(settings.Path(), []byte(`{"theme":"dark"}`), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if got := settings.Load().RegistryBuckets; !slices.Equal(got, settings.RegistryBucketIDs) {
+	if got := settings.Load().RegistryBuckets; !slices.Equal(got, settings.RegistryWireIDs) {
 		t.Errorf("a file with no buckets reads as %v, want all four", got)
 	}
 }

@@ -20,7 +20,7 @@ func TestStatsAnswerWritesWhatEncodeDid(t *testing.T) {
 	day := func(date string) sessions.Day {
 		return sessions.Day{Date: date,
 			Usage:  []sessions.Usage{{Agent: "codex", Cwd: "/a<b>&c", Model: "gpt x", Tokens: sessions.Tokens{Input: 3, CacheWrite1h: 1}, Cost: 1e21, Priced: true}},
-			Active: []sessions.Active{{Agent: "claude", Cwd: "引号\"", Seconds: 61, Hours: []int64{1, 2}}}}
+			Active: []sessions.Active{{Agent: "claude", Cwd: "引号\"", Seconds: 61, Hours: []uint64{1, 2}}}}
 	}
 	for _, c := range []struct {
 		st     sessions.Stats

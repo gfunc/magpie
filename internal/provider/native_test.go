@@ -2,6 +2,7 @@ package provider
 
 import (
 	"path/filepath"
+	"slices"
 	"testing"
 
 	"github.com/yetone/magpie/internal/catalog"
@@ -51,6 +52,91 @@ func TestNative(t *testing.T) {
 	} {
 		if got := c.p.Native(c.model); got != c.want {
 			t.Errorf("%s: %q, want %q", c.name, got, c.want)
+		}
+	}
+}
+
+// A model the provider serves on Gemini's generateContent as it is is
+// listed on that wire too (/v1/models' native_endpoints), which relayed
+// alone leaves out: its Native gate picks among the three wires magpie
+// translates between, and a generateContent-only model has no native one
+// of those. The Gemini path is keyed by the id the client sends
+// (Entry.ID), the one the gateway's Gemini route takes in its path.
+func TestNativeEndpointsOnGemini(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
+	t.Setenv("XDG_CACHE_HOME", filepath.Join(home, ".cache"))
+	catalog.Reset()
+	t.Cleanup(catalog.Reset)
+	// Vertex AI says, per model, which API serves it: its Gemini models
+	// on generateContent alone, partner models on chat completions and
+	// Claude's on Anthropic's Messages (ListedAPIs)
+	vertex := Provider{ID: "vertex-prod", Name: "Vertex prod", Preset: VertexPreset, Vertex: &Vertex{Project: "acme-vertex"}}
+	// a relay with a Gemini API beside its Chat one, nothing said per model
+	both := Provider{ID: "both", Chat: "https://both.test/v1", Gemini: "https://both.test/v1beta"}
+	// a Google sign-in speaks Code Assist, never Gemini, and a Claude
+	// Code or Devin sign-in translates generateContent like every other
+	// request, so none of them is listed on the wire — even one whose
+	// saved shape carries a Gemini base
+	codeAssist := Provider{ID: "gemini", Account: &Account{Agent: "gemini", codeAssist: "https://cloudcode-pa.googleapis.com"}}
+	claude := Provider{ID: "claude", Anthropic: "https://api.anthropic.com", Gemini: "https://generativelanguage.googleapis.com/v1beta", Account: &Account{Agent: "claude"}}
+	devin := Provider{ID: "devin", Gemini: "https://x.test", Account: &Account{Agent: "devin"}}
+	for _, c := range []struct {
+		name string
+		e    Entry
+		want []string
+	}{
+		// the case relayed alone returns nil for: Native("") gates a
+		// generateContent-only model out of the translated three
+		{"Vertex's Gemini model, keyed by the client's id", Entry{ID: "vertex-prod/gemini-3-pro", Model: "gemini-3-pro", Provider: vertex}, []string{"/v1beta/models/vertex-prod/gemini-3-pro:generateContent"}},
+		{"Vertex's partner model stays on Chat", Entry{ID: "vertex-prod/deepseek-ai/deepseek-v4.1-flash-maas", Model: "deepseek-ai/deepseek-v4.1-flash-maas", Provider: vertex}, []string{"/v1/chat/completions"}},
+		{"Vertex's Claude model stays on Messages", Entry{ID: "vertex-prod/claude-opus-5-5", Model: "claude-opus-5-5", Provider: vertex}, []string{"/v1/messages"}},
+		{"a Gemini-only base", Entry{ID: "mine/gemini-3-pro", Model: "gemini-3-pro", Provider: Provider{ID: "mine", Gemini: "https://generativelanguage.googleapis.com/v1beta"}}, []string{"/v1beta/models/mine/gemini-3-pro:generateContent"}},
+		{"each wire it speaks, nothing said per model", Entry{ID: "both/glm-5.3", Model: "glm-5.3", Provider: both}, []string{"/v1/chat/completions", "/v1beta/models/both/glm-5.3:generateContent"}},
+		{"Claude Code", Entry{ID: "claude/claude-sonnet-5", Model: "claude-sonnet-5", Provider: claude}, nil},
+		{"Devin", Entry{ID: "devin/swe-2", Model: "swe-2", Provider: devin}, nil},
+		{"Code Assist", Entry{ID: "gemini/gemini-3-pro", Model: "gemini-3-pro", Provider: codeAssist}, nil},
+	} {
+		if got := NativeEndpoints(c.e); !slices.Equal(got, c.want) {
+			t.Errorf("%s: endpoints %v, want %v", c.name, got, c.want)
+		}
+	}
+}
+
+// A routing group rides the OpenAI-compatible wires: its endpoints are
+// its members' common APIs among the three magpie translates between,
+// never Gemini's per-model path — an all-Gemini group has none.
+func TestNativeEndpointsOfAGroup(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
+	t.Setenv("XDG_CACHE_HOME", filepath.Join(home, ".cache"))
+	catalog.Reset()
+	t.Cleanup(catalog.Reset)
+	geminiOnly := Provider{ID: "mine", Gemini: "https://generativelanguage.googleapis.com/v1beta"}
+	both := Provider{ID: "both", Chat: "https://both.test/v1", Gemini: "https://both.test/v1beta"}
+	chat := Provider{ID: "chat", Chat: "https://chat.test/v1"}
+	of := func(ps ...Provider) []Member {
+		var ms []Member
+		for _, p := range ps {
+			ms = append(ms, Member{Provider: p, Model: "glm-5.3"})
+		}
+		return ms
+	}
+	for _, c := range []struct {
+		name string
+		ms   []Member
+		want []string
+	}{
+		{"an all-Gemini group has no path", of(geminiOnly, geminiOnly), nil},
+		{"members sharing no translated wire", of(both, geminiOnly), nil},
+		{"the Chat wire both speak, not the Gemini one a member also speaks", of(both, chat), []string{"/v1/chat/completions"}},
+	} {
+		if got := GroupEndpoints(c.ms); !slices.Equal(got, c.want) {
+			t.Errorf("%s: endpoints %v, want %v", c.name, got, c.want)
 		}
 	}
 }

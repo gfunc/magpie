@@ -29,6 +29,12 @@ func TestCursorLocalModels(t *testing.T) {
 	if err := catalog.SaveLive("or", "http://127.0.0.1:2/v1", []catalog.Model{{ID: "claude-opus-4-7", Efforts: []string{"low", "medium", "high"}}}); err != nil {
 		t.Fatal(err)
 	}
+	if err := provider.Save(provider.Provider{ID: "gg", Name: "GG", Key: "k", Gemini: "http://127.0.0.1:3/v1beta", Models: []string{"gemini-3-pro"}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := catalog.SaveLive("gg", "http://127.0.0.1:3/v1beta", []catalog.Model{{ID: "gemini-3-pro"}}); err != nil {
+		t.Fatal(err)
+	}
 	list := func(key string, ua ...string) map[string]map[string]any {
 		t.Helper()
 		req := httptest.NewRequest("GET", "/v1/models", nil)
@@ -98,6 +104,16 @@ func TestCursorLocalModels(t *testing.T) {
 	if ts := types(got["ds/claude-sonnet-4-6"]); !slices.Equal(ts, []string{"chat_completions"}) {
 		t.Errorf("a Claude on Chat alone: api_types = %v", ts)
 	}
+	// a model native on Gemini's per-model generateContent alone: Cursor
+	// isn't asked on it, so api_types says its three rather than the
+	// path's empty name
+	gg := got["gg/gemini-3-pro"]
+	if gg == nil {
+		t.Fatalf("models: %v", got)
+	}
+	if ts := types(gg); !slices.Equal(ts, []string{"chat_completions", "responses", "anthropic_messages"}) {
+		t.Errorf("a Gemini-native model's api_types = %v, want Cursor's three", ts)
+	}
 
 	for _, key := range []string{Token, TokenFor("cursor"), TokenFor("opencode")} {
 		for id, m := range list(key) {
@@ -105,6 +121,15 @@ func TestCursorLocalModels(t *testing.T) {
 				t.Errorf("%s: %s has %v %v", key, id, m["api_types"], m["capabilities"])
 			}
 		}
+	}
+
+	// the listing carries the true Gemini path, the one the client itself
+	// asks: native_endpoints names the model in it, keyed by the id the
+	// client sends
+	if m := list(Token)["gg/gemini-3-pro"]; m == nil {
+		t.Fatalf("models: %v", list(Token))
+	} else if eps, _ := m["native_endpoints"].([]any); len(eps) != 1 || eps[0] != "/v1beta/models/gg/gemini-3-pro:generateContent" {
+		t.Errorf("gg/gemini-3-pro: native_endpoints %v, want the generateContent path", m["native_endpoints"])
 	}
 
 	// the models picked on its row are its picker's: one taken out isn't

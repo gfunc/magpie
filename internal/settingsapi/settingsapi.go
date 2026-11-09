@@ -39,9 +39,10 @@ var Keys = []string{
 	// network
 	"proxy",
 	// the model registry (GET /api.json): whether it is served, the
-	// thinking effort its models take by default, the protocol buckets it
-	// carries and whether the config rides sync
-	"registryOn", "registryEffort", "registryBuckets", "registrySync",
+	// thinking effort its models take by default, the protocol wires it
+	// carries, whether its routing groups ride it and whether the config
+	// rides sync
+	"registryOn", "registryEffort", "registryBuckets", "registryGroups", "registrySync",
 	// privacy
 	"redact", "redactPersonal", "redactKinds", "redactWords", "redactWordsAnyCase", "redactWordsWhole", "redactShape",
 	"noStats", "noUsageStats", "otel",
@@ -98,13 +99,22 @@ func Field(key string) (reflect.StructField, bool) {
 	return reflect.StructField{}, false
 }
 
-// Value is key's value in s, as it is saved.
+// Value is key's value in s, as it is saved. A switch stored as a *bool
+// is its effective one, never null: only registryGroups is absent-means-on;
+// every other nil pointer switch is off.
 func Value(s settings.Settings, key string) (any, bool) {
 	f, ok := Field(key)
 	if !ok {
 		return nil, false
 	}
-	return reflect.ValueOf(s).FieldByIndex(f.Index).Interface(), true
+	v := reflect.ValueOf(s).FieldByIndex(f.Index)
+	if b, ok := v.Interface().(*bool); ok {
+		if b == nil {
+			return key == "registryGroups", true
+		}
+		return *b, true
+	}
+	return v.Interface(), true
 }
 
 // Known says whether key is one Apply saves.
@@ -266,10 +276,11 @@ func Merge(body []byte, cur settings.Settings, web bool) (settings.Settings, err
 	if _, sent := fields["maskAlert"]; !sent {
 		in.MaskAlert = cur.MaskAlert
 	}
-	// nor the model registry's own four: whether it is served, the
-	// thinking effort its models take by default, the protocol buckets it
-	// carries and whether the config rides sync. A page from before the
-	// section exists doesn't send them, and keeps the user's own.
+	// nor the model registry's own five: whether it is served, the
+	// thinking effort its models take by default, the protocol wires it
+	// carries, whether its routing groups ride it and whether the config
+	// rides sync. A page from before the section exists doesn't send
+	// them, and keeps the user's own.
 	if _, sent := fields["registryOn"]; !sent {
 		in.RegistryOn = cur.RegistryOn
 	}
@@ -281,9 +292,16 @@ func Merge(body []byte, cur settings.Settings, web bool) (settings.Settings, err
 	}
 	// The buckets are a list, and a list that isn't sent is the one the
 	// user has (as the searchers after the one named are). A list that is
-	// sent empty is every bucket turned off, which the save refuses.
+	// sent empty is every wire turned off — with the routing groups on
+	// the groups-only save, which the save takes; with them off, the one
+	// it refuses.
 	if in.RegistryBuckets == nil {
 		in.RegistryBuckets = cur.RegistryBuckets
+	}
+	// The routing-groups switch is kept as a pointer, and nil — not sent,
+	// or sent null — is the one the user has, as a list that isn't sent is.
+	if in.RegistryGroups == nil {
+		in.RegistryGroups = cur.RegistryGroups
 	}
 	in.AgentOrder, in.AgentsHidden, in.AgentsShown, in.AgentsHere = cur.AgentOrder, cur.AgentsHidden, cur.AgentsShown, cur.AgentsHere
 	in.Window, in.WindowMaximised, in.WindowAt = cur.Window, cur.WindowMaximised, cur.WindowAt // the window's own, as it was last resized and moved

@@ -474,13 +474,19 @@ func Restore(b Bundle, parts Parts) (Result, error) {
 		if b.Settings != nil {
 			s = *b.Settings
 		}
-		// the registry's config lands only when the bundle carried it (its
-		// maker's switch was on) and this machine asked for it; the switch
-		// itself is every machine's own, never another's to move
-		ride := s.RegistrySync && cur.RegistrySync && s.RegistryBuckets != nil
+		// the registry's config lands only when the bundle carried it whole
+		// — the wires and the groups switch both — and this machine asked
+		// for it; a legacy peer's half (no groups switch) never rides, so
+		// this machine keeps its own until the peer upgrades and pushes a
+		// whole one. The switch itself is every machine's own, never
+		// another's to move. The field set's one owner is
+		// CopyRegistryConfig (settings); this is the one other site that
+		// names the fields, because Sync is per-machine here — copied
+		// unconditionally, not as a field-set copy.
+		ride := s.RegistrySync && cur.RegistrySync && s.RegistryBuckets != nil && s.RegistryGroups != nil
 		s.RegistrySync = cur.RegistrySync
 		if !ride {
-			s.RegistryOn, s.RegistryEffort, s.RegistryBuckets = cur.RegistryOn, cur.RegistryEffort, cur.RegistryBuckets
+			s.RegistryOn, s.RegistryEffort, s.RegistryBuckets, s.RegistryGroups = cur.RegistryOn, cur.RegistryEffort, cur.RegistryBuckets, cur.RegistryGroups
 		}
 		s.KeepOwn(cur)
 		if !keys {

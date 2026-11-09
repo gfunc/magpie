@@ -26,6 +26,11 @@ export function connect({ gateway, model, models }) {
 	if err := provider.SetModelPrice("deepseek/pro", &catalog.Price{Input: 0.3, Output: 1.2, CacheRead: 0.03}); err != nil {
 		t.Fatal(err)
 	}
+	// a provider whose Gemini models are relayed on generateContent as
+	// it is, beside DeepSeek's Chat one
+	if err := provider.Save(provider.Provider{ID: "google", Name: "Google", Gemini: "https://generativelanguage.googleapis.com/v1beta", Key: "k", Models: []string{"gemini-3-pro"}}); err != nil {
+		t.Fatal(err)
+	}
 	a, err := Find("facts")
 	if err != nil {
 		t.Fatal(err)
@@ -88,6 +93,11 @@ export function connect({ gateway, model, models }) {
 	}
 	if flash.HasPrice {
 		t.Errorf("unpriced flash has pricing %v, want none", flash.Pricing)
+	}
+	// the Gemini-native model's path is keyed by the id the client sends,
+	// as the gateway's Gemini route takes it in its path
+	if g := byID["google/gemini-3-pro"]; len(g.Native) != 1 || g.Native[0] != "/v1beta/models/google/gemini-3-pro:generateContent" {
+		t.Errorf("google/gemini-3-pro native_endpoints = %v, want [/v1beta/models/google/gemini-3-pro:generateContent]:\n%s", g.Native, file.Seen)
 	}
 	// what connect was told before stays as it was
 	for _, k := range []string{"id", "name", "context", "output", "images", "efforts"} {

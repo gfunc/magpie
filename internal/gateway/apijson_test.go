@@ -3,6 +3,7 @@ package gateway
 import (
 	"encoding/json"
 	"net/http/httptest"
+	"slices"
 	"strings"
 	"testing"
 
@@ -29,11 +30,11 @@ func registryOn(t *testing.T, edit ...func(*settings.Settings)) {
 }
 
 // GET /api.json is the gateway as a models.dev-shaped registry (kimi-code's
-// /provider paste): a model appears under a protocol bucket only where the
-// gateway passes it through untranslated, its id keeps magpie's
+// /provider paste): a model appears under a wire only where the gateway
+// passes it through on that protocol untranslated, its id keeps magpie's
 // provider/model form, a window it doesn't know is left out for the
-// importer's own default, and the routing groups sit under their own bucket
-// by bare id. The buckets' union is the model list's native subset — the
+// importer's own default, and the routing groups sit under their own entry
+// by bare id. The wires' union is the model list's native subset — the
 // parity the registry owes /v1/models.
 func TestAPIJSONServesNativeBuckets(t *testing.T) {
 	f := &fake{ctype: "application/json", reply: `{"id":"x","object":"chat.completion","choices":[{"index":0,"message":{"role":"assistant","content":"ok"},"finish_reason":"stop"}]}`}
@@ -74,13 +75,14 @@ func TestAPIJSONServesNativeBuckets(t *testing.T) {
 	if err := json.Unmarshal(rec.Body.Bytes(), &out); err != nil {
 		t.Fatal(err)
 	}
-	if len(out) != 4 {
-		t.Fatalf("buckets: %v", out)
+	if len(out) != 5 {
+		t.Fatalf("entries: %v", out)
 	}
 	for id, want := range map[string]string{
 		"magpie-openai":           "openai",
 		"magpie-anthropic":        "anthropic",
 		"magpie-openai-responses": "openai_responses",
+		"magpie-gemini":           "google-genai",
 		"magpie-group":            "openai",
 	} {
 		if out[id].Type != want {
@@ -90,9 +92,12 @@ func TestAPIJSONServesNativeBuckets(t *testing.T) {
 			t.Errorf("%s: api %q not off the request's host", id, base)
 		}
 	}
-	openai, anthropic, responses, group := out["magpie-openai"].Models, out["magpie-anthropic"].Models, out["magpie-openai-responses"].Models, out["magpie-group"].Models
+	openai, anthropic, responses, gemini, group := out["magpie-openai"].Models, out["magpie-anthropic"].Models, out["magpie-openai-responses"].Models, out["magpie-gemini"].Models, out["magpie-group"].Models
 	if len(responses) != 0 {
-		t.Errorf("responses bucket serves %v; want none", responses)
+		t.Errorf("responses wire serves %v; want none", responses)
+	}
+	if len(gemini) != 0 {
+		t.Errorf("gemini wire serves %v; gx speaks no Gemini: want none", gemini)
 	}
 	if _, ok := openai["gx/m-any"]; !ok {
 		t.Errorf("openai bucket lacks gx/m-any: %v", openai)
@@ -106,16 +111,16 @@ func TestAPIJSONServesNativeBuckets(t *testing.T) {
 	if _, ok := anthropic["gx/m-chat"]; ok {
 		t.Errorf("anthropic bucket serves gx/m-chat, native on chat alone: %v", anthropic)
 	}
-	for _, b := range []map[string]map[string]any{openai, anthropic, responses} {
+	for _, b := range []map[string]map[string]any{openai, anthropic, responses, gemini} {
 		if _, ok := b["gx/m-res"]; ok {
-			t.Errorf("a bucket serves gx/m-res, native on nothing it speaks: %v", b)
+			t.Errorf("a wire serves gx/m-res, native on nothing it speaks: %v", b)
 		}
 	}
 	if _, ok := group["daily"]; !ok {
-		t.Errorf("group bucket lacks the bare id daily: %v", group)
+		t.Errorf("groups entry lacks the bare id daily: %v", group)
 	}
 	if _, ok := group["group/daily"]; ok {
-		t.Errorf("group bucket carries the prefixed id group/daily: %v", group)
+		t.Errorf("groups entry carries the prefixed id group/daily: %v", group)
 	}
 	// the group's efforts come from the catalog's own computation over the
 	// members (the one member's levels here), like its limits do; its name
@@ -285,15 +290,15 @@ func TestAPIJSONOffUntilServed(t *testing.T) {
 	}
 }
 
-// An unchecked protocol bucket is absent from the registry and the rest
-// unchanged; the groups' own bucket goes or stays by its own checkbox,
-// and turning off a native bucket never moves them, for they match on
-// their group, not on a wire.
-func TestAPIJSONServesCheckedBucketsOnly(t *testing.T) {
+// An unchecked wire is absent from the registry and the rest unchanged;
+// the routing groups go or stay by their own switch, and turning a wire
+// off never moves them, for they match on their group, not on a wire.
+// A registry of the groups alone is legal: no wire ticked, the switch on.
+func TestAPIJSONServesCheckedWiresOnly(t *testing.T) {
 	f := &fake{ctype: "application/json", reply: `{"id":"x","object":"chat.completion","choices":[{"index":0,"message":{"role":"assistant","content":"ok"},"finish_reason":"stop"}]}`}
 	up := setup(t, provider.Chat, f)
 	if err := provider.Save(provider.Provider{ID: "gx", Name: "GX", Key: "k",
-		Chat: up.URL + "/v1", Anthropic: up.URL,
+		Chat: up.URL + "/v1", Anthropic: up.URL, Gemini: up.URL + "/v1beta",
 		Models: []string{"m-any", "m-chat"}}); err != nil {
 		t.Fatal(err)
 	}
@@ -326,11 +331,13 @@ func TestAPIJSONServesCheckedBucketsOnly(t *testing.T) {
 	}
 
 	registryOn(t, func(s *settings.Settings) {
-		s.RegistryBuckets = []string{"magpie-openai", "magpie-openai-responses", "magpie-group"}
+		s.RegistryBuckets = []string{"magpie-openai", "magpie-openai-responses"}
 	})
 	out := registry()
-	if _, ok := out["magpie-anthropic"]; ok {
-		t.Errorf("magpie-anthropic unchecked but served: %v", out["magpie-anthropic"])
+	for _, id := range []string{"magpie-anthropic", "magpie-gemini"} {
+		if _, ok := out[id]; ok {
+			t.Errorf("%s unchecked but served: %v", id, out[id])
+		}
 	}
 	for _, id := range []string{"magpie-openai", "magpie-openai-responses", "magpie-group"} {
 		if _, ok := out[id]; !ok {
@@ -338,37 +345,164 @@ func TestAPIJSONServesCheckedBucketsOnly(t *testing.T) {
 		}
 	}
 	if m := out["magpie-openai"].Models["gx/m-any"]; m == nil {
-		t.Errorf("openai bucket lacks gx/m-any: %v", out["magpie-openai"].Models)
+		t.Errorf("openai wire lacks gx/m-any: %v", out["magpie-openai"].Models)
 	} else if m["default_effort"] != nil {
 		t.Errorf("gx/m-any: default_effort %v with none set", m["default_effort"])
 	}
 	if _, ok := out["magpie-openai"].Models["gx/m-chat"]; !ok {
-		t.Errorf("openai bucket lacks gx/m-chat: %v", out["magpie-openai"].Models)
+		t.Errorf("openai wire lacks gx/m-chat: %v", out["magpie-openai"].Models)
 	}
 	if _, ok := out["magpie-group"].Models["daily"]; !ok {
-		t.Errorf("group bucket lacks daily: %v", out["magpie-group"].Models)
+		t.Errorf("groups entry lacks daily: %v", out["magpie-group"].Models)
 	}
 
-	// the groups' bucket alone: the native ones are all unchecked, and the
-	// groups stay, on the openai api a group is served
+	// the groups' own switch off: every wire stays, their entry alone goes
 	registryOn(t, func(s *settings.Settings) {
-		s.RegistryBuckets = []string{"magpie-group"}
+		s.RegistryBuckets = nil // every wire back on
+		off := false
+		s.RegistryGroups = &off
+	})
+	out = registry()
+	if _, ok := out["magpie-group"]; ok {
+		t.Errorf("the groups switched off but served: %v", out["magpie-group"])
+	}
+	for _, id := range settings.RegistryWireIDs {
+		if _, ok := out[id]; !ok {
+			t.Errorf("%s still checked but absent: %v", id, out)
+		}
+	}
+
+	// the groups alone: every wire unchecked and the switch on, a registry
+	// that lists nothing but its routing groups
+	registryOn(t, func(s *settings.Settings) {
+		s.RegistryBuckets = []string{}
+		on := true
+		s.RegistryGroups = &on
 	})
 	out = registry()
 	if len(out) != 1 {
-		t.Fatalf("group-only registry: %v, want magpie-group alone", out)
+		t.Fatalf("groups-only registry: %v, want %s alone", out, settings.RegistryGroupID)
 	}
-	if _, ok := out["magpie-group"].Models["daily"]; !ok {
-		t.Errorf("group-only bucket lacks daily: %v", out["magpie-group"].Models)
+	if _, ok := out[settings.RegistryGroupID].Models["daily"]; !ok {
+		t.Errorf("groups-only entry lacks daily: %v", out[settings.RegistryGroupID].Models)
 	}
+}
 
-	// a native bucket off leaves the groups in theirs
-	registryOn(t, func(s *settings.Settings) {
-		s.RegistryBuckets = []string{"magpie-anthropic", "magpie-openai-responses", "magpie-group"}
-	})
-	out = registry()
-	if _, ok := out["magpie-group"].Models["daily"]; !ok {
-		t.Errorf("group bucket lost daily with openai unchecked: %v", out["magpie-group"].Models)
+// The registry's Gemini wire is the gateway as a Google GenAI registry:
+// id, name, type google-genai (the importer's own string, not "gemini")
+// and the api root Google's SDKs build their paths on, base+"/v1beta". A
+// model is listed on it exactly when the gateway relays its
+// generateContent as it is: a Gemini-only base's model, a relay that
+// speaks two wires' model on each of them, and a translated-only speaker
+// not at all.
+func TestAPIJSONGeminiWire(t *testing.T) {
+	t.Setenv("MAGPIE_PUBLIC_URL", "https://reg.example")
+	f := &fake{ctype: "application/json", reply: `{"id":"x","object":"chat.completion","choices":[{"index":0,"message":{"role":"assistant","content":"ok"},"finish_reason":"stop"}]}`}
+	up := setup(t, provider.Chat, f)
+	if err := provider.Save(provider.Provider{ID: "gg", Name: "GG", Key: "k",
+		Gemini: up.URL + "/v1beta", Models: []string{"gemini-3-pro"}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := catalog.SaveLive("gg", up.URL+"/v1beta", []catalog.Model{
+		{ID: "gemini-3-pro", Name: "Gemini 3 Pro"},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if err := provider.Save(provider.Provider{ID: "both", Name: "Both", Key: "k",
+		Chat: up.URL + "/v1", Gemini: up.URL + "/v1beta", Models: []string{"glm-5.3"}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := catalog.SaveLive("both", up.URL+"/v1", []catalog.Model{
+		{ID: "glm-5.3", Name: "GLM 5.3"},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	registryOn(t)
+	req := httptest.NewRequest("GET", "/api.json", nil)
+	rec := httptest.NewRecorder()
+	New().Handler().ServeHTTP(rec, req)
+	if rec.Code != 200 {
+		t.Fatalf("/api.json: %d %s", rec.Code, rec.Body)
+	}
+	var out map[string]struct {
+		ID     string                    `json:"id"`
+		Name   string                    `json:"name"`
+		Type   string                    `json:"type"`
+		API    string                    `json:"api"`
+		Models map[string]map[string]any `json:"models"`
+	}
+	if err := json.Unmarshal(rec.Body.Bytes(), &out); err != nil {
+		t.Fatal(err)
+	}
+	gemini, ok := out["magpie-gemini"]
+	if !ok {
+		t.Fatalf("no magpie-gemini entry: %v", out)
+	}
+	if gemini.ID != "magpie-gemini" || gemini.Name != "Magpie (Google GenAI)" || gemini.Type != "google-genai" {
+		t.Errorf("the gemini entry: id %q name %q type %q", gemini.ID, gemini.Name, gemini.Type)
+	}
+	if gemini.API != "https://reg.example/v1beta" {
+		t.Errorf("the gemini entry's api %q, want the base with /v1beta", gemini.API)
+	}
+	for _, id := range []string{"gg/gemini-3-pro", "both/glm-5.3"} {
+		if _, ok := gemini.Models[id]; !ok {
+			t.Errorf("the gemini wire lacks %s: %v", id, gemini.Models)
+		}
+	}
+	if _, ok := gemini.Models["fake/m1"]; ok {
+		t.Errorf("the gemini wire serves fake/m1, native on chat alone: %v", gemini.Models)
+	}
+	if m := out["magpie-openai"].Models; m["both/glm-5.3"] == nil || m["gg/gemini-3-pro"] != nil {
+		t.Errorf("the openai wire: a two-wire model on it, a Gemini-only one not: %v", m)
+	}
+}
+
+// A fresh settings file lists every wire and the routing groups: the
+// registry a new install serves is the whole gateway, nothing trimmed by
+// a list no one wrote.
+func TestAPIJSONDefaultsListEveryWireAndGroups(t *testing.T) {
+	f := &fake{ctype: "application/json", reply: `{"id":"x","object":"chat.completion","choices":[{"index":0,"message":{"role":"assistant","content":"ok"},"finish_reason":"stop"}]}`}
+	up := setup(t, provider.Chat, f)
+	if err := provider.Save(provider.Provider{ID: "gx", Name: "GX", Key: "k",
+		Chat: up.URL + "/v1", Models: []string{"m1"}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := catalog.SaveLive("gx", up.URL+"/v1", []catalog.Model{
+		{ID: "m1", Name: "Model One"},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	registryOn(t)
+	req := httptest.NewRequest("GET", "/api.json", nil)
+	rec := httptest.NewRecorder()
+	New().Handler().ServeHTTP(rec, req)
+	if rec.Code != 200 {
+		t.Fatalf("/api.json: %d %s", rec.Code, rec.Body)
+	}
+	var out map[string]json.RawMessage
+	if err := json.Unmarshal(rec.Body.Bytes(), &out); err != nil {
+		t.Fatal(err)
+	}
+	want := append(slices.Clone(settings.RegistryWireIDs), settings.RegistryGroupID)
+	if len(out) != len(want) {
+		t.Fatalf("a fresh registry serves %d entries (%v), want %v", len(out), out, want)
+	}
+	for _, id := range want {
+		if _, ok := out[id]; !ok {
+			t.Errorf("a fresh registry lacks %s: %v", id, out)
+		}
+	}
+	body := rec.Body.String()
+	last := -1
+	for _, id := range want {
+		at := strings.Index(body, `"`+id+`":`)
+		if at < 0 {
+			t.Fatalf("the raw registry lacks the %s key: %s", id, body)
+		}
+		if at <= last {
+			t.Fatalf("registry keys are not in wire order with groups last (%v): %s", want, body)
+		}
+		last = at
 	}
 }
 

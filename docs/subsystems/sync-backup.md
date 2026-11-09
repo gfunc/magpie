@@ -49,30 +49,41 @@ address is `MAGPIE_ADDR`, so neither is in a bundle.
 
 The model registry's config is this computer's own until every synced box
 asks for it to travel. [`Settings.OwnRegistry`](../../internal/settings/settings.go)
-takes the three config fields — whether the registry is served (`RegistryOn`),
-the default thinking effort its models start at (`RegistryEffort`) and the
-protocol buckets it carries (`RegistryBuckets`) — out of a settings bundle
-about to leave this computer (`backup.Collect` and `davsync`'s `collect` call
-it before the bundle is sealed), so with `RegistrySync` off they are in no
-bundle and land from none. The switch itself (`RegistrySync`) is
-per-machine: it is always this computer's own, never another's to move, and
-it governs travel, not the serving — the registry still answers here.
+takes the four config fields — whether the registry is served (`RegistryOn`),
+the default thinking effort its models start at (`RegistryEffort`), the
+protocol wires it carries (`RegistryBuckets`) and whether it lists its
+routing groups (`RegistryGroups`) — out of a settings bundle about to
+leave this computer (`backup.Collect` and `davsync`'s `collect` call it
+before the bundle is sealed), so with `RegistrySync` off they are in no
+bundle and land from none. The five fields' one owner is
+`Settings.CopyRegistryConfig` (settings): the strip, the blind copy and
+the merge's keep-servers copy all go through it, so they cannot drift
+apart. Not-carried is spelled nil — `RegistryGroups` nil in a bundle,
+never false — so a stripped bundle hash-differs from nothing and a peer's
+explicit off is never invented by this machine. The switch itself
+(`RegistrySync`) is per-machine: it is always this computer's own, never
+another's to move, and it governs travel, not the serving — the registry
+still answers here.
 
 With the switch off the registry is blind as well:
-[`davsync.blindRegistry`](../../internal/davsync/davsync.go) zeroes the four
+[`davsync.blindRegistry`](../../internal/davsync/davsync.go) zeroes the five
 fields on every copy a sync compares or stores, so a peer's registry is never
 a change to push or pull and the next sync sees no phantom one, and
 [`keepServersRegistry`](../../internal/davsync/davsync.go) puts the server's
-own four fields back onto what this computer pushes, so an off machine never
+own five fields back onto what this computer pushes, so an off machine never
 replaces the server's registry with its stripped nothing.
 
-With the switch on, the three config fields ride the settings part like any
+With the switch on, the four config fields ride the settings part like any
 other preference, and the coupling is all-ends-on: the config is in a bundle
-only when the machine that made it had the switch on, and it lands only where
-the receiving machine has the switch on too
-([`backup.Restore`](../../internal/backup/backup.go)'s landing rule, which
-also requires the bundle to carry a bucket list). So one box opting in
-changes nothing until every synced box's switch is on.
+only when the machine that made it had the switch on, and it lands only
+where the receiving machine has the switch on too
+([`backup.Restore`](../../internal/backup/backup.go)'s landing rule), which
+also requires the bundle to carry a whole config — the wires and the groups
+switch both. A peer still on the pre-split shape (its bundle has no
+`registryGroups`) never rides; each machine keeps its own registry config
+until that peer upgrades and pushes a whole one, and the first whole push
+overwrites whatever half copy sat stored. So one box opting in changes
+nothing until every synced box's switch is on.
 
 The Usage page's clears (`usageCleared`, see
 [gateway sessions](gateway-sessions.md)) are a preference, not a computer's

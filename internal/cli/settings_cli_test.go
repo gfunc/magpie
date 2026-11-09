@@ -2,6 +2,7 @@ package cli
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"strings"
 	"testing"
@@ -80,6 +81,51 @@ func TestSettingsSetGetReset(t *testing.T) {
 	}
 }
 
+func TestSettingsLightweight(t *testing.T) {
+	settingsHome(t)
+	get := func(want string) {
+		t.Helper()
+		if out, err := runOut(t, "settings", "get", "lightweight"); err != nil || strings.TrimSpace(out) != want {
+			t.Fatalf("get lightweight = %q, %v; want %q", out, err, want)
+		}
+	}
+	get("off")
+	out, err := runOut(t, "settings", "list", "--json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var rows []settingRow
+	if err := json.Unmarshal([]byte(out), &rows); err != nil {
+		t.Fatal(err)
+	}
+	found := false
+	for _, r := range rows {
+		if r.Key == "lightweight" {
+			found = true
+			if r.Value != false || r.Default != false {
+				t.Errorf("lightweight row = %+v, want value and default off", r)
+			}
+		}
+	}
+	if !found {
+		t.Fatal("settings list has no lightweight row")
+	}
+	if _, err := runOut(t, "settings", "set", "lightweight", "on"); err != nil {
+		t.Fatal(err)
+	}
+	get("on")
+	if !settings.Load().LightweightOn() {
+		t.Fatal("lightweight set on read back off")
+	}
+	if _, err := runOut(t, "settings", "reset", "lightweight"); err != nil {
+		t.Fatal(err)
+	}
+	get("off")
+	if settings.Load().LightweightOn() {
+		t.Fatal("lightweight reset read back on")
+	}
+}
+
 // A key or value that isn't one, and a flag where a value goes, write
 // nothing and say why.
 func TestSettingsRefusesAndWritesNothing(t *testing.T) {
@@ -121,9 +167,10 @@ func TestSettingsRefusesAndWritesNothing(t *testing.T) {
 }
 
 // The model registry's settings are the CLI's to set, like the window's
-// (the stacks' upgrade path is `magpie settings set registryOn true`), and
-// a registry that carries no protocol bucket is refused: nothing is
-// written.
+// (the stacks' upgrade path is `magpie settings set registryOn true`).
+// The wires are RegistryWireIDs' four — the legacy group id is refused,
+// the groups having their own switch now — and a registry left with no
+// wire and the groups off is refused: nothing is written.
 func TestSettingsRegistry(t *testing.T) {
 	settingsHome(t)
 	if _, err := runOut(t, "settings", "set", "registryOn", "true"); err != nil {
@@ -147,34 +194,85 @@ func TestSettingsRegistry(t *testing.T) {
 	if !settings.Load().RegistrySync {
 		t.Error("registrySync is off after it was set")
 	}
-	if _, err := runOut(t, "settings", "set", "registryBuckets", "magpie-openai,magpie-group"); err != nil {
+	// the routing-groups switch round-trips, and the pointer it is stored
+	// as is shown as the switch it is, never as null
+	var nilGroups *bool
+	if got := shown(nilGroups); got != "on" {
+		t.Errorf("a nil groups switch shows as %q, want on", got)
+	}
+	if _, err := runOut(t, "settings", "set", "registryGroups", "false"); err != nil {
 		t.Fatal(err)
 	}
-	if out, err := runOut(t, "settings", "get", "registryBuckets"); err != nil || strings.TrimSpace(out) != "magpie-openai,magpie-group" {
+	if out, err := runOut(t, "settings", "get", "registryGroups"); err != nil || strings.TrimSpace(out) != "off" {
+		t.Fatalf("get registryGroups = %q, %v", out, err)
+	}
+	if s := settings.Load(); s.RegistryGroups == nil || *s.RegistryGroups {
+		t.Error("registryGroups set false stayed on")
+	}
+	if _, err := runOut(t, "settings", "set", "registryGroups", "true"); err != nil {
+		t.Fatal(err)
+	}
+	if out, err := runOut(t, "settings", "get", "registryGroups"); err != nil || strings.TrimSpace(out) != "on" {
+		t.Fatalf("get registryGroups = %q, %v", out, err)
+	}
+	// the wires carry their own ids, gemini the fourth
+	if _, err := runOut(t, "settings", "set", "registryBuckets", "magpie-openai,magpie-gemini"); err != nil {
+		t.Fatal(err)
+	}
+	if out, err := runOut(t, "settings", "get", "registryBuckets"); err != nil || strings.TrimSpace(out) != "magpie-openai,magpie-gemini" {
 		t.Fatalf("get registryBuckets = %q, %v", out, err)
 	}
-	// every bucket off is refused: a registry that carries no protocol
-	// serves nothing, so one stays
+	// the legacy group id is a wire no longer: the groups have their own
+	// switch, and a value the save refuses writes nothing
 	before, err := os.ReadFile(settings.Path())
 	if err != nil {
 		t.Fatal(err)
 	}
-	out, err := runOut(t, "settings", "set", "registryBuckets", "")
+	out, err := runOut(t, "settings", "set", "registryBuckets", "magpie-openai,magpie-group")
 	if err == nil {
-		t.Errorf("magpie settings set registryBuckets \"\": no error (%q)", out)
+		t.Errorf("the legacy group id was taken as a wire (%q)", out)
 	}
-	if err != nil && !strings.Contains(err.Error(), "bucket") {
-		t.Errorf("the refused bucket list didn't say why: %v", err)
+	if err != nil && !strings.Contains(err.Error(), `not "magpie-group"`) {
+		t.Errorf("the refused wire didn't say which: %v", err)
 	}
 	after, _ := os.ReadFile(settings.Path())
 	if string(after) != string(before) {
-		t.Fatal("a refused bucket list changed settings.json")
+		t.Fatal("a refused wire list changed settings.json")
 	}
-	// back to all four
+	// no wire and the groups off is the registry listing nothing, and the
+	// refusal says so without a bucket left in it
+	if _, err := runOut(t, "settings", "set", "registryGroups", "off"); err != nil {
+		t.Fatal(err)
+	}
+	before, err = os.ReadFile(settings.Path())
+	if err != nil {
+		t.Fatal(err)
+	}
+	out, err = runOut(t, "settings", "set", "registryBuckets", "")
+	if err == nil {
+		t.Errorf("magpie settings set registryBuckets \"\": no error (%q)", out)
+	}
+	if err != nil && !errors.Is(err, settings.ErrRegistryEmpty) {
+		t.Errorf("the refused registry didn't say why: %v", err)
+	}
+	if err != nil && strings.Contains(err.Error(), "bucket") {
+		t.Errorf("the refusal still speaks of buckets: %v", err)
+	}
+	after, _ = os.ReadFile(settings.Path())
+	if string(after) != string(before) {
+		t.Fatal("a refused registry save changed settings.json")
+	}
+	// back to defaults: the groups on, all four wires
+	if _, err := runOut(t, "settings", "reset", "registryGroups"); err != nil {
+		t.Fatal(err)
+	}
+	if out, err := runOut(t, "settings", "get", "registryGroups"); err != nil || strings.TrimSpace(out) != "on" {
+		t.Fatalf("get registryGroups after a reset = %q, %v", out, err)
+	}
 	if _, err := runOut(t, "settings", "reset", "registryBuckets"); err != nil {
 		t.Fatal(err)
 	}
-	if out, err := runOut(t, "settings", "get", "registryBuckets"); err != nil || strings.TrimSpace(out) != "magpie-openai,magpie-anthropic,magpie-openai-responses,magpie-group" {
+	if out, err := runOut(t, "settings", "get", "registryBuckets"); err != nil || strings.TrimSpace(out) != "magpie-openai,magpie-anthropic,magpie-openai-responses,magpie-gemini" {
 		t.Fatalf("get registryBuckets after a reset = %q, %v", out, err)
 	}
 }
