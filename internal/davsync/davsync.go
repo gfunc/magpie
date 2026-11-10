@@ -907,6 +907,8 @@ func unset(b backup.Bundle, p string) bool {
 			s = *b.Settings
 		}
 		d := settings.Defaults()
+		s.OwnRegistry()
+		d.OwnRegistry()
 		s.KeepOwn(settings.Settings{})
 		d.KeepOwn(settings.Settings{})
 		j, _ := json.Marshal(s)
