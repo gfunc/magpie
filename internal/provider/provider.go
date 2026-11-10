@@ -620,13 +620,13 @@ type Provider struct {
 	Unlisted bool `json:"unlisted,omitempty"`
 	// HiddenDrawers are the provider's image models the user unticked in
 	// its editor (321sssrt on X: an OpenAI key lists a dozen): left out of
-	// every list one is picked from (Settings › Images, another magpie's
+	// every list one is picked from (Settings › Models › Images, another magpie's
 	// list, Aside's) and of Automatic's choice, as an unticked chat model
 	// is left out of the agents' lists. A deny list beside Models, not in
 	// it: Models is what agents chat with, empty meaning the vendor's list,
 	// so an image model put there would be offered to chat with, and
 	// hiding one would mean picking every chat model. A request that names
-	// one still draws with it, and so does the one Settings › Images
+	// one still draws with it, and so does the one Settings › Models › Images
 	// names: a hidden pick is shown as picked, and said to be hidden.
 	HiddenDrawers []string `json:"hiddenDrawers,omitempty"`
 	// HiddenVideomakers are its video models unticked in its editor, as
@@ -760,7 +760,12 @@ func (e *unreadableError) Unwrap() []error { return []error{ErrUnreadable, e.err
 
 // Reads used for an edit must keep errors: a broken file is not an empty
 // catalog to write over. Only a missing file is a first use.
+// fileReads counts read, for the test that a page's look at whether the
+// file parses doesn't parse it again.
+var fileReads atomic.Int64
+
 func read() (file, error) {
+	fileReads.Add(1)
 	var f file
 	b, err := steady.ReadFile(Path())
 	if errors.Is(err, os.ErrNotExist) {
@@ -798,6 +803,11 @@ var utf8BOM = []byte("\xef\xbb\xbf")
 // FileError is why providers.json can't be read, nil when it can or isn't
 // there: for what lists the providers to say so, not "none yet".
 func FileError() error {
+	// a file that parses, parsed once until it changes (storedFile): each
+	// Providers page parsed the whole of it again only to see it does
+	if _, err := filememo.Read("providers", Path(), parseProviders); err == nil {
+		return nil
+	}
 	_, err := read()
 	return err
 }
@@ -1075,6 +1085,12 @@ func accountSettings(a, pk Provider) Provider {
 func Hidden() []Provider {
 	var out []Provider
 	saved := storedFile().Providers
+	// most users removed none: then no account is made at all (Accounts
+	// reads every sign-in, ~0.6 MB each poll of the Providers page,
+	// which asks twice, here and through Excluded)
+	if !slices.ContainsFunc(saved, func(p Provider) bool { return p.Hidden }) {
+		return nil
+	}
 	for _, a := range Accounts() {
 		for _, p := range saved {
 			if p.ID == a.ID && p.Hidden {
