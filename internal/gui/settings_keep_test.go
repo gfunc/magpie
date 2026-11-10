@@ -194,6 +194,7 @@ func TestSettingsSaveKeepsWhatItDoesNotSend(t *testing.T) {
 		QuotaReads:           "asked",
 		SearchAll:            true,
 		SearchCount:          9,
+		Fetch:                "deepseek",
 		NoAccountDiscovery:   true,
 		RedactModel:          true,
 		RedactModelName:      "astrlink-guard",
