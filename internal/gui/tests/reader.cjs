@@ -202,6 +202,22 @@ async function settled(page) {
   await page.waitForFunction(() => !document.getAnimations().some((a) => a.playState === "running" && Number.isFinite(a.effect?.getComputedTiming().endTime)));
 }
 
+// scrollRest waits until native wheel and momentum scrolling have stopped.
+async function scrollRest(page) {
+  await page.evaluate(async () => {
+    const at = () => JSON.stringify([scrollY, ...[...document.querySelectorAll("*")].filter((e) => e.scrollTop).map((e) => e.scrollTop)]);
+    let was = at(), still = 0;
+    for (let i = 0; i < 240; i++) {
+      await new Promise(requestAnimationFrame);
+      const now = at();
+      still = now === was ? still + 1 : 0;
+      if (still === 12) return;
+      was = now;
+    }
+    throw new Error("the page did not come to rest after wheel input");
+  });
+}
+
 // pickItem presses an item of an open picker where the reader sees it.
 // A model picker is drawn again when its first read of /api/model-speeds
 // answers (readSpeeds, once a minute and after every load), so an item
