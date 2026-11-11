@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/yetone/magpie/internal/provider"
 	"github.com/yetone/magpie/internal/settings"
 )
 
@@ -155,13 +156,16 @@ func agentCounts(all []file) []AgentCount {
 // ListAgent is every session of one agent, the most recently active first,
 // with no limit; one nothing was said in is listed too, to be cleared away.
 func ListAgent(agent string) []Managed {
+	alias := provider.UsageAlias()
 	storeMu.RLock()
 	defer storeMu.RUnlock()
 	mu.Lock()
 	defer mu.Unlock()
 	loadCache()
 	defer useDBs()()
-	return listAgent(agent, allFiles())
+	out := listAgent(agent, allFiles())
+	aliasManaged(out, alias)
+	return out
 }
 
 // NativeIDs are the ids of every session the agents named keep themselves,
@@ -196,6 +200,7 @@ type ManageView struct {
 // Only native's agents and the one picked are read: a change to another
 // agent's sessions waits for a page that shows it (#2776).
 func Manage(native map[string]bool, pick func([]AgentCount, map[string]map[string]bool) string) ManageView {
+	alias := provider.UsageAlias()
 	storeMu.RLock()
 	defer storeMu.RUnlock()
 	mu.Lock()
@@ -207,6 +212,7 @@ func Manage(native map[string]bool, pick func([]AgentCount, map[string]map[strin
 	v.Agent = pick(v.Agents, v.Native)
 	if v.Agent != "" {
 		v.Sessions = listAgentWith(v.Agent, all, true)
+		aliasManaged(v.Sessions, alias)
 	}
 	return v
 }
@@ -599,7 +605,7 @@ func sessionPaths(agent, id string, fs []file) []string {
 		}
 	}
 	if agent == "claude" {
-		dir := ClaudeDir()
+		dir := claudeDirOf(fs[0].path)
 		if fs[0].m().wsl != "" {
 			// the distro's own ~/.claude
 			if dir = wslHomeOf(fs[0].m().wsl); dir == "" {
@@ -853,4 +859,13 @@ func Restore(key string) (Trashed, error) {
 	os.RemoveAll(dir)
 	wslRelistNow(t.Items)
 	return t, nil
+}
+
+// claudeDirOf is the Claude Code folder a session file at path is kept in
+// (<dir>/projects/<project>/<id>.jsonl), ClaudeDir for one elsewhere.
+func claudeDirOf(path string) string {
+	if p := filepath.Dir(filepath.Dir(path)); filepath.Base(p) == "projects" {
+		return filepath.Dir(p)
+	}
+	return ClaudeDir()
 }
