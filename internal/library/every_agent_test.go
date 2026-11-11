@@ -19,6 +19,7 @@ var noLibrary = map[string]string{
 	"aside":             "not looked at (#5897)",
 	"cursor-local":      "not looked at (#5897)",
 	"vscode":            "not looked at (#5897)",
+	"vscode-server":     "not looked at (#5897)",
 	"vscode-insiders":   "not looked at (#5897)",
 	"vscodium":          "not looked at (#5897)",
 	"zoo-code":          "not looked at (#5897)",
