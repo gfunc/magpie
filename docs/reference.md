@@ -3631,6 +3631,7 @@ application:
   # for agents that aren't signed in to the box: the gateway checks them as
   # everywhere
   public_path:
+    - /api.json
     - /v1
     - /v1beta
     - /models
