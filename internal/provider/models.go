@@ -2998,8 +2998,17 @@ func PriceRateOK(r float64) string {
 // reply limit is keyed: both are stored under the id the provider has now, and
 // both outlive the provider they were set for, so the spelling the user typed
 // is the one that has to be checked before a name is resolved at all.
+//
+// It looks among the shared providers and copies only the one it found:
+// through All every price of every model of a Sessions poll copied every
+// provider's keys, headers and models (~10 MB per 40 polls on a real
+// history, #2278).
 func byIDOrWas(id string) (Provider, bool) {
-	return byIDOrWasIn(All(), id)
+	p, ok := byIDOrWasIn(sharedAll(), id)
+	if ok {
+		p = p.clone() // the caller's to change, as All's are
+	}
+	return p, ok
 }
 
 // byIDOrWasIn is byIDOrWas among the providers given.
@@ -3458,7 +3467,7 @@ func entriesOf(of func(Provider) bool, off func(pid, model string) bool) []Entry
 // window and the reply limit a request on it is routed and metered against,
 // with what the user set taken over the vendor's list and models.dev.
 func entryFor(p Provider, m catalog.Model, s settings.Settings) Entry {
-	ctx := p.WindowOf(m)
+	ctx := p.windowIn(m, s)
 	output := p.replyLimit(m, s)
 	images := m.Images || catalog.SeesImages(m.ID)
 	if m.ImageInput != nil {
@@ -3719,17 +3728,27 @@ func ListedWindow(m catalog.Model) int {
 // is the user's word on it, larger or not. The catalog's entries and the
 // Providers page's model lists both read it, so the page shows the window
 // agents are told.
-func (p Provider) WindowOf(m catalog.Model) int {
+func (p Provider) WindowOf(m catalog.Model) int { return p.windowIn(m, settings.Shared()) }
+
+// WindowIn is WindowOf with the settings s already read.
+func (p Provider) WindowIn(m catalog.Model, s settings.Settings) int { return p.windowIn(m, s) }
+
+// windowIn is WindowOf under settings s: a window the user typed, for the
+// model or for all the provider's (which is no larger than the model's own
+// where it says), is theirs as it is, or held to the longest context too
+// when the user chose that (settings.ContextCapAll); any other is held to
+// the longest context the user set for every model (settings.ContextCap).
+func (p Provider) windowIn(m catalog.Model, s settings.Settings) int {
 	if n := p.Contexts[m.ID]; n > 0 {
-		return n
+		return s.CappedOwn(n)
 	}
 	if n := p.Contexts["*"]; n > 0 {
 		if most := max(catalog.Window(m.Context), m.MaxContext); most > 0 && most < n {
-			return most
+			return s.CappedOwn(most)
 		}
-		return n
+		return s.CappedOwn(n)
 	}
-	return ListedWindow(m)
+	return s.Capped(ListedWindow(m))
 }
 
 // ContextOf is the context the user set for the provider's model: its own,

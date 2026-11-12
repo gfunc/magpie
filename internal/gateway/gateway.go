@@ -378,9 +378,12 @@ type Served struct {
 // still that one's to send: in #506 a Factory 403 came worded as v0.1.550
 // and earlier word it to two people whose magpie said v0.1.630, so none of
 // the fixes since reached their requests. Its version tells it apart.
-func ServedBy() Served {
+func ServedBy() Served { return ServedAt(URL()) }
+
+// servedAt is ServedBy for the magpie at base.
+func ServedAt(base string) Served {
 	c := &http.Client{Timeout: 700 * time.Millisecond}
-	res, err := c.Get(URL() + "/")
+	res, err := c.Get(base + "/")
 	if err != nil {
 		return Served{}
 	}
@@ -805,6 +808,8 @@ func (s *Server) ListenAndServe(ctx context.Context) error {
 	s.lnMu.Lock()
 	s.ln = ln
 	s.lnMu.Unlock()
+	recordListening(ln.Addr())
+	defer forgetListening()
 	// the keys out of credit a magpie before this one rested go on
 	// resting, and climb on from their rung (rest_store.go)
 	loadRests()
@@ -1023,6 +1028,7 @@ func (s *Server) routes() *routeMux {
 	mux.HandleFunc("POST /v1/magpie/usage/requests", s.usageIngest)
 	mux.HandleFunc("GET /v1/magpie/quotas/history", s.quotasHistory)
 	mux.HandleFunc("GET "+provider.RemoteCardsPath, s.quotaCards)
+	mux.HandleFunc("GET "+provider.RemoteLibraryPath, s.sharedLibrary)
 	mux.HandleFunc("POST "+provider.RemoteRefreshPath, s.quotaCardsRefresh)
 	mux.HandleFunc("POST "+provider.RemoteCodexResetPath, s.codexReset)
 	mux.HandleFunc("GET /v1/magpie/route", s.sessionRoute)
@@ -1234,6 +1240,38 @@ func (s *Server) quotaCards(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeCards(w, r, scope)
+}
+
+// SharedLibrary is the Library as another magpie is told it (JSON), set
+// by the app: the gateway doesn't know the library package.
+var SharedLibrary func() ([]byte, error)
+
+// sharedLibrary tells another magpie that has this one as its provider
+// the skills and prompts of the Library, to use them as its own (KoiLx0
+// on X). Only to this computer and to a full-access key of a magpie
+// shared on the local network: a key held to models, a budget or
+// accounts is the user's limit on what that caller may use.
+func (s *Server) sharedLibrary(w http.ResponseWriter, r *http.Request) {
+	if !local(r) && !sharedWith(r) {
+		writeError(w, provider.Chat, http.StatusForbidden, "magpie's Library is told to another machine only when magpie is shared on the local network (Settings → Share on local network) and the request carries its API key (Authorization: Bearer <key> or x-api-key: <key>)")
+		return
+	}
+	if heldKey(access.Caller(r.Context())) {
+		refuseHeld(w, r, heldQuotasOff)
+		return
+	}
+	if SharedLibrary == nil {
+		writeError(w, provider.Chat, http.StatusNotFound, "this magpie has no Library to tell")
+		return
+	}
+	b, err := SharedLibrary()
+	if err != nil {
+		writeError(w, provider.Chat, http.StatusInternalServerError, "reading the Library: "+err.Error())
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "no-store")
+	w.Write(b)
 }
 
 // remoteRefreshes is when another magpie last had each card read again
@@ -1956,12 +1994,12 @@ func (s *Server) countTokens(w http.ResponseWriter, r *http.Request) {
 	// Count the same masked prompt that generation sends to the vendor,
 	// and the one as written where generation sends that, masked only
 	// then (#3973)
-	if _, ms, isGroup := provider.FindGroup(id); !ok || !unredactedRoute(p, isGroup, ms) {
+	if _, ms, isGroup := provider.FindGroup(id); !ok || !unredactedRoute(p, model, isGroup, ms) {
 		if fp, before := maskedBefore(r); before {
 			// masked by the magpie that passed it on (serve)
 			r = withMaskedAs(r, fp)
 		} else {
-			rw, b, done, hits, err := redactedHits(maskedFor(r.Context(), p, isGroup, ms), w, body)
+			rw, b, done, hits, err := redactedHits(maskedFor(r.Context(), p, model, isGroup, ms), w, body)
 			if err != nil {
 				writeError(w, provider.Anthropic, maskStatus(err), err.Error())
 				return
@@ -1972,7 +2010,7 @@ func (s *Server) countTokens(w http.ResponseWriter, r *http.Request) {
 				p, model, ok = provider.Resolve(to)
 			} else {
 				w, body = rw, b
-				r = withMaskedAs(r, ownMaskedAs())
+				r = withMaskedAs(r, ownMaskedAs(r.Context()))
 				defer done()
 			}
 		}
@@ -2150,6 +2188,11 @@ func (s *Server) handle(from provider.Protocol) http.HandlerFunc {
 			// asked (codexTiered)
 			body = codexTiered(r, body, model)
 		}
+		// the service tier the gateway key is set to, over the client's
+		// ask and the Codex setting (keyTiered)
+		if from == provider.Responses || from == provider.Chat {
+			body = keyTiered(r, body, model)
+		}
 		if from == provider.Chat {
 			body = thinkingEffort(body)
 			// OpenCode 1's promptCacheKey (#5468)
@@ -2194,6 +2237,10 @@ func (s *Server) handle(from provider.Protocol) http.HandlerFunc {
 			}
 			if to := codexSummariesTo(r.Header, body, true, session); to != "" {
 				s.codexSummary(w, r, body, to)
+				return
+			}
+			if to := codexCommitsTo(r.Header, body, true, session); to != "" {
+				s.codexCommit(w, r, body, to)
 				return
 			}
 			if to := codexPredictionsTo(r.Header, body, true, session); to != "" {
@@ -2386,6 +2433,11 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 	// it to that transcript, and its reply ended the agent's turn
 	if call.Kind == "" && factsOf(from, plain).compact {
 		call.Kind = KindCompact
+	}
+	// Claude Code's auto mode classifier and AgentSummary name themselves
+	// nowhere: told by their content, recorded as inferred
+	if call.Kind == "" {
+		call.Kind = inferredKind(r.Header, from, body)
 	}
 	// the reply counted as it reaches the agent, for the Routing page
 	// while it is out (#4951); learned from once it ends
@@ -2646,14 +2698,14 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 	// keeps it as it went, its secrets taken out as every archived body's
 	// are, and an observer that wants the bodies is handed a copy masked
 	// when it is first handed one, after the try (maskIn, #3973)
-	if sentWhole = unredactedRoute(p, isGroup, ms); !sentWhole {
+	if sentWhole = unredactedRoute(p, model, isGroup, ms); !sentWhole {
 		if fp, before := maskedBefore(r); before {
 			// masked by the magpie that passed it on, by the same
 			// settings: it goes on as it came, that magpie puts its
 			// values back, and a further magpie is told so too
 			r = withMaskedAs(r, fp)
 		} else {
-			rw, b, done, hits, err := redactedHits(maskedFor(r.Context(), p, isGroup, ms), capture.ResponseWriter, body)
+			rw, b, done, hits, err := redactedHits(maskedFor(r.Context(), p, model, isGroup, ms), capture.ResponseWriter, body)
 			if err != nil { // fails closed: never sent unmasked
 				log.Printf("gateway: %v", err)
 				call.Status, call.Error = maskStatus(err), err.Error()
@@ -2674,7 +2726,7 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 				move(to, movedPrivacy)
 			} else {
 				capture.ResponseWriter, body, unmask, maskedHits = rw, b, done, hits
-				r = withMaskedAs(r, ownMaskedAs())
+				r = withMaskedAs(r, ownMaskedAs(r.Context()))
 			}
 		}
 	}
@@ -2901,6 +2953,15 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 			return
 		}
 	}
+	// a video for a model its list says takes none is turned away, not
+	// left out for the model to answer the words alone (#6135); a group's
+	// members are picked by it below
+	if !isGroup && bytes.Contains(body, []byte("video")) && noVideo(p.ID, model) && hasCurrentVideo(from, body) {
+		call.Status, call.Error = 400, "model does not support video input"
+		writeError(w, from, 400, videoRefused(call.Model, ""))
+		turnedAway()
+		return
+	}
 	// a careful provider's capped accounts read again now where what is
 	// known of their usage is too old to send on (plugins#349)
 	if isGroup {
@@ -2978,6 +3039,10 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 			// (#954), as a group's member may be; its fallbacks, other
 			// models, go as they are
 			fastPick(cands, pl, p.ID, model, provider.IsUltraPick(agent, p.ID+"/"+model))
+		} else if tier := provider.ModelTier(p.ID, model); tier != "" {
+			// the speed the user gave the model in its Model settings, for
+			// every agent that has no pick of its own for it
+			fastPick(cands, pl, p.ID, model, tier == "ultrafast")
 		}
 	}
 	agentPick := provider.AgentEffort(agent)
@@ -3242,6 +3307,31 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 				turnedAway()
 				return
 			}
+		}
+	}
+	if isGroup && hasCurrentVideo(from, body) {
+		// a video goes only to the members that take one, else to those
+		// magpie knows nothing of, else is turned away: a member that takes
+		// none would answer the words alone (#6135)
+		var takes, unknown []candidate
+		var takesAt, unknownAt []Weighed
+		for i, c := range cands {
+			switch v := videoInput(c.p.ID, c.model); {
+			case v == nil:
+				unknown, unknownAt = append(unknown, c), append(unknownAt, pl.order[i])
+			case *v:
+				takes, takesAt = append(takes, c), append(takesAt, pl.order[i])
+			}
+		}
+		cands, pl.order = takes, takesAt
+		if len(takes) == 0 {
+			cands, pl.order = unknown, unknownAt
+		}
+		if len(cands) == 0 {
+			call.Status, call.Error = 400, "model does not support video input"
+			writeError(w, from, 400, videoRefused(call.Model, g.Name))
+			turnedAway()
+			return
 		}
 	}
 	pin := strings.TrimSpace(r.Header.Get(AccountHeader))
@@ -3945,6 +4035,7 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 		// the models Copilot's Auto picked for it, where from, and which
 		// were refused (#256)
 		autoPicked := func() []provider.AutoPick { return nil }
+		entryOf := func() (string, string) { return "", "" }
 		if said, ok := verifyHeld(c); ok && last {
 			// the account must be verified first (#152): the agent's
 			// reconnects are told so again, not sent on to a vendor that
@@ -4024,6 +4115,11 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 				ctx = withFallback(ctx)
 			}
 			hw.stop = stop
+			if sentBy(c.p) == "claude" {
+				// the entry point its Claude Code run takes, for the
+				// try's row (Try.Entry)
+				ctx, entryOf = withEntry(ctx)
+			}
 			if autoPicks(c) {
 				// the reply names the pick it went as last (#256: it
 				// named one Copilot refused)
@@ -4242,6 +4338,7 @@ func (s *Server) serve(w http.ResponseWriter, r *http.Request, from provider.Pro
 			try.Reset, resetFirst = resetFirst, nil
 		}
 		asName := provider.SentNameOnIn(wiresOf(r.Context()), c.p.ID, accountAgent(c.p), c.model, sent)
+		try.Entry, try.EntryWhy = entryOf()
 		try.Swapped, try.Routed = swapped(asName, call.Usage.Served) && !usage.ListedAs(c.p.ID, c.model, call.Usage.Served), usage.GroupRouted(asName, call.Usage.Served)
 		try.TTFT, try.FirstText = hw.first.ms()
 		try.FirstReasoning = hw.first.reasoningMs(call.To)
@@ -5630,6 +5727,12 @@ func (s *Server) attempt(w http.ResponseWriter, r *http.Request, from provider.P
 	if relay && !keep && customOff() {
 		relay, ownAPI = false, true
 	}
+	// and a backend that turned a request for one body away because it
+	// only streams (stream_only.go) is asked streamed, translated
+	streamOnly := (from == provider.Chat || from == provider.Responses) && !streamOf(body) && !s.fits(p.ID, streamOnlyRefused(model), from)
+	if relay && !keep && streamOnly {
+		relay, ownAPI = false, true
+	}
 	if keep && relayable {
 		relay, ownAPI = true, false
 	}
@@ -5650,7 +5753,7 @@ func (s *Server) attempt(w http.ResponseWriter, r *http.Request, from provider.P
 		// the model isn't served on the client's own API: speak another;
 		// or it turned the custom tools away just now: speak it translated,
 		// except a compaction, which a translation would leave out
-		if customOff() {
+		if customOff() || !s.fits(p.ID, streamOnlyRefused(model), from) && !streamOf(body) {
 			if keep {
 				return writeError(w, from, status, msg), msg
 			}
@@ -5866,10 +5969,12 @@ func (s *Server) forwardOnce(ctx context.Context, p provider.Provider, to provid
 	body = deepseekTokenField(p, to, body)
 	body = s.chatTokenField(p, to, body)
 	body = toolOneOfAsAnyOf(p, to, body)
+	body = copilotGeminiToolsFit(p, to, body)
 	body = copilotGeminiToolUnions(p, to, body)
+	body = copilotGrokFlat(p, to, body)
 	body = kimiToolEnumTypes(p, to, body)
 	body = kimiToolRefTypes(p, to, body)
-	body = geminiToolTypes(body)
+	body = geminiTypes(body, copilotGemini(p, body))
 	body = kimiLockedSampling(p, to, body)
 	body = clinePin(p, to, body)
 	body = codexImagesFit(p, to, body)
@@ -6803,6 +6908,14 @@ func (s *Server) passthrough(w http.ResponseWriter, r *http.Request, p provider.
 			s.markUnfit(p.ID, customToolRefused(model), proto)
 			return res.StatusCode, p.Name + ": " + provider.APIError(b, res.Status), false
 		}
+		if gather == nil && refusesWhole(proto, body, b) {
+			// a backend that only streams (stream_only.go): the request
+			// is translated on the same API, which asks it streamed and
+			// gives the client one body, and so from then on
+			res.Body.Close()
+			s.markUnfit(p.ID, streamOnlyRefused(model), proto)
+			return res.StatusCode, p.Name + ": " + provider.APIError(b, res.Status), false
+		}
 		fs := refusedOptional(res.StatusCode, b, body)
 		// and an earlier turn's thinking sent back inside messages, which
 		// DeepSeek and Kimi want and a stricter vendor turns away (#494)
@@ -7073,6 +7186,11 @@ func (s *Server) passthrough(w http.ResponseWriter, r *http.Request, p provider.
 	if res.StatusCode >= 400 {
 		b, _ := io.ReadAll(io.LimitReader(res.Body, 1<<20))
 		msg := explained(p, model, res, b)
+		if s.noChannelElsewhere(p, model, proto, res.StatusCode, b) {
+			s.markUnfit(p.ID, model, proto)
+			u.RequestID = ""
+			return res.StatusCode, msg, false
+		}
 		if wrongEndpoint(res.StatusCode, b) {
 			s.markUnfit(p.ID, model, proto)
 			if len(s.usable(p, model)) > 0 {
@@ -8355,7 +8473,7 @@ func (s *Server) forwardTranslated(ctx context.Context, p provider.Provider, to 
 		// cache, not because the model needs it: a model the vendor doesn't
 		// serve on it (404) is asked on Chat, as before #1578
 		cacheOnly := to == provider.Responses && res.StatusCode == http.StatusNotFound && p.ResponsesTellsCache()
-		if !cacheOnly && !wrongEndpoint(res.StatusCode, b) {
+		if !cacheOnly && !wrongEndpoint(res.StatusCode, b) && !s.noChannelElsewhere(p, model, to, res.StatusCode, b) {
 			return res, to, nil
 		}
 		s.markUnfit(p.ID, model, to)
@@ -8757,6 +8875,14 @@ func badRequest(status int) bool {
 // reads too (#3766).
 func wrongEndpoint(status int, body []byte) bool { return catalog.WrongEndpoint(status, body) }
 
+// noChannelElsewhere is whether a relay said it has no channel for model on
+// proto (catalog.NoChannel) while p speaks another API that may serve it. A
+// relay with channels per API (New API) answers a GPT asked on its Anthropic
+// URL so, and the request goes on to the next API, as for wrongEndpoint.
+func (s *Server) noChannelElsewhere(p provider.Provider, model string, proto provider.Protocol, status int, body []byte) bool {
+	return catalog.NoChannel(status, body) && slices.ContainsFunc(s.usable(p, model), func(o provider.Protocol) bool { return o != proto })
+}
+
 // wrongAPINote goes after an upstream's word that the model isn't served
 // on the API it was asked on (wrongEndpoint), when no other API is left to
 // ask: the URL asked, and the APIs the vendor's list serves the model on
@@ -8892,6 +9018,10 @@ func (s *Server) translate(w http.ResponseWriter, r *http.Request, p provider.Pr
 			r = r.WithContext(searchingOn(r.Context(), p))
 			return s.searchReply(w, r, from, p.Name, request, u, ask)
 		}
+	}
+	if msg := unportableVideo(to, request); msg != "" {
+		// told, not left out for the model to answer the words alone (#6135)
+		return writeError(w, from, 400, msg), msg
 	}
 	stream := request.Stream
 	request.Stream = true
@@ -9260,6 +9390,13 @@ func buildFor(p provider.Provider, proto provider.Protocol, r *Request, model st
 		c.instructionsKept = true
 		r = &c
 	}
+	if !r.videoOff && anyVideo(r) && noVideo(p.ID, model) {
+		// a video of an earlier turn, to a model that takes none, is told
+		// of in words (#6135)
+		c := *r
+		c.videoOff = true
+		r = &c
+	}
 	return build(proto, r, model, buildHost(p), p.RejectsTemperature(model))
 }
 
@@ -9512,7 +9649,7 @@ func render(proto provider.Protocol, res Result, r *Request) []byte {
 // custom provider.
 func dashScope(p provider.Provider) bool {
 	switch p.VendorPreset() {
-	case "qwen", "qwen-cn", "qwen-token-plan", "bailian-token-plan", "qwencloud", "qwencloud-token-plan":
+	case "qwen", "qwen-cn", "qwen-token-plan", "bailian-token-plan", "alibaba-token-plan", "qwencloud", "qwencloud-token-plan":
 		return true
 	}
 	h := p.VendorHost()

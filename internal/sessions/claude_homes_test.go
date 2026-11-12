@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 	"time"
+	"unsafe"
 )
 
 // Claude run with CLAUDE_CONFIG_DIR set to a folder of each account's
@@ -52,5 +53,38 @@ func TestListReadsEveryClaudeFolderOnce(t *testing.T) {
 	}
 	if len(n) != 2 || n["main1"] != 1 || n["work1"] != 1 {
 		t.Fatalf("rows = %v, want main1 and work1 once each", n)
+	}
+}
+
+// Every Claude folder's files are listed into one slice made at their
+// size, not grown file by file on every pass (a pass every 10 s while
+// the Sessions page is open), a pass like the last gives the last one's
+// list, and a session kept in two folders is still listed once.
+func TestClaudeFilesMadeAtTheirSize(t *testing.T) {
+	d := setupCalls(t)
+	home, _ := os.UserHomeDir()
+	work := filepath.Join(home, ".claude-work")
+	user := func(id string) string {
+		return `{"type":"user","timestamp":"` + stamp(0) + `","message":{"role":"user","content":"hello"},"cwd":"/work/app","sessionId":"` + id + `"}`
+	}
+	for i := range 20 {
+		id := "main" + itoa(i)
+		writeLines(t, filepath.Join(d.claude, "projects", "-a", id+".jsonl"), user(id))
+		id = "work" + itoa(i)
+		writeLines(t, filepath.Join(work, "projects", "-b", id+".jsonl"), user(id))
+	}
+	writeLines(t, filepath.Join(work, "projects", "-a", "main0.jsonl"), user("main0"))
+	if len(ClaudeDirs()) != 2 {
+		t.Fatalf("folders %v", ClaudeDirs())
+	}
+	fs := claudeFiles()
+	if len(fs) != 40 {
+		t.Fatalf("%d files, want 40", len(fs))
+	}
+	if cap(fs) != 40 {
+		t.Fatalf("listed into room for %d, want the 40 kept", cap(fs))
+	}
+	if again := claudeFiles(); unsafe.SliceData(again) != unsafe.SliceData(fs) {
+		t.Fatal("an unchanged pass made its list again")
 	}
 }
