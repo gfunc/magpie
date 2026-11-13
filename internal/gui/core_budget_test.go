@@ -18,7 +18,7 @@ import (
 // `git log -L` of this file.
 const (
 	appScriptBudget  = 1_086_267 // app.js: 1,080,614 at 8016205e3, with the 5,653 of room it had
-	coreScriptBudget = 1_280_000 // every core script at 8016205e3, the old measure 682 over its cap there (#5918); the fork's registry share of the core over it, 1,261,958 code bytes measured, rounded down to the nearest 1,000 with 1.5% headroom (11-12)
+	coreScriptBudget = 1_284_000 // every core script at 8016205e3, the old measure 682 over its cap there (#5918); +367 for the model test on a chosen account (tmr11235), no page left to move it to; +151 for the provider menu's "Only on this device" item and its four translations; +458 for Settings › About's Report a problem row and its translations; +113 for withScheme, the one rule every typed address goes through (eachg0 on X), cut to the shortest form that keeps it whole; +10 for the kept whole's tooltip (Musikrv77852 on X), the past-cycle line reused for it, no page left to move it to; +1,112 for Codex's Open button and its Open Codex with menu (Yink88564391 on X), packed to the shortest form, no page left to move them to; +168 for Discover's long lists drawn in part (the owner, 11-13), after the rest of its hook moved into plugingrid.js, imported when Plugins first draws; the fork's registry share over it, 1,265,636 code bytes measured, rounded down to the nearest 1,000 with 1.5% headroom (11-13)
 )
 
 // codeBytes is how many bytes of b are code: its blank lines, its lines

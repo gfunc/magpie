@@ -17,8 +17,8 @@ func NativeProtocols(e Entry) []Protocol {
 	if e.Group != "" {
 		return nil
 	}
-	out := relayed(e.Provider, e.Model)
-	if speaksGemini(e.Provider, e.Model) {
+	out := relayed(*e.Provider, e.Model)
+	if speaksGemini(*e.Provider, e.Model) {
 		out = append(out, Gemini)
 	}
 	return out

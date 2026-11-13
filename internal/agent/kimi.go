@@ -108,7 +108,7 @@ func kimiModelTables(path string, legacy bool, preferred string, wrote map[strin
 		name := "models." + strconv.Quote(magpieID+"/"+m.ID)
 		ctx := m.Context
 		if ctx <= 0 {
-			ctx = kimiContext
+			ctx = unknownWindow(kimiContext)
 		}
 		var was map[string]string
 		if slices.Contains(names, name) {
