@@ -90,14 +90,14 @@ func TestNativeEndpointsOnGemini(t *testing.T) {
 	}{
 		// the case relayed alone returns nil for: Native("") gates a
 		// generateContent-only model out of the translated three
-		{"Vertex's Gemini model, keyed by the client's id", Entry{ID: "vertex-prod/gemini-3-pro", Model: "gemini-3-pro", Provider: vertex}, []string{"/v1beta/models/vertex-prod/gemini-3-pro:generateContent"}},
-		{"Vertex's partner model stays on Chat", Entry{ID: "vertex-prod/deepseek-ai/deepseek-v4.1-flash-maas", Model: "deepseek-ai/deepseek-v4.1-flash-maas", Provider: vertex}, []string{"/v1/chat/completions"}},
-		{"Vertex's Claude model stays on Messages", Entry{ID: "vertex-prod/claude-opus-5-5", Model: "claude-opus-5-5", Provider: vertex}, []string{"/v1/messages"}},
-		{"a Gemini-only base", Entry{ID: "mine/gemini-3-pro", Model: "gemini-3-pro", Provider: Provider{ID: "mine", Gemini: "https://generativelanguage.googleapis.com/v1beta"}}, []string{"/v1beta/models/mine/gemini-3-pro:generateContent"}},
-		{"each wire it speaks, nothing said per model", Entry{ID: "both/glm-5.3", Model: "glm-5.3", Provider: both}, []string{"/v1/chat/completions", "/v1beta/models/both/glm-5.3:generateContent"}},
-		{"Claude Code", Entry{ID: "claude/claude-sonnet-5", Model: "claude-sonnet-5", Provider: claude}, nil},
-		{"Devin", Entry{ID: "devin/swe-2", Model: "swe-2", Provider: devin}, nil},
-		{"Code Assist", Entry{ID: "gemini/gemini-3-pro", Model: "gemini-3-pro", Provider: codeAssist}, nil},
+		{"Vertex's Gemini model, keyed by the client's id", Entry{ID: "vertex-prod/gemini-3-pro", Model: "gemini-3-pro", Provider: &vertex}, []string{"/v1beta/models/vertex-prod/gemini-3-pro:generateContent"}},
+		{"Vertex's partner model stays on Chat", Entry{ID: "vertex-prod/deepseek-ai/deepseek-v4.1-flash-maas", Model: "deepseek-ai/deepseek-v4.1-flash-maas", Provider: &vertex}, []string{"/v1/chat/completions"}},
+		{"Vertex's Claude model stays on Messages", Entry{ID: "vertex-prod/claude-opus-5-5", Model: "claude-opus-5-5", Provider: &vertex}, []string{"/v1/messages"}},
+		{"a Gemini-only base", Entry{ID: "mine/gemini-3-pro", Model: "gemini-3-pro", Provider: &Provider{ID: "mine", Gemini: "https://generativelanguage.googleapis.com/v1beta"}}, []string{"/v1beta/models/mine/gemini-3-pro:generateContent"}},
+		{"each wire it speaks, nothing said per model", Entry{ID: "both/glm-5.3", Model: "glm-5.3", Provider: &both}, []string{"/v1/chat/completions", "/v1beta/models/both/glm-5.3:generateContent"}},
+		{"Claude Code", Entry{ID: "claude/claude-sonnet-5", Model: "claude-sonnet-5", Provider: &claude}, nil},
+		{"Devin", Entry{ID: "devin/swe-2", Model: "swe-2", Provider: &devin}, nil},
+		{"Code Assist", Entry{ID: "gemini/gemini-3-pro", Model: "gemini-3-pro", Provider: &codeAssist}, nil},
 	} {
 		if got := NativeEndpoints(c.e); !slices.Equal(got, c.want) {
 			t.Errorf("%s: endpoints %v, want %v", c.name, got, c.want)
