@@ -831,6 +831,12 @@ type Settings struct {
 	// "codex/gpt-5.6-sol"), for clients moved from another proxy that ask
 	// for bare ids (love1sbug on X; provider.BareEntries). Off by default.
 	BareModelIDs bool `json:"bareModelIDs,omitempty"`
+	// BareModelIDsOnly, with BareModelIDs, has the list give a model its
+	// bare id in place of the provider/model ids it stands for, not beside
+	// them (qQianye on X: a client of a Docker magpie listed every model
+	// twice, and a gateway has no Agents page to pick models on). A
+	// provider/model id the bare one doesn't reach stays (provider.BareOnly).
+	BareModelIDsOnly bool `json:"bareModelIDsOnly,omitempty"`
 	// CodexAgentsV1 has the OpenAI models magpie hands Codex — the ChatGPT
 	// account's own, their codex/ ids, the groups one is in, and those a
 	// provider that seals as that backend does serves (catalog.Model.Seals:
@@ -1047,7 +1053,8 @@ type Settings struct {
 	// PanelUsageHidden are the subscriptions, by provider id, that the tray
 	// panel's Allowances tab leaves out (H20 on Discord). It is what the
 	// panel shows, nothing more: routing, caps, the Usage page and the menu
-	// bar's cells still have them. The panel's order is UsageOrder.
+	// bar's cells still have them. The panel's order is UsageOrder, and it
+	// leaves out what UsageCardsHidden and UsageWindowsHidden do too.
 	PanelUsageHidden []string `json:"panelUsageHidden,omitempty"`
 	// UsageAgentsHidden are the clients, by the id the ledger records them
 	// under ("curl", "Go-http-client", an agent's id), that the Usage page's
@@ -1058,15 +1065,19 @@ type Settings struct {
 	// leaves out (whqtian_07012 on Discord), each as its tray card id (the
 	// provider id, then "|" and the account when there is one) and "|plan"
 	// or "|balance", so StepFun's balance card goes while its plan card
-	// stays. Only what that page shows: routing, caps, counting, the tray
-	// panel (PanelUsageHidden is its own) and the menu bar's cells keep them.
+	// stays. Only what is shown: the tray panel's Allowances tab, the menu
+	// bar's cells, tooltip and Windows' tray figure, and the TUI's Usage
+	// page leave them out too (onkashiko on X; provider.ShownQuotas), while
+	// routing, caps and counting keep them. TrayUsages keeps a hidden
+	// card's cell, which shows again with the card.
 	UsageCardsHidden []string `json:"usageCardsHidden,omitempty"`
 	// UsageWindowsHidden are the quota rows of an allowance card that the
 	// Overview leaves out (wangshaowei39 on X: Antigravity's Claude & GPT
 	// rows unwanted), each as the provider id, "|" and the row's group: a
 	// pool's or a model family's name, else the window's name. Every
 	// account of the provider alike. A card is never left with none: when
-	// every row is named, all show. Only what that page shows.
+	// every row is named, all show. Only what is shown, there, in the tray
+	// panel, the menu bar and the TUI's Usage page.
 	UsageWindowsHidden []string `json:"usageWindowsHidden,omitempty"`
 	// ClientAgents counts a client magpie doesn't know as one of the agents
 	// it does, on the Usage and Sessions pages (#1958, NorethSea): a bridge
@@ -1610,7 +1621,9 @@ var (
 	UpdateEveries = []int{30, 60, 360, 1440}
 	// TextSizes are TextSize's values, in percent. None is under 100: the
 	// webviews' zoom on Windows and Linux (Wails' SetZoom) goes no lower.
-	TextSizes = []int{100, 110, 125, 150}
+	// 115 and 120 are the steps between 110 and 125 (WeltAn_X on X: 110
+	// small, 125 crowded at 4K and 200%).
+	TextSizes = []int{100, 110, 115, 120, 125, 150}
 	// RegistryWireIDs are the wires the model registry (GET /api.json)
 	// lists, in the registry's emission order. The routing groups are not
 	// among them: their own switch is RegistryGroups, their entry
@@ -1624,21 +1637,82 @@ var (
 	RegistryEfforts = []string{"low", "medium", "high", "xhigh", "max"}
 )
 
-// RegistryGroupID is the registry's routing-groups entry (the importer's
-// key for it) and the legacy tick a stored bucket list carried before
-// groups got their own switch. MigrateRegistry reads it from old lists;
-// Save refuses it after.
+// RegistryGroupID is the registry's routing-group wire id: the groups
+// ride their own OpenAI-compatible entry under it (an empty list with
+// them on) — their own switch (RegistryGroups) is what lists them. The
+// legacy tick a stored bucket list carried before groups got their own
+// switch is read by MigrateRegistry from old lists; Save refuses it after.
 const RegistryGroupID = "magpie-group"
 
 // ErrRegistryEmpty is returned by Save when the registry was left listing
 // nothing: no wire and the routing groups off. One of the two stays on.
 var ErrRegistryEmpty = errors.New("the registry lists nothing with no wire and no routing groups: leave one on")
 
+// CopyRegistryConfig is the registry's field-set owner: the whole config
+// — On, Effort, Buckets, Groups and Sync — moves only through here.
+// Strip (OwnRegistry), blind (davsync's blindRegistry) and merge
+// (keepServersRegistry) call it with a zero or a remote Settings, and
+// Groups moves as it is: not-carried is nil, never false, so a blinded
+// copy hash-matches a peer's nil. The one other site that names registry
+// fields is the landing rule beside KeepOwn in backup.Restore — its Sync
+// is per-machine and copied unconditionally, a different rule on purpose.
+func (s *Settings) CopyRegistryConfig(from Settings) {
+	s.RegistryOn = from.RegistryOn
+	s.RegistryEffort = from.RegistryEffort
+	s.RegistryBuckets = from.RegistryBuckets
+	s.RegistryGroups = from.RegistryGroups
+	s.RegistrySync = from.RegistrySync
+}
+
+// OwnRegistry takes the model registry's config out of s, a settings
+// bundle about to travel to another computer (backup.Collect and
+// davsync's collect call it before the bundle is sealed), while the
+// switch itself stays as it is on this machine, per-machine like every
+// registry landing decision: the config lands only when the sender
+// carried it and the receiver opted in. CopyRegistryConfig's zero zeroes
+// Sync too — no move, inside a branch that already requires it off. It
+// is idempotent: an already-stripped s changes nothing.
+func (s *Settings) OwnRegistry() {
+	if !s.RegistrySync {
+		s.CopyRegistryConfig(Settings{})
+	}
+}
+
 // RegistryGroupsOn says whether the registry lists its routing groups.
 // Nil groups — pre-split on disk, or not carried in a bundle — reads as
 // on: absent means on everywhere a raw Settings is seen.
 func RegistryGroupsOn(st Settings) bool {
 	return st.RegistryGroups == nil || *st.RegistryGroups
+}
+
+// MigrateRegistry carries a stored pre-split registry config onto the
+// reshaped one. A bucket list with no groups switch is a file from before
+// the split, and the group tick such a list carried — or its lack —
+// becomes the groups switch, the id stripped either way (a
+// ["magpie-group"] list is the groups-only [], legal). Nothing calls it
+// but normal, before its defaulting: every path that Loads or Saves runs
+// normal, so this one hook covers them all, while a bundle in transit
+// never does — no sync path pre-migrates, and strip and blind outputs
+// stay terminal. Idempotent: once the switch is set, the discriminator
+// no longer holds.
+func (s *Settings) MigrateRegistry() {
+	if s.RegistryBuckets == nil || s.RegistryGroups != nil {
+		return
+	}
+	if slices.Contains(s.RegistryBuckets, RegistryGroupID) {
+		on := true
+		s.RegistryGroups = &on
+		wires := make([]string, 0, len(s.RegistryBuckets))
+		for _, id := range s.RegistryBuckets {
+			if id != RegistryGroupID {
+				wires = append(wires, id)
+			}
+		}
+		s.RegistryBuckets = wires
+		return
+	}
+	off := false
+	s.RegistryGroups = &off
 }
 
 // SearchFirst's values: a provider's search first, saved as "", or the
@@ -1856,36 +1930,6 @@ func (s *Settings) KeepOwn(cur Settings) {
 	// the agents' telemetry is in this computer's files, turned off by
 	// this computer's switch
 	s.AgentTelemetryOff = cur.AgentTelemetryOff
-}
-
-// CopyRegistryConfig is the registry's field-set owner: the whole config
-// — On, Effort, Buckets, Groups and Sync — moves only through here.
-// Strip (OwnRegistry), blind (davsync's blindRegistry) and merge
-// (keepServersRegistry) call it with a zero or a remote Settings, and
-// Groups moves as it is: not-carried is nil, never false, so a blinded
-// copy hash-matches a peer's nil. The one other site that names registry
-// fields is the landing rule beside KeepOwn in backup.Restore — its Sync
-// is per-machine and copied unconditionally, a different rule on purpose.
-func (s *Settings) CopyRegistryConfig(from Settings) {
-	s.RegistryOn = from.RegistryOn
-	s.RegistryEffort = from.RegistryEffort
-	s.RegistryBuckets = from.RegistryBuckets
-	s.RegistryGroups = from.RegistryGroups
-	s.RegistrySync = from.RegistrySync
-}
-
-// OwnRegistry takes the model registry's config out of s, a settings
-// bundle about to travel to another computer (backup.Collect and
-// davsync's collect call it before the bundle is sealed), while the
-// switch itself stays as it is on this machine, per-machine like every
-// registry landing decision: the config lands only when the sender
-// carried it and the receiver opted in. CopyRegistryConfig's zero zeroes
-// Sync too — no move, inside a branch that already requires it off. It
-// is idempotent: an already-stripped s changes nothing.
-func (s *Settings) OwnRegistry() {
-	if !s.RegistrySync {
-		s.CopyRegistryConfig(Settings{})
-	}
 }
 
 // Wires is ModelWires with the provider's own id of each model the user
@@ -2458,6 +2502,24 @@ func SetRouterAllTools(on bool) error {
 	return save(s, true)
 }
 
+// TakeStable puts UpdateChannel on Stable when no channel is set, from
+// what the file holds now: a fresh install of the Stable version (the
+// site's Stable download) stays on Stable. A channel already set is the
+// user's, and is kept. It says whether it changed the channel. A settings
+// file that can't be read is left as it is, with the error.
+func TakeStable() (bool, error) {
+	defer lockFile()()
+	s, err := loadChecked()
+	if err != nil {
+		return false, err
+	}
+	if s.UpdateChannel != "" {
+		return false, nil
+	}
+	s.UpdateChannel = UpdateStable
+	return true, save(s, false)
+}
+
 // EditCheckinOff changes CheckinOff alone, as edit returns it from what the
 // file holds now, so a save elsewhere from an older snapshot isn't undone.
 // A settings file that can't be read is left as it is, with the error.
@@ -2818,7 +2880,6 @@ func saveOwn(s Settings, recording, reads bool) error {
 		return fmt.Errorf("%q is not a reasoning effort for Claude Desktop's subagents", e)
 	}
 	s.Searcher = strings.TrimSpace(s.Searcher)
-	s.Fetch = strings.TrimSpace(s.Fetch)
 	var then []string
 	for _, v := range s.SearcherThen {
 		if v = strings.TrimSpace(v); v != "" && v != "off" && v != s.Searcher && !slices.Contains(then, v) {
@@ -3091,36 +3152,6 @@ func (s Settings) normal() Settings {
 		s.RegistryGroups = &on
 	}
 	return s
-}
-
-// MigrateRegistry carries a stored pre-split registry config onto the
-// reshaped one. A bucket list with no groups switch is a file from before
-// the split, and the group tick such a list carried — or its lack —
-// becomes the groups switch, the id stripped either way (a
-// ["magpie-group"] list is the groups-only [], legal). Nothing calls it
-// but normal, before its defaulting: every path that Loads or Saves runs
-// normal, so this one hook covers them all, while a bundle in transit
-// never does — no sync path pre-migrates, and strip and blind outputs
-// stay terminal. Idempotent: once the switch is set, the discriminator
-// no longer holds.
-func (s *Settings) MigrateRegistry() {
-	if s.RegistryBuckets == nil || s.RegistryGroups != nil {
-		return
-	}
-	if slices.Contains(s.RegistryBuckets, RegistryGroupID) {
-		on := true
-		s.RegistryGroups = &on
-		wires := make([]string, 0, len(s.RegistryBuckets))
-		for _, id := range s.RegistryBuckets {
-			if id != RegistryGroupID {
-				wires = append(wires, id)
-			}
-		}
-		s.RegistryBuckets = wires
-		return
-	}
-	off := false
-	s.RegistryGroups = &off
 }
 
 // Clock reads a time of day, "06:00" (seconds, as a time field may send

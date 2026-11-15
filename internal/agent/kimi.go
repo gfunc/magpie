@@ -16,11 +16,12 @@ package agent
 
 import (
 	"encoding/json"
-	"fmt"
 	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
+
+	"github.com/pelletier/go-toml/v2"
 
 	satomic "sync/atomic"
 
@@ -51,6 +52,20 @@ func init() {
 // kimiNoticeText is one of the two above as a string, "" when unset.
 func kimiNoticeText(v *satomic.Value) string { return v.Load().(string) }
 
+// kimiThinkingEffort is the Agents-page pick, `[thinking]`'s effort key in
+// Kimi Code's config: "" with no error when the table or key is absent,
+// and the read error (an array table named thinking among them) so a
+// caller can tell unreadable from unset. The one reader of the key: the
+// effort field's Get and the model tables' writer both go through it, so
+// what follows the pick and what the page shows can't drift apart.
+func kimiThinkingEffort(path string) (string, error) {
+	t, err := edit.GetTOMLTable(path, "thinking")
+	if err != nil {
+		return "", err
+	}
+	return t["effort"], nil
+}
+
 // KimiDir is the folder Kimi Code keeps its config.toml in, and whether it is
 // the old kimi-cli's. kimi-cli (1.50 on) hands over to the new Kimi Code,
 // which reads only ~/.kimi-code: it offers to copy ~/.kimi's config over
@@ -78,28 +93,14 @@ func kimiDir(at place) (dir string, legacy bool) {
 	return code, false
 }
 
-// kimiThinkingEffort is the Agents-page pick, `[thinking]`'s effort key in
-// Kimi Code's config: "" with no error when the table or key is absent,
-// and the read error (an array table named thinking among them) so a
-// caller can tell unreadable from unset. The one reader of the key: the
-// effort field's Get and the model tables' writer both go through it, so
-// what follows the pick and what the page shows can't drift apart.
-func kimiThinkingEffort(path string) (string, error) {
-	t, err := edit.GetTOMLTable(path, "thinking")
-	if err != nil {
-		return "", err
-	}
-	return t["effort"], nil
-}
-
 // kimiModelTables are magpie's model tables; the new Kimi Code is told of
 // tool calling too, which kimi-cli has no word for and refuses. wrote is
 // what magpie wrote in them last (kimiOwn), and the tables come back with
-// what this write puts there. preferred is the Agents-page effort
-// (kimiThinkingEffort), "" when none is picked: while wired, every
-// magpie-owned default_effort is set to it (kimiDefaultEffort), so the
-// subagents Kimi Code runs on the tables bind the effort the user asked
-// for instead of each table's vendor default.
+// what this write puts there.
+// preferred is the Agents-page effort (kimiThinkingEffort), "" when none
+// is picked: while wired, every magpie-owned default_effort is set to it
+// (kimiDefaultEffort), so the subagents Kimi Code runs on the tables bind
+// the effort the user asked for instead of each table's vendor default.
 func kimiModelTables(path string, legacy bool, preferred string, wrote map[string]map[string]string) ([]edit.Table, map[string]map[string]string) {
 	var out []edit.Table
 	now := map[string]map[string]string{}
@@ -230,8 +231,9 @@ func kimiWrote(path string) map[string]map[string]string {
 // strongest; a want nothing ranks (a list of words EffortRank doesn't
 // know) falls through to the vendor/high chain below rather than dropping
 // a key today's rule would write. With no want (""), the vendor default
-// where the model offers it, else high, else no key. "none" is never a
-// level: Kimi Code's own off turns thinking off.
+// where the model offers it, else high, else no key — kimiEfforts' own
+// fallback, so "" here means just that. "none" is never a level: Kimi
+// Code's own off turns thinking off.
 func kimiDefaultEffort(want, vendor string, efforts []string) string {
 	if want != "" && want != "none" {
 		if slices.Contains(efforts, want) {
@@ -250,9 +252,9 @@ func kimiDefaultEffort(want, vendor string, efforts []string) string {
 	return ""
 }
 
-// kimiHighestEffort is levels' strongest as catalog.EffortRank orders the
-// words (a vendor's own word for one, EffortAliases, ranks as the level
-// it names): "" when none of them ranks. "none" is excluded: it isn't a
+// kimiHighestEffort is levels' strongest as catalog.EffortRank orders it
+// (a vendor's own word for a level and the level's own word rank the
+// same): "" when none of them ranks. "none" is excluded: it isn't a
 // thinking level but thinking off.
 func kimiHighestEffort(levels []string) string {
 	best, at := "", -1
@@ -264,10 +266,8 @@ func kimiHighestEffort(levels []string) string {
 		if i < 0 {
 			continue
 		}
-		// a vendor's own word for the level (light for low) and the
-		// level's own word rank the same: the model's list spells it,
-		// and the first spelling stands so the answer is always one of
-		// the model's own words, not a word only its alias knows
+		// the first spelling stands so the answer is always one of the
+		// model's own words, not a word only its alias knows
 		if best == "" || at < i {
 			best, at = l, i
 		}
@@ -277,20 +277,17 @@ func kimiHighestEffort(levels []string) string {
 
 // kimiEfforts are a thinking model's levels for the new Kimi Code's
 // thinking picker (#333): support_efforts, and default_effort, as Kimi
-// Code takes for its own models (else it starts on the middle one). The
-// default is prefer, the pick kimiDefaultEffort resolved for this table
-// (the Agents-page effort while one is set, else the vendor default, else
-// high). Without them it offers thinking on or off only and asks for no
+// Code takes for its own models (else it starts on the middle one): the
+// one the model's list says it thinks at (vendor, Kimi Code's
+// think_efforts default_effort, max on K2.8), else high where the model
+// has it. Without them it offers thinking on or off only and asks for no
 // level at all. none is left out: Kimi Code's own off turns thinking off.
 // kimi-cli has neither key. was is the table's default_effort now and
 // wrote what magpie wrote in the table last (kimiOwn): one set by hand
-// stays while the model has it — except in a table magpie kept no record
-// of, where a was of high or of the model's vendor default is one magpie
-// wrote before it kept records (high on every model that had it, the
-// vendor default where the model offered one) and is re-owned; any other
-// value there is the user's hand-set. def is magpie's own default, ""
-// when the table keeps the user's. A prefer outside the model's levels —
-// a direct caller's; kimiDefaultEffort never makes one — writes no
+// stays while the model has it. def is magpie's own default, "" when the
+// table keeps the user's.
+// prefer is the pick kimiDefaultEffort resolved for this table — a
+// direct caller's; kimiDefaultEffort never makes one — writes no
 // default of its own: an emitted default_effort always sits inside its
 // table's support_efforts, so Kimi Code's start-up validation takes the
 // config.
@@ -361,27 +358,25 @@ func kimiIn(at place) *Agent {
 	key := "kimi:" + path + ":default_model"
 	get := func() string { v, _ := edit.GetTOMLTop(path, "default_model"); return v }
 	providerTable := "providers." + magpieID
-	// writeMagpie takes the agent over. While wired, every magpie-owned
-	// default_effort follows the Agents-page effort, kimiThinkingEffort's
-	// one read of it: the tables' writer and the effort field read the
-	// same key through it. A [thinking] that can't be read as a table
-	// (an array table, valid TOML that syncs fine otherwise) degrades to
-	// the pre-change write, preferred = "" — unknown is not unset, and
-	// aborting would strip magpie's models from a config that works
-	// today — and says so in a Notice. The [secondary_model] table's
-	// section-wide default_effort, which Kimi Code resolves ahead of
-	// every per-table default, is never written: while one is set the
-	// per-table defaults magpie writes are inert, and the Notice names
-	// it so the user knows.
 	writeMagpie := func() error {
-		preferred := ""
-		degraded := ""
-		if p, err := kimiThinkingEffort(path); err != nil {
-			degraded = noticeKimiThinkingUnreadable.say("error", err.Error())
-		} else {
-			preferred = p
+		// the Agents-page pick, when [thinking] reads as a table: one it
+		// doesn't degrades the write to the vendor/default fallback and
+		// says so (kimiDegraded); "" is no pick, unknown is not unset
+		preferred, degraded := "", ""
+		if !legacy {
+			p, err := kimiThinkingEffort(path)
+			if err != nil {
+				degraded = noticeKimiThinkingUnreadable.say("error", err.Error())
+			} else {
+				preferred = p
+			}
 		}
 		kimiDegraded.Store(degraded)
+		if sec, err := edit.GetTOMLTable(path, "secondary_model"); err == nil && sec["default_effort"] != "" {
+			kimiHeld.Store(noticeKimiSectionEffort.say("effort", sec["default_effort"]))
+		} else {
+			kimiHeld.Store("")
+		}
 		if err := kimiProvider(path, providerTable,
 			edit.KV{Path: "type", Value: "kimi"},
 			edit.KV{Path: "base_url", Value: at.v1()},
@@ -389,22 +384,17 @@ func kimiIn(at place) *Agent {
 		); err != nil {
 			return err
 		}
-		if sec, err := edit.GetTOMLTable(path, "secondary_model"); err == nil && sec["default_effort"] != "" {
-			kimiHeld.Store(noticeKimiSectionEffort.say("effort", sec["default_effort"]))
-		} else {
-			kimiHeld.Store("")
-		}
 		tables, wrote := kimiModelTables(path, legacy, preferred, kimiWrote(path))
 		if err := edit.SetTOMLTables(path, []string{kimiModelTable}, tables); err != nil {
+			return err
+		}
+		b, err := json.Marshal(wrote)
+		if err != nil {
 			return err
 		}
 		// what magpie wrote goes in the stash as part of the same atomic
 		// edit: a record lost after a successful write would make the
 		// next sync read magpie's own value as hand-set and stop following
-		b, err := json.Marshal(wrote)
-		if err != nil {
-			return err
-		}
 		stashMu.Lock()
 		defer stashMu.Unlock()
 		m := stashLoad()
@@ -432,7 +422,7 @@ func kimiIn(at place) *Agent {
 		t, err := kimiModelTableForKey(path, k)
 		return err == nil && t != nil
 	}
-	a := &Agent{
+	return atomic(&Agent{
 		Telemetry: kimiTelemetry(at, path),
 		ID:        "kimi", Name: "Kimi Code", Icon: "kimi", Aliases: []string{"kimi-code", "kimi-cli"}, Spelled: prefixed,
 		// kimi-cli (Python) says KimiCLI/…; Kimi Code 2.x, kimi-code-cli/…
@@ -512,42 +502,148 @@ func kimiIn(at place) *Agent {
 			Options: func(cur map[string]string) []Option {
 				return withVia(kimiOwnOptions(path, cur["model"]), "kimi", magpieID+"/")
 			},
-		}},
-	}
-	if !legacy && !at.cold {
-		levels := []string{"low", "medium", "high", "xhigh", "max"}
-		a.Fields = append(a.Fields, Field{
+		}, kimiThinkingField(path, legacy, at.cold, func() bool { return usesMagpie(get()) }, writeMagpie)},
+	}, path)
+}
+
+// kimiThinkingField is the thinking level Kimi Code starts its sessions
+// at (@apple_test_src on X: every other agent had one). The new Kimi Code
+// keeps it in [thinking] (packages/agent-core-v2's ThinkingConfigSchema):
+// enabled = false for off, else effort, the level its own /model saves
+// beside default_model (persistModelSelection, thinkingEffortToConfig);
+// with neither it starts each model at the model's default_effort. A level
+// the model doesn't have starts it at its default too. kimi-cli has only
+// thinking on or off, its top-level default_thinking. A stopped WSL
+// distro's (cold) levels are the common ones: reading its config would
+// start it again (#3896).
+func kimiThinkingField(path string, legacy, cold bool, wired func() bool, follow func() error) Field {
+	if legacy {
+		return Field{
 			Key: "effort", Label: "thinking",
-			Get: func() string { v, _ := kimiThinkingEffort(path); return v },
+			Get: func() string {
+				switch v, _ := edit.GetTOMLTop(path, "default_thinking"); v {
+				case "true":
+					return "on"
+				case "false":
+					return "off"
+				}
+				return ""
+			},
 			Set: func(v string) error {
 				if v == "" {
-					if err := edit.DelTOMLKey(path, "thinking", "effort"); err != nil {
-						return err
-					}
-				} else {
-					if !slices.Contains(levels, v) {
-						return fmt.Errorf("%q is not one of Kimi Code's thinking levels", v)
-					}
-					if err := edit.SetTOMLKey(path, "thinking", "effort", v); err != nil {
-						return err
-					}
+					return edit.DelTOMLTop(path, "default_thinking")
 				}
-				// while magpie's models are what the agent runs, the
-				// tables' default_effort follows the pick (writeMagpie);
-				// not wired, there is nothing to follow (Disconnect
-				// clears the model first, so its pass over the fields
-				// finds usesMagpie false here and recreates nothing)
-				if !usesMagpie(get()) {
+				return edit.SetTOMLTop(path, edit.KV{Path: "default_thinking", Value: v != "off"})
+			},
+			Options: func(map[string]string) []Option { return static("off", "on") },
+		}
+	}
+	return Field{
+		Key: "effort", Label: "thinking",
+		Get: func() string {
+			t, _ := edit.GetTOMLTable(path, "thinking")
+			if t["enabled"] == "false" {
+				return "off"
+			}
+			return t["effort"]
+		},
+		Set: func(v string) error {
+			// while magpie's models are what the agent runs, the
+			// tables' default_effort follows the pick (writeMagpie);
+			// not wired, there is nothing to follow (Disconnect clears
+			// the model first, so its pass over the fields finds
+			// usesMagpie false here and recreates nothing)
+			write := func() error {
+				if !wired() {
 					return nil
 				}
-				return writeMagpie()
-			},
-			Options: func(map[string]string) []Option {
-				return append([]Option{{Note: "default"}}, static(levels...)...)
-			},
-		})
+				return follow()
+			}
+			switch v {
+			case "":
+				if err := edit.DelTOMLKey(path, "thinking", "effort"); err != nil {
+					return err
+				}
+				if err := edit.DelTOMLKey(path, "thinking", "enabled"); err != nil {
+					return err
+				}
+				return write()
+			case "off":
+				// as Kimi Code's own off: the level stays for the next on
+				if err := edit.SetTOMLKey(path, "thinking", "enabled", false); err != nil {
+					return err
+				}
+				return write()
+			}
+			if err := edit.SetTOMLKey(path, "thinking", "enabled", true); err != nil {
+				return err
+			}
+			if err := edit.SetTOMLKey(path, "thinking", "effort", v); err != nil {
+				return err
+			}
+			return write()
+		},
+		Options: func(cur map[string]string) []Option {
+			if cold {
+				return static(kimiCommonLevels...)
+			}
+			return kimiThinkingOptions(path, cur["model"])
+		},
 	}
-	return atomic(a, path)
+}
+
+// kimiCommonLevels are the levels offered for a model whose own aren't known.
+var kimiCommonLevels = []string{"off", "low", "medium", "high"}
+
+// kimiThinkingOptions are the levels Kimi Code offers for model, the key
+// of a model table in its config at path: off, then its support_efforts
+// (its [overrides]' when they say), Default being the model's
+// default_effort; off alone for a model that thinks with no levels, and
+// none for one that doesn't think. A model the config doesn't describe
+// (Kimi Code's own sign-in's, from its catalog) gets the common levels.
+func kimiThinkingOptions(path, model string) []Option {
+	type levels struct {
+		Capabilities   []string `toml:"capabilities"`
+		SupportEfforts []string `toml:"support_efforts"`
+		DefaultEffort  string   `toml:"default_effort"`
+	}
+	var doc struct {
+		Models map[string]struct {
+			levels
+			Overrides *levels `toml:"overrides"`
+		} `toml:"models"`
+	}
+	b, err := edit.Read(path)
+	if err != nil || toml.Unmarshal(edit.TrimBOM(b), &doc) != nil {
+		return static(kimiCommonLevels...)
+	}
+	m, ok := doc.Models[model]
+	if !ok {
+		return static(kimiCommonLevels...)
+	}
+	efforts, def, caps := m.SupportEfforts, m.DefaultEffort, m.Capabilities
+	if o := m.Overrides; o != nil {
+		if o.SupportEfforts != nil {
+			efforts = o.SupportEfforts
+		}
+		if o.DefaultEffort != "" {
+			def = o.DefaultEffort
+		}
+		if o.Capabilities != nil {
+			caps = o.Capabilities
+		}
+	}
+	if len(efforts) == 0 && !slices.Contains(caps, "thinking") && !slices.Contains(caps, "always_thinking") {
+		return nil
+	}
+	var out []Option
+	if slices.Contains(efforts, def) {
+		out = append(out, Option{Value: "", Note: "Kimi Code's default for the model: " + def, Takes: def})
+	}
+	if !slices.Contains(caps, "always_thinking") {
+		out = append(out, Option{Value: "off"})
+	}
+	return append(out, static(efforts...)...)
 }
 
 // kimiOwnOptions are the models of the user's own in Kimi's config: its
