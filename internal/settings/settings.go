@@ -598,7 +598,9 @@ type Settings struct {
 	// version as it comes out, the default; UpdateStable ("stable") one a
 	// week, the newest that had been out three days as the week began, or
 	// an urgent one (a security hole, a ban risk, lost data) at once, from
-	// the update feed's ?channel=stable (ssharpcc on X). Settings' Update
+	// the update feed's ?channel=stable (ssharpcc on X); UpdateDaily
+	// ("daily") one a day, the newest that passed its tests, or an urgent
+	// one at once, from ?channel=daily (fishmagic80 on X). Settings' Update
 	// channel and magpie update channel set it.
 	UpdateChannel string `json:"updateChannel,omitempty"`
 	// Vision is the model that describes an image to a model that can't see
@@ -1313,6 +1315,11 @@ type Settings struct {
 	// changes nothing until every synced box has. The switch itself is
 	// per-machine: no peer's disagreeing choice moves it.
 	RegistrySync bool `json:"registrySync,omitempty"`
+	// OnTop keeps the main window above other apps' windows, pinned from
+	// its title bar's pin (NovaStudiosss on X: Usage and Routing watched
+	// while working elsewhere). This computer's own, as the window's size
+	// and place are.
+	OnTop bool `json:"onTop,omitempty"`
 }
 
 // ModelPrice is the price of one model as the user states it. Each part is a
@@ -1413,6 +1420,10 @@ const AnyProvider = "*/"
 // UpdateStable is UpdateChannel's Stable: a version a week, an urgent one
 // at once.
 const UpdateStable = "stable"
+
+// UpdateDaily is UpdateChannel's Daily: a version a day, the newest that
+// passed its tests and has all its files, an urgent one at once.
+const UpdateDaily = "daily"
 
 // The values of Settings.UpdateSource; "" is automatic.
 const (
@@ -1615,8 +1626,9 @@ var (
 	Warmups = []string{"", "week", "all"}
 	// TrayEvery are TrayUsageEvery's values, in minutes.
 	TrayEvery = []int{1, 3, 5, 10, 30}
-	// UpdateChannels are UpdateChannel's values: every version, Stable.
-	UpdateChannels = []string{"", UpdateStable}
+	// UpdateChannels are UpdateChannel's values: every version, Daily,
+	// Stable.
+	UpdateChannels = []string{"", UpdateDaily, UpdateStable}
 	// UpdateEveries are UpdateEvery's values, in minutes.
 	UpdateEveries = []int{30, 60, 360, 1440}
 	// TextSizes are TextSize's values, in percent. None is under 100: the
@@ -1908,7 +1920,7 @@ func (s *Settings) KeepOwn(cur Settings) {
 	s.UpdateProxy, s.UpdateProxyCustom = cur.UpdateProxy, cur.UpdateProxyCustom
 	s.UpdateSource = cur.UpdateSource
 	s.WindowMaximised, s.KeepAwake, s.KeepAwakeDisplay = cur.WindowMaximised, cur.KeepAwake, cur.KeepAwakeDisplay
-	s.WindowAt = cur.WindowAt
+	s.WindowAt, s.OnTop = cur.WindowAt, cur.OnTop
 	s.TrayUsages, s.TrayUsage, s.TrayUsageEvery, s.TrayNoLogos, s.TrayNoBird, s.TrayPace, s.TrayNoCost = cur.TrayUsages, cur.TrayUsage, cur.TrayUsageEvery, cur.TrayNoLogos, cur.TrayNoBird, cur.TrayPace, cur.TrayNoCost
 	s.TrayWindows, s.TrayNoNumber, s.TrayCurrency = cur.TrayWindows, cur.TrayNoNumber, cur.TrayCurrency
 	s.GatewayMode = cur.GatewayMode
@@ -2464,6 +2476,18 @@ func SetQuitNoAsk(on bool) error {
 	return save(s, false)
 }
 
+// SetOnTop sets OnTop alone, from what the file holds now; a file that
+// can't be read is left as it is.
+func SetOnTop(on bool) error {
+	defer lockFile()()
+	s, err := loadChecked()
+	if err != nil {
+		return err
+	}
+	s.OnTop = on
+	return save(s, false)
+}
+
 // RouterNoteMost is how many characters RouterNote keeps: a few words,
 // said before every tool's description.
 const RouterNoteMost = 80
@@ -2732,7 +2756,7 @@ func saveOwn(s Settings, recording, reads bool) error {
 		return fmt.Errorf("magpie checks for updates every %v minutes, not %d", UpdateEveries, s.UpdateEvery)
 	}
 	if !slices.Contains(UpdateChannels, s.UpdateChannel) {
-		return fmt.Errorf("the update channel is %q (stable) or empty (every version), not %q", UpdateStable, s.UpdateChannel)
+		return fmt.Errorf("the update channel is %q, %q or empty (every version), not %q", UpdateStable, UpdateDaily, s.UpdateChannel)
 	}
 	if m := s.UpdateMirror; m != "" {
 		if u, err := url.Parse(m); err != nil || (u.Scheme != "https" && u.Scheme != "http") || u.Host == "" {

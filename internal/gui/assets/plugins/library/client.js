@@ -692,6 +692,15 @@ magpie.plugin("library", (ctx) => {
       status(parts.join(" · "), warn ? "warn" : "ok", warn ? 10000 : 6000);
       return;
     }
+    // slash commands imported from the agents (command_import.go)
+    const ci = res.commands;
+    if (ci) {
+      const n = (ci.added?.length || 0) + (ci.joined?.length || 0), parts = [n === 1 ? t("1 slash command imported") : t("{count} slash commands imported", { count: n })];
+      const warn = res.problems?.length;
+      if (warn) { const p = res.problems[0]; parts.push(t("{agent}: {error}", { agent: tilde(nameOf(p.agent)), error: p.error })); }
+      status(parts.join(" · "), warn ? "warn" : "ok", warn ? 10000 : 6000);
+      return;
+    }
     // an update that found its source without the skill: said so, not
     // as done or failed (スライム on Discord)
     if (res.gone?.length) {
@@ -1046,7 +1055,7 @@ magpie.plugin("library", (ctx) => {
     else if (tab === "plugins") renderPlugins(body);
     else renderSkills(body);
     page.append(body);
-    for (const n of body.querySelectorAll(".row-head .note")) n.title = n.textContent;
+    for (const n of body.querySelectorAll(".row-head .note")) if (!n.closest(".fold")) n.title = n.textContent;
     for (const d of page.querySelectorAll(".lib-detail[data-detail]")) if (had.has(d.dataset.detail)) d.classList.add("kept");
     for (const f of fits.splice(0)) f();
     page.scrollTop = top;
@@ -2771,6 +2780,8 @@ magpie.plugin("library", (ctx) => {
   const remote = (s) => s.transport === "http" || s.transport === "sse";
   const reaches = (s) => (a) => !a || (!(remote(s) && a.noRemote) && !(s.transport === "sse" && a.noSSE) && !(envRefs(s) && a.noEnvRefs));
 
+  let serversOffFolded = true; // the servers turned off, folded below the ones on
+  try { serversOffFolded = localStorage.getItem("magpie.offServersOpen") !== "1"; } catch {}
   function renderServers(body) {
     body.append(intro(agentless()
       ? t("Add the servers other apps should reach, and turn on the MCP router: they connect at its address, from another computer with a gateway key.")
@@ -2785,8 +2796,41 @@ magpie.plugin("library", (ctx) => {
       if (agentless()) body.append(...hubPart());
     } else {
       const list = el("div", "list lib-list");
+      // turned off, they fold away below the ones on, as Providers' do
+      // (hzlxb on X), folded at first and remembered; while picking, the
+      // fold stays open, for every server picked to be in sight
+      const offList = el("div", "list lib-list lib-offlist");
+      offList.id = "lib-offServers";
+      const offHead = el("div", "row-head off-head lib-offhead");
+      const fold = el("button", "fold");
+      fold.type = "button";
+      fold.setAttribute("aria-controls", offList.id);
+      const offCount = el("span", "note");
+      fold.append(svg(CHEV_R, 11, 1.6), el("span", "label", t("Servers turned off")), offCount);
+      offHead.append(fold);
+      const syncFold = () => {
+        const offs = offList.childElementCount, open = !!picking || !serversOffFolded;
+        offHead.hidden = !offs;
+        list.hidden = offs > 0 && !list.childElementCount;
+        offList.hidden = !offs || !open;
+        offCount.textContent = offs || "";
+        fold.disabled = !!picking;
+        fold.setAttribute("aria-expanded", String(open));
+        fold.title = t(open ? "Fold the servers turned off away" : "Show the servers turned off");
+      };
+      fold.onclick = (e) => {
+        e.stopPropagation();
+        serversOffFolded = !serversOffFolded;
+        try { localStorage.setItem("magpie.offServersOpen", serversOffFolded ? "0" : "1"); } catch {}
+        syncFold();
+      };
       // in the order the reader picked (#481), A→Z till then
-      const fill = () => list.replaceChildren(...[...lib.servers].sort(byName(sortOf("libServers"))).map((s) => serverRow(s, all)));
+      const fill = () => {
+        const sorted = [...lib.servers].sort(byName(sortOf("libServers")));
+        list.replaceChildren(...sorted.filter((s) => !s.hidden).map((s) => serverRow(s, all)));
+        offList.replaceChildren(...sorted.filter((s) => s.hidden).map((s) => serverRow(s, all)));
+        syncFold();
+      };
       // one heading over the list, with what the skills' has (#1027): the
       // order, Select, every server on or off for every agent shown, one
       // agent's (#475, or out of a hidden one) and every server out
@@ -2806,7 +2850,7 @@ magpie.plugin("library", (ctx) => {
         body.append(rh);
       }
       fill();
-      body.append(list);
+      body.append(list, offHead, offList);
       if (picking) body.append(pickBar(all));
       const after = el("div", "after-list");
       after.append(button(t("＋ Add server"), "", () => editServer(null)));
@@ -5103,6 +5147,7 @@ magpie.plugin("library", (ctx) => {
     body.append(intro(t("A slash command is a prompt you type as /name in an agent. Add it once and magpie writes it into each agent you pick, as that agent's own command.")));
     const all = commandAgents();
     const cmds = lib.commands || [];
+    body.append(commandFind());
     if (!cmds.length) {
       body.append(empty(t("No slash commands in the library yet"), t("Add one, and pick the agents that get it."), button(t("＋ Add a slash command"), "action", () => editCommand(null))));
     } else {
@@ -5117,6 +5162,116 @@ magpie.plugin("library", (ctx) => {
     if (noPlace.length) body.append(el("p", "lib-aside lib-commands-noargs", t("{agents} take only $ARGUMENTS, all the words at once: a command that uses $1, $2… isn't written for them.", { agents: noPlace.map((a) => a.name).join(", ") })));
     const skip = all.filter((a) => commandAgentOf(a.id).no);
     if (skip.length) body.append(el("p", "lib-aside lib-commands-no", t("magpie can't give slash commands to {agents}: their chips are greyed, and say why.", { agents: skip.map((a) => a.name).join(", ") })));
+  }
+
+  // the slash commands the user already made in their agents (miantiao_me
+  // on X: "can the ones I made in Pi be imported?"), each agent's own
+  // files read as magpie's (library/command_import.go); importing keeps
+  // each file as it is, the agents it came from ticked
+  let cmdProbe = null;    // { found, pick:Set, filter } or { error }
+  let cmdProbing = false;
+  const cmdPickable = (x) => x.state !== "taken";
+
+  function commandFind() {
+    const card = el("div", "list lib-card lib-install lib-cmdfind");
+    const line = el("div", "lib-find");
+    const go = button(cmdProbing ? t("Looking…") : t("Find in agents"), "action", () => find());
+    go.disabled = cmdProbing;
+    if (cmdProbing) go.classList.add("busy");
+    line.append(glyph(GLYPH.search, "lib-mini"), el("span", "lib-findnote", t("Slash commands you made in your agents")), go);
+    card.append(line);
+    async function find() {
+      if (cmdProbing) return;
+      cmdProbing = true;
+      cmdProbe = null;
+      render();
+      try {
+        const f = await api("library/commands/probe", {});
+        // ticked: each new name's first, one of those saying different things
+        const pick = new Set(), names = new Set();
+        for (const x of f.candidates) if (!x.state && !names.has(x.name)) { names.add(x.name); pick.add(x.path); }
+        cmdProbe = { found: f, pick, filter: "" };
+      } catch (e) {
+        cmdProbe = { error: e.message };
+      }
+      cmdProbing = false;
+      render();
+    }
+    if (cmdProbe?.error) card.append(el("div", "lib-err", cmdProbe.error));
+    if (cmdProbe?.found) card.append(commandPicks(cmdProbe));
+    return card;
+  }
+
+  function commandPicks(p) {
+    const box = el("div", "lib-probe");
+    const c = p.found.candidates;
+    const left = (p.found.left || []).map((x) => el("div", "lib-none lib-left", t("{path} left out: {error}", { path: tilde(x.path), error: x.error })));
+    const head = el("div", "lib-probehead");
+    head.append(el("span", "note", !c.length ? t("No slash commands of your own in your agents") : c.length === 1 ? t("1 slash command in your agents") : t("{count} slash commands in your agents", { count: c.length })));
+    head.append(el("span", "grow"));
+    if (!c.length) {
+      head.append(button(t("Close"), "", () => { cmdProbe = null; render(); }));
+      box.append(head, ...left);
+      return box;
+    }
+    box.append(head);
+    if (c.length > 8) {
+      const f = el("input", "lib-filter");
+      f.type = "text";
+      f.dataset.lib = "cmdfilter";
+      f.placeholder = t("Filter…");
+      f.value = p.filter;
+      f.oninput = () => { p.filter = f.value; drawList(); };
+      f.onkeydown = (e) => e.stopPropagation();
+      box.append(f);
+    }
+    const list = el("div", "lib-picks");
+    const drawList = () => {
+      list.replaceChildren();
+      const q = p.filter.toLowerCase();
+      for (const x of c) {
+        const from = x.agents.map((id) => agentOf(id)?.name || id).join(" · ");
+        if (q && !(x.name + " " + x.description + " " + from).toLowerCase().includes(q)) continue;
+        const r = el("label", "lib-pick lib-cmdpick" + (cmdPickable(x) ? "" : " dim"));
+        const cb = el("input");
+        cb.type = "checkbox";
+        cb.checked = p.pick.has(x.path);
+        cb.disabled = !cmdPickable(x);
+        cb.onchange = () => {
+          if (cb.checked) {
+            // one of those called the same
+            for (const y of c) if (y.name === x.name) p.pick.delete(y.path);
+            p.pick.add(x.path);
+          } else p.pick.delete(x.path);
+          drawList();
+          syncGo();
+        };
+        const w = el("span", "who");
+        w.append(el("span", "name mono", "/" + x.name));
+        if (x.description) w.append(el("span", "sub", x.description));
+        w.append(el("span", "sub lib-cmdfrom", from));
+        r.append(cb, w);
+        if (x.state === "taken") r.append(tag(t("Name taken"), "lib-as", t("The library has another slash command called /{name}, so this one stays in the agent as it is.", { name: x.name })));
+        else if (x.clash) r.append(tag(t("Differs by agent"), "lib-as", t("/{name} says something else in another agent: pick one.", { name: x.name })));
+        else if (x.state === "same") r.append(tag(t("in the library"), "", t("The library has it saying the same: importing it gives it to these agents too.")));
+        list.append(r);
+      }
+    };
+    drawList();
+    box.append(list, ...left);
+    const foot = el("div", "lib-probefoot");
+    foot.append(el("span", "grow"), button(t("Cancel"), "", () => { cmdProbe = null; render(); }));
+    const go = button("", "primary", async () => {
+      go.disabled = true;
+      go.textContent = t("Importing…");
+      if (await change("commands/import", { paths: [...p.pick] })) { cmdProbe = null; render(); }
+      else { go.disabled = false; syncGo(); }
+    });
+    const syncGo = () => { const n = p.pick.size; go.textContent = n === 1 ? t("Import 1 slash command") : t("Import {count} slash commands", { count: n }); go.disabled = !n; };
+    syncGo();
+    foot.append(go);
+    box.append(foot);
+    return box;
   }
 
   function commandRow(c, all) {
@@ -8576,6 +8731,8 @@ magpie.plugin("library", (ctx) => {
       go.onclick = async (e) => { if (await closeLibModal()) openSettingsAt(e, "models", "#searchList .row"); };
       hint.append(" ", go);
       ed.append(hint);
+    } else if (x.name === "magpie-sessions") {
+      ed.append(el("p", "mk-hint", t("Pick the agents that may search and read what was said in your other sessions.")));
     } else if (x.name === "magpie-vision") {
       ed.append(el("p", "mk-hint", t("Pick the agents that may read images with it: each image goes to the Image recognition model set in Settings → Models → Images, and costs what that model charges.")));
     } else if (x.optIn) ed.append(el("p", "mk-hint", t("Pick the agents that may generate images: each image costs what the model set in Settings → Models → Images charges.")));

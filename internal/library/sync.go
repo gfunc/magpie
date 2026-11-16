@@ -55,6 +55,9 @@ type Result struct {
 	// Subagents is, for subagents imported from a repository, what was
 	// added, updated, had already, and left as changed here
 	Subagents *SubagentsImported `json:"subagents,omitempty"`
+	// Commands is, for slash commands imported from the agents, what was
+	// added and the library's own given to more agents
+	Commands *CommandsImported `json:"commands,omitempty"`
 	// dropped are the servers taken out of an agent's config, as it had
 	// them, whose processes go once no agent runs them (mcp_reap.go)
 	dropped []*Server
@@ -111,7 +114,7 @@ func syncSteps(all, gone []*Target, b *backups, res *Result) []func(*Library) {
 	steps := []func(*Library){func(l *Library) { l.followMovedSkills() }}
 	for _, t := range all {
 		steps = append(steps, func(l *Library) {
-			l.syncInstructions(t, b, res, true)
+			l.syncInstructions(t, all, b, res, true)
 			l.syncMCP(t, b, res)
 			l.syncHooks(t, b, res)
 			l.syncEnv(t, b, res)

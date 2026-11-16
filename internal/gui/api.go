@@ -1300,6 +1300,12 @@ func Handler(w Windows, gw *gateway.Server) http.Handler {
 		if s.NoBird {
 			boot["noBird"] = true
 		}
+		// and the title bar's pin, where the window can be kept on top
+		// (ontop.go): shown, and pressed, from the first paint
+		if pinnable(w) {
+			boot["pin"] = true
+			boot["onTop"] = s.OnTop
+		}
 		// a browser tab keeps its own font choice (fonts.js)
 		if !isWeb(w) {
 			boot["uiFont"], boot["codeFont"] = s.UIFont, s.CodeFont
@@ -2394,6 +2400,21 @@ func Handler(w Windows, gw *gateway.Server) http.Handler {
 		}
 		writeJSON(rw, map[string]bool{"ok": true})
 	})
+	// Warm up all: each of a Codex or Claude agent's accounts in use and not
+	// in a window already warmed at once, and what each came to
+	mux.HandleFunc("POST /api/warm-all", func(rw http.ResponseWriter, r *http.Request) {
+		var in struct{ Agent string }
+		if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+			fail(rw, err)
+			return
+		}
+		rs, err := provider.WarmAll(r.Context(), in.Agent)
+		if err != nil {
+			fail(rw, err)
+			return
+		}
+		writeJSON(rw, map[string]any{"results": rs})
+	})
 	// whether a Codex account spends one of its resets by itself once its
 	// week is used up, the Usage card's toggle, set on its own
 	// a Codex account's own daily warm-up time: "06:00", "off", or "" to
@@ -3242,12 +3263,30 @@ func Handler(w Windows, gw *gateway.Server) http.Handler {
 	mux.HandleFunc("GET /api/quit", func(rw http.ResponseWriter, r *http.Request) {
 		writeJSON(rw, map[string]any{"agents": quitAgents()})
 	})
+	// the question's Disconnect and quit: the agents put back as Put
+	// agents back when quitting puts them, for this quit (quitDisconnect)
+	mux.HandleFunc("POST /api/quit/disconnect", func(rw http.ResponseWriter, r *http.Request) {
+		if err := quitDisconnect(); err != nil {
+			fail(rw, err)
+			return
+		}
+		writeJSON(rw, state())
+	})
 	mux.HandleFunc("POST /api/window/{action}", func(rw http.ResponseWriter, r *http.Request) {
 		switch r.PathValue("action") {
 		case "hide":
 			w.HidePanel()
 		case "main":
 			w.ShowMain(mainView(r.URL.Query()))
+		case "ontop":
+			// the title bar's pin (ontop.go)
+			on := r.URL.Query().Get("on") == "1"
+			if err := pinMain(w, on); err != nil {
+				fail(rw, err)
+				return
+			}
+			writeJSON(rw, map[string]bool{"onTop": on})
+			return
 		case "quit":
 			// the question's "Don't ask again" (noAsk=1, zhujiu on
 			// Discord) is saved before the quit; a save that fails keeps
