@@ -188,6 +188,72 @@ func kimiModelTables(path string, legacy bool, preferred string, wrote map[strin
 	return out, now
 }
 
+// kimiSignInEffort clamps the sign-in's own plan tables (the kimi CLI's,
+// on its managed provider: [models."kimi-code/…"], written from Kimi's own
+// list) to the Agents-page pick, so a model run through the sign-in starts
+// at the picked effort as one through magpie does (the live gap: pick max,
+// K3.1 Pro's sign-in table at the vendor's high). With no pick the vendor's
+// stands. A hand-set value is the user's, told by the same wrote-record the
+// magpie tables use, keyed by its table name. What the pick resolved to is
+// written per table, each to what it offers (kimiDefaultEffort's clamp),
+// and the record keeps what magpie wrote so a later pick change reclaims it.
+func kimiSignInEffort(path, preferred string, wrote map[string]map[string]string) (kvs []edit.KV, now map[string]map[string]string) {
+	if preferred == "" || preferred == "none" {
+		return nil, nil
+	}
+	// the whole file once, arrays and all, as kimiThinkingOptions reads it
+	type levels struct {
+		Provider       string   `toml:"provider"`
+		SupportEfforts []string `toml:"support_efforts"`
+		DefaultEffort  string   `toml:"default_effort"`
+	}
+	var doc struct {
+		Models map[string]levels `toml:"models"`
+	}
+	b, err := edit.Read(path)
+	if err != nil || toml.Unmarshal(edit.TrimBOM(b), &doc) != nil {
+		return nil, nil
+	}
+	for name, m := range doc.Models {
+		key := name
+		if strings.HasPrefix(key, magpieID+"/") || m.Provider != providerKimiManaged || len(m.SupportEfforts) == 0 {
+			continue
+		}
+		efforts := m.SupportEfforts
+		if !slices.Contains(efforts, "none") && !slices.ContainsFunc(efforts, func(e string) bool { return e != "" }) {
+			continue
+		}
+		mine := kimiDefaultEffort(preferred, m.DefaultEffort, efforts)
+		if !slices.Contains(efforts, mine) {
+			continue // kimiDefaultEffort fell through to nothing here
+		}
+		table := "models." + strconv.Quote(key)
+		was := map[string]string{"default_effort": m.DefaultEffort}
+		// with no record of the table, its vendor default is the CLI's
+		// own write (Kimi's list names it), not the user's hand: only a
+		// value that is neither the vendor's nor recorded stays
+		if _, ok := wrote[table]["default_effort"]; !ok && m.DefaultEffort != "" {
+			was["default_effort"] = ""
+		}
+		v, by := kimiOwn(was, wrote[table], "default_effort", mine)
+		if v == "" || v == m.DefaultEffort {
+			continue
+		}
+		kvs = append(kvs, edit.KV{Path: table, Value: v})
+		if by {
+			if now == nil {
+				now = map[string]map[string]string{}
+			}
+			setWrote(now, table, "default_effort", v)
+		}
+	}
+	return kvs, now
+}
+
+// providerKimiManaged is the provider table the kimi CLI gives its own
+// Kimi Code sign-in.
+const providerKimiManaged = "managed:kimi-code"
+
 // kimiOwn is the value of key in one of magpie's model tables: one the user
 // set there themselves (was, other than what magpie wrote last) stays,
 // else magpie's own (mine, "" for none), and by says it is magpie's.
@@ -387,6 +453,22 @@ func kimiIn(at place) *Agent {
 		tables, wrote := kimiModelTables(path, legacy, preferred, kimiWrote(path))
 		if err := edit.SetTOMLTables(path, []string{kimiModelTable}, tables); err != nil {
 			return err
+		}
+		if !legacy {
+			kvs, more := kimiSignInEffort(path, preferred, wrote)
+			for _, kv := range kvs {
+				if err := edit.SetTOMLKey(path, kv.Path, "default_effort", kv.Value); err != nil {
+					return err
+				}
+			}
+			for t, m := range more {
+				if wrote[t] == nil {
+					wrote[t] = map[string]string{}
+				}
+				for k, v := range m {
+					wrote[t][k] = v
+				}
+			}
 		}
 		b, err := json.Marshal(wrote)
 		if err != nil {
