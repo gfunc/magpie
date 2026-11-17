@@ -587,15 +587,24 @@ func codexIn(at place) *Agent {
 		}
 		ms := models()
 		model, effort := get("model"), get("model_reasoning_effort")
-		if e := catalog.Efforts(ms, model); len(e) > 0 && effort != "" && !contains(e, effort) {
-			to := codexcat.ModelDefault(e, effort)
-			if err := edit.SetTOMLTop(path, edit.KV{Path: "model_reasoning_effort", Value: to}); err != nil {
-				return err
+		if e := catalog.Efforts(ms, model); len(e) > 0 {
+			// the pin writes the model's own highest level whatever the
+			// agent or the user picked; "" (nothing rankable) is no pin
+			to := ""
+			if pin := pinnedEffort(e); pin != "" {
+				to = pin
+			} else if effort != "" && !contains(e, effort) {
+				to = codexcat.ModelDefault(e, effort)
 			}
-			// magpie's own change, which Disconnect undoes while it stands
-			stash(map[string]string{at.key("codex.effort_set"): to})
-			if err := relist(); err != nil {
-				return err
+			if to != "" && effort != to {
+				if err := edit.SetTOMLTop(path, edit.KV{Path: "model_reasoning_effort", Value: to}); err != nil {
+					return err
+				}
+				// magpie's own change, which Disconnect undoes while it stands
+				stash(map[string]string{at.key("codex.effort_set"): to})
+				if err := relist(); err != nil {
+					return err
+				}
 			}
 		}
 		// the Codex app's list as magpie is wired now, or taken out

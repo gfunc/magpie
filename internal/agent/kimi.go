@@ -437,6 +437,12 @@ func kimiIn(at place) *Agent {
 				preferred = p
 			}
 		}
+		// the pin beats the pick: asked as "max", every model gets its own
+		// max where it offers one and its strongest level where it doesn't
+		// (kimiDefaultEffort's clamp), which is the pin's ask
+		if effortPinned() {
+			preferred = "max"
+		}
 		kimiDegraded.Store(degraded)
 		if sec, err := edit.GetTOMLTable(path, "secondary_model"); err == nil && sec["default_effort"] != "" {
 			kimiHeld.Store(noticeKimiSectionEffort.say("effort", sec["default_effort"]))

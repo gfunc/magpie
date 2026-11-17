@@ -2090,6 +2090,12 @@ func claudeIn(at place) *Agent {
 				}
 				return fmt.Errorf("Claude Code keeps an effort of %s, not %q", strings.Join(claudeEfforts, ", "), v)
 			}
+			// the pin writes the model's own highest level whatever was
+			// picked — Default included, so the pin can't be read as
+			// thinking off; "" (a model with no levels) keeps its own read
+			if p := pinnedEffort(claudeEffortsFor(m)); p != "" {
+				v = p
+			}
 			if err := claudeTakes(m, v); err != nil {
 				return err
 			}
