@@ -290,6 +290,12 @@ func kimiWrote(path string) map[string]map[string]string {
 	return out
 }
 
+// kimiPinCeiling is the effort-pick sentinel that names no level: a table
+// pinned to it takes its own strongest level through kimiDefaultEffort's
+// fall-through, never the sentinel itself (no support_efforts list can
+// contain it, so the contains check always falls to kimiHighestEffort).
+const kimiPinCeiling = "\x00ceiling"
+
 // kimiDefaultEffort is the default_effort magpie writes in one of its
 // model tables: the whole selection rule, pure. want is the Agents-page
 // pick: offered by the model as it stands, else the model's highest level
@@ -438,10 +444,12 @@ func kimiIn(at place) *Agent {
 			}
 		}
 		// the pin beats the pick: asked as "max", every model gets its own
-		// max where it offers one and its strongest level where it doesn't
-		// (kimiDefaultEffort's clamp), which is the pin's ask
+		// the model's strongest level everywhere: a want no table offers
+		// falls through kimiDefaultEffort's contains to kimiHighestEffort,
+		// each table's own ceiling (ultra past max included), and the
+		// none-rankable tables keep the vendor/high fallback
 		if effortPinned() {
-			preferred = "max"
+			preferred = kimiPinCeiling
 		}
 		kimiDegraded.Store(degraded)
 		if sec, err := edit.GetTOMLTable(path, "secondary_model"); err == nil && sec["default_effort"] != "" {

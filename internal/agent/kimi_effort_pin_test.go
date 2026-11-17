@@ -4,7 +4,9 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/yetone/magpie/internal/catalog"
 	"github.com/yetone/magpie/internal/edit"
+	"github.com/yetone/magpie/internal/provider"
 )
 
 // The effort pin (settings' EffortPin, "highest") is the fork's ask that
@@ -59,5 +61,43 @@ func TestKimiEffortPinWritesTheHighest(t *testing.T) {
 	// own control); only the tables' defaults are pinned
 	if v, _ := edit.GetTOMLTable(path, "thinking"); v["effort"] != "high" {
 		t.Fatalf("the pick was not kept as picked: %v", v)
+	}
+}
+
+// The pin writes each table's own ceiling, not max literally: gpt-6.1-sol
+// offers ultra past max and must land there (the live config's four
+// ultra-topped tables sat at max with the literal pin).
+func TestKimiEffortPinTakesEachTablesOwnCeiling(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
+	t.Setenv("XDG_CACHE_HOME", filepath.Join(home, ".cache"))
+	t.Setenv("KIMI_SHARE_DIR", "")
+	t.Setenv("KIMI_CODE_HOME", "")
+	if err := provider.Save(provider.Provider{ID: "think", Name: "Think", Chat: "https://example.test/v1", Key: "k", Models: []string{"sol"}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := catalog.SaveLive("think", "https://example.test/v1", []catalog.Model{
+		{ID: "sol", Efforts: []string{"low", "high", "max", "ultra"}, DefaultEffort: "high"},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	pinOn(t)
+	path := filepath.Join(home, ".kimi-code", "config.toml")
+	writeFile(t, path, "")
+	a := kimi(home)
+	if err := a.Connect(); err != nil {
+		t.Fatal(err)
+	}
+	ms := readKimiTOML(t, path)["models"].(map[string]any)
+	var e any
+	for _, v := range ms {
+		if m, ok := v.(map[string]any); ok {
+			e = m["default_effort"]
+		}
+	}
+	if e != "ultra" {
+		t.Fatalf("default_effort %v, want the table's own ceiling ultra", e)
 	}
 }
