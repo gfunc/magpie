@@ -246,6 +246,7 @@ func TestRefusedValueWritesNothing(t *testing.T) {
 		"updateSource":    `"cloudflare"`,
 		"registryBuckets": `[]`,      // every wire off while the groups are off
 		"registryEffort":  `"ultra"`, // not one of the five levels
+		"effortPin":       `"top"`,   // not the pin's one value
 	} {
 		cur := settings.Load()
 		body, err := Body(cur, key, json.RawMessage(value))
@@ -522,5 +523,36 @@ func TestImageGenAcceptsMiniMaxImageModel(t *testing.T) {
 	body, _ := json.Marshal(map[string]any{"imageGen": "minimax-cn/nothing"})
 	if _, err := Merge(body, settings.Settings{}, true); err == nil {
 		t.Error("a model it doesn't draw was taken")
+	}
+}
+
+// The effort pin (effortPin) is saved as its one value or "", and a save
+// from a page that doesn't send it (any page from before it existed)
+// keeps what the user set.
+func TestEffortPinSavedAndKept(t *testing.T) {
+	home(t)
+	set := func(body string) settings.Settings {
+		t.Helper()
+		if _, _, err := Apply([]byte(body), false); err != nil {
+			t.Fatalf("%s: %v", body, err)
+		}
+		return settings.Load()
+	}
+	if got := set(`{"effortPin":"highest"}`); got.EffortPin != settings.EffortPinHighest {
+		t.Fatalf("highest saved as %q", got.EffortPin)
+	}
+	if got := set(`{"effortPin":"HIGHEST"}`); got.EffortPin != settings.EffortPinHighest {
+		t.Fatalf("HIGHEST saved as %q", got.EffortPin)
+	}
+	// a save that doesn't send it keeps it, as any page from before it
+	// existed does
+	if _, _, err := Apply([]byte(`{"theme":"dark"}`), false); err != nil {
+		t.Fatal(err)
+	}
+	if got := settings.Load(); got.EffortPin != settings.EffortPinHighest || got.Theme != "dark" {
+		t.Fatalf("a save without effortPin changed it: %q theme %q", got.EffortPin, got.Theme)
+	}
+	if got := set(`{"effortPin":""}`); got.EffortPin != "" {
+		t.Fatalf("empty saved as %q", got.EffortPin)
 	}
 }

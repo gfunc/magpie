@@ -52,6 +52,9 @@ var Keys = []string{
 	// models: replies, vision, images, search
 	"replyModel", "noLoopGuard", "claudeLeanPrompt", "claudeNoExtraUsage", "claudePrintMode", "refusalRetries", "retryAfterCap",
 	"vision", "visionEffort", "imageGen", "videoGen", "imageTimeout", "classifyTimeout",
+	// and whether every model an agent runs is pinned to its highest
+	// thinking level while the agent is on magpie (effortPin)
+	"effortPin",
 	// what every routing group does that says nothing of its own
 	"groupSink", "groupFirstToken", "groupPatience",
 	"searcher", "searcherThen", "searcherEffort", "searchFirst", "fetch",
@@ -78,6 +81,7 @@ var Choices = map[string][]string{
 	"updateSource":   {settings.UpdateSourceSite, settings.UpdateSourceGitHub},
 	"updateEvery":    ints(settings.UpdateEveries),
 	"searchFirst":    {settings.SearchFirstModel, settings.SearchFirstAPI},
+	"effortPin":      {settings.EffortPinHighest},
 	"replyModel":     settings.ReplyModels,
 	"registryEffort": settings.RegistryEfforts,
 }
@@ -292,9 +296,12 @@ func Merge(body []byte, cur settings.Settings, web bool) (settings.Settings, err
 	// thinking effort its models take by default, the protocol wires it
 	// carries, whether its routing groups ride it and whether the config
 	// rides sync. A page from before the section exists doesn't send
-	// them, and keeps the user's own.
+	// them, and keeps the user's own — as it does the effort pin.
 	if _, sent := fields["registryOn"]; !sent {
 		in.RegistryOn = cur.RegistryOn
+	}
+	if _, sent := fields["effortPin"]; !sent {
+		in.EffortPin = cur.EffortPin
 	}
 	if _, sent := fields["registryEffort"]; !sent {
 		in.RegistryEffort = cur.RegistryEffort

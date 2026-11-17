@@ -249,3 +249,42 @@ func TestRegistryCopyAndStrip(t *testing.T) {
 		t.Fatalf("an on machine's bundle lost the registry: %+v", keep)
 	}
 }
+
+// EffortPin takes "highest" or "", and a value outside them is refused
+// with the file kept as it was (HIGH included: it is not folded to the
+// pin's word).
+func TestEffortPinValues(t *testing.T) {
+	t.Setenv("XDG_CONFIG_HOME", t.TempDir())
+	if err := os.MkdirAll(Dir(), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(Path(), []byte(`{"theme":"dark"}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	for _, v := range []string{"highest", ""} {
+		s := Load()
+		s.EffortPin = v
+		if err := Save(s); err != nil {
+			t.Fatalf("%q: %v", v, err)
+		}
+		if got := Load().EffortPin; got != v {
+			t.Fatalf("%q round-tripped as %q", v, got)
+		}
+	}
+	// the save that set "highest" rewrote the file; a refused one after it
+	// leaves those bytes alone
+	highest, err := os.ReadFile(Path())
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, v := range []string{"top", "max", "HIGH"} {
+		s := Load()
+		s.EffortPin = v
+		if err := Save(s); err == nil {
+			t.Fatalf("%q was accepted", v)
+		}
+		if after, _ := os.ReadFile(Path()); !bytes.Equal(after, highest) {
+			t.Errorf("a refused pin changed the file: %s", after)
+		}
+	}
+}

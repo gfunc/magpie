@@ -1128,6 +1128,14 @@ type Settings struct {
 	// carry one (Cursor Private Inference, #1003): one of the levels in
 	// provider.MemberEfforts.
 	AgentEfforts map[string]string `json:"agentEfforts,omitempty"`
+	// EffortPin is that every model an agent runs, while magpie has taken
+	// the agent over, starts at its own highest thinking level whatever the
+	// agent or the user picked: "highest" for that, "" for each agent's
+	// pick to stand (agent.effortPinned). The write paths are the takeover
+	// ones alone — a model picked on the Agents page and a level set by
+	// hand in the agent's own file both land at the model's highest while
+	// it is on — so it is a fork setting, off by default.
+	EffortPin string `json:"effortPin,omitempty"`
 	// OrderedModels is the order an agent's lists put its models in, by
 	// agent id and then entry id, as the user dragged them on the Agents
 	// page (Codex's, #855): the ones named first, any other after them.
@@ -1733,6 +1741,10 @@ const (
 	SearchFirstModel = "model"
 	SearchFirstAPI   = "api"
 )
+
+// EffortPin's one value beside "": every model an agent runs starts at its
+// own highest thinking level while magpie has taken the agent over.
+const EffortPinHighest = "highest"
 
 // DefaultTextSize is the text size of settings that have never had one
 // saved. Windows' and Linux's body text is 14px against magpie's 13px at
@@ -2916,11 +2928,16 @@ func saveOwn(s Settings, recording, reads bool) error {
 			return fmt.Errorf("a model's reasoning must be one of %s, or empty for the default, not %q", strings.Join(catalog.EffortRank, ", "), *e)
 		}
 	}
-	if s.SearchFirst = strings.TrimSpace(s.SearchFirst); s.SearchFirst == SearchFirstModel {
+	s.SearchFirst = strings.TrimSpace(s.SearchFirst)
+	if s.SearchFirst == SearchFirstModel {
 		s.SearchFirst = ""
 	}
 	if s.SearchFirst != "" && s.SearchFirst != SearchFirstAPI {
 		return fmt.Errorf("web search must go first to %q or %q, not %q", SearchFirstModel, SearchFirstAPI, s.SearchFirst)
+	}
+	s.EffortPin = strings.ToLower(strings.TrimSpace(s.EffortPin))
+	if s.EffortPin != "" && s.EffortPin != EffortPinHighest {
+		return fmt.Errorf("an agent's thinking effort is pinned to %q or empty for each agent's own pick, not %q", EffortPinHighest, s.EffortPin)
 	}
 	s.ImageGen = strings.TrimSpace(s.ImageGen)
 	if s.ImageGen != "" && s.ImageGen != "off" && !strings.Contains(s.ImageGen, "/") {
