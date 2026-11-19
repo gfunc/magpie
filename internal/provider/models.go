@@ -1332,14 +1332,31 @@ func (p Provider) PlanRerankers() []catalog.Model {
 	return p.planMedia(func(r *Region) []string { return r.Rerankers }, false, false, catalog.ServesRerank)
 }
 
-// PlanRetrieval are the preset's models of kind's (catalog.ServesEmbedding
-// or ServesRerank), or both for "".
+// PlanSpeakers are the text-to-speech models the preset names, served on
+// /v1/audio/speech.
+func (p Provider) PlanSpeakers() []catalog.Model {
+	return p.planMedia(func(r *Region) []string { return r.Speakers }, false, false, catalog.ServesSpeech)
+}
+
+// PlanTranscribers are the speech-to-text models the preset names, served
+// on /v1/audio/transcriptions.
+func (p Provider) PlanTranscribers() []catalog.Model {
+	return p.planMedia(func(r *Region) []string { return r.Transcribers }, false, false, catalog.ServesTranscription)
+}
+
+// PlanRetrieval are the preset's models of kind's (catalog.ServesEmbedding,
+// ServesRerank, ServesSpeech or ServesTranscription), or its embedding and
+// rerank models for "".
 func (p Provider) PlanRetrieval(kind string) []catalog.Model {
 	switch kind {
 	case catalog.ServesEmbedding:
 		return p.PlanEmbeddings()
 	case catalog.ServesRerank:
 		return p.PlanRerankers()
+	case catalog.ServesSpeech:
+		return p.PlanSpeakers()
+	case catalog.ServesTranscription:
+		return p.PlanTranscribers()
 	case "":
 		return append(p.PlanEmbeddings(), p.PlanRerankers()...)
 	}
@@ -1364,7 +1381,8 @@ func (p Provider) planMedia(ids func(*Region) []string, draws, films bool, serve
 		return nil
 	}
 	// a preset with no regions names its own (Voyage AI's)
-	own := &Region{Embeddings: pr.Embeddings, Rerankers: pr.Rerankers}
+	own := &Region{Embeddings: pr.Embeddings, Rerankers: pr.Rerankers, Drawers: pr.Drawers, Videos: pr.Videos,
+		Speakers: pr.Speakers, Transcribers: pr.Transcribers}
 	// keys on plans of their own (KeyAccount.Plan): each plan's, once
 	views := []Provider{p}
 	if p.plansMixed() {
@@ -3274,10 +3292,47 @@ func pricedNamesTo(dst []string, model string) []string {
 	if base, ok := effortBase(l); ok {
 		out = append(out, base)
 	}
+	if base, ok := geminiTrialBase(l); ok {
+		out = append(out, base)
+		if b, ok := effortBase(base); ok {
+			out = append(out, b)
+		}
+	}
 	if m, ok := antigravityRole(l); ok {
 		out = append(out, m)
 	}
 	return out
+}
+
+// geminiTrialBase is the Gemini model the lower-cased id l is the trial
+// access of (ownsh1p on X: Usage showed gemini-4-argon-trial with tokens and
+// no cost): the id without its -trial, at an effort after it too
+// (gemini-4-argon-trial-high). Google's Antigravity models page
+// (https://antigravity.google/docs/models/, read 2026-11-16) gives Gemini 4
+// Argon to "paid Google AI Pro plans or on trial with eligible premium
+// devices": the same model, reached on a trial, so its calls are estimated
+// at the model's list price as a paid plan's are. Only a gemini- id: a
+// -trial of another vendor's (ZCode's glm-5.3-trial, grok-4.7-trial) is
+// that vendor's own offer and keeps no price it doesn't list.
+func geminiTrialBase(l string) (string, bool) {
+	if !strings.Contains(l, "-trial") {
+		return "", false // every model of every provider's list is priced on each poll
+	}
+	last := l[strings.LastIndexByte(l, '/')+1:]
+	if !strings.HasPrefix(last, "gemini-") {
+		return "", false
+	}
+	if base, ok := strings.CutSuffix(l, "-trial"); ok {
+		return base, true
+	}
+	i := strings.LastIndexByte(l, '-')
+	switch l[i+1:] {
+	case "minimal", "low", "medium", "high", "xhigh":
+		if base, ok := strings.CutSuffix(l[:i], "-trial"); ok {
+			return base + l[i:], true
+		}
+	}
+	return "", false
 }
 
 // antigravityRoles are the ids Antigravity's Orchestrator mode records its
@@ -3291,11 +3346,17 @@ func pricedNamesTo(dst []string, model string) []string {
 // with no cost). gemini-pro-orchestrator is Orchestrator (Carbon)'s id
 // before Argon's came (MODEL_PLACEHOLDER_M667 in the Antigravity Context
 // Window Monitor extension 1.17.1, beside M681 for -argon and the shared
-// worker M669). Only these ids: no other name is read as one of them.
+// worker M669). The agy CLI names Orchestrator (Argon)
+// gemini-pro-orchestrator-g1-pro (`agy models` on a Google AI Pro account,
+// agy 1.5.9, in the agy-cli plugin's test/usage.mjs; mu33410 on X: agy's
+// Orchestrator had no cost) and Orchestrator (Carbon)
+// gemini-pro-orchestrator, as the app did before Argon. Only these ids: no
+// other name is read as one of them.
 var antigravityRoles = map[string]string{
 	"gemini-pro-orchestrator":        "gemini-4-carbon",
 	"gemini-pro-orchestrator-carbon": "gemini-4-carbon",
 	"gemini-pro-orchestrator-argon":  "gemini-4-argon",
+	"gemini-pro-orchestrator-g1-pro": "gemini-4-argon",
 	"gemini-flash-worker-agy":        "gemini-4-hydrogen",
 }
 

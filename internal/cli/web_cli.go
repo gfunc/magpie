@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/yetone/magpie/internal/agent"
 	"github.com/yetone/magpie/internal/daemon"
 	"github.com/yetone/magpie/internal/gateway"
 	"github.com/yetone/magpie/internal/gui"
@@ -87,6 +88,7 @@ func webCmd(args []string) error {
 	if err != nil {
 		return err
 	}
+	defer stopGatewayOnSignal(w.Close)()
 	if !w.ServesGateway() {
 		// another magpie has the gateway (the service, magpie serve, the
 		// app): this page shows its settings and accounts, read from the
@@ -241,10 +243,13 @@ func serveCmd(args []string) error {
 		return serve()
 	}
 	go stats.Run(version, "serve")
+	// the models a Remote magpie's agents are on, as the app follows them
+	go agent.KeepFollowingRemote(context.Background(), 30*time.Second)
 	w, err := gui.StartWeb(web, version)
 	if err != nil {
 		return err
 	}
+	defer stopGatewayOnSignal(w.Close)()
 	public := advertisedURL()
 	fmt.Println(green.Render("●"), "magpie gateway on", bold.Render(gateway.URL()))
 	fmt.Println(muted.Render("  OpenAI  "), public+"/v1/chat/completions", muted.Render("·"), public+"/v1/responses")

@@ -137,7 +137,7 @@ func Installed() bool {
 
 // ErrNotInstalled is what a request gets when the model is on in the
 // settings and isn't on disk (magpie's cache was cleared).
-var ErrNotInstalled = errors.New("the local masking model isn't downloaded; download it again in Settings → Privacy, or turn it off")
+var ErrNotInstalled = errors.New("the local masking model isn't downloaded; download it again in Settings › Privacy, or turn it off")
 
 // Status is what Settings → Privacy shows of the model.
 type Status struct {
@@ -176,6 +176,9 @@ type Status struct {
 	// in Go and translated, several times slower than in Apple silicon's
 	// build, which has CoreML too
 	Rosetta bool `json:"rosetta,omitempty"`
+	// Emulated: AstrLink Guard runs in an x64 magpie under Windows on
+	// Arm's emulation, translated as under Rosetta
+	Emulated bool `json:"emulated,omitempty"`
 }
 
 // Now is the model's status.

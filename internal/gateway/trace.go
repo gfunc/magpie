@@ -147,7 +147,7 @@ type Route struct {
 	// counts: streamed replies only (#196)
 	TTFT      int64 `json:"ttft,omitempty"`
 	FirstText int64 `json:"firstText,omitempty"`
-	// FirstReasoning is the start of paced visible reasoning, absent for hidden reasoning.
+	// FirstReasoning: ms to the reply's first sign of reasoning, streamed or sealed (a reasoning delta, a reasoning item's or thinking block's start); 0 for none.
 	FirstReasoning  int64 `json:"firstReasoning,omitempty"`
 	ReasoningHidden bool  `json:"reasoningHidden,omitempty"`
 	// Flow: the ms its content took to come (Call.Flow)
@@ -517,7 +517,7 @@ type Try struct {
 	// (claude_entry.go). "" for a try that ran no Claude Code.
 	Entry    string `json:"entry,omitempty"`
 	EntryWhy string `json:"entryWhy,omitempty"`
-	// FirstReasoning is the start of paced visible reasoning, absent for hidden reasoning.
+	// FirstReasoning: ms to the reply's first sign of reasoning, streamed or sealed (a reasoning delta, a reasoning item's or thinking block's start); 0 for none.
 	FirstReasoning  int64 `json:"firstReasoning,omitempty"`
 	ReasoningHidden bool  `json:"reasoningHidden,omitempty"`
 	// Flow: the ms its content took to come (Call.Flow)
@@ -1172,9 +1172,11 @@ func swapped(sent, served string) bool { return usage.Swapped(sent, served) }
 // request's metadata. Unknown token counts have no price, including failures.
 // What the reply counted of earlier requests (Deferred) is priced as a tier
 // of its own before the request's, which stays last: the prompt is read
-// from the last (promptCounted), and is the request's own.
+// from the last (promptCounted), and is the request's own. So are the
+// calls its advisor made at the vendor, under the advisor's model
+// (advisorRouteUsage, #6977).
 func routeUsage(id, model string, u Usage) []RouteUsage {
-	var out []RouteUsage
+	out := advisorRouteUsage(id, u)
 	if d := u.Deferred; d != nil && d.Input+d.Output+d.CacheRead+d.CacheWrite > 0 {
 		out = append(out, RouteUsage{Provider: id, Model: model, Input: d.Input, Output: d.Output,
 			CacheRead: d.CacheRead, CacheWrite: d.CacheWrite, Reasoning: d.Reasoning})

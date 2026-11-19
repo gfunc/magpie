@@ -741,7 +741,47 @@ func restrictedRefused(p provider.Provider, status int, body []byte) bool {
 	if restrictedSaid(status, body) {
 		return true
 	}
-	return isWorkBuddy(p) && provider.WBRestricted(status, wordsOf(body)) || googleSuspended(p, status, body)
+	return isWorkBuddy(p) && provider.WBRestricted(status, wordsOf(body)) || googleSuspended(p, status, body) || claudeAccountOff(p, status, body)
+}
+
+// claudeOffWords are Anthropic's, and Claude Code's, words for an account
+// that can serve nothing more: its organization disabled ("API Error: 400
+// {"type":"error","error":{"type":"invalid_request_error","message":"This
+// organization has been disabled."}}", Claude Code's errors page; the
+// same as a 403 permission_error), the claude.ai account put on hold
+// ("Your account is on hold and can't use Claude Code. View details or
+// appeal: https://claude.ai/restricted", account_on_hold), and an
+// organization that turned off Claude subscription sign-in for Claude
+// Code (oauth_org_not_allowed; the API's "OAuth authentication is
+// currently not allowed for this organization."), and a flagged account's
+// "Your account can't receive replies from Claude right now" (Claude's
+// apps show it as 「您的账户暂时无法接收 Claude 的回复」; RiverOnVenus on X
+// got 403s in a group with it; the English words are from a user's report,
+// not Anthropic's docs). Either apostrophe, or "cannot". None is about the
+// model or what was asked: the same request is served by another account.
+var claudeOffWords = lazyre.New(`(?i)this organization has been disabled|account is on hold and can(?:'|\x{2019}|no)t use Claude|organization has disabled Claude subscription access|OAuth authentication is currently not allowed for this organization|account can(?:'|\x{2019}|no)t receive (?:replies|responses) from Claude`)
+
+// claudeAccountOff says Anthropic turned p, a Claude subscription account
+// or a key on Anthropic's own API, off (claudeOffWords). Read as any
+// failure, a disabled account answered 400 and its group stopped there,
+// its next members never asked (Ramon317317 on X: a Claude account
+// flagged mid-use, and the group didn't move on); now it rests as one its
+// vendor restricted, until an appeal, and the request goes on to the
+// next member and the provider's other accounts (riskRefused leaves them
+// in). A relay's same words are about the relay's own account behind it,
+// and its other keys may still answer: read as any failure there.
+func claudeAccountOff(p provider.Provider, status int, body []byte) bool {
+	if status < 400 || status >= 500 {
+		return false
+	}
+	if a := p.Account; a != nil {
+		if a.Agent != "claude" {
+			return false
+		}
+	} else if provider.HostOf(p.Base(provider.Anthropic)) != "api.anthropic.com" {
+		return false
+	}
+	return claudeOffWords.Match(wordsOf(body))
 }
 
 // googleToS is Google's 403 PERMISSION_DENIED for a Code Assist account it
@@ -1275,8 +1315,12 @@ var resetsInWords = lazyre.New(`(?i)\bresets? in (?:(\d+)\s*d(?:ays?)?\b\s*)?(?:
 // will reset after 3h19m30s." Unread, the account rested the quarter of
 // an hour of a quota that says nothing, and the account first in order
 // was asked again, and refused, every 15 minutes for the hours or days
-// its quota was out (Dani Ariyanto on Discord, 10-24).
-var quotaResetAfter = lazyre.New(`(?i)\bquota will reset after ((?:\d+h)?(?:\d+m)?(?:\d+(?:\.\d+)?s)?)`)
+// its quota was out (Dani Ariyanto on Discord, 10-24). agy's own notice
+// for an account's quota used up says it the same way: "Individual quota
+// reached. Please upgrade your subscription to increase your limits.
+// Resets in 1h18m40s." (@Airan_FS on X, through the agy-cli plugin), which
+// resetsInWords can't read, as no word ends after its "h".
+var quotaResetAfter = lazyre.New(`(?i)\b(?:quota will reset after|individual quota reached\b[^\n]{0,160}?\bresets in) ((?:\d+h)?(?:\d+m)?(?:\d+(?:\.\d+)?s)?)`)
 
 // resetsAfter is how long the refusal says until it is back
 // (resetsInWords, quotaResetAfter, soonWords), held to longestWritten. Zero when it
@@ -1834,8 +1878,9 @@ func (s *Server) restAfterMarked(c candidate, status int, header http.Header, bo
 	if zcodeTrialRestricted(c, why) {
 		id = c.restID()
 	}
-	// a relay's 429 that names the model whose credentials cooled down, or a
-	// vendor's that names the model it limits (modelNamed), is
+	// a relay's 429 that names the model whose credentials cooled down, a
+	// vendor's that names the model it limits (modelNamed), or
+	// Antigravity's for the model's pool (antigravityPoolSpent), is
 	// that model's: its siblings on the same key still answer upstream,
 	// and the model's own sentence rests with the model, not on every
 	// sibling's refusal (#3039)
@@ -1937,10 +1982,34 @@ func modelCooledDown(why string, body []byte) bool {
 
 // modelLimited says a refusal for want of quota, credit or rate is the
 // model's own, not the key's or account's: a relay's pooled credentials of
-// the model cooled down (modelCooledDown), or the vendor's words name the
-// model it limited (modelNamed).
+// the model cooled down (modelCooledDown), the vendor's words name the
+// model it limited (modelNamed), or Antigravity's quota of the model's
+// pool is used up (antigravityPoolSpent).
 func modelLimited(c candidate, why string, body []byte) bool {
-	return modelCooledDown(why, body) || modelNamed(c, why, body)
+	return modelCooledDown(why, body) || modelNamed(c, why, body) || antigravityPoolSpent(c, why, body)
+}
+
+// antigravityPoolQuota is Antigravity's refusal of a model whose quota pool
+// is used up, in agy's words ("Individual quota reached. Please upgrade
+// your subscription to increase your limits. Resets in 1h18m40s.", which
+// the agy-cli plugin relays) or Code Assist's ("You have exhausted your
+// capacity on this model. Your quota will reset after 3h19m30s.").
+var antigravityPoolQuota = lazyre.New(`(?i)\bindividual quota reached\b|\bexhausted your capacity on this model\b`)
+
+// antigravityPoolSpent says a quota refusal is Antigravity's for the
+// model's pool, not the account's: Google counts an Antigravity account's
+// quota per pool of models (Claude and GPT in one, Gemini's apart), and
+// has no allowance of the whole account to run out. It rests the model,
+// so the account's other pools are still asked. BruceLu73129013 on X
+// (agy-cli 0.1.87): Opus used up rested the account, and Gemini 4 Carbon,
+// its quota left, was answered the same 429 from the rest (timedHeld).
+// The retired built-in's readings told the pools apart (Pooled); agy-cli's
+// windows are display only (aside), so routing has no reading to narrow
+// the rest by, and the refusal's own words are what tell it. Only a
+// Google sign-in's (googleSignIn): another vendor's "individual quota
+// reached" says nothing of pools, and rests what it always did.
+func antigravityPoolSpent(c candidate, why string, body []byte) bool {
+	return c.model != "" && (why == failQuota || why == failRate) && googleSignIn(c.p) && antigravityPoolQuota.Match(wordsOf(body))
 }
 
 // modelLimitedBy is modelLimited, and a Claude account's plain rate limit
