@@ -4,9 +4,14 @@ import (
 	"context"
 	"net/url"
 	"slices"
+	"strings"
 
 	"github.com/yetone/magpie/internal/catalog"
 )
+
+// remoteCodexList is where another magpie lists its models in Codex's
+// shape, after its /v1: the gateway's CodexCatalogPath (#1281).
+const remoteCodexList = "/codex/models"
 
 // codexEntries are ms, the models a provider the user added by its address
 // lists at its Responses base, with the entry each has in Codex's own shape
@@ -28,13 +33,29 @@ import (
 // models (#904); one read that is a plain list says the vendor gives none.
 // Only a single-protocol provider makes that second request. A provider
 // with several protocols keeps the shared list to one request.
+//
+// Another magpie is asked for the list it hands a Codex on another
+// computer (remoteCodexList), where a ChatGPT account it holds has its
+// models as the backend lists them (codex/<slug>, base_instructions,
+// model_messages, tools and tiers), and every other model as that magpie
+// describes it to its own Codex. Without it this magpie made an entry of
+// its own for each of them, as for any third party's model, and a Codex
+// here was handed a remote ChatGPT account's GPT models with none of what
+// Codex's own catalog says of them (Darkf1ames on X).
 func (p Provider) codexEntries(ctx context.Context, list string, ms []catalog.Model) []catalog.Model {
-	if p.Preset != "" || p.Account != nil || slices.ContainsFunc(ms, func(m catalog.Model) bool { return len(m.Codex) > 0 }) {
+	if p.Preset != "" && !p.IsRemoteMagpie() || p.Account != nil || slices.ContainsFunc(ms, func(m catalog.Model) bool { return len(m.Codex) > 0 }) {
 		return ms
 	}
 	u, err := url.Parse(list)
 	if err != nil {
 		return ms
+	}
+	if p.IsRemoteMagpie() {
+		path, ok := strings.CutSuffix(u.Path, "/models")
+		if !ok {
+			return ms
+		}
+		u.Path = path + remoteCodexList
 	}
 	q := u.Query()
 	q.Set("client_version", codexVersion())
