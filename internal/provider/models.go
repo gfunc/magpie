@@ -1031,9 +1031,7 @@ func (p Provider) fetchOne(ctx context.Context) (fetched, error) {
 		}
 		sides = append(sides, saved...)
 	}
-	if codexAt != "" && len(p.Speaks()) == 1 {
-		// Codex's richer list is a second request, so only a single-protocol
-		// provider may make it. A shared base stays one request.
+	if codexAt != "" {
 		out = p.codexEntries(ctx, codexAt, out)
 	}
 	// the image models its list leaves out (AIHubMix's gpt-image-2)
