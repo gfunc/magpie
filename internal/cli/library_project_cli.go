@@ -36,6 +36,13 @@ const libraryProjectUsage = `magpie library project [--json]      the projects (
                                      .claude/settings.local.json and .codex/hooks.json beside what's there
   magpie library project hook rm <dir> <hook…>   take them out, only the entries magpie wrote
   magpie library project hook agents <dir> <hook> <a,b…|none>   the agents it has the hook for
+  magpie library project plugin [list] <dir> [--json]   the library's plugins and Claude Code's own, and which are on
+  magpie library project plugin on <dir> <plugin…> [agents=a,b…]   turn plugins on in it: a library plugin's parts go
+                                     where its agents read the project's own (by default the agents its plugins are
+                                     for already, or every agent here that reads one); a plugin Claude Code installed
+                                     (name@marketplace, or its name alone when only one has it) is turned on in
+                                     .claude/settings.local.json, for this project alone
+  magpie library project plugin off <dir> <plugin…>   turn them off: only what magpie wrote for them comes out
   magpie library project pi [list] <dir> [--json]   its packages for Pi (.pi/settings.json) and the project's own
   magpie library project pi add|on <dir> <source…>   give it packages for Pi: npm:<name>[@version] or a git source; Pi
                                      installs them when it next starts there
@@ -47,6 +54,10 @@ const libraryProjectUsage = `magpie library project [--json]      the projects (
                                      magpie's two marker lines, into the project file each agent reads: by default for
                                      the agents the shared instructions are on for, else every agent here that reads one
   magpie library project instructions <dir> agents <a,b…|none>   the agents whose project file they're written into
+  magpie library project export <dir> [file]   what the project has, and the hooks, subagents and sources that
+                                     takes, as JSON (to the file, or printed): no key, sign-in or other project
+  magpie library project apply <file|-> <dir>   give a folder (made a project) what an export has: added to what
+                                     it has already, so again changes nothing; what this library lacks is named
                                      <dir> may be relative, or "." for the folder you're in. A skill that couldn't be
                                      placed (a folder there that isn't magpie's is left as it is) is named, and the
                                      command exits with status 1.
@@ -154,10 +165,16 @@ func libraryProjectCmd(args []string) error {
 		return projectKindCmd(projectSubagents, rest, usage)
 	case "hook":
 		return projectKindCmd(projectHooks, rest, usage)
+	case "plugin", "plugins":
+		return projectPluginCmd(rest, usage)
 	case "pi":
 		return projectPiCmd(rest, usage)
 	case "instructions", "instr":
 		return projectInstrCmd(rest, usage)
+	case "export":
+		return projectExportCmd(rest, usage)
+	case "apply", "import":
+		return projectApplyCmd(rest, usage)
 	}
 	return fmt.Errorf("no library project command %q\n  %s", args[0], libraryProjectUsage)
 }

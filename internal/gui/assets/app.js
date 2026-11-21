@@ -3903,7 +3903,9 @@ function openAgentMenu(anchor, a, inFold, at) {
   // coolmantou, lileo0668
   // Codex's desktop app, by the setting Open Codex with (Yink88564391 on
   // X): in the menu, not on the row, so the row lines up with the others
-  const app = a.openApp && mode != "panel" && !web, o = a.terminal && mode != "panel" && !web, term = [...app ? [{ name: "Open the Codex app", icon: LAUNCH_GLYPH, sep: !0, run: () => api("agents/open", { agent: a.id }).catch(statusErr) }] : [], ...o ? [{ name: "Open in terminal", icon: LAUNCH_GLYPH, sep: !app, run: () => api("agents/open", { agent: a.id, terminal: !0 }).catch(statusErr) }] : [], ...a.command ? [{ name: "Copy launch command", icon: COPY_ICON, sep: !o && !app, run: () => copy(a.command, t("Launch command")) }] : []];
+  const app = a.openApp && mode != "panel" && !web, o = a.terminal && mode != "panel" && !web, term = [...app ? [{ name: "Open the Codex app", icon: LAUNCH_GLYPH, sep: !0, run: () => api("agents/open", { agent: a.id }).catch(statusErr) }] : [], ...o ? [{ name: "Open in terminal", icon: LAUNCH_GLYPH, sep: !app, run: () => api("agents/open", { agent: a.id, terminal: !0 }).catch(statusErr) }] : [], ...a.command ? [{ name: "Copy launch command", icon: COPY_ICON, sep: !o && !app, run: () => copy(a.command, t("Launch command")) }] : [],
+    // its whole file at hand, as CC Switch has it (InkCoalW on X)
+    ...a.path && mode != "panel" && !web ? [{ name: "Show settings file", icon: "M4.5 2.5h5l2.5 2.5v8.5h-7.5zM9.5 2.5V5H12", run: () => api("agents/reveal", { agent: a.id }).catch(statusErr) }] : []];
   const acts = inFold && isHidden(a)
     ? [{ name: "Show", icon: EYE, run: () => setAgentHidden(a, false) }]
     : inFold
@@ -4051,6 +4053,14 @@ const SUB_MODEL_UNSET_PLAIN = "The lead picks each subagent's model, or the lead
 const SUB_MODEL_LEAD = "Every subagent runs on the lead's model ({model}), even when the lead names another. Lead's pick lets the lead choose again.";
 const SUB_MODEL_LEAD_PLAIN = "Every subagent runs on the lead's model, even when the lead names another. Lead's pick lets the lead choose again.";
 const SUB_MODEL_SET = "Every subagent runs on this model, even when the lead names another. Lead's pick lets the lead choose again.";
+// Claude Desktop's subagent model unset: its Code tab's lead names a tier
+// in the Agent call (Claude Code 2.1.327 takes opus, sonnet, haiku or
+// fable there, nothing else), and the subagent runs on that tier's model
+// (@mathfournity on X: a model set here held every subagent to it, and
+// "Default" didn't say the lead chooses)
+const DESKTOP_SUB_UNSET = "The lead names opus, sonnet, haiku or fable for each subagent, which runs on that tier's model in Tiers. A model picked here runs every subagent.";
+const DESKTOP_SUB_NOTE = "the tier the lead names, on its model in Tiers";
+const deskSub = (a, f) => a.id === "claude-desktop" && f.label === SUB_MODEL;
 const SUB_MODEL_OLD = "Codex's config still starts subagents on {model} when the lead names none; picking here replaces it.";
 // codexSubSaid: the subagent model's name, what it does
 function codexSubSaid(a, f) {
@@ -4091,7 +4101,7 @@ const MEMORIES_DEFAULT = "Codex's own memory models, or the session's magpie mod
 const SAME_SESSION = "Same as the session";
 function extraField(a, f) {
   if (toggled(f)) return fieldToggle(a, f);
-  const said = f.label === SUB_MODEL && codexSub(a) ? codexSubSaid(a, f) : null;
+  const said = f.label === SUB_MODEL && codexSub(a) ? codexSubSaid(a, f) : deskSub(a, f) ? { name: f.value ? optionFor(f, f.value)?.label || f.value : t(LEADS_PICK), line: t(f.value ? SUB_MODEL_SET : DESKTOP_SUB_UNSET) } : null;
   const set = !!(f.value || f.custom || said?.old);
   const b = el("button", "field extra" + (set ? " set" : ""));
   b.append(svg(EXTRA_GLYPH[f.label] || EXTRA_GLYPH.tiers, 13, 1.5));
@@ -4834,6 +4844,14 @@ function toggleFold() {
   filter((o) => o.fold);
 }
 
+// unservedRows: the user's routing groups the field doesn't offer, last in
+// the groups' section with why (field.unserved), so none is gone from the
+// picker without a word (@CHENGJIAHEGOXIS on X: DeepSeek-API-Agents, on
+// on the Routing page, was in no section of Codex's). One the gateway
+// serves, which only the agent's own lists leave out, is picked as any
+// other and put back in them (pick); the rest can't be picked.
+const unservedRows = (f, only) => only ? [] : (f.unserved || []).map((u) => ({ ...u, group: ROUTING_GROUPS, note: t(u.why), unserved: !u.pick }));
+
 // openPicker drops the option list under a field button. `only` narrows the
 // options (the providers page offers one vendor's models at a time).
 function openPicker(agent, field, anchor, ev, only) {
@@ -4846,7 +4864,7 @@ function openPicker(agent, field, anchor, ev, only) {
   // the picker's own choices, routing groups, each provider's, then the
   // agent's own models, which hid magpie's below the fold (abledo)
   const rest = options.filter((o) => !o.reset && o.group !== ROUTING_GROUPS);
-  options = [...options.filter((o) => o.reset), ...options.filter((o) => !o.reset && o.group === ROUTING_GROUPS), ...rest.filter((o) => !o.direct), ...rest.filter((o) => o.direct)];
+  options = [...options.filter((o) => o.reset), ...options.filter((o) => !o.reset && o.group === ROUTING_GROUPS), ...unservedRows(field, only), ...rest.filter((o) => !o.direct), ...rest.filter((o) => o.direct)];
   const effortPicker = !only && (field.key === "effort" || field.label === "effort" || field.label === "thinking" || field.label === SUB_EFFORT || roleLevel(field.label));
   options = oneRowPerModel(options, cur);
   // models of one provider that would read alike say what tells them apart
@@ -4884,6 +4902,8 @@ function openPicker(agent, field, anchor, ev, only) {
     const leadIcon = (main && optionFor(main, main.value)?.icon) || agent.icon;
     options.unshift({ value: "", label: t(LEADS_PICK), note: said.lead ? t("{model} unless the lead names another", { model: said.lead }) : t("the lead's model unless it names another"), icon: leadIcon, reset: true },
       { value: CODEX_SUB_LEAD, label: t(SAME_AS_LEAD), note: said.lead ? t("{model}, for every subagent", { model: said.lead }) : t("the lead's model, for every subagent"), icon: leadIcon, reset: true });
+  } else if (deskSub(agent, field) && !options.some((o) => o.value === "")) {
+    options.unshift({ value: "", label: t(LEADS_PICK), note: t(DESKTOP_SUB_NOTE), icon: agent.icon, reset: true });
   } else if (!only && !field.menu && !field.onPick && !options.some((o) => o.value === "")) {
     // Pi picks the first provider signed in when none is set (#709)
     const note = agent.id === "reasonix" && ["model", "planner"].includes(field.key) ? "restore the previous {field} selection"
@@ -5492,7 +5512,8 @@ function renderList() {
     if (!q && head && head.key !== group) list.append(head.li);
     if (!q) group = head ? head.key : o.group ?? group;
     if (o.fold) { list.append(foldRow(o, idx, hasIcons)); return; }
-    const li = el("li", (idx === pick.cursor ? "sel" : "") + (o.value === pick.field.value || pick.field.picked?.(o.value) ? " cur" : "") + (o.custom ? " custom" : "") + (o.reset ? " reset" : ""));
+    const li = el("li", (idx === pick.cursor ? "sel" : "") + (o.value === pick.field.value || pick.field.picked?.(o.value) ? " cur" : "") + (o.custom ? " custom" : "") + (o.reset ? " reset" : "") + (o.unserved ? " unserved" : ""));
+    if (o.unserved) li.setAttribute("aria-disabled", "true");
     li.dataset.i = idx;
     if (hasIcons) li.append(optionIcon(o));
     const words = el("span", "option-words");
@@ -5521,7 +5542,7 @@ function renderList() {
     if (note) { const n = el("span", "n", note); n.title = note; words.append(n); }
     li.append(words);
     if (o.run) li.title = t(DISCONNECT_TIP, { agent: pick.agent.name });
-    if (pick.modelPicker && o.value && !o.custom && !o.run) {
+    if (pick.modelPicker && o.value && !o.custom && !o.run && !o.why) {
       const star = el("button", "favorite" + (isFavorite(o) ? " on" : ""));
       star.title = isFavorite(o) ? t("Remove from favorites") : t("Add to favorites");
       star.setAttribute("aria-pressed", String(isFavorite(o)));
@@ -5684,6 +5705,7 @@ async function commit(value) {
   if (!pick || value == null) return;
   const { agent, field, anchor, levelNext } = pick;
   const opt = pick.options.find((o) => o.value === value);
+  if (opt?.unserved) return; // a group no provider serves now: its row says why
   if (field.multi && !opt?.run) {
     // a picker that takes several (a group's models, PAMI on Discord)
     // stays open: each pick adds one, or takes it out again, and is ticked
@@ -5828,6 +5850,9 @@ async function setPick(agent, field, value, opt) {
   renderAgents();
   flash();
   try {
+    // a group the agent's lists leave out is put back in them first, so
+    // the agent is given it before it is set to it
+    if (opt?.pick) await api("agent-models/" + encodeURIComponent(agent.id), { show: opt.ref });
     const next = await api("set", { agent: agent.id, field: field.key, value });
     // a later pick is already on its way: its answer is the one to draw
     if (seq !== commit.seq) return;
@@ -6591,9 +6616,14 @@ function renderMovable() {
   // imported when there are any (@tongzhenbao on X); while it is drawn it
   // says what the withdrawn plugin's line would, with the Move itself
   const agy = providers.agyMove?.length && (window.agyMoveLine ? agyMoveLine() : void import("./agymove.js").then(renderMovable, () => {}));
-  box.hidden = (!ps.length || hid === ids) && !unmoved.length && !wd.length && !noSubs && !agy;
+  // the Claude accounts' way out in a region Anthropic doesn't list
+  // (egress.js, @alterxyz4 on X), and retired built-ins whose accounts
+  // haven't moved (unmoved.js): each imported when there are any
+  const eg = providers.providers.some((p) => p.egress?.state === "unsupported") && (window.egressLine ? egressLine() : void import("./egress.js").then(renderMovable, () => {}));
+  box.hidden = (!ps.length || hid === ids) && !unmoved.length && !wd.length && !noSubs && !agy && !eg;
   if (noSubs) box.append(discoveryOffLine());
-  for (const p of unmoved) box.append(unmovedLine(p));
+  for (const p of unmoved) window.unmovedLine ? box.append(unmovedLine(p)) : import("./unmoved.js").then(renderMovable, () => {});
+  if (eg) box.append(eg);
   if (agy) box.append(agy);
   // a plugin magpie gives nobody new (plugin.WithdrawnOf): it still
   // works, and its user is told the risk and what to use instead
@@ -6636,34 +6666,6 @@ function depLine(kind, head, why, ...acts) {
   body.append(el("div", "dep-head", head), el("p", "dep-why", why));
   a.append(...acts);
   card.append(el("span", "dep-dot"), body, a);
-  return card;
-}
-
-// unmovedLine: a retired built-in whose accounts haven't moved to its
-// plugin (a failed install): nothing serves them, so it is never hidden.
-// An amber dot, what happened and why, and the move, tried again here.
-const unmovedSaid = {}; // provider id → { busy } or { why }
-function unmovedLine(p) {
-  const said = unmovedSaid[p.id];
-  const why = said?.why || moveWhy(p, p);
-  const b = el("button", "text action", said?.busy || (why ? t("Try again") : t("Move to the plugin")));
-  b.title = p.package; // the npm package: for the curious, not the sentence
-  b.disabled = b.classList.toggle("busy", !!said?.busy);
-  b.onclick = async () => {
-    unmovedSaid[p.id] = { busy: t("Installing the plugin and checking each account…") };
-    renderMovable();
-    try {
-      providers = await api("provider/move", { id: p.id });
-      delete unmovedSaid[p.id];
-      renderProviders();
-      await movedSay(p);
-    } catch (e) {
-      unmovedSaid[p.id] = { why: moveWhy({ why: e.why, error: e.message }, p) };
-      renderMovable();
-    }
-  };
-  const card = depLine("unmoved", t("{name}'s built-in subscription is retired, and its accounts haven't moved to its plugin yet", { name: p.name }), why ? t("Nothing serves them until they move: {error}", { error: why }) : t("Nothing serves them until they move. Moving keeps your accounts, models and agents as they are."), b);
-  card.dataset.id = p.id;
   return card;
 }
 
@@ -7619,9 +7621,19 @@ function markNewPartners() {
 let newPartnerTiles = null;
 const newPartnerDotsIn = new Set();
 
-// a partner's row: its own section says it is sponsored, so no badge
+// a partner's row: its own section says it is sponsored, so no badge; its
+// tagline goes on a quiet line under the name, where it is read, not only
+// in the title (yetone: 上 A 方案)
 function partnerTile(pr) {
   const b = tile({ ...pr, sponsored: false, note: "" });
+  const note = partnerNote(pr);
+  if (note) {
+    const n = b.querySelector(".nm .n");
+    const col = el("span", "col");
+    n.replaceWith(col);
+    col.append(n, el("span", "sub", note));
+    b.classList.add("two");
+  }
   if (!pr.added) {
     const open = b.onclick;
     b.onclick = (e) => { newPartnerTiles?.delete(pr.id); countPartner("opened", [pr.id]); open(e); };
@@ -8130,7 +8142,7 @@ const groupAdvanced = (b) => self.advGroups?.(b);
 function advancedSet(d, p) {
   return (d.headers || []).some(([k]) => (k || "").trim()) || !!(d.extraBody || "").trim() || !!(d.replyHeaders || d.passHeaders || "").trim() ||
     !!d.proxyMode || Object.values(d.accountProxies || {}).some((x) => x?.mode) || Object.values(d.keyPriceRates || {}).some((v) => String(v).trim()) ||
-    [d.concurrency, d.maxAccounts, d.queueLimit, d.queueWait, d.maxRPM, d.priceRate, d.contexts, d.outputs, d.compacts].some((v) => String(v ?? "").trim()) ||
+    [d.concurrency, d.maxAccounts, d.queueLimit, d.queueWait, d.maxRPM, d.priceRate, d.topUpRate ?? p?.topUpRate, d.contexts, d.outputs, d.compacts].some((v) => String(v ?? "").trim()) ||
     !!d.rateWindows?.length ||
     !!(d.searches || d.authHeader || d.passUserAgent === false || d.unredacted || d.countFree || d.billing || d.pinUpstream || d.nativeCompaction || d.balanceToken || d.limitRestOff || d.noBalanceProbe || d.http1 || d.socket || d.imageFilesOff || d.passErrors || d.clientCert || d.serverCA || d.serverPin || d.resolve) ||
     !!d.fallback?.length || !!(p?.balanceToken?.set || p?.connectAgents || p?.maxImages);
@@ -8350,7 +8362,9 @@ function accountProxiesOfDraft() {
 
 // a key's own price rate (@tnt12231 on X), in keyrates.js, and any other
 // part keyrates.js draws for a provider with two or more keys (f)
-const keyRateField = (p, f = "keyPriceRateField", at = el("span")) => p?.keyList?.length > 1 ? (import("./keyrates.js").then(() => at.isConnected && at.replaceWith(...window[f](p)), () => {}), [at]) : [];
+// (on: two keys or more, unless said); a relay's top-up rate
+// (@YIXIE233 on X) is drawn there too
+const keyRateField = (p, f = "keyPriceRateField", on = p?.keyList?.length > 1, at = el("span")) => on ? (import("./keyrates.js").then(() => at.isConnected && at.replaceWith(...window[f](p)), () => {}), [at]) : [];
 
 // headers as ordered [name, value, json?] rows that survive a redraw; headersOf folds them back
 function headerRows(obj) {
@@ -9775,6 +9789,7 @@ function drawEditor(p, presetID) {
     ed.append(...field(t("Models"), renderModels(p), pluginFilterNote(subOf(a.agent))));
     if (p.drawIds?.length) ed.append(...renderDrawers(p));
     if (p.filmIds?.length) ed.append(...renderVideomakers(p));
+    ed.append(...retrievalRows(p));
     // the subscription's own warm-up, check-in and resets first
     // and Advanced opened when one is on, as for Routing: the user who set
     // a warm-up finds it where it went (ChrisYagao on X: "我的预热去哪里了")
@@ -10066,7 +10081,7 @@ function drawEditor(p, presetID) {
   if (perKey) proxies.append(perKey);
   advIn.append(...field(t("Proxy"), proxies));
   advIn.append(...concurrencyField(p));
-  advIn.append(...priceRateField(), ...keyRateField(p), ...countFreeField(), ...billingField(), ...rateWindowsField());
+  advIn.append(...priceRateField(), ...keyRateField(p, "topUpRateField", custom || p?.topUpRate), ...keyRateField(p), ...countFreeField(), ...billingField(), ...rateWindowsField());
 
   if (p?.cline || (isNew && pr?.id === "clinepass")) advIn.append(...upstreamField());
 
@@ -10290,6 +10305,12 @@ function drawEditor(p, presetID) {
       seg.append(b);
     }
     accessAt(cur);
+    // the key was taken at another region than the one picked (a test's
+    // result.region): the editor moves there, for Save to keep
+    draft.onKeyRegion = (id) => {
+      const b = seg.querySelectorAll(".opt")[pr.regions.findIndex((r) => r.id === id)];
+      if (b && !b.classList.contains("on")) { b.click(); status(t("The key is {region}'s: moved there. Save to keep it.", { region: b.textContent })); }
+    };
     queueMicrotask(() => {
       slide(seg, "regions");
       // the region in use in view, where they scroll
@@ -10304,6 +10325,7 @@ function drawEditor(p, presetID) {
   else if (pr?.id === "azure") ed.append(...field(t("Models"), el("div", "hint azure-models", t("No need to type them: once added, magpie lists the deployments this key can call. Type a deployment's name as a model id only if that list can't be fetched.")), ""));
   if (p?.drawIds?.length) ed.append(...renderDrawers(p));
   if (p?.filmIds?.length) ed.append(...renderVideomakers(p));
+  ed.append(...retrievalRows(p));
   {
     // the window agents are told a model has, over what the vendor or
     // models.dev says: one for all of them, and model=size for one
@@ -10568,7 +10590,7 @@ function drawEditor(p, presetID) {
     Object.assign(body, queue);
     body.priceRate = priceRateOfDraft();
     if (body.priceRate === undefined) return priceRateError(ed);
-    if ((body.keyPriceRates = self.keyPriceRates?.(ed)) === null) return;
+    if ((body.keyPriceRates = self.keyPriceRates?.(ed, body)) === null) return;
     body.rateWindows = self.rateWindowsOfDraft?.();
     if (body.rateWindows === false) return rateWindowsError(ed);
     if (p && priceTypedError(ed)) return;
@@ -11149,6 +11171,16 @@ function renderEndpoints(p, src) {
         for (const x of r.results) {
           const s = slots[x.protocol];
           if (!s) continue;
+          s.nextElementSibling?.classList.contains("copy") && s.nextElementSibling.remove();
+          if (x.unserved) {
+            // the vendor serves this key nothing on this API (sub2api's
+            // "This group does not allow /v1/messages dispatch"): no fault
+            // of the key, whose models go by its other APIs
+            s.className = "res";
+            s.replaceChildren(el("span", "", t("Not served for this key")));
+            s.title = x.error;
+            continue;
+          }
           s.className = "res " + (x.ok ? "ok" : "bad");
           s.replaceChildren();
           s.append(svg(x.ok ? CHECK : "M4.5 4.5l7 7M11.5 4.5l-7 7", 10, 2));
@@ -11444,6 +11476,7 @@ async function provTest(id, body) {
   try {
     const r = await api("provider/test", { ...body, id, run }, null, ac.signal);
     if (editing === id && r?.results?.some((x) => x.v1)) draft?.onV1?.(r.results);
+    if (editing === id) draft?.onKeyRegion?.(r?.results?.find((x) => x.region)?.region);
     return r;
   }
   catch (e) { e.stopped = ac.signal.aborted; throw e; }
@@ -11472,7 +11505,9 @@ const typedIds = (v) => (v || "").split(/[,\n]/).map((id) => id.trim()).filter(B
 // a Save takes as if Enter had been pressed on them
 function chosenIds() {
   const typed = typedIds(draft.typed);
-  return [...draft.chosen, ...typed.filter((id) => !draft.chosen.includes(id))].filter((id, i, all) => all.indexOf(id) === i);
+  // ids typed join what the list serves, drawn dashed (none while some
+  // are picked), as a click on a chip it doesn't serve does
+  return [...typed[0] && draft.dashed || [], ...draft.chosen, ...typed].filter((id, i, all) => all.indexOf(id) === i);
 }
 
 // noneChosen: Select none kept, nothing picked or served (#1818)
@@ -11483,7 +11518,7 @@ const pickingNone = () => !!draft.picking && !chosenIds().length;
 const bestChosen = () => !!draft.best && !draft.none && !chosenIds().length;
 
 // servedIds: the picks; none after Select none; else the vendor's list's
-const servedIds = (p) => draft.chosen.length ? draft.chosen : draft.none || draft.picking ? [] : p.models.filter((m) => draft.best ? m.best : m.on).map((m) => m.id);
+const servedIds = (p) => draft.chosen[0] ? draft.chosen : draft.none || draft.picking ? [] : p.models.filter((m) => draft.best ? m.best : m.on).map((m) => m.id);
 
 // modelsOpen: models let out to full height (#833). MCHIPS_MAX: .mchips' max-height
 let modelsOpen = false;
@@ -11640,15 +11675,17 @@ function renderModels(p) {
   };
   const draw = () => {
     if (agentMenu && chips.contains(agentMenu.anchor)) closeAgentMenu();
-    if (draft.chosen.length) draft.picking = false;
+    if (draft.chosen[0]) draft.picking = false;
     chips.replaceChildren();
     const f = (q?.value || "").trim().toLowerCase();
     let shown = 0, hidden = 0, unpicked = 0;
     // Picked only, unfiltered: the picks alone (unpickedShown)
-    const picksOnly = draft.chosen.length && !f && unpickedShown !== p.id && !decideOnly(p);
+    const picksOnly = draft.chosen[0] && !f && unpickedShown !== p.id && !decideOnly(p);
     // none picked: what the vendor's list serves is drawn as served (#614,
     // #1818), none after Select none
-    const served = draft.chosen.length || draft.picking || decideOnly(p) || draft.none ? new Set() : new Set(dashed());
+    const served = draft.chosen[0] || draft.picking || decideOnly(p) || draft.none ? new Set() : new Set(dashed());
+    // an id added by hand joins them too (chosenIds)
+    draft.dashed = [...served];
     // models that would read alike say what tells them apart (modelTells)
     const tells = modelTells(p.models);
     // a filter is a search: what it doesn't match is left out
@@ -11696,9 +11733,13 @@ function renderModels(p) {
       if (kb.length) c.title = (c.title || m.id) + "\n" + t("Kept out of agents' lists by {groups}, a routing group listed alone", { groups: kb.join(", ") });
       tested(c, m.id);
       menu(c, m.id);
-      // a click picks it (#681); the last unpicked leaves none (#1831)
+      // a click picks it (#681); the last unpicked leaves none (#1831).
+      // With none picked, a served (dashed) one is picked alone (#681), and
+      // one the list doesn't serve joins those it does: a relay's 25th
+      // model clicked left the 24 served out (onkashiko on X), where the
+      // TUI's toggle adds it to them
       c.onclick = () => {
-        draft.chosen = on ? draft.chosen.filter((x) => x !== m.id) : [...draft.chosen, m.id];
+        draft.chosen = on ? draft.chosen.filter((x) => x !== m.id) : [...served.has(m.id) ? [] : served, ...draft.chosen, m.id];
         draft.none = true;
         unpickedShown = p.id;
         draw();
@@ -11717,7 +11758,7 @@ function renderModels(p) {
       chips.append(c);
     }
     if (hidden || unpicked) chips.append(showRest(hidden || unpicked, () => { if (unpicked) unpickedShown = p.id; else showAll = true; draw(); }));
-    if (!p.models.length && !draft.chosen.length) chips.append(el("span", "hint", t(emptyModelsHint(p))));
+    if (!p.models.length && !draft.chosen[0]) chips.append(el("span", "hint", t(emptyModelsHint(p))));
     // the list is of models agents chat with: image, embedding and speech
     // models are left out of it, and an image model is set in Settings
     else if (f && !chips.children.length) chips.append(el("span", "hint", t("No model here matches “{q}”. Image, embedding and speech models aren't listed, as agents can't chat with them: pick an image model in Settings › Models › Images.", { q: q.value.trim() })));
@@ -11726,11 +11767,11 @@ function renderModels(p) {
     drawWorkOn();
     drawServes();
     why.textContent = decideOnly(p) ? t("Agents never see them: a routing group picks one as its classifier.")
-      : !draft.chosen.length && draft.picking ? t("Pick a model first.")
-      : !draft.chosen.length && draft.none ? t("None selected: no agent or routing group uses its models. Its balance and usage still show. Click a model to pick it.")
+      : !draft.chosen[0] && draft.picking ? t("Pick a model first.")
+      : !draft.chosen[0] && draft.none ? t("None selected: no agent or routing group uses its models. Its balance and usage still show. Click a model to pick it.")
       : bestChosen() && !draft.unlisted ? t("Best in family: agents see the newest model of each family it lists (dashed), up to {n}. A newer one it lists later takes the old one's place.", { n: 24 })
-      : draft.unlisted ? t(draft.chosen.length ? "Agents don't see them: only the routing groups they are in use them." : "Vendor's list: agents don't see it, the routing groups its models are in use up to {n} of it (dashed). Click a model to pick just it.", { n: 24 })
-      : t(draft.chosen.length ? "Agents see the models picked." : "Vendor's list: agents see up to {n} of its models (dashed), and those it lists later. Click a model to pick just it.", { n: 24 });
+      : draft.unlisted ? t(draft.chosen[0] ? "Agents don't see them: only the routing groups they are in use them." : "Vendor's list: agents don't see it, the routing groups its models are in use up to {n} of it (dashed). Click a dashed one to pick just it.", { n: 24 })
+      : t(draft.chosen[0] ? "Agents see the models picked." : "Vendor's list: agents see up to {n} of its models (dashed), and those it lists later. Click a dashed one to pick just it.", { n: 24 });
     drawLost();
     drawHiders();
   };
@@ -12164,12 +12205,12 @@ function renderModels(p) {
     b.dataset.serves = v;
     b.title = t(tip, { n: 24 });
     b.onclick = () => {
-      if (v !== "picked" && draft.chosen.length) picksLeft = { id: p.id, picks: [...draft.chosen] };
+      if (v !== "picked" && draft.chosen[0]) picksLeft = { id: p.id, picks: [...draft.chosen] };
       if (v !== "picked") { draft.chosen = []; draft.typed = ""; draft.none = v === "none"; draft.best = v === "best"; draft.picking = false; }
       else {
-        if (!draft.chosen.length && picksLeft?.id === p.id) { draft.chosen = picksLeft.picks; draft.none = true; }
+        if (!draft.chosen[0] && picksLeft?.id === p.id) { draft.chosen = picksLeft.picks; draft.none = true; }
         // none picked: it picks none, not the first 24 (yuancjun)
-        draft.picking = !draft.chosen.length;
+        draft.picking = !draft.chosen[0];
         unpickedShown = null; draft.best = false;
       }
       draw();
@@ -12177,7 +12218,7 @@ function renderModels(p) {
     serves.append(b);
     return b;
   });
-  const servesMode = () => draft.chosen.length || draft.picking ? "picked" : draft.none ? "none" : draft.best ? "best" : "list";
+  const servesMode = () => draft.chosen[0] || draft.picking ? "picked" : draft.none ? "none" : draft.best ? "best" : "list";
   const drawServes = () => {
     const now = servesMode();
     for (const b of servesOpts) { b.classList.toggle("on", b.dataset.serves === now); b.setAttribute("aria-pressed", b.dataset.serves === now); }
@@ -12367,6 +12408,18 @@ function renderDrawers(p) {
 // renderVideomakers: its video models, ticked to be offered (axelburks on Discord)
 function renderVideomakers(p) {
   return field(t("Video models"), mediaChips("mchips videomakers", p.filmIds, "hiddenVideomakers", p), t("Only the ticked ones are offered when making a video. Agents don't chat with these, so they aren't among its models."));
+}
+
+// retrievalRows: its embedding and rerank models, which need no pick and
+// aren't among its models since agents don't chat with them: they were
+// nowhere to be seen (@rfiacne on X)
+function retrievalRows(p) {
+  return [["Embedding models", p?.embedIds], ["Rerank models", p?.rerankIds]].flatMap(([l, v]) => {
+    if (!v) return [];
+    const d = el("div", "mchips still");
+    d.append(...v.map((id) => el("span", "mchip", id)));
+    return field(t(l), d);
+  });
 }
 
 function mediaChips(cls, ids, key, p, names) {
@@ -15205,7 +15258,7 @@ function renderKeyAccounts(p) {
     // one the gateway passes over after a failure: why, and until when, on
     // a line of its own under the key's, so the row's controls stay in reach
     let restLine = null;
-    if (k.rest && new Date(k.rest.until) > Date.now()) {
+    if (restShown(k.rest)) {
       restLine = restLineOf(k.rest, "", t("The gateway passes this key over until then, and tries the next one"), k.name || k.masked, () => { k.rest = null; });
       row.classList.add("resting");
     }
@@ -15383,7 +15436,7 @@ function keyFold(p) {
 function keyMatches(k, q) {
   const words = String(q || "").toLowerCase().split(/\s+/).filter(Boolean);
   if (!words.length) return true;
-  const resting = k.rest && new Date(k.rest.until) > Date.now();
+  const resting = k.rest && !k.rest.notice && new Date(k.rest.until) > Date.now();
   const text = [k.name, k.masked, k.on ? "" : "off " + t("turned off"),
     resting ? "resting " + t("resting") + " " + keyFail(k.rest) + " " + t(keyFail(k.rest)) + " " + (k.rest.status || "") : ""].join(" ").toLowerCase();
   return words.every((w) => text.includes(w));
@@ -15391,7 +15444,7 @@ function keyMatches(k, q) {
 // keyDead: a key the gateway is passing over for good reason, not a rate
 // limit that ends by itself: its sign-in refused, or its credit gone
 function keyDead(k) {
-  return !!k.rest && (k.rest.why === "auth" || k.rest.why === "credit") && new Date(k.rest.until) > Date.now();
+  return !!k.rest && !k.rest.notice && (k.rest.why === "auth" || k.rest.why === "credit") && new Date(k.rest.until) > Date.now();
 }
 // keyFoldRows: under the rows a folded list shows, All N keys; opened,
 // above them the filter and removing many at once, and under them how many
@@ -15471,11 +15524,18 @@ function splitKeys(text) {
   }
   return out;
 }
-// a rest's line: why, till when, the vendor's words, Try now (#1869)
+// restShown: a rest in force, or a rate limit or quota whose rest ended
+// before the limit did (r.notice, gateway.LimitNotice, @eachg0 on X):
+// shown till the time the vendor named, or, with none, till the gateway
+// drops it once the account or key answers again
+const restShown = (r) => !!r && (r.notice && !(Date.parse(r.until) > 0) || new Date(r.until) > Date.now());
+// a rest's line: why, till when, the vendor's words, Try now (#1869). A
+// notice says when the limit resets, or since when, and has no Try now:
+// nothing rests
 function restLineOf(r, model, title, name, lifted) {
-  const why = (r.status ? r.status + " " : "") + t(keyFail(r)), time = restBack(r.until);
-  const s = el("span", "key-rest", (model ? t("{model} resting · {why} · back at {time}", { model, why, time }) : t("Resting · {why} · back at {time}", { why, time })) + (r.probed ? " · " + t("checked in the background, back as soon as it answers") : ""));
-  s.title = title;
+  const e = Date.parse(r.until) > 0, why = (r.status ? r.status + " " : "") + t(keyFail(r)), time = restBack(r.notice && !e ? r.at : r.until);
+  const s = el("span", "key-rest", r.notice ? (model ? model + " " : "") + t(e ? "{why} · resets at {time}" : "{why} since {time}", { why, time }) : (model ? t("{model} resting · {why} · back at {time}", { model, why, time }) : t("Resting · {why} · back at {time}", { why, time })) + (r.probed ? " · " + t("checked in the background, back as soon as it answers") : ""));
+  s.title = r.notice ? t(e ? "The gateway asks it again; this shows until the limit resets" : "The gateway asks it again; this shows until a request on it is answered") : title;
   const go = el("button", "text key-unrest", t("Try now"));
   go.title = t("Ends the rest: the next request asks it again. Refused again, it rests again.");
   go.onclick = async (e) => {
@@ -15491,13 +15551,13 @@ function restLineOf(r, model, title, name, lifted) {
   const line = el("div", "key-rest-line");
   line.append(s);
   if (r.error) line.append(Object.assign(el("span", "key-rest-said", r.error), { title: r.error }));
-  line.append(go);
+  if (!r.notice) line.append(go);
   return line;
 }
 
 const accountRestLines = (p, user) => {
   const u = String(user).toLowerCase(), rs = p.accountRests?.[u] || [];
-  return rs.filter((r) => new Date(r.until) > Date.now()).map((r) => restLineOf(r, r.model, r.model ? t("Until then {model} goes to another account; its other models are used as before", { model: r.model }) : t("The gateway passes this account over until then, and tries the next one"), r.model ? r.model + " · " + user : user, () => p.accountRests[u] = rs.filter((x) => x !== r)));
+  return rs.filter(restShown).map((r) => restLineOf(r, r.model, r.model ? t("Until then {model} goes to another account; its other models are used as before", { model: r.model }) : t("The gateway passes this account over until then, and tries the next one"), r.model ? r.model + " · " + user : user, () => p.accountRests[u] = rs.filter((x) => x !== r)));
 };
 
 // a key's rest, worded as the Routing page words a failure
@@ -15880,7 +15940,9 @@ async function providerAction(action, body, okMsg, base = "provider/") {
     renderProviders();
     state = await api("state");
     renderAgents();
-    saidMoved(okMsg);
+    // a provider saved at the region its key is of (providers.placed, the
+    // region's name): Sidrune AI's China key typed in at Global
+    saidMoved(providers.placed ? t("Saved at {region}: the key is that region's", { region: t(providers.placed) }) : okMsg);
     return true;
   } catch (e) {
     // a Remove may have gone through before what failed: the list as it is
@@ -19851,8 +19913,13 @@ async function loadSettings() {
   syncView = null;
   // gateway mode turned in another tab, or the agents here come and gone
   if (web && !!s.gatewayOn !== gatewayMode) setGatewayMode(!!s.gatewayOn);
+  $("#setUnread")?.remove(); // settingsunread.js's line, once read
   renderSettings();
 }
+// Settings never read (a magpie just restarted still starting, or the read
+// failed) left every page of them blank, with only the footer saying why
+// (WaiooT on X): settingsunread.js says so in the page and reads them again
+function settingsUnread(e) { statusErr(e); if (!prefs && view === "settings") import("./settingsunread.js").then((m) => m.unread(e)); }
 
 // Writes of the settings, counted as they start and end: a read of them
 // (the state, the settings) that one overlapped is from before it, and is
@@ -21893,9 +21960,14 @@ function renderReplies(s, keep) {
   const x = segRow("claudeExtraRow", t("Spend extra usage"),
     t("Once a Claude account has used up its plan, Anthropic bills further requests as extra usage. Off, magpie sends the account nothing until its plan renews, and your other accounts take the requests"),
     onOff, s.claudeNoExtraUsage ? "off" : "on", (v) => savePrefs({ ...keep, claudeNoExtraUsage: v === "off" }));
+  // Claude's requests held while their way out is in a region Anthropic
+  // doesn't list (internal/egress, off unless on)
+  const g = segRow("claudeRegionRow", t("Hold requests outside supported regions"),
+    t("While this computer's way out to the internet is in a region Anthropic doesn't list, Claude requests aren't sent and the agent is told why. A lookup that fails holds nothing"),
+    onOff, s.claudeRegionHold ? "on" : "off", (v) => savePrefs({ ...keep, claudeRegionHold: v === "on" }));
   box.append(r, l);
   // a Claude run's, in its provider's editor (PROV_PREFS)
-  $("#claudeRunList").replaceChildren(c, x);
+  $("#claudeRunList").replaceChildren(c, x, g);
   $("#claudeRunList").classList.toggle("gw", gatewayMode);
   $("#routeList").replaceChildren(f, a, k, $("#busyLoadRow"), $("#contextCapRow"));
 }
@@ -22904,7 +22976,7 @@ function prefsKeep(s) {
     redact: !!s.redact, redactPersonal: !!s.redactPersonal, redactKinds: s.redactKinds || {}, redactWords: s.redactWords || [], redactWordsAnyCase: !!s.redactWordsAnyCase, redactWordsWhole: !!s.redactWordsWhole, redactShape: !!s.redactShape, codexWarmup: s.codexWarmup || "",
     claudeWarmup: s.claudeWarmup || "", codexWarmAt: s.codexWarmAt || "", claudeWarmAt: s.claudeWarmAt || "",
     codexWarmAts: warmTimes(s.codexWarmAts, s.codexWarmAt), claudeWarmAts: warmTimes(s.claudeWarmAts, s.claudeWarmAt), workbuddyCheckin: !!s.workbuddyCheckin, traeCheckin: !!s.traeCheckin, minimaxCheckin: !!s.minimaxCheckin, qoderCheckin: !!s.qoderCheckin, checkinAt: s.checkinAt || "", noStats: !!s.noStats, noUsageStats: !!s.noUsageStats, signInLinkOnly: !!s.signInLinkOnly,
-    replyModel: s.replyModel || "", noLoopGuard: !!s.noLoopGuard, claudeLeanPrompt: !!s.claudeLeanPrompt, claudeNoExtraUsage: !!s.claudeNoExtraUsage, claudePrintMode: !!s.claudePrintMode, refusalRetries: s.refusalRetries ?? null, retryAfterCap: s.retryAfterCap ?? null,
+    replyModel: s.replyModel || "", noLoopGuard: !!s.noLoopGuard, claudeLeanPrompt: !!s.claudeLeanPrompt, claudeNoExtraUsage: !!s.claudeNoExtraUsage, claudeRegionHold: !!s.claudeRegionHold, claudePrintMode: !!s.claudePrintMode, refusalRetries: s.refusalRetries ?? null, retryAfterCap: s.retryAfterCap ?? null,
     noUpdatePill: !!s.noUpdatePill, noAutoUpdate: !!s.noAutoUpdate, updateEvery: s.updateEvery || 360, autoRestart: !!s.autoRestart, noAutoDownload: !!s.noAutoDownload, updateChannel: s.updateChannel || "",
     trayUsage: s.trayUsage || "", trayUsageEvery: s.trayUsageEvery || 3, trayNoLogos: !!s.trayNoLogos, trayAnthropicMark: !!s.trayAnthropicMark, trayNoBird: !!s.trayNoBird, trayNoNumber: !!s.trayNoNumber, trayPace: !!s.trayPace, trayNoCost: !!s.trayNoCost, trayWindows: s.trayWindows || {}, vision: s.vision || "", visionEffort: s.visionEffort || "", searcherEffort: s.searcherEffort || "", imageGen: s.imageGen || "", videoGen: s.videoGen || "", imageTimeout: s.imageTimeout || 0, classifyTimeout: s.classifyTimeout || 0, searcher: s.searcher || "", searchFirst: s.searchFirst || "", effortPin: s.effortPin || "", fetch: s.fetch || "", currency: s.currency || "usd", totalCurrency: s.totalCurrency || "", trayCurrency: s.trayCurrency || "",    chineseUnits: !!s.chineseUnits, dayStart: s.dayStart || 0, usageAlert: s.usageAlert || 0, balanceAlert: s.balanceAlert || 0, resetReminder: s.resetReminder || 0,
     turnDoneAlert: s.turnDoneAlert || 0, maskAlert: !!s.maskAlert,
@@ -23414,7 +23486,7 @@ async function show(v) {
   // Routing's accounts' windows as Usage read them (#1833), never an asked read
   // and Providers' balances (rowBalance, plugins/usage/page.js)
   if ((rtView(v) || v === "providers" && !featuresOff.has("usage")) && (!quotas || Date.now() - quotasAt > 60e3)) loadQuotas();
-  if (v === "settings") (settingsLoad = loadSettings()).then(back, statusErr);
+  if (v === "settings") (settingsLoad = loadSettings()).then(back, settingsUnread);
   if (v === "plugins") window.loadPlugins?.()?.then(back);
   syncTitle();
   syncURL();
@@ -24426,6 +24498,10 @@ if (mode === "window") {
 
 // loadBack: a window shown again hears visibilitychange and focus together;
 // one read for both. A read asked over a second ago gets one more after it.
+// a view's entrance held while out of sight ends as the window is back: a
+// page shown with it held at its first frame was a blank pane under its
+// header and sidebar (WaiooT on X)
+function playViews() { for (const v of $$(".view")) for (const a of v.getAnimations?.() || []) try { a.finish(); } catch {} }
 function loadBack() {
   const f = loadBack.flight;
   if (f && performance.now() - f.at < 1000) return f.done;
@@ -24438,7 +24514,7 @@ function loadBack() {
 // and one gone from view, hidden or closed (which hides it first), says
 // so: what its Sessions and Usage pages keep goes 30 s later unless a page
 // asks again (pageAwayFor)
-document.addEventListener("visibilitychange", () => { if (!document.hidden) { loadBack(); wag(); refreshLanes(); } else fetch("/api/page-away", { method: "POST", keepalive: true }).catch(() => {}); });
+document.addEventListener("visibilitychange", () => { if (!document.hidden) { playViews(); loadBack(); wag(); refreshLanes(); } else fetch("/api/page-away", { method: "POST", keepalive: true }).catch(() => {}); });
 // an agent's config can be rewritten, or the agent run round magpie, while the
 // window is up: ask what drifted now and then, and redraw only on a change —
 // never under an open menu

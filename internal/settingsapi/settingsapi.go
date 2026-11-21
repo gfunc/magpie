@@ -50,7 +50,7 @@ var Keys = []string{
 	"codexWarmup", "claudeWarmup", "codexWarmAt", "claudeWarmAt", "codexWarmAts", "claudeWarmAts",
 	"workbuddyCheckin", "traeCheckin", "minimaxCheckin", "qoderCheckin", "checkinAt",
 	// models: replies, vision, images, search
-	"replyModel", "noLoopGuard", "claudeLeanPrompt", "claudeNoExtraUsage", "claudePrintMode", "refusalRetries", "retryAfterCap",
+	"replyModel", "noLoopGuard", "claudeLeanPrompt", "claudeNoExtraUsage", "claudeRegionHold", "claudePrintMode", "refusalRetries", "retryAfterCap",
 	"vision", "visionEffort", "imageGen", "videoGen", "imageTimeout", "imageResolution", "classifyTimeout",
 	// and whether every model an agent runs is pinned to its highest
 	// thinking level while the agent is on magpie (effortPin)
@@ -363,6 +363,7 @@ func Merge(body []byte, cur settings.Settings, web bool) (settings.Settings, err
 	in.FetchPrivate = cur.FetchPrivate           // in settings.json only
 	in.RouterNote = cur.RouterNote               // set on its own (the Library's servers/hub-note)
 	in.RouterAllTools = cur.RouterAllTools       // set on its own (the Library's servers/hub-tools)
+	in.RouterNoCode = cur.RouterNoCode           // set on its own (the Library's servers/hub-code)
 	in.GitHubToken = cur.GitHubToken             // set on its own (github-token), never sent to the page
 	in.ProxyCustom = cur.ProxyCustom             // set by settings.Save from the proxy, never by the page
 	in.PluginProxyCustom = cur.PluginProxyCustom // and plugin downloads' from theirs
