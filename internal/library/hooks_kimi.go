@@ -15,15 +15,6 @@ import (
 // providers with the hooks. So a hook crosses one boundary, newKimiEntry,
 // and past it a kimiEntry is something Kimi accepts.
 
-// hookInput is one hook on its way into an agent's file. Timeout is Library
-// seconds: 0 is the agent's own.
-type hookInput struct {
-	Event   string // the agent's own event name
-	Matcher string // the agent's own matcher, "" for none
-	Command string
-	Timeout int
-}
-
 // kimiEvent is one of the events Kimi Code fires. Only kimiHookEvents names
 // them, so a value of this type is one Kimi knows.
 type kimiEvent string

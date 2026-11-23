@@ -306,12 +306,18 @@ func TestPluginHookEnvPerShell(t *testing.T) {
 		if got != c.want || shell != c.shell {
 			t.Errorf("%s (git bash %q):\n got %s [%s]\nwant %s [%s]", c.os, c.bash, got, shell, c.want, c.shell)
 		}
-		e := string(claudeHookSpec(filepath.Join(t.TempDir(), "s.json")).entry(&Hook{Name: "x", Bundle: name, Event: "turn-end", Command: "run"}, "Stop"))
-		if c.shell != "" && !strings.Contains(e, `"shell":"`+c.shell+`"`) || c.shell == "" && strings.Contains(e, `"shell"`) {
+		entry := func(h *Hook) string {
+			raw, err := claudeHookSpec(filepath.Join(t.TempDir(), "s.json")).entry(h, "Stop")
+			if err != nil {
+				t.Fatalf("%s entry: %v", c.os, err)
+			}
+			return string(raw)
+		}
+		if e := entry(&Hook{Name: "x", Bundle: name, Event: "turn-end", Command: "run"}); c.shell != "" && !strings.Contains(e, `"shell":"`+c.shell+`"`) || c.shell == "" && strings.Contains(e, `"shell"`) {
 			t.Errorf("%s entry's shell: %s", c.os, e)
 		}
 		// a hook of the user's own is as they wrote it
-		if e := string(claudeHookSpec(filepath.Join(t.TempDir(), "s.json")).entry(&Hook{Name: "x", Event: "turn-end", Command: "run"}, "Stop")); strings.Contains(e, "CLAUDE_PLUGIN") || strings.Contains(e, `"shell"`) {
+		if e := entry(&Hook{Name: "x", Event: "turn-end", Command: "run"}); strings.Contains(e, "CLAUDE_PLUGIN") || strings.Contains(e, `"shell"`) {
 			t.Errorf("%s: the user's own hook: %s", c.os, e)
 		}
 	}
