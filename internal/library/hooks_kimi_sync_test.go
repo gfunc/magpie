@@ -302,7 +302,6 @@ func TestKimiFormatWriteSplicesTheFile(t *testing.T) {
 	})
 
 	t.Run("drop one of the user's, in the middle", func(t *testing.T) {
-		// the user's two, then magpie's, then a table after
 		path := kimiFile(t, "# mine\n[[hooks]]\nevent = \"Stop\"\ncommand = \"one\"\n\n[[hooks]]\nevent = \"Stop\"\ncommand = \"two\"\n\n[[hooks]]\nevent = \"PostToolUse\"\ncommand = \"three\"\n\n[ui]\ntheme = \"dark\"\n")
 		f, _ := kimiFormat.Open(path)
 		if err := kimiWrite(t, f, path, map[string][]int{"Stop": {1}}, nil); err != nil {
@@ -401,7 +400,6 @@ func TestKimiFormatWriteSplicesTheFile(t *testing.T) {
 				}
 			})
 		}
-		// added alone, after a last block that ends the file or sits before a table
 		for _, c := range []struct{ name, before, want string }{
 			{"the block alone", "[[hooks]]\nevent = \"Stop\"\ncommand = \"old\"\n",
 				"[[hooks]]\nevent = \"Stop\"\ncommand = \"old\"\n\n" + newBlock},
@@ -468,7 +466,6 @@ func TestKimiFormatWriteRefusesAnInvalidResult(t *testing.T) {
 	if got := read(t, path); got != kimiSeed {
 		t.Errorf("the file was touched:\n%s", got)
 	}
-	// an entry that isn't a block at all
 	f, _ = kimiFormat.Open(path)
 	if err := kimiWrite(t, f, path, map[string][]int{}, map[string][]json.RawMessage{"Stop": {json.RawMessage(`{"a":1}`)}}); err == nil {
 		t.Error("an entry that isn't a block was written")
@@ -650,8 +647,7 @@ func TestKimiHooksResavedBlockIsStillMine(t *testing.T) {
 	if got := read(t, path); got != kimiSeed+mine {
 		t.Fatalf("magpie's write:\n got %q\nwant %q", got, kimiSeed+mine)
 	}
-	// Kimi's tool saved the file again: magpie's block comes back with its
-	// keys in another order and another indent
+	// Kimi's tool saved the file again: magpie's block comes back re-spaced
 	resaved := "[[hooks]]\n    command = \"bark\"\n    event = \"Stop\"\n"
 	saved := kimiSeed + resaved + theirs
 	write(t, path, saved)
@@ -681,15 +677,13 @@ func TestKimiHooksResavedBlockIsStillMine(t *testing.T) {
 		t.Errorf("the user's own isn't listed: %+v", v.FoundHooks)
 	}
 
-	// a real edit: the re-saved block comes out, the new one goes in once,
-	// after the last block there is
+	// a real edit: the re-saved block comes out, the new one goes in once
 	ok(t)(SaveHook("bark", Hook{Name: "bark", Event: "turn-end", Command: "bark louder", Agents: []string{"kimi"}}))
 	without := kimiSeed + theirs
 	if got, want := read(t, path), without+"\n"+kimiHookBlock("Stop", "", "bark louder", 0); got != want {
 		t.Errorf("after the edit:\n got %q\nwant %q", got, want)
 	}
 
-	// untick: that block comes out and nothing else changes
 	ok(t)(HookAgents("bark", []string{}))
 	if got := read(t, path); got != without {
 		t.Errorf("after unticking:\n got %q\nwant %q", got, without)
@@ -751,7 +745,6 @@ func TestKimiHooksFoundOfTheUsersOwn(t *testing.T) {
 		}
 	}
 
-	// one that can't be kept isn't brought in
 	if _, err := ImportHooks([]string{fifth.Key}); err == nil || !strings.Contains(err.Error(), "it can only be removed") {
 		t.Errorf("a block with a fifth key was brought in: %v", err)
 	}
@@ -861,7 +854,6 @@ func TestKimiHooksUnreadableFileLeftAlone(t *testing.T) {
 	if recs := kimiRecorded(t); len(recs) != 0 {
 		t.Errorf("recorded as written: %+v", recs)
 	}
-	// a sync with nothing to write says nothing
 	ok(t)(HookAgents("bark", []string{}))
 	if read(t, path) != bad {
 		t.Error("the file was touched by a sync with nothing to write")
@@ -986,7 +978,6 @@ func TestKimiHooksSessionStartNarrowed(t *testing.T) {
 	if got := starts(); !slices.Equal(got, []string{"startup"}) {
 		t.Errorf("SessionStart matchers: %q", got)
 	}
-	// one resumed: Kimi's own word for it
 	if p := save("reinject", reinject("resume")); p["kimi"] != "" {
 		t.Errorf("resume: %+v", p)
 	}
@@ -1024,8 +1015,8 @@ func TestKimiHooksSessionStartNarrowed(t *testing.T) {
 	if p := save("reinject", reinject("clear|compact|fork")); !strings.Contains(p["kimi"], "no session start called clear or compact or fork") {
 		t.Errorf("clear|compact|fork: %+v", p)
 	}
-	// the page offers Kimi's own two among its starts, and never one to
-	// starts Kimi alone never fires; and says which starts it has
+	// the page offers Kimi's own two among its starts, never one to a start
+	// it never fires; and says which starts it has
 	v, err := Read(nil)
 	if err != nil {
 		t.Fatal(err)

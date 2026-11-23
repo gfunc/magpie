@@ -60,8 +60,8 @@ type decodedHook struct {
 	// named by its type, "(prompt)"
 	Commands []string
 	Timeout  int
-	// Why is "type" or "several" when the entry is one the Library can
-	// list and remove but not keep as it is written
+	// Why is "type", "several" or "shape" when the entry can be listed
+	// and removed but not kept as it is written
 	Why string
 }
 
@@ -160,8 +160,8 @@ func (f jsonFormat) Decode(ev string, e json.RawMessage) (decodedHook, error) {
 	return decodeHandlers(handlers, group["matcher"], f.ms), nil
 }
 
-// Same is canonical, as the engine compared entries before there was a
-// format: these files' entries are compared as they were written.
+// Same compares these files' entries as they were written, as the engine
+// did before formats
 func (jsonFormat) Same(a, b json.RawMessage) bool { return canonical(a) == canonical(b) }
 
 // grokFormat is the Grok CLI's config.toml: [[hooks.<Event>]] array tables,
@@ -237,8 +237,7 @@ func decodeHandlers(handlers []map[string]any, matcher any, ms bool) decodedHook
 	if len(handlers) == 1 {
 		d.Timeout = numberOf(handlers[0]["timeout"])
 		if ms && d.Timeout%1000 != 0 {
-			// not a whole second: it has no Library timeout to be kept as,
-			// and is listed with the one the file has
+			// not a whole second: it has no Library timeout to be kept as
 			why = "shape"
 		} else if ms {
 			d.Timeout /= 1000
@@ -352,7 +351,6 @@ func (f *grokFile) Lists(events []string) ([]string, map[string][]json.RawMessag
 // user's own blocks, comments and other settings left as they are.
 func (f *grokFile) Write(path string, drop map[string][]int, add map[string][]json.RawMessage, lists map[string][]json.RawMessage) error {
 	var drops, adds [][]byte
-	// the dropped blocks: the entry text each index in lists holds
 	for ev, idxs := range drop {
 		for _, i := range idxs {
 			if blk, ok := grokBlockText(lists[ev][i]); ok {

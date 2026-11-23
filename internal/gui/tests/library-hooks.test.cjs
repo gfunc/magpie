@@ -51,7 +51,7 @@ const HOOK_AGENTS = [
   { id: "gemini", file: `${HOME}/.gemini/settings.json`, events: ["AfterTool", "AfterAgent", "SessionStart"], startSources: ["startup", "resume", "clear"], starts: ["startup", "resume", "clear", "startup|resume|clear", "startup|resume|clear|compact"] },
   { id: "opencode", no: "OpenCode has no hooks magpie can write" },
 ];
-// the same, with Kimi Code here (after Gemini CLI, as the agents are listed)
+// the same, with Kimi Code here
 const HOOK_AGENTS_KIMI = [...HOOK_AGENTS.slice(0, 4), KIMI, HOOK_AGENTS[4]];
 const lib = (hooks, withKimi) => ({
   dir: `${HOME}/.magpie/library`, backups: `${HOME}/.magpie/backups`, home: HOME,
@@ -410,7 +410,6 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
         assert.deepEqual(posts, [], "a chip greyed by the server posted");
         assert.deepEqual(await sideways(page), [], "sideways scroll with a server reason on a chip");
 
-        // a row the server says nothing of: Kimi's chip works, and posts
         assert.equal(await chip("bark", "kimi").getAttribute("aria-disabled"), null);
         await press(page, chip("bark", "kimi"));
         await page.waitForFunction(() => document.querySelector('#view-library .lib-hook .lib-ag[data-agent="kimi"][aria-pressed="true"]'));
@@ -485,7 +484,6 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
         assert.equal(await barKimi.getAttribute("aria-disabled"), null);
         assert.equal(await barKimi.getAttribute("aria-pressed"), "true");
         assert.equal(await barKimi.getAttribute("title"), w("{agent} has all of these hooks — click to take them away", { agent: "Kimi Code" }));
-        // with the blocked hook alone picked, Kimi's chip is greyed with the reason
         await press(page, row("bark").locator(".lib-pickbox"));
         await v.locator(".lib-pickbar .lib-pickn").filter({ hasText: w("{n} selected", { n: 1 }) }).waitFor();
         assert.equal(await barKimi.getAttribute("aria-disabled"), "true");

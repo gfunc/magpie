@@ -28,11 +28,9 @@ type goldenFile struct {
 // different one on every run, and dsh's row names the hooks file in it.
 const goldenHome = "<home>"
 
-// TestHooksGoldenBytes holds what the hooks engine writes today, byte for
-// byte, for the agents it serves, and the records it keeps of that in
-// library.json. The engine was rewritten to serve one more agent, Kimi Code.
-// The goldens of the seven it served before must not change, so a change to
-// any byte an existing agent gets is caught before it ships.
+// TestHooksGoldenBytes holds what the hooks engine writes, byte for byte,
+// for each agent and the records it keeps in library.json, so a byte
+// changed for an agent it already served is caught.
 func TestHooksGoldenBytes(t *testing.T) {
 	update := os.Getenv("UPDATE_HOOKS_GOLDEN") == "1"
 	for _, id := range hookAgents {
@@ -129,8 +127,7 @@ matcher = "run_terminal_command"
   }
 }
 `,
-	// the user's own tables, a comment, and two [[hooks]] blocks in the
-	// order and style Kimi's own tool writes them (hooks_kimi_sync_test.go)
+	// the user's own tables, a comment, and two [[hooks]] blocks
 	"kimi": kimiSeed,
 }
 
@@ -139,7 +136,6 @@ matcher = "run_terminal_command"
 func goldenRun(t *testing.T, id string) goldenFile {
 	t.Helper()
 	h := sandbox(t)
-	// each agent's hooks file, and where its seed goes
 	var file, row string
 	switch id {
 	case "claude":
@@ -213,7 +209,6 @@ func goldenRun(t *testing.T, id string) goldenFile {
 	snap("save after-tool")
 	ok(t)(SaveHook("bark", Hook{Name: "bark", Event: "turn-end", Command: "curl -s https://api.day.app/KEY/again", Timeout: 10, Agents: []string{id}}))
 	snap("edit command")
-	// the user adds one of their own after magpie's
 	write(t, file, goldenAfterMine(t, id, read(t, file), "curl -s https://api.day.app/KEY/again"))
 	ok(t)(HookAgents("bark", []string{}))
 	snap("untick first")
@@ -282,7 +277,7 @@ var goldenAfter = map[string]string{
   type = "command"
   command = "say after"
 `,
-	// a [[hooks]] block appended after the last one, as Kimi's tool writes it
+	// as Kimi's tool writes it
 	"kimi": `
 [[hooks]]
 event = "Stop"

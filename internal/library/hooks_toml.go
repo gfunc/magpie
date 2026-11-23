@@ -180,8 +180,8 @@ func blockText(e json.RawMessage) (string, bool) {
 func (f *flatFile) Write(path string, drop map[string][]int, add map[string][]json.RawMessage, _ map[string][]json.RawMessage) error {
 	dropped := map[int]bool{}
 	for ev, idxs := range drop {
-		// the file's block each index of this event's list names, in the
-		// list's order: the i-th of them is the i-th block whose event is ev
+		// the file's block each index names: the i-th of the list is the i-th
+		// block whose event is ev
 		placed := []int{}
 		for i, s := range f.spans {
 			if eventOf(s.Keys, f.event) == ev {
@@ -208,18 +208,14 @@ func (f *flatFile) Write(path string, drop map[string][]int, add map[string][]js
 	if len(dropped) == 0 && len(adds) == 0 {
 		return nil
 	}
-	// the write is over the lines read when the file was opened. The file is
-	// looked at again before anything is spliced: one another process saved
-	// in between has other blocks than the indices name, and is left to the
-	// next sync rather than spliced on a stale index. Read straight from the
-	// disk: edit.Read keeps what it read while the file's time and size are
-	// the same, which a write inside one clock tick can leave them.
+	// Read straight from the disk, not edit.Read: that keeps what it read
+	// while the file's time and size are the same, which a write inside one
+	// clock tick leaves them.
 	if err := f.unchanged(); err != nil {
 		return err
 	}
-	// The file in two parts, around the table's last block: everything up to
-	// and including it, and what comes after. A block added goes between
-	// them, after the last block were it kept or dropped.
+	// head ends at the table's last block, kept or dropped; a block added
+	// goes after it
 	head, tail := f.aroundLastBlock(dropped)
 	for _, block := range adds {
 		// the block ends in "\n": SplitLines leaves no trailing empty element
@@ -230,8 +226,7 @@ func (f *flatFile) Write(path string, drop map[string][]int, add map[string][]js
 		head = append(head, blk...)
 	}
 	if len(head) > 0 && len(tail) > 0 && strings.TrimSpace(tail[0]) != "" {
-		// what follows the table starts at once: a blank line parts them,
-		// as the blocks were parted from it before
+		// a blank line parts the table from what follows it
 		head = append(head, "")
 	}
 	return edit.WriteTOMLFile(path, append(head, tail...))

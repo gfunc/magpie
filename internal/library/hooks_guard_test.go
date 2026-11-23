@@ -74,13 +74,13 @@ func TestHookAgentsAndSpecsAgree(t *testing.T) {
 	everyAgentHere(t)
 	targets := Targets()
 
-	// 1. every agent that is a target here and has a spec is in hookAgents
+	// every agent that is a target here and has a spec is in hookAgents
 	for _, tg := range targets {
 		if sp, _ := hookSpecFor(tg); sp != nil && !slices.Contains(hookAgents, tg.Agent.ID) {
 			t.Errorf("%s has a hooks spec, so it is written hooks, but hookAgents doesn't list it", tg.Agent.ID)
 		}
 	}
-	// 2. every agent in hookAgents is a target here with a spec
+	// every agent in hookAgents is a target here with a spec
 	for _, id := range hookAgents {
 		tg := targetByID(id)
 		if tg == nil {
@@ -92,7 +92,7 @@ func TestHookAgentsAndSpecsAgree(t *testing.T) {
 		}
 	}
 
-	// 3. an agent that maps session-start says how its start is narrowed,
+	// an agent that maps session-start says how its start is narrowed,
 	// unless it is one of the named few (startUnnarrowed). A row naming a
 	// start HookStarts doesn't is a start no hook can ask for.
 	for _, id := range hookAgents {
@@ -118,7 +118,7 @@ func TestHookAgentsAndSpecsAgree(t *testing.T) {
 		}
 	}
 
-	// 4. an agent's own event can be given to every agent magpie writes hooks
+	// an agent's own event can be given to every agent magpie writes hooks
 	// for, and to Antigravity, whose hooks it writes in a project alone
 	if want := append(slices.Clone(hookAgents), "agy"); !slices.Equal(ownEventAgents, want) {
 		t.Errorf("ownEventAgents is %v, want hookAgents plus agy: %v", ownEventAgents, want)

@@ -14,8 +14,8 @@ import (
 // Kimi Code keeps hooks as [[hooks]] array tables in its config.toml, one
 // rule each. The shape is strict as no other agent's here is: one key or
 // value Kimi does not take and it refuses the whole config.toml, models and
-// providers with the hooks. So a hook crosses one boundary, newKimiEntry,
-// and past it a kimiEntry is something Kimi accepts.
+// providers with the hooks. So newKimiEntry is the one way in, and block
+// checks its receiver again before rendering.
 
 // kimiFormat is Kimi Code's config.toml as a hooks file: [[hooks]] array
 // tables, each one rule. The blocks are flatTOML's; what a block means is
@@ -70,7 +70,7 @@ func kimiSameBlock(a, b string) bool {
 // optionally a matcher and a timeout from 1 to 600, and no other key. What
 // could be read of a block Kimi refuses is returned with it.
 func kimiBlock(block string) (kimiEntry, bool) {
-	// the block is a [[hooks]] table, so its keys are under that one table
+	// the block is a [[hooks]] table, so its keys sit under "hooks"
 	var doc struct {
 		Hooks []map[string]any `toml:"hooks"`
 	}
@@ -137,8 +137,8 @@ type kimiTimeout struct {
 	n   int
 }
 
-// kimiEntry is one [[hooks]] rule. It has exactly the four keys Kimi accepts
-// and no others, and only newKimiEntry makes one.
+// kimiEntry is one [[hooks]] rule, with exactly the four keys Kimi accepts
+// and no others. newKimiEntry is the way to make one from a hook.
 type kimiEntry struct {
 	event   kimiEvent
 	matcher string

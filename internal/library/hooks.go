@@ -231,10 +231,6 @@ type hookSpec struct {
 // of them isn't written again (namedHas), so it never runs twice. Its
 // edit tools aren't named there, so a hook narrowed to edits isn't given; PreInvocation runs before every model
 // call, not once a prompt, so a prompt hook isn't either.
-//
-// Its hooks.json's top-level keys are named hooks, so magpie's are one
-// named hook of its own there ("magpie", the format's root) and the user's
-// are never written in.
 func agyHookSpec(path string) *hookSpec {
 	return &hookSpec{
 		path: path,

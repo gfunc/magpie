@@ -135,7 +135,7 @@ func foundHook(l *Library, id string, sp *hookSpec, ev string, e json.RawMessage
 		f.Why = "shape"
 		return f
 	}
-	// the entry's timeout is the format's, in the Library's seconds
+	// Timeout is the format's, in the Library's seconds
 	f.Matcher, f.Commands, f.Timeout, f.Own = d.Matcher, d.Commands, d.Timeout, foundOwner(d.Commands)
 	why := d.Why
 	switch {
