@@ -1,0 +1,173 @@
+{
+  "steps": [
+    {
+      "name": "seed",
+      "file": "{\n  // my own settings\n  \"model\": \"opus\",\n  \"hooks\": {\n    // said when a turn ends\n    \"Stop\": [{\"hooks\": [{\"type\": \"command\", \"command\": \"say done\"}]}],\n    \"PostToolUse\": [{\"matcher\": \"Bash\", \"hooks\": [{\"type\": \"command\", \"command\": \"my-log\"}]}]\n  }\n}\n",
+      "applied": []
+    },
+    {
+      "name": "save turn-end",
+      "file": "{\n  // my own settings\n  \"model\": \"opus\",\n  \"hooks\": {\n    // said when a turn ends\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"curl -s https://api.day.app/KEY/done\",\n            \"timeout\": 10\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [{\"matcher\": \"Bash\", \"hooks\": [{\"type\": \"command\", \"command\": \"my-log\"}]}]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "Stop",
+          "entry": {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "curl -s https://api.day.app/KEY/done",
+                "timeout": 10
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "sync no change",
+      "file": "{\n  // my own settings\n  \"model\": \"opus\",\n  \"hooks\": {\n    // said when a turn ends\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"curl -s https://api.day.app/KEY/done\",\n            \"timeout\": 10\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [{\"matcher\": \"Bash\", \"hooks\": [{\"type\": \"command\", \"command\": \"my-log\"}]}]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "Stop",
+          "entry": {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "curl -s https://api.day.app/KEY/done",
+                "timeout": 10
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "save after-tool",
+      "file": "{\n  // my own settings\n  \"model\": \"opus\",\n  \"hooks\": {\n    // said when a turn ends\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"curl -s https://api.day.app/KEY/done\",\n            \"timeout\": 10\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"my-log\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"Edit|Write|MultiEdit\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"prettier --write .\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "Stop",
+          "entry": {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "curl -s https://api.day.app/KEY/done",
+                "timeout": 10
+              }
+            ]
+          }
+        },
+        {
+          "name": "fmt",
+          "event": "PostToolUse",
+          "entry": {
+            "matcher": "Edit|Write|MultiEdit",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "prettier --write ."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "edit command",
+      "file": "{\n  // my own settings\n  \"model\": \"opus\",\n  \"hooks\": {\n    // said when a turn ends\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"curl -s https://api.day.app/KEY/again\",\n            \"timeout\": 10\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"my-log\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"Edit|Write|MultiEdit\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"prettier --write .\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "fmt",
+          "event": "PostToolUse",
+          "entry": {
+            "matcher": "Edit|Write|MultiEdit",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "prettier --write ."
+              }
+            ]
+          }
+        },
+        {
+          "name": "bark",
+          "event": "Stop",
+          "entry": {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "curl -s https://api.day.app/KEY/again",
+                "timeout": 10
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "untick first",
+      "file": "{\n  // my own settings\n  \"model\": \"opus\",\n  \"hooks\": {\n    // said when a turn ends\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say after\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"my-log\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"Edit|Write|MultiEdit\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"prettier --write .\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "fmt",
+          "event": "PostToolUse",
+          "entry": {
+            "matcher": "Edit|Write|MultiEdit",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "prettier --write ."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "untick user-edited",
+      "file": "{\n  // my own settings\n  \"model\": \"opus\",\n  \"hooks\": {\n    // said when a turn ends\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say after\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"my-log\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"Edit|Write|MultiEdit\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"prettier --write ./src\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": []
+    },
+    {
+      "name": "import found",
+      "file": "{\n  // my own settings\n  \"model\": \"opus\",\n  \"hooks\": {\n    // said when a turn ends\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say after\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"my-log\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"Edit|Write|MultiEdit\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"prettier --write ./src\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "my-log",
+          "event": "PostToolUse",
+          "entry": {
+            "matcher": "Bash",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "my-log"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "remove found",
+      "file": "{\n  // my own settings\n  \"model\": \"opus\",\n  \"hooks\": {\n    // said when a turn ends\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say after\"\n          }\n        ]\n      }\n    ],\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"Bash\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"my-log\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"Edit|Write|MultiEdit\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"prettier --write ./src\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "my-log",
+          "event": "PostToolUse",
+          "entry": {
+            "matcher": "Bash",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "my-log"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

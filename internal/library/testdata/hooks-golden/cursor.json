@@ -1,0 +1,128 @@
+{
+  "steps": [
+    {
+      "name": "seed",
+      "file": "{\n  // my Cursor hooks\n  \"version\": 1,\n  \"hooks\": {\n    \"stop\": [{\"command\": \"say done\"}],\n    \"postToolUse\": [{\"command\": \"my-log\", \"matcher\": \"Shell\"}]\n  }\n}\n",
+      "applied": []
+    },
+    {
+      "name": "save turn-end",
+      "file": "{\n  // my Cursor hooks\n  \"version\": 1,\n  \"hooks\": {\n    \"stop\": [\n      {\n        \"command\": \"say done\"\n      },\n      {\n        \"command\": \"curl -s https://api.day.app/KEY/done\",\n        \"timeout\": 10\n      }\n    ],\n    \"postToolUse\": [{\"command\": \"my-log\", \"matcher\": \"Shell\"}]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "stop",
+          "entry": {
+            "command": "curl -s https://api.day.app/KEY/done",
+            "timeout": 10
+          }
+        }
+      ]
+    },
+    {
+      "name": "sync no change",
+      "file": "{\n  // my Cursor hooks\n  \"version\": 1,\n  \"hooks\": {\n    \"stop\": [\n      {\n        \"command\": \"say done\"\n      },\n      {\n        \"command\": \"curl -s https://api.day.app/KEY/done\",\n        \"timeout\": 10\n      }\n    ],\n    \"postToolUse\": [{\"command\": \"my-log\", \"matcher\": \"Shell\"}]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "stop",
+          "entry": {
+            "command": "curl -s https://api.day.app/KEY/done",
+            "timeout": 10
+          }
+        }
+      ]
+    },
+    {
+      "name": "save after-tool",
+      "file": "{\n  // my Cursor hooks\n  \"version\": 1,\n  \"hooks\": {\n    \"stop\": [\n      {\n        \"command\": \"say done\"\n      },\n      {\n        \"command\": \"curl -s https://api.day.app/KEY/done\",\n        \"timeout\": 10\n      }\n    ],\n    \"postToolUse\": [\n      {\n        \"command\": \"my-log\",\n        \"matcher\": \"Shell\"\n      },\n      {\n        \"command\": \"prettier --write .\",\n        \"matcher\": \"Write\"\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "stop",
+          "entry": {
+            "command": "curl -s https://api.day.app/KEY/done",
+            "timeout": 10
+          }
+        },
+        {
+          "name": "fmt",
+          "event": "postToolUse",
+          "entry": {
+            "command": "prettier --write .",
+            "matcher": "Write"
+          }
+        }
+      ]
+    },
+    {
+      "name": "edit command",
+      "file": "{\n  // my Cursor hooks\n  \"version\": 1,\n  \"hooks\": {\n    \"stop\": [\n      {\n        \"command\": \"say done\"\n      },\n      {\n        \"command\": \"curl -s https://api.day.app/KEY/again\",\n        \"timeout\": 10\n      }\n    ],\n    \"postToolUse\": [\n      {\n        \"command\": \"my-log\",\n        \"matcher\": \"Shell\"\n      },\n      {\n        \"command\": \"prettier --write .\",\n        \"matcher\": \"Write\"\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "fmt",
+          "event": "postToolUse",
+          "entry": {
+            "command": "prettier --write .",
+            "matcher": "Write"
+          }
+        },
+        {
+          "name": "bark",
+          "event": "stop",
+          "entry": {
+            "command": "curl -s https://api.day.app/KEY/again",
+            "timeout": 10
+          }
+        }
+      ]
+    },
+    {
+      "name": "untick first",
+      "file": "{\n  // my Cursor hooks\n  \"version\": 1,\n  \"hooks\": {\n    \"stop\": [\n      {\n        \"command\": \"say done\"\n      },\n      {\n        \"command\": \"say after\"\n      }\n    ],\n    \"postToolUse\": [\n      {\n        \"command\": \"my-log\",\n        \"matcher\": \"Shell\"\n      },\n      {\n        \"command\": \"prettier --write .\",\n        \"matcher\": \"Write\"\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "fmt",
+          "event": "postToolUse",
+          "entry": {
+            "command": "prettier --write .",
+            "matcher": "Write"
+          }
+        }
+      ]
+    },
+    {
+      "name": "untick user-edited",
+      "file": "{\n  // my Cursor hooks\n  \"version\": 1,\n  \"hooks\": {\n    \"stop\": [\n      {\n        \"command\": \"say done\"\n      },\n      {\n        \"command\": \"say after\"\n      }\n    ],\n    \"postToolUse\": [\n      {\n        \"command\": \"my-log\",\n        \"matcher\": \"Shell\"\n      },\n      {\n        \"command\": \"prettier --write ./src\",\n        \"matcher\": \"Write\"\n      }\n    ]\n  }\n}\n",
+      "applied": []
+    },
+    {
+      "name": "import found",
+      "file": "{\n  // my Cursor hooks\n  \"version\": 1,\n  \"hooks\": {\n    \"stop\": [\n      {\n        \"command\": \"say done\"\n      },\n      {\n        \"command\": \"say after\"\n      }\n    ],\n    \"postToolUse\": [\n      {\n        \"command\": \"my-log\",\n        \"matcher\": \"Shell\"\n      },\n      {\n        \"command\": \"prettier --write ./src\",\n        \"matcher\": \"Write\"\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "my-log",
+          "event": "postToolUse",
+          "entry": {
+            "command": "my-log",
+            "matcher": "Shell"
+          }
+        }
+      ]
+    },
+    {
+      "name": "remove found",
+      "file": "{\n  // my Cursor hooks\n  \"version\": 1,\n  \"hooks\": {\n    \"stop\": [\n      {\n        \"command\": \"say after\"\n      }\n    ],\n    \"postToolUse\": [\n      {\n        \"command\": \"my-log\",\n        \"matcher\": \"Shell\"\n      },\n      {\n        \"command\": \"prettier --write ./src\",\n        \"matcher\": \"Write\"\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "my-log",
+          "event": "postToolUse",
+          "entry": {
+            "command": "my-log",
+            "matcher": "Shell"
+          }
+        }
+      ]
+    }
+  ]
+}
