@@ -1300,7 +1300,9 @@ func HookAgents(name string, agents []string) (*Result, error) {
 
 // SomeHooksAgents gives the hooks named to the agents, or takes them from
 // them, each to the agents that can take it: an agent's own event stays
-// that agent's alone.
+// that agent's alone, and a hook an agent refuses (HookView.Blocked says
+// why) is not given to it. An agent not here is still set, or unset: a
+// library synced from another computer can hold a tick for it.
 func SomeHooksAgents(names, agents []string, on bool) (*Result, error) {
 	if len(names) == 0 {
 		return nil, errors.New("no hooks to give the agents")
@@ -1314,13 +1316,14 @@ func SomeHooksAgents(names, agents []string, on bool) (*Result, error) {
 				return fmt.Errorf("no hook called %s", name)
 			}
 		}
+		specs := hookSpecsOf(agents)
 		for _, h := range l.Hooks {
 			if !slices.Contains(names, h.Name) {
 				continue
 			}
 			list := slices.Clone(h.Agents)
 			for _, a := range agents {
-				if on && !hookTakes(h, a) {
+				if on && hookTakesWhy(h, a, specs[a]) != nil {
 					continue
 				}
 				list = set(list, a, on)
@@ -1331,18 +1334,63 @@ func SomeHooksAgents(names, agents []string, on bool) (*Result, error) {
 	})
 }
 
-// hookTakes is whether agent a can be given h.
-func hookTakes(h *Hook, a string) bool {
-	if x, _, ok := strings.Cut(h.Event, ":"); ok {
-		// Antigravity's own events go to a project's hooks.json alone
-		return sameHookFamily(x, a) && slices.Contains(hookAgents, a)
+// hookSpecsOf is how each of ids keeps its hooks, the agent's own spec for
+// each one that is here and has one: what a hook is asked of before it is
+// given to it. One not here, or with no hooks magpie can write, has no
+// entry, and is asked only what needs no spec.
+func hookSpecsOf(ids []string) map[string]*hookSpec {
+	want := map[string]bool{}
+	for _, a := range ids {
+		want[a] = true
 	}
-	if h.Event == "session-start" {
-		if _, err := startMatcher(a, h.Matcher); err != nil {
-			return false
+	specs := map[string]*hookSpec{}
+	for _, t := range Targets() {
+		if want[t.Agent.ID] {
+			if sp, _ := hookSpecOf(t); sp != nil {
+				specs[t.Agent.ID] = sp
+			}
 		}
 	}
-	return slices.Contains(hookAgents, a)
+	return specs
+}
+
+// hookTakes is whether agent a can ever be given h: what its family and its
+// session start say. The callers that ask what the agent itself refuses
+// (SomeHooksAgents, hooksView) go to hookTakesWhy with its spec.
+func hookTakes(h *Hook, a string) bool { return hookTakesWhy(h, a, nil) == nil }
+
+// hookTakesWhy is why agent a can't be given h, nil when it can. First what
+// needs no spec: an own event of another agent's family, the session start's
+// narrowing, an agent magpie writes no hooks for. Then, given sp (the
+// agent's own spec, nil to stop before it), the entry itself through sp's
+// event and sp's format, which is where an agent's own refusal comes from
+// without a branch here. A hook that gets past here can still be refused for
+// a start it can't be narrowed to beyond what startMatcher asks, which
+// depends on what the user picked. The reason is the page's, on the agent's
+// chip (HookView.Blocked).
+func hookTakesWhy(h *Hook, a string, sp *hookSpec) error {
+	if x, _, ok := strings.Cut(h.Event, ":"); ok {
+		// Antigravity's own events go to a project's hooks.json alone
+		if !sameHookFamily(x, a) {
+			return fmt.Errorf("%s is an event of another agent's", h.Event)
+		}
+	} else if h.Event == "session-start" {
+		if _, err := startMatcher(a, h.Matcher); err != nil {
+			return err
+		}
+	}
+	if !slices.Contains(hookAgents, a) {
+		return fmt.Errorf("%s has no hooks magpie can write", a)
+	}
+	if sp == nil {
+		return nil
+	}
+	ev, err := sp.event(a, h)
+	if err != nil {
+		return err
+	}
+	_, err = sp.entry(h, ev)
+	return err
 }
 
 // RemoveHooks takes the hooks named out of the library, and what magpie
@@ -1392,6 +1440,9 @@ type HookView struct {
 	// ProjectNo is, for each agent magpie gives hooks only in a project
 	// (Antigravity), why it can't be given this one there: "" when it can
 	ProjectNo map[string]string `json:"projectNo,omitempty"`
+	// Blocked is, for each agent the page lists a chip for, why it can't
+	// be given this one whatever is ticked: "" when it can
+	Blocked map[string]string `json:"blocked,omitempty"`
 }
 
 // HookAgentView is an agent the Hooks tab lists.
@@ -1456,6 +1507,17 @@ func (l *Library) hooksView(targets []*Target, asleep []*agent.Agent, of func(st
 		for id, sp := range specs {
 			if ev, err := sp.event(id, h); err == nil {
 				hv.Native[id] = ev
+			}
+		}
+		// an agent that has a spec and can't be given it says why before the
+		// click, the reason its chip greys with. One with no spec is the
+		// page's to say (HookAgentView.No), and so is one Problems says
+		for id, sp := range specs {
+			if err := hookTakesWhy(h, id, sp); err != nil && hv.Problems[id] == "" {
+				if hv.Blocked == nil {
+					hv.Blocked = map[string]string{}
+				}
+				hv.Blocked[id] = err.Error()
 			}
 		}
 		// an agent ticked that can't take it says why, before any change

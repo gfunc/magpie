@@ -37,6 +37,13 @@ const LONG = "【格式化】编辑文件后自动运行 prettier 格式化改�
 const hk = (name, event, matcher, command, agents, description) => ({ name, event, matcher, command, agents, ...(description ? { description } : {}) });
 // the starts each agent can be narrowed to, as hooksView lists them (in part)
 const FIVE = ["startup", "resume", "clear", "compact", "fork"];
+// the reason the server gives for a timeout Kimi Code refuses (newKimiEntry):
+// said raw on the chip, as every server reason on a chip is, in every language
+const KIMI_SLOW = "Kimi Code takes a hook's timeout from 1 to 600 seconds, not 700";
+// the hook that reason is about, as /api/library gives it: a timeout of 700,
+// ticked for Claude Code, and what the server says of it for Kimi (blocked)
+const slowHook = () => ({ name: "slow", event: "turn-end", matcher: "", command: "sleep 700", timeout: 700, agents: ["claude"], blocked: { kimi: KIMI_SLOW } });
+const KIMI = { id: "kimi", file: `${HOME}/.kimi-code/config.toml`, events: ["PreToolUse", "PostToolUse", "Stop", "SessionStart", "UserPromptSubmit"], startSources: ["startup", "resume"], starts: ["startup", "resume", "startup|resume"] };
 const HOOK_AGENTS = [
   { id: "claude", file: `${HOME}/.claude/settings.json`, events: ["PreToolUse", "PostToolUse", "Notification", "Stop", "SessionStart"], startSources: FIVE, starts: ["startup", "resume", "clear", "compact", "fork", "startup|resume|clear|compact"] },
   { id: "codex", file: `${HOME}/.codex/hooks.json`, events: ["PreToolUse", "PostToolUse", "Stop", "SessionStart"], startSources: FIVE, starts: ["startup", "resume", "clear", "compact", "fork", "startup|resume|clear|compact"] },
@@ -44,11 +51,13 @@ const HOOK_AGENTS = [
   { id: "gemini", file: `${HOME}/.gemini/settings.json`, events: ["AfterTool", "AfterAgent", "SessionStart"], startSources: ["startup", "resume", "clear"], starts: ["startup", "resume", "clear", "startup|resume|clear", "startup|resume|clear|compact"] },
   { id: "opencode", no: "OpenCode has no hooks magpie can write" },
 ];
-const lib = (hooks) => ({
+// the same, with Kimi Code here (after Gemini CLI, as the agents are listed)
+const HOOK_AGENTS_KIMI = [...HOOK_AGENTS.slice(0, 4), KIMI, HOOK_AGENTS[4]];
+const lib = (hooks, withKimi) => ({
   dir: `${HOME}/.magpie/library`, backups: `${HOME}/.magpie/backups`, home: HOME,
-  agents: [agent("claude", "Claude Code"), agent("codex", "Codex"), agent("cursor", "Cursor"), agent("gemini", "Gemini CLI"), agent("opencode", "OpenCode")],
+  agents: [agent("claude", "Claude Code"), agent("codex", "Codex"), agent("cursor", "Cursor"), agent("gemini", "Gemini CLI"), ...(withKimi ? [agent("kimi", "Kimi Code")] : []), agent("opencode", "OpenCode")],
   instructions: { agents: [] }, servers: [], skills: [], foundServers: [], projects: [], foundSkills: [], problems: [],
-  hooks, hookAgents: HOOK_AGENTS,
+  hooks, hookAgents: withKimi ? HOOK_AGENTS_KIMI : HOOK_AGENTS,
 });
 
 let I18N;
@@ -66,14 +75,17 @@ function tr(lang, key, vars = {}) {
 }
 
 function server(lang, state, posts) {
-  const can = (h, a) => a !== "opencode" && (!h.event.includes(":") || h.event.startsWith(a + ":"));
+  // what the server gives an agent (SomeHooksAgents): not one it has no hooks
+  // for, not another's own event, and not one it said it refuses (blocked)
+  const can = (h, a) => a !== "opencode" && (!h.event.includes(":") || h.event.startsWith(a + ":")) && !h.blocked?.[a];
+  const view = () => lib(state.hooks, state.kimi);
   return async (route) => {
     const req = route.request(), url = new URL(req.url());
     const json = (data) => route.fulfill({ json: data });
     if (url.pathname === "/boot.js") return route.fulfill({ contentType: "text/javascript", body: `window.bootPrefs = {lang:"${lang}",theme:"light",web:true};` });
     if (url.pathname === "/wails/runtime.js") return route.fulfill({ contentType: "text/javascript", body: "export const Window = {};" });
     if (url.pathname === "/api/state") return json({ agents: [], profiles: [], settings: { lang, theme: "light" } });
-    if (url.pathname === "/api/library") return json(lib(state.hooks));
+    if (url.pathname === "/api/library") return json(view());
     if (url.pathname.startsWith("/api/library/") && req.method() === "POST" && !url.pathname.endsWith("/reveal")) {
       const body = req.postDataJSON(), what = url.pathname.replace("/api/library/", "");
       posts.push({ what, body });
@@ -82,7 +94,7 @@ function server(lang, state, posts) {
       if (what === "hooks/agents-some") state.hooks = state.hooks.map((x) => (body.names.includes(x.name) ? put(x, body.agents, body.on) : x));
       if (what === "hooks/save") state.hooks = [...state.hooks.filter((x) => x.name !== body.old), body.hook];
       if (what === "hooks/remove-all") state.hooks = state.hooks.filter((x) => !body.names.includes(x.name));
-      return json({ ...lib(state.hooks), result: { changed: ["claude"] } });
+      return json({ ...view(), result: { changed: ["claude"] } });
     }
     if (url.pathname === "/api/plugins") return json({ plugins: [] });
     if (url.pathname === "/api/usage/quotas") return json([]);
@@ -348,6 +360,140 @@ for (const engine of (process.env.BROWSER ? [process.env.BROWSER] : ["chromium",
         await row("reinject").waitFor();
         assert.equal((await row("reinject").locator(".lib-hookev").textContent()).trim(), w("When a session starts") + " · " + w("After the context is compacted"));
         assert.equal(await row("reinject").locator('.lib-ag[data-agent="gemini"]').getAttribute("title"), w("{agent} never starts a session that way", { agent: "Gemini CLI" }));
+
+        assert.deepEqual(posts, []);
+        assert.deepEqual(errors, []);
+        await ctx.close();
+      });
+
+      // A reason the browser can't work out, the server says on the hook
+      // (blocked): the chip is greyed with it before the click, as a chip the
+      // browser greys itself is, and a click posts nothing. Kimi Code refuses
+      // a timeout of 700; Claude Code takes it. The page is never told the
+      // rule, only this hook's reason.
+      await t.test(lang + ": the server's reason greys a chip before the click", async () => {
+        const w = (key, vars) => tr(lang, key, vars);
+        const state = { kimi: true, hooks: [
+          slowHook(),
+          hk("bark", "turn-end", "", "curl -s https://api.day.app/KEY/done", ["codex"]),
+        ] };
+        const posts = [], errors = [];
+        const ctx = await browser.newContext({ viewport: { width: 440, height: 1000 }, reducedMotion: "reduce" });
+        await ctx.addInitScript(() => { try { localStorage.setItem("magpie.libTab", "hooks"); } catch {} });
+        const page = await ctx.newPage();
+        page.setDefaultTimeout(5000);
+        page.setDefaultNavigationTimeout(60000);
+        // WebKit reports a ResizeObserver round left to the next frame as a
+        // page error, as the group tests say: the rows' chip-gap watch is told
+        // again while a round is under way (here, chips drawn again in the
+        // editor), the round is delivered next frame and nothing is painted
+        // wrong. Any other error is one.
+        page.on("pageerror", (e) => { if (!/^ResizeObserver loop completed with undelivered notifications/.test(e.message)) errors.push(e.message); });
+        page.on("dialog", (d) => { errors.push("a browser dialog: " + d.message()); d.dismiss(); });
+        await page.route("**/*", server(lang, state, posts));
+        await page.goto("http://magpie.test/");
+        await page.locator('button[data-view="library"]').click();
+        const v = page.locator("#view-library");
+        await v.locator(".lib-hook").first().waitFor();
+        const row = (name) => v.locator(".lib-hook").filter({ has: page.locator(".name", { hasText: new RegExp("^" + name + "$") }) });
+        const chip = (name, id) => row(name).locator(`:scope > .lib-agents > .lib-ag[data-agent="${id}"]`);
+        const agentsOf = (name) => state.hooks.find((s) => s.name === name)?.agents;
+
+        // the row: Kimi's chip greyed, its tooltip the server's reason, said
+        // as the server said it (no translation: the page shows server
+        // reasons raw); Claude's, which takes the timeout, not greyed
+        assert.equal(await chip("slow", "kimi").getAttribute("aria-disabled"), "true");
+        assert.equal(await chip("slow", "kimi").getAttribute("title"), KIMI_SLOW);
+        assert.equal(await chip("slow", "claude").getAttribute("aria-disabled"), null);
+        await press(page, chip("slow", "kimi"));
+        await page.waitForTimeout(150);
+        assert.deepEqual(posts, [], "a chip greyed by the server posted");
+        assert.deepEqual(await sideways(page), [], "sideways scroll with a server reason on a chip");
+
+        // a row the server says nothing of: Kimi's chip works, and posts
+        assert.equal(await chip("bark", "kimi").getAttribute("aria-disabled"), null);
+        await press(page, chip("bark", "kimi"));
+        await page.waitForFunction(() => document.querySelector('#view-library .lib-hook .lib-ag[data-agent="kimi"][aria-pressed="true"]'));
+        await page.waitForTimeout(200);
+        assert.deepEqual(posts.shift(), { what: "hooks/agents", body: { name: "bark", agents: ["codex", "kimi"] } });
+        assert.deepEqual(agentsOf("bark"), ["codex", "kimi"]);
+
+        // All on the blocked row gives it to the agents that can take it, not Kimi
+        const all = row("slow").locator(":scope > .lib-agents > .lib-ag.all");
+        if (await all.count()) {
+          await press(page, all);
+          await page.waitForTimeout(250);
+          assert.deepEqual(posts.shift(), { what: "hooks/agents", body: { name: "slow", agents: ["claude", "codex", "cursor", "gemini"] } });
+          await press(page, row("slow").locator('.lib-ag[data-agent="codex"]'));
+          await press(page, row("slow").locator('.lib-ag[data-agent="cursor"]'));
+          await press(page, row("slow").locator('.lib-ag[data-agent="gemini"]'));
+          for (let i = 0; i < 3; i++) posts.shift();
+          assert.deepEqual(agentsOf("slow"), ["claude"], "back to Claude Code alone");
+        }
+
+        // the editor opened on the blocked row: Kimi's chip greyed with the
+        // reason, a click on it changes nothing, and Save doesn't add Kimi
+        await press(page, row("slow"));
+        const ed = page.locator("#modal .lib-hookedit");
+        await ed.waitFor();
+        await settled(page);
+        const edChip = (id) => ed.locator(`.lib-ag[data-agent="${id}"]`);
+        assert.equal(await edChip("kimi").getAttribute("aria-disabled"), "true");
+        assert.equal(await edChip("kimi").getAttribute("title"), KIMI_SLOW);
+        assert.deepEqual(await sideways(page), [], "sideways scroll in the editor with a server reason");
+        // a reader's click, where the chip is (Playwright's own click refuses
+        // an aria-disabled button, which is the point of it)
+        await press(page, edChip("kimi"));
+        assert.equal(await edChip("kimi").getAttribute("aria-pressed"), "false", "a click on the greyed chip ticked Kimi");
+        assert.equal(await ed.count(), 1, "a click on the greyed chip left the editor");
+        await ed.locator(".bar button.primary").click();
+        await ed.waitFor({ state: "detached" });
+        assert.deepEqual(posts.shift(), { what: "hooks/save", body: { old: "slow", hook: { name: "slow", description: "", event: "turn-end", matcher: "", command: "sleep 700", timeout: 700, agents: ["claude"] } } });
+
+        // the reader changes what the reason is about: the timeout is 600
+        // now, which Kimi takes, so the old reason is not shown nor saved by,
+        // and Kimi is sent as ticked. The server judges the new hook itself.
+        state.hooks = state.hooks.map((x) => (x.name === "slow" ? { ...x, blocked: { kimi: KIMI_SLOW } } : x));
+        await page.reload();
+        await v.locator(".lib-hook").first().waitFor();
+        await press(page, row("slow"));
+        await ed.waitFor();
+        await settled(page);
+        assert.equal(await edChip("kimi").getAttribute("aria-disabled"), "true", "the row's reason is the editor's on opening");
+        await ed.locator(".lib-hooktimeout").fill("600");
+        await edChip("kimi").waitFor();
+        assert.equal(await edChip("kimi").getAttribute("aria-disabled"), null, "a reason about a timeout of 700 greys a hook with 600");
+        await edChip("kimi").click();
+        await ed.locator(".bar button.primary").click();
+        await ed.waitFor({ state: "detached" });
+        assert.deepEqual(posts.shift(), { what: "hooks/save", body: { old: "slow", hook: { name: "slow", description: "", event: "turn-end", matcher: "", command: "sleep 700", timeout: 600, agents: ["claude", "kimi"] } } });
+
+        // the bar, with the blocked hook and another picked. Its own state:
+        // the save above made "slow" one Kimi takes. Kimi has the other and
+        // can't be given the blocked one, so of what it can be given it has
+        // all: not greyed, and not "1 of these", which would offer to give
+        // it the one it refuses
+        state.hooks = [slowHook(), hk("bark", "turn-end", "", "curl -s https://api.day.app/KEY/done", ["codex", "kimi"])];
+        await page.reload();
+        await v.locator(".lib-hook").first().waitFor();
+        const head = v.locator(".row-head.lib-hookhead");
+        await press(page, head.locator(".lib-select"));
+        await v.locator(".lib-pickbar .lib-pickn.none").waitFor();
+        await press(page, row("slow").locator(".lib-pickbox"));
+        await press(page, row("bark").locator(".lib-pickbox"));
+        const barKimi = v.locator('.lib-pickbar .lib-ag[data-agent="kimi"]');
+        assert.equal(await barKimi.getAttribute("aria-disabled"), null);
+        assert.equal(await barKimi.getAttribute("aria-pressed"), "true");
+        assert.equal(await barKimi.getAttribute("title"), w("{agent} has all of these hooks — click to take them away", { agent: "Kimi Code" }));
+        // with the blocked hook alone picked, Kimi's chip is greyed with the reason
+        await press(page, row("bark").locator(".lib-pickbox"));
+        await v.locator(".lib-pickbar .lib-pickn").filter({ hasText: w("{n} selected", { n: 1 }) }).waitFor();
+        assert.equal(await barKimi.getAttribute("aria-disabled"), "true");
+        assert.equal(await barKimi.getAttribute("title"), KIMI_SLOW);
+        await press(page, barKimi);
+        await page.waitForTimeout(150);
+        assert.deepEqual(posts, [], "the bar's greyed chip posted");
+        assert.deepEqual(await sideways(page), [], "sideways scroll with the bar and a server reason");
 
         assert.deepEqual(posts, []);
         assert.deepEqual(errors, []);

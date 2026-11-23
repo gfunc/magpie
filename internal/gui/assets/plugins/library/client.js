@@ -4944,6 +4944,15 @@ magpie.plugin("library", (ctx) => {
     }
     return "";
   };
+  // Why a can't be given h, user-wide: what the server said of this hook
+  // (HookView.Blocked, a reason the browser can't know, such as a value an
+  // agent refuses), else what the browser works out itself. The server's
+  // is a fact about the hook as it judged it, so it is asked of a hook as
+  // the page holds it, never of one being edited (editHook keeps its own).
+  const hookRefused = (h) => (a) => h.blocked?.[a.id] || hookBlocked(h)(a);
+  // Whether what is being edited (d) is still the hook the server judged (h),
+  // so that h's reasons are about what is on screen
+  const hookJudged = (d, h) => !!h && ["event", "matcher", "command", "timeout"].every((k) => (d[k] ?? "") === (h[k] ?? ""));
   function hookEventLabel(h) {
     const i = h.event.indexOf(":");
     if (i > 0) return nameOf(h.event.slice(0, i)) + " · " + h.event.slice(i + 1);
@@ -5015,7 +5024,7 @@ magpie.plugin("library", (ctx) => {
     cmd.title = h.command;
     who.append(cmd);
     row.append(glyph(GLYPH.hook), who, ...removeAct(() => confirmRemoveHook(h)),
-      agentChips(withGone(all, h.agents), h.agents, chipsChange("hooks/agents", h.name, "hooks", (x) => hookRow(x, all)), { problems: h.problems, blocked: hookBlocked(h), all: true }));
+      agentChips(withGone(all, h.agents), h.agents, chipsChange("hooks/agents", h.name, "hooks", (x) => hookRow(x, all)), { problems: h.problems, blocked: hookRefused(h), all: true }));
     if (picking) return pickRow(row, h.name);
     row.onclick = () => editHook(h);
     row.title = t("Edit {name}", { name: h.name });
@@ -5081,6 +5090,15 @@ magpie.plugin("library", (ctx) => {
     const d = h ? { name: h.name, description: h.description || "", event: h.event, matcher: h.matcher || "", command: h.command, timeout: h.timeout || 0, agents: [...(h.agents || [])] }
       : { name: "", description: "", event: "turn-end", matcher: "", command: "", timeout: 0, agents: [] };
     if (!h) d.agents = all.filter((a) => !hookBlocked(d)(a)).map((a) => a.id);
+    // why a chip is greyed here: the server's reason while what is being
+    // edited is still the hook it judged, else the browser's rules alone.
+    // Both the chips and what Save sends ask this, so they can't disagree
+    const blocked = (a) => (hookJudged(d, h) ? h.blocked?.[a.id] : "") || hookBlocked(d)(a);
+    // A field the server's reason is about changed (the event and matcher
+    // menus draw everything again themselves). The chips say what a save
+    // will do, so they are drawn again when the reason stops or starts
+    // applying, and only then: the chips under the pointer stay put.
+    const reasonChanged = (was) => { if (hookJudged(d, h) !== was) drawAgents(); };
     const ed = el("div", "editor lib-editor lib-hookedit");
     const head = el("div", "ehead");
     head.append(glyph(GLYPH.hook), el("b", "", h ? h.name : t("New hook")));
@@ -5127,10 +5145,10 @@ magpie.plugin("library", (ctx) => {
     ed.append(...field(t("When it runs"), evBtn));
     const slot = el("div", "lib-slot");
     ed.append(slot);
-    const cmd = field2(d.command, "curl -s https://api.day.app/KEY/done", (v) => { d.command = v; });
+    const cmd = field2(d.command, "curl -s https://api.day.app/KEY/done", (v) => { const was = hookJudged(d, h); d.command = v; reasonChanged(was); });
     cmd.classList.add("mono");
     ed.append(...field(t("Command"), cmd, t("Run by the agent's shell, in the session's folder; the agent passes what happened as JSON on its input")));
-    const to = field2(d.timeout ? String(d.timeout) : "", t("the agent's own"), (v) => { d.timeout = Math.max(0, parseInt(v, 10) || 0); });
+    const to = field2(d.timeout ? String(d.timeout) : "", t("the agent's own"), (v) => { const was = hookJudged(d, h); d.timeout = Math.max(0, parseInt(v, 10) || 0); reasonChanged(was); });
     to.inputMode = "numeric";
     to.classList.add("lib-hooktimeout");
     ed.append(...field(t("Timeout (seconds)"), to));
@@ -5139,7 +5157,7 @@ magpie.plugin("library", (ctx) => {
     ed.append(err);
 
     function drawAgents() {
-      agentsBox.replaceChildren(agentChips(all, d.agents, (next) => { d.agents = next; drawAgents(); }, { names: true, blocked: hookBlocked(d), all: true }));
+      agentsBox.replaceChildren(agentChips(all, d.agents, (next) => { d.agents = next; drawAgents(); }, { names: true, blocked, all: true }));
     }
     function draw() {
       evBtn.replaceChildren(el("span", "", hookEventLabel(d)), svg(CHEV, 11, 1.6));
@@ -5179,7 +5197,7 @@ magpie.plugin("library", (ctx) => {
     const save = async () => {
       err.textContent = "";
       try {
-        const hook = { name: d.name, description: d.description.trim(), event: d.event, matcher: d.matcher, command: d.command, timeout: d.timeout, agents: d.agents.filter((id) => !hookBlocked(d)(agentOf(id) || { id })) };
+        const hook = { name: d.name, description: d.description.trim(), event: d.event, matcher: d.matcher, command: d.command, timeout: d.timeout, agents: d.agents.filter((id) => !blocked(agentOf(id) || { id })) };
         take(await api("library/hooks/save", { old: h ? h.name : "", hook }));
         report(lib.result, h ? t("{name} saved", { name: d.name }) : "");
         closeLibModal(true);
@@ -6829,7 +6847,7 @@ magpie.plugin("library", (ctx) => {
     const servers = kind === "servers", hooks = kind === "hooks";
     const n = skills.length, names = skills.map((s) => s.name);
     const own = (s, a) => !s.always?.includes(a.id);
-    const can = (s, a) => (servers ? !!reaches(s)(a) : hooks ? !hookBlocked(s)(a) : own(s, a));
+    const can = (s, a) => (servers ? !!reaches(s)(a) : hooks ? !hookRefused(s)(a) : own(s, a));
     const reach = (a) => skills.filter((s) => can(s, a)).length;
     const count = (a) => skills.filter((s) => can(s, a) && s.agents?.includes(a.id)).length;
     const itself = (a) => (servers || hooks ? 0 : skills.filter((s) => !own(s, a)).length);
@@ -6878,7 +6896,7 @@ magpie.plugin("library", (ctx) => {
     // repository's heading drew an icon for each of twenty Hermes profiles)
     change.rows = true;
     const box = agentChips(all, full, change, { all: true, blocked: servers ? (a) => (reach(a) ? "" : n === 1 ? sseBlocked(skills[0])(a) : t("{agent} can reach none of these servers", { agent: a.name }))
-      : hooks ? (a) => (reach(a) ? "" : n === 1 ? hookBlocked(skills[0])(a) : t("{agent} can run none of these hooks", { agent: a.name })) : null,
+      : hooks ? (a) => (reach(a) ? "" : n === 1 ? hookRefused(skills[0])(a) : t("{agent} can run none of these hooks", { agent: a.name })) : null,
     always: servers || hooks || !n ? null : (a) => (reach(a) ? "" : n === 1 ? alwaysFor(skills[0])(a)
       : t("{agent} reads ~/.agents/skills itself, where all of these are kept — it has them whatever is ticked here", { agent: a.name })) });
     box.classList.add("lib-groupchips");
