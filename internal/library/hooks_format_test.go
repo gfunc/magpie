@@ -73,17 +73,24 @@ func (f *respacedFile) Write(path string, drop map[string][]int, add map[string]
 // Every place the engine asks "are these one entry" asks the format. In
 // run() there are two: find, which says which file entry a record or a
 // wanted entry is, and the done test, which says whether a claimed record is
-// the wanted entry. This pins find: left on exact text while the format
-// compares in a normal form, a record whose file entry came back
-// re-serialised is taken as gone, and its hook written a second time.
+// the wanted entry. In hooks_found.go there is a third, the claim pass,
+// which says which file entries magpie's records own. This pins find: left
+// on exact text while the format compares in a normal form, a record whose
+// file entry came back re-serialised is taken as gone, and its hook written
+// a second time.
 //
-// The done test is not pinned here. It compares an entry magpie just built
-// with a record magpie wrote, and for every format in this tree those two
-// are the same text (Entry is deterministic), so no state tells a done on
-// exact text from one on the normal form. It is left for a format whose
-// records and fresh entries can differ in their spelling and still be one
-// rule.
-func TestHookFormatSameIsIdentityEverywhere(t *testing.T) {
+// Kimi Code pins the claim pass too (TestKimiHooksResavedBlockIsStillMine,
+// hooks_kimi_sync_test.go): on exact text, a block of magpie's the user's
+// tool saved again is listed under "In your agents" as the user's.
+//
+// The done test is on the format and is pinned by nothing. It compares an
+// entry magpie just built with a record magpie wrote, and for every format
+// in this tree those two are the same text, Entry being deterministic, so no
+// state tells a done on exact text from one on the normal form: measured,
+// a sync over a re-saved block with done on canonical writes nothing and
+// keeps the record. It is left for a format whose records and fresh entries
+// can differ in their spelling and still be one rule.
+func TestHookFormatSameIsIdentityAtFindAndClaim(t *testing.T) {
 	// One rule in two spellings: as the format spells it, and as the file
 	// holds it now that the other tool re-saved it, with a key of its own
 	// added. Their text differs, which canonical tells apart, and the

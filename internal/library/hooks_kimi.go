@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"unicode/utf8"
+
+	"github.com/pelletier/go-toml/v2"
 )
 
 // Kimi Code keeps hooks as [[hooks]] array tables in its config.toml, one
@@ -14,6 +16,103 @@ import (
 // value Kimi does not take and it refuses the whole config.toml, models and
 // providers with the hooks. So a hook crosses one boundary, newKimiEntry,
 // and past it a kimiEntry is something Kimi accepts.
+
+// kimiFormat is Kimi Code's config.toml as a hooks file: [[hooks]] array
+// tables, each one rule. The blocks are flatTOML's; what a block means is
+// Kimi's, and lives here.
+var kimiFormat = flatTOML{
+	table: "hooks",
+	event: "event",
+	encode: func(in hookInput) (string, error) {
+		e, err := newKimiEntry(in, kimiHookEvents)
+		if err != nil {
+			return "", err
+		}
+		return e.block()
+	},
+	decode: kimiDecode,
+	same:   kimiSameBlock,
+}
+
+// kimiDecode reads one [[hooks]] block back. A block with any key but
+// Kimi's four, a value of the wrong sort, or an event other than ev is one
+// Kimi would refuse: it is listed and can be taken out, but the Library
+// can't keep it as it is written, so it reads back as "shape", with what it
+// could read of it. Kimi's timeout is in seconds, the Library's own unit,
+// and one the block doesn't set is 0.
+func kimiDecode(ev, block string) (decodedHook, error) {
+	e, ok := kimiBlock(block)
+	d := decodedHook{Matcher: e.matcher, Commands: []string{}, Timeout: e.timeoutSeconds()}
+	if e.command != "" {
+		d.Commands = []string{e.command}
+	}
+	if !ok || string(e.event) != ev {
+		d.Why = "shape"
+	}
+	return d, nil
+}
+
+// kimiSameBlock is whether two blocks are one hook: both read as Kimi's four
+// keys and compared field by field, so a block the user's tool saved again
+// with another key order or indent is still the one magpie wrote. A block
+// that isn't Kimi's is compared by its exact text.
+func kimiSameBlock(a, b string) bool {
+	x, aOK := kimiBlock(a)
+	y, bOK := kimiBlock(b)
+	if !aOK || !bOK {
+		return a == b
+	}
+	return x == y
+}
+
+// kimiBlock is one [[hooks]] block read into Kimi's keys, and whether it is
+// one Kimi takes: exactly a command and an event, each a string, with
+// optionally a matcher and a timeout from 1 to 600, and no other key. What
+// could be read of a block Kimi refuses is returned with it.
+func kimiBlock(block string) (kimiEntry, bool) {
+	// the block is a [[hooks]] table, so its keys are under that one table
+	var doc struct {
+		Hooks []map[string]any `toml:"hooks"`
+	}
+	if toml.Unmarshal([]byte(block), &doc) != nil || len(doc.Hooks) != 1 {
+		return kimiEntry{}, false
+	}
+	var e kimiEntry
+	ok := true
+	for k, v := range doc.Hooks[0] {
+		s, isString := v.(string)
+		n, isInt := v.(int64)
+		switch k {
+		case "event":
+			e.event, ok = kimiEvent(s), ok && isString
+		case "matcher":
+			e.matcher, ok = s, ok && isString
+		case "command":
+			e.command, ok = s, ok && isString
+		case "timeout":
+			inRange := isInt && n >= 1 && n <= 600
+			if inRange {
+				e.timeout = kimiTimeout{set: true, n: int(n)}
+			}
+			ok = ok && inRange
+		default:
+			ok = false
+		}
+	}
+	// Kimi refuses a rule with no command, and one with no event
+	if e.event == "" || e.command == "" {
+		ok = false
+	}
+	return e, ok
+}
+
+// timeoutSeconds is the block's timeout in the Library's seconds, 0 for none.
+func (e kimiEntry) timeoutSeconds() int {
+	if !e.timeout.set {
+		return 0
+	}
+	return e.timeout.n
+}
 
 // kimiEvent is one of the events Kimi Code fires. Only kimiHookEvents names
 // them, so a value of this type is one Kimi knows.

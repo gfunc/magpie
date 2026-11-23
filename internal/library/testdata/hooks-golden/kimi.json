@@ -1,0 +1,101 @@
+{
+  "steps": [
+    {
+      "name": "seed",
+      "file": "# my Kimi Code config\ndefault_model = \"kimi-code/k2.7\"\n\n[thinking]\neffort = \"high\"\n\n# said when a turn ends\n[[hooks]]\nevent = \"Stop\"\ncommand = \"say done\"\n\n[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Bash\"\ncommand = \"my-log\"\n",
+      "applied": []
+    },
+    {
+      "name": "save turn-end",
+      "file": "# my Kimi Code config\ndefault_model = \"kimi-code/k2.7\"\n\n[thinking]\neffort = \"high\"\n\n# said when a turn ends\n[[hooks]]\nevent = \"Stop\"\ncommand = \"say done\"\n\n[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Bash\"\ncommand = \"my-log\"\n\n[[hooks]]\nevent = \"Stop\"\ncommand = \"curl -s https://api.day.app/KEY/done\"\ntimeout = 10\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "Stop",
+          "entry": "[[hooks]]\nevent = \"Stop\"\ncommand = \"curl -s https://api.day.app/KEY/done\"\ntimeout = 10\n"
+        }
+      ]
+    },
+    {
+      "name": "sync no change",
+      "file": "# my Kimi Code config\ndefault_model = \"kimi-code/k2.7\"\n\n[thinking]\neffort = \"high\"\n\n# said when a turn ends\n[[hooks]]\nevent = \"Stop\"\ncommand = \"say done\"\n\n[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Bash\"\ncommand = \"my-log\"\n\n[[hooks]]\nevent = \"Stop\"\ncommand = \"curl -s https://api.day.app/KEY/done\"\ntimeout = 10\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "Stop",
+          "entry": "[[hooks]]\nevent = \"Stop\"\ncommand = \"curl -s https://api.day.app/KEY/done\"\ntimeout = 10\n"
+        }
+      ]
+    },
+    {
+      "name": "save after-tool",
+      "file": "# my Kimi Code config\ndefault_model = \"kimi-code/k2.7\"\n\n[thinking]\neffort = \"high\"\n\n# said when a turn ends\n[[hooks]]\nevent = \"Stop\"\ncommand = \"say done\"\n\n[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Bash\"\ncommand = \"my-log\"\n\n[[hooks]]\nevent = \"Stop\"\ncommand = \"curl -s https://api.day.app/KEY/done\"\ntimeout = 10\n\n[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Write|Edit\"\ncommand = \"prettier --write .\"\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "Stop",
+          "entry": "[[hooks]]\nevent = \"Stop\"\ncommand = \"curl -s https://api.day.app/KEY/done\"\ntimeout = 10\n"
+        },
+        {
+          "name": "fmt",
+          "event": "PostToolUse",
+          "entry": "[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Write|Edit\"\ncommand = \"prettier --write .\"\n"
+        }
+      ]
+    },
+    {
+      "name": "edit command",
+      "file": "# my Kimi Code config\ndefault_model = \"kimi-code/k2.7\"\n\n[thinking]\neffort = \"high\"\n\n# said when a turn ends\n[[hooks]]\nevent = \"Stop\"\ncommand = \"say done\"\n\n[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Bash\"\ncommand = \"my-log\"\n\n[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Write|Edit\"\ncommand = \"prettier --write .\"\n\n[[hooks]]\nevent = \"Stop\"\ncommand = \"curl -s https://api.day.app/KEY/again\"\ntimeout = 10\n",
+      "applied": [
+        {
+          "name": "fmt",
+          "event": "PostToolUse",
+          "entry": "[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Write|Edit\"\ncommand = \"prettier --write .\"\n"
+        },
+        {
+          "name": "bark",
+          "event": "Stop",
+          "entry": "[[hooks]]\nevent = \"Stop\"\ncommand = \"curl -s https://api.day.app/KEY/again\"\ntimeout = 10\n"
+        }
+      ]
+    },
+    {
+      "name": "untick first",
+      "file": "# my Kimi Code config\ndefault_model = \"kimi-code/k2.7\"\n\n[thinking]\neffort = \"high\"\n\n# said when a turn ends\n[[hooks]]\nevent = \"Stop\"\ncommand = \"say done\"\n\n[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Bash\"\ncommand = \"my-log\"\n\n[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Write|Edit\"\ncommand = \"prettier --write .\"\n\n[[hooks]]\nevent = \"Stop\"\ncommand = \"say after\"\n",
+      "applied": [
+        {
+          "name": "fmt",
+          "event": "PostToolUse",
+          "entry": "[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Write|Edit\"\ncommand = \"prettier --write .\"\n"
+        }
+      ]
+    },
+    {
+      "name": "untick user-edited",
+      "file": "# my Kimi Code config\ndefault_model = \"kimi-code/k2.7\"\n\n[thinking]\neffort = \"high\"\n\n# said when a turn ends\n[[hooks]]\nevent = \"Stop\"\ncommand = \"say done\"\n\n[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Bash\"\ncommand = \"my-log\"\n\n[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Write|Edit\"\ncommand = \"prettier --write ./src\"\n\n[[hooks]]\nevent = \"Stop\"\ncommand = \"say after\"\n",
+      "applied": []
+    },
+    {
+      "name": "import found",
+      "file": "# my Kimi Code config\ndefault_model = \"kimi-code/k2.7\"\n\n[thinking]\neffort = \"high\"\n\n# said when a turn ends\n[[hooks]]\nevent = \"Stop\"\ncommand = \"say done\"\n\n[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Bash\"\ncommand = \"my-log\"\n\n[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Write|Edit\"\ncommand = \"prettier --write ./src\"\n\n[[hooks]]\nevent = \"Stop\"\ncommand = \"say after\"\n",
+      "applied": [
+        {
+          "name": "my-log",
+          "event": "PostToolUse",
+          "entry": "[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Bash\"\ncommand = \"my-log\"\n"
+        }
+      ]
+    },
+    {
+      "name": "remove found",
+      "file": "# my Kimi Code config\ndefault_model = \"kimi-code/k2.7\"\n\n[thinking]\neffort = \"high\"\n\n# said when a turn ends\n\n[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Bash\"\ncommand = \"my-log\"\n\n[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Write|Edit\"\ncommand = \"prettier --write ./src\"\n\n[[hooks]]\nevent = \"Stop\"\ncommand = \"say after\"\n",
+      "applied": [
+        {
+          "name": "my-log",
+          "event": "PostToolUse",
+          "entry": "[[hooks]]\nevent = \"PostToolUse\"\nmatcher = \"Bash\"\ncommand = \"my-log\"\n"
+        }
+      ]
+    }
+  ]
+}

@@ -29,10 +29,10 @@ type goldenFile struct {
 const goldenHome = "<home>"
 
 // TestHooksGoldenBytes holds what the hooks engine writes today, byte for
-// byte, for the seven agents it serves, and the records it keeps of that in
-// library.json. The engine is being rewritten to serve one more agent. This
-// test must pass against the same goldens afterwards, so a change to any
-// byte an existing agent gets is caught before it ships.
+// byte, for the agents it serves, and the records it keeps of that in
+// library.json. The engine was rewritten to serve one more agent, Kimi Code.
+// The goldens of the seven it served before must not change, so a change to
+// any byte an existing agent gets is caught before it ships.
 func TestHooksGoldenBytes(t *testing.T) {
 	update := os.Getenv("UPDATE_HOOKS_GOLDEN") == "1"
 	for _, id := range hookAgents {
@@ -129,6 +129,9 @@ matcher = "run_terminal_command"
   }
 }
 `,
+	// the user's own tables, a comment, and two [[hooks]] blocks in the
+	// order and style Kimi's own tool writes them (hooks_kimi_sync_test.go)
+	"kimi": kimiSeed,
 }
 
 // goldenRun plays the script for agent id in a sandbox of its own, and
@@ -154,6 +157,8 @@ func goldenRun(t *testing.T, id string) goldenFile {
 	case "dsh":
 		file = filepath.Join(h, ".dsh", "magpie-hooks.json")
 		row = filepath.Join(h, ".dsh", "profiles", "web", "cordis.patch.yml")
+	case "kimi":
+		file = filepath.Join(h, ".kimi-code", "config.toml")
 	default:
 		// an agent the engine serves that this script doesn't know: its
 		// file would never be read, and an empty golden would pass
@@ -277,6 +282,12 @@ var goldenAfter = map[string]string{
   type = "command"
   command = "say after"
 `,
+	// a [[hooks]] block appended after the last one, as Kimi's tool writes it
+	"kimi": `
+[[hooks]]
+event = "Stop"
+command = "say after"
+`,
 }
 
 // goldenAfterMine is the hooks file with the user's turn-end hook after
@@ -289,7 +300,7 @@ func goldenAfterMine(t *testing.T, id, s, anchor string) string {
 	if !ok {
 		t.Fatalf("no entry of the user's own to add for %s", id)
 	}
-	if id == "grok" || id == "grok-app" {
+	if id == "grok" || id == "grok-app" || id == "kimi" {
 		return strings.TrimSuffix(s, "\n") + "\n" + entry
 	}
 	i := strings.Index(s, anchor)

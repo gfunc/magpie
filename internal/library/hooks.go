@@ -116,6 +116,12 @@ var startSpecs = map[string]*startSpec{
 	"agy":      {sources: []string{"startup"}},
 	"grok":     {sources: []string{"startup", "resume", "clear"}, groups: grokStarts},
 	"grok-app": {sources: []string{"startup", "resume", "clear"}, groups: grokStarts},
+	// Kimi Code 2.7.2 (its bundle, triggerSessionStart): SessionStart's
+	// matcher is a regular expression tested on the session's source, which
+	// is "startup" for a new session or "resume" for one resumed. A forked
+	// or reclaimed session fires no SessionStart, and /clear is no start.
+	// Several are named as a regex names them, "startup|resume"
+	"kimi": {sources: []string{"startup", "resume"}},
 }
 
 var grokStarts = map[string][]string{"new": {"startup", "clear"}, "load": {"resume"}}
@@ -242,7 +248,7 @@ func agyHookSpec(path string) *hookSpec {
 }
 
 // hookAgents are the agents magpie can give hooks to.
-var hookAgents = []string{"claude", "codex", "cursor", "dsh", "gemini", "grok", "grok-app"}
+var hookAgents = []string{"claude", "codex", "cursor", "dsh", "gemini", "grok", "grok-app", "kimi"}
 
 // grokHookEvents are the events the Grok CLI fires (docs/user-guide/10-hooks.md),
 // shared by Grok Build and the Grok App that runs it. Only the ones magpie
@@ -370,8 +376,35 @@ func hookSpecFor(t *Target) (*hookSpec, string) {
 		return grokHookSpec(t.MCP.Path), ""
 	case "dsh":
 		return dshHookSpec(t)
+	case "kimi":
+		return kimiHookSpec(t)
 	}
 	return nil, fmt.Sprintf("%s has no hooks magpie can write", t.Agent.Name)
+}
+
+// kimiHookSpec is how Kimi Code keeps hooks: [[hooks]] array tables in its
+// config.toml, each one rule. The old Python kimi-cli shares the id and has
+// no hooks, so it is refused by name of what it is. The blocks are read and
+// written by flatTOML; what a block means is kimiFormat's (hooks_kimi.go).
+func kimiHookSpec(t *Target) (*hookSpec, string) {
+	dir, legacy := agent.KimiDir(home())
+	if legacy {
+		return nil, fmt.Sprintf("the old kimi-cli in %s has no hooks; Kimi Code has, in ~/.kimi-code", dir)
+	}
+	native := make([]string, len(kimiHookEvents))
+	for i, ev := range kimiHookEvents {
+		native[i] = string(ev)
+	}
+	return &hookSpec{
+		path:   filepath.Join(dir, "config.toml"),
+		format: kimiFormat,
+		events: map[string]string{
+			"turn-end": "Stop", "after-tool": "PostToolUse", "before-tool": "PreToolUse",
+			"prompt": "UserPromptSubmit", "session-start": "SessionStart",
+		},
+		native: native,
+		tools:  map[string]string{"shell": "Bash", "edit": "Write|Edit"},
+	}, ""
 }
 
 // event is the agent's own name for h's event, or why it has none.
