@@ -3412,8 +3412,10 @@ async function openAgentModels(a, anchor, ev) {
   // until it is ticked (#1337), not every one not taken out
   // own: its pickers offer models the agent reaches on its own beside
   // magpie's (DeepSeek Harness's), which ownHidden leaves out (#1642)
-  let models, ordered = false, only = false, own = false, ownHidden = false;
-  try { ({ models, ordered, only = false, own = false, ownHidden = false } = await api("agent-models/" + encodeURIComponent(a.id))); }
+  // joins: shown only its picks, it takes in the models ticked in a
+  // provider's editor too (eiyuuzaki2333 on X)
+  let models, ordered = false, only = false, own = false, ownHidden = false, joins = false;
+  try { [{ models, ordered, only = false, own = false, ownHidden = false, joins = false }] = await Promise.all([api("agent-models/" + encodeURIComponent(a.id)), import("./agentjoin.js").catch(() => {})]); }
   catch (e) {
     if (agentModelsLoading === loading) { loading.drop(); statusErr(e); }
     return;
@@ -3468,9 +3470,13 @@ async function openAgentModels(a, anchor, ev) {
   const onlySw = libSwitch("use-credits", only, onlySay.textContent);
   onlyBox.title = t("Off: new models are shown. On: only the models ticked here are shown, and a model added later, of any provider, stays off until you tick it");
   onlyBox.append(onlySw, onlySay);
+  // only with Only models I pick on: shown every model, an agent has a
+  // provider's picks already (agentjoin.js)
+  const joinBox = window.amJoin?.(a, joins, () => me, () => disarm()) || el("i");
+  joinBox.hidden = !only;
   // takes back a first click on Hide all or Show all (twice, below)
   let disarm = () => {};
-  foot.append(onlyBox, el("span", "sp"), hideAll, el("span", "am-dot", "·"), reset);
+  foot.append(onlyBox, el("span", "sp"), hideAll, el("span", "am-dot", "·"), reset, joinBox);
   // groups as the catalog has them, routing groups first; a long one
   // starts folded, unless the agent is set to a model in it
   const groups = [];
@@ -3603,6 +3609,7 @@ async function openAgentModels(a, anchor, ev) {
     only = !only;
     onlySw.classList.toggle("on", only);
     onlySw.setAttribute("aria-checked", String(only));
+    joinBox.hidden = !only;
     me.changed = true;
     // the models shown stay as they are, so the list drawn needs nothing
     // new; what comes back is the same, but for one added meanwhile
@@ -3614,6 +3621,7 @@ async function openAgentModels(a, anchor, ev) {
         only = !want;
         onlySw.classList.toggle("on", only);
         onlySw.setAttribute("aria-checked", String(only));
+        joinBox.hidden = !only;
       });
   };
   ownSw.onclick = (e) => {
@@ -3791,7 +3799,7 @@ async function openAgentModels(a, anchor, ev) {
       : kindOf(a) === "codex" ? t("Drag to put them in the order {agent} lists them; new models go last", { agent: a.name })
       : t("Drag to put them in the order magpie hands them to {agent}; new models go last", { agent: a.name });
     if (order) foot.replaceChildren(footNote, el("span", "sp"), unorder);
-    else foot.replaceChildren(onlyBox, el("span", "sp"), hideAll, el("span", "am-dot", "·"), reset);
+    else foot.replaceChildren(onlyBox, el("span", "sp"), hideAll, el("span", "am-dot", "·"), reset, joinBox);
     list.scrollTop = 0;
     draw();
   };
@@ -9996,6 +10004,8 @@ function drawEditor(p, presetID) {
     };
     side.append(b);
   }
+  // a Vibe plan's key from a sign-in to Mistral (mistralsignin.js)
+  if (pr?.id === "mistral") import("./mistralsignin.js").then(() => mistralSignIn(side, key, save), () => {});
   const keyWrap = el("div", "pair");
   keyWrap.append(key, side);
   // Vertex AI: no key, the user's Google Cloud project's token
@@ -23968,10 +23978,10 @@ document.fonts?.ready.then(fitTop);
 // a font picked later (Settings' Font) can still be loading when it's applied
 document.fonts?.addEventListener("loadingdone", fitTop);
 
-// the shown page's tab; Routing's for its groups in the header's row,
-// which has no room for theirs (app.css)
+// the shown page's tab; in the header's row, which has no room for theirs
+// (app.css), Routing's for its groups and Library's for Artifacts
 function markNav(v) {
-  const tab = v === "groups" && !sideNav() ? "routing" : v;
+  const tab = sideNav() ? v : { groups: "routing", artifacts: "library" }[v] || v;
   for (const b of $("#nav").querySelectorAll("button[data-view]")) {
     const on = b.dataset.view === tab;
     b.classList.toggle("on", on);
