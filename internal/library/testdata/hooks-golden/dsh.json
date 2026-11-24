@@ -1,0 +1,141 @@
+{
+  "steps": [
+    {
+      "name": "seed",
+      "file": "{\n  // the hooks dsh runs through its plugin\n  \"hooks\": {\n    \"Stop\": [{\"hooks\": [{\"type\": \"command\", \"command\": \"say done\"}]}]\n  }\n}\n",
+      "applied": []
+    },
+    {
+      "name": "save turn-end",
+      "file": "{\n  // the hooks dsh runs through its plugin\n  \"hooks\": {\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"curl -s https://api.day.app/KEY/done\",\n            \"timeout\": 10\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "Stop",
+          "entry": {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "curl -s https://api.day.app/KEY/done",
+                "timeout": 10
+              }
+            ]
+          }
+        }
+      ],
+      "row": "- insert: # magpie\n    - id: magpie-hooks\n      name: \"@deepseek-ai/dsh-hooks-claude-code\"\n      config:\n        configPath: \"\u003chome\u003e/.dsh/magpie-hooks.json\"\n"
+    },
+    {
+      "name": "sync no change",
+      "file": "{\n  // the hooks dsh runs through its plugin\n  \"hooks\": {\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"curl -s https://api.day.app/KEY/done\",\n            \"timeout\": 10\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "Stop",
+          "entry": {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "curl -s https://api.day.app/KEY/done",
+                "timeout": 10
+              }
+            ]
+          }
+        }
+      ],
+      "row": "- insert: # magpie\n    - id: magpie-hooks\n      name: \"@deepseek-ai/dsh-hooks-claude-code\"\n      config:\n        configPath: \"\u003chome\u003e/.dsh/magpie-hooks.json\"\n"
+    },
+    {
+      "name": "save after-tool",
+      "file": "{\n  // the hooks dsh runs through its plugin\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"write|edit|str_replace_editor\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"prettier --write .\"\n          }\n        ]\n      }\n    ],\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"curl -s https://api.day.app/KEY/done\",\n            \"timeout\": 10\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "Stop",
+          "entry": {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "curl -s https://api.day.app/KEY/done",
+                "timeout": 10
+              }
+            ]
+          }
+        },
+        {
+          "name": "fmt",
+          "event": "PostToolUse",
+          "entry": {
+            "matcher": "write|edit|str_replace_editor",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "prettier --write ."
+              }
+            ]
+          }
+        }
+      ],
+      "row": "- insert: # magpie\n    - id: magpie-hooks\n      name: \"@deepseek-ai/dsh-hooks-claude-code\"\n      config:\n        configPath: \"\u003chome\u003e/.dsh/magpie-hooks.json\"\n"
+    },
+    {
+      "name": "edit command",
+      "file": "{\n  // the hooks dsh runs through its plugin\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"write|edit|str_replace_editor\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"prettier --write .\"\n          }\n        ]\n      }\n    ],\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"curl -s https://api.day.app/KEY/again\",\n            \"timeout\": 10\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "fmt",
+          "event": "PostToolUse",
+          "entry": {
+            "matcher": "write|edit|str_replace_editor",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "prettier --write ."
+              }
+            ]
+          }
+        },
+        {
+          "name": "bark",
+          "event": "Stop",
+          "entry": {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "curl -s https://api.day.app/KEY/again",
+                "timeout": 10
+              }
+            ]
+          }
+        }
+      ],
+      "row": "- insert: # magpie\n    - id: magpie-hooks\n      name: \"@deepseek-ai/dsh-hooks-claude-code\"\n      config:\n        configPath: \"\u003chome\u003e/.dsh/magpie-hooks.json\"\n"
+    },
+    {
+      "name": "untick first",
+      "file": "{\n  // the hooks dsh runs through its plugin\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"write|edit|str_replace_editor\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"prettier --write .\"\n          }\n        ]\n      }\n    ],\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say after\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "fmt",
+          "event": "PostToolUse",
+          "entry": {
+            "matcher": "write|edit|str_replace_editor",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "prettier --write ."
+              }
+            ]
+          }
+        }
+      ],
+      "row": "- insert: # magpie\n    - id: magpie-hooks\n      name: \"@deepseek-ai/dsh-hooks-claude-code\"\n      config:\n        configPath: \"\u003chome\u003e/.dsh/magpie-hooks.json\"\n"
+    },
+    {
+      "name": "untick user-edited",
+      "file": "{\n  // the hooks dsh runs through its plugin\n  \"hooks\": {\n    \"PostToolUse\": [\n      {\n        \"matcher\": \"write|edit|str_replace_editor\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"prettier --write ./src\"\n          }\n        ]\n      }\n    ],\n    \"Stop\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say after\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": [],
+      "row": "[]\n"
+    }
+  ]
+}

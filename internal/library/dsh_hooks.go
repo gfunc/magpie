@@ -59,6 +59,7 @@ func dshHookSpec(t *Target) (*hookSpec, string) {
 			"prompt": "UserPromptSubmit", "session-start": "SessionStart"},
 		native: dshHookEvents,
 		tools:  map[string]string{"shell": "bash|pwsh", "edit": "write|edit|str_replace_editor"},
+		format: jsonFormat{},
 	}, ""
 }
 

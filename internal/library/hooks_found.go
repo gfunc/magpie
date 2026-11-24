@@ -10,9 +10,6 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-
-	"github.com/pelletier/go-toml/v2"
-	"github.com/tidwall/gjson"
 )
 
 // Hooks the agents run that magpie didn't give them (@InkCoalW on X: read
@@ -82,15 +79,18 @@ func foundHooksOf(l *Library, targets []*Target) []FoundHook {
 		if sp == nil {
 			continue
 		}
-		evs, lists, err := hookLists(sp)
+		file, err := sp.format.Open(sp.path)
+		if err != nil {
+			continue
+		}
+		evs, lists, err := file.Lists(sp.native)
 		if err != nil {
 			continue
 		}
 		claimed := map[string]map[int]bool{}
 		for _, rec := range l.applied(t.Agent.ID).Hooks {
-			c := canonical(rec.Entry)
 			for i, e := range lists[rec.Event] {
-				if !claimed[rec.Event][i] && canonical(e) == c {
+				if !claimed[rec.Event][i] && sp.format.Same(e, rec.Entry) {
 					if claimed[rec.Event] == nil {
 						claimed[rec.Event] = map[int]bool{}
 					}
@@ -122,108 +122,28 @@ func foundKey(agent, ev, canon string, n int) string {
 	return hex.EncodeToString(s[:8])
 }
 
-// hookLists is every event's list in the agent's hooks file, the events in
-// the file's order.
-func hookLists(sp *hookSpec) ([]string, map[string][]json.RawMessage, error) {
-	lists := map[string][]json.RawMessage{}
-	var evs []string
-	if sp.toml {
-		for _, ev := range sp.native {
-			x, err := grokHookBlocks(sp.path, ev)
-			if err != nil {
-				return nil, nil, err
-			}
-			if len(x) > 0 {
-				evs = append(evs, ev)
-				lists[ev] = x
-			}
-		}
-		return evs, lists, nil
-	}
-	doc, err := readHooksFile(sp.path)
-	if err != nil || doc == nil {
-		return nil, lists, err
-	}
-	var failed error
-	gjson.GetBytes(doc, "hooks").ForEach(func(k, v gjson.Result) bool {
-		if !v.IsArray() {
-			return true // not a list of hooks: nothing the agent runs, left as it is
-		}
-		var list []json.RawMessage
-		if err := json.Unmarshal([]byte(v.Raw), &list); err != nil {
-			failed = err
-			return false
-		}
-		evs = append(evs, k.String())
-		lists[k.String()] = list
-		return true
-	})
-	return evs, lists, failed
-}
-
 // foundHook reads one entry: what it runs, and the library hook it would
 // be, checked by writing that hook back the way magpie writes it: only an
 // entry that comes out the same is brought in, so nothing of the user's
 // (a second command, async, a status message) is lost on the next write.
+// One the format can't read back is listed with Why set and no hook, to be
+// removed only: never dropped from the page.
 func foundHook(l *Library, id string, sp *hookSpec, ev string, e json.RawMessage) FoundHook {
 	f := FoundHook{Agent: id, Event: ev, File: sp.path, Commands: []string{}, entry: e}
-	var group map[string]any
-	if sp.toml {
-		blk, _ := grokBlockText(e)
-		var doc map[string]any
-		if toml.Unmarshal([]byte(blk), &doc) == nil {
-			hs, _ := doc["hooks"].(map[string]any)
-			list, _ := hs[ev].([]any)
-			if len(list) == 1 {
-				group, _ = list[0].(map[string]any)
-			}
-		}
-	} else {
-		_ = json.Unmarshal(e, &group)
+	d, err := sp.format.Decode(ev, e)
+	if err != nil {
+		f.Why = "shape"
+		return f
 	}
-	var handlers []map[string]any
-	if sp.flat {
-		if group != nil {
-			handlers = []map[string]any{group}
-		}
-	} else if group != nil {
-		hs, _ := group["hooks"].([]any)
-		for _, h := range hs {
-			if m, ok := h.(map[string]any); ok {
-				handlers = append(handlers, m)
-			}
-		}
-	}
-	if group != nil {
-		f.Matcher, _ = group["matcher"].(string)
-	}
-	why := ""
-	for _, h := range handlers {
-		typ, _ := h["type"].(string)
-		cmd, _ := h["command"].(string)
-		if (typ == "" || typ == "command") && cmd != "" {
-			f.Commands = append(f.Commands, cmd)
-		} else {
-			if typ == "" {
-				typ = "?"
-			}
-			f.Commands = append(f.Commands, "("+typ+")")
-			why = "type"
-		}
-	}
-	if len(handlers) == 1 {
-		f.Timeout = numberOf(handlers[0]["timeout"])
-		if sp.ms {
-			f.Timeout /= 1000
-		}
-	}
-	f.Own = foundOwner(f.Commands)
+	// Timeout is the format's, in the Library's seconds
+	f.Matcher, f.Commands, f.Timeout, f.Own = d.Matcher, d.Commands, d.Timeout, foundOwner(d.Commands)
+	why := d.Why
 	switch {
 	case why != "":
-	case len(handlers) != 1:
+	case len(d.Commands) != 1:
 		why = "several"
 	default:
-		if h := adoptable(id, sp, ev, e, f.Matcher, f.Commands[0], numberOf(handlers[0]["timeout"])); h != nil {
+		if h := adoptable(id, sp, ev, e, f.Matcher, f.Commands[0], f.Timeout); h != nil {
 			f.Hook = h
 			for _, x := range l.Hooks {
 				if x.Event == h.Event && x.Matcher == h.Matcher && x.Command == h.Command && x.Timeout == h.Timeout && hookTakes(x, id) {
@@ -256,14 +176,8 @@ func numberOf(v any) int {
 // adoptable is the library hook entry e is, under event ev of the agent, or
 // nil when no hook magpie writes comes out as e: a portable one when its
 // event and matcher are the portable one's, else the agent's own event as
-// written.
+// written. timeout is in the Library's seconds, as the format read it back.
 func adoptable(id string, sp *hookSpec, ev string, e json.RawMessage, matcher, cmd string, timeout int) *Hook {
-	if sp.ms {
-		if timeout%1000 != 0 {
-			return nil
-		}
-		timeout /= 1000
-	}
 	var tries []Hook
 	for _, p := range HookEvents {
 		if sp.events[p] != ev {
@@ -294,7 +208,8 @@ func adoptable(id string, sp *hookSpec, ev string, e json.RawMessage, matcher, c
 		if h.check() != nil || !hookTakes(&h, id) {
 			continue
 		}
-		if canonical(sp.entry(&h, ev)) == want {
+		entry, _ := sp.entry(&h, ev)
+		if canonical(entry) == want {
 			return &h
 		}
 	}

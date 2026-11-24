@@ -1,0 +1,173 @@
+{
+  "steps": [
+    {
+      "name": "seed",
+      "file": "{\n  // my Gemini settings\n  \"theme\": \"Default\",\n  \"hooks\": {\n    \"AfterAgent\": [{\"hooks\": [{\"type\": \"command\", \"command\": \"say done\"}]}],\n    \"AfterTool\": [{\"matcher\": \"run_shell_command\", \"hooks\": [{\"type\": \"command\", \"command\": \"my-log\"}]}]\n  }\n}\n",
+      "applied": []
+    },
+    {
+      "name": "save turn-end",
+      "file": "{\n  // my Gemini settings\n  \"theme\": \"Default\",\n  \"hooks\": {\n    \"AfterAgent\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"curl -s https://api.day.app/KEY/done\",\n            \"timeout\": 10000\n          }\n        ]\n      }\n    ],\n    \"AfterTool\": [{\"matcher\": \"run_shell_command\", \"hooks\": [{\"type\": \"command\", \"command\": \"my-log\"}]}]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "AfterAgent",
+          "entry": {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "curl -s https://api.day.app/KEY/done",
+                "timeout": 10000
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "sync no change",
+      "file": "{\n  // my Gemini settings\n  \"theme\": \"Default\",\n  \"hooks\": {\n    \"AfterAgent\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"curl -s https://api.day.app/KEY/done\",\n            \"timeout\": 10000\n          }\n        ]\n      }\n    ],\n    \"AfterTool\": [{\"matcher\": \"run_shell_command\", \"hooks\": [{\"type\": \"command\", \"command\": \"my-log\"}]}]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "AfterAgent",
+          "entry": {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "curl -s https://api.day.app/KEY/done",
+                "timeout": 10000
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "save after-tool",
+      "file": "{\n  // my Gemini settings\n  \"theme\": \"Default\",\n  \"hooks\": {\n    \"AfterAgent\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"curl -s https://api.day.app/KEY/done\",\n            \"timeout\": 10000\n          }\n        ]\n      }\n    ],\n    \"AfterTool\": [\n      {\n        \"matcher\": \"run_shell_command\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"my-log\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"write_file|replace\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"prettier --write .\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "AfterAgent",
+          "entry": {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "curl -s https://api.day.app/KEY/done",
+                "timeout": 10000
+              }
+            ]
+          }
+        },
+        {
+          "name": "fmt",
+          "event": "AfterTool",
+          "entry": {
+            "matcher": "write_file|replace",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "prettier --write ."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "edit command",
+      "file": "{\n  // my Gemini settings\n  \"theme\": \"Default\",\n  \"hooks\": {\n    \"AfterAgent\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"curl -s https://api.day.app/KEY/again\",\n            \"timeout\": 10000\n          }\n        ]\n      }\n    ],\n    \"AfterTool\": [\n      {\n        \"matcher\": \"run_shell_command\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"my-log\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"write_file|replace\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"prettier --write .\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "fmt",
+          "event": "AfterTool",
+          "entry": {
+            "matcher": "write_file|replace",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "prettier --write ."
+              }
+            ]
+          }
+        },
+        {
+          "name": "bark",
+          "event": "AfterAgent",
+          "entry": {
+            "hooks": [
+              {
+                "type": "command",
+                "command": "curl -s https://api.day.app/KEY/again",
+                "timeout": 10000
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "untick first",
+      "file": "{\n  // my Gemini settings\n  \"theme\": \"Default\",\n  \"hooks\": {\n    \"AfterAgent\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say after\"\n          }\n        ]\n      }\n    ],\n    \"AfterTool\": [\n      {\n        \"matcher\": \"run_shell_command\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"my-log\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"write_file|replace\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"prettier --write .\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "fmt",
+          "event": "AfterTool",
+          "entry": {
+            "matcher": "write_file|replace",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "prettier --write ."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "untick user-edited",
+      "file": "{\n  // my Gemini settings\n  \"theme\": \"Default\",\n  \"hooks\": {\n    \"AfterAgent\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say after\"\n          }\n        ]\n      }\n    ],\n    \"AfterTool\": [\n      {\n        \"matcher\": \"run_shell_command\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"my-log\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"write_file|replace\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"prettier --write ./src\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": []
+    },
+    {
+      "name": "import found",
+      "file": "{\n  // my Gemini settings\n  \"theme\": \"Default\",\n  \"hooks\": {\n    \"AfterAgent\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say done\"\n          }\n        ]\n      },\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say after\"\n          }\n        ]\n      }\n    ],\n    \"AfterTool\": [\n      {\n        \"matcher\": \"run_shell_command\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"my-log\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"write_file|replace\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"prettier --write ./src\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "my-log",
+          "event": "AfterTool",
+          "entry": {
+            "matcher": "run_shell_command",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "my-log"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "remove found",
+      "file": "{\n  // my Gemini settings\n  \"theme\": \"Default\",\n  \"hooks\": {\n    \"AfterAgent\": [\n      {\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"say after\"\n          }\n        ]\n      }\n    ],\n    \"AfterTool\": [\n      {\n        \"matcher\": \"run_shell_command\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"my-log\"\n          }\n        ]\n      },\n      {\n        \"matcher\": \"write_file|replace\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"prettier --write ./src\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "applied": [
+        {
+          "name": "my-log",
+          "event": "AfterTool",
+          "entry": {
+            "matcher": "run_shell_command",
+            "hooks": [
+              {
+                "type": "command",
+                "command": "my-log"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

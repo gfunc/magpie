@@ -1,0 +1,101 @@
+{
+  "steps": [
+    {
+      "name": "seed",
+      "file": "[models]\ndefault = \"grok-4.7\"\n\n# the Grok App's own hooks\n[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"say done\"\n\n[[hooks.PostToolUse]]\nmatcher = \"run_terminal_command\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"my-log\"\n",
+      "applied": []
+    },
+    {
+      "name": "save turn-end",
+      "file": "[models]\ndefault = \"grok-4.7\"\n\n# the Grok App's own hooks\n[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"say done\"\n\n[[hooks.PostToolUse]]\nmatcher = \"run_terminal_command\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"my-log\"\n\n[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"curl -s https://api.day.app/KEY/done\"\n  timeout = 10\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "Stop",
+          "entry": "[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"curl -s https://api.day.app/KEY/done\"\n  timeout = 10\n"
+        }
+      ]
+    },
+    {
+      "name": "sync no change",
+      "file": "[models]\ndefault = \"grok-4.7\"\n\n# the Grok App's own hooks\n[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"say done\"\n\n[[hooks.PostToolUse]]\nmatcher = \"run_terminal_command\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"my-log\"\n\n[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"curl -s https://api.day.app/KEY/done\"\n  timeout = 10\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "Stop",
+          "entry": "[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"curl -s https://api.day.app/KEY/done\"\n  timeout = 10\n"
+        }
+      ]
+    },
+    {
+      "name": "save after-tool",
+      "file": "[models]\ndefault = \"grok-4.7\"\n\n# the Grok App's own hooks\n[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"say done\"\n\n[[hooks.PostToolUse]]\nmatcher = \"run_terminal_command\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"my-log\"\n\n[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"curl -s https://api.day.app/KEY/done\"\n  timeout = 10\n\n[[hooks.PostToolUse]]\nmatcher = \"search_replace\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"prettier --write .\"\n",
+      "applied": [
+        {
+          "name": "bark",
+          "event": "Stop",
+          "entry": "[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"curl -s https://api.day.app/KEY/done\"\n  timeout = 10\n"
+        },
+        {
+          "name": "fmt",
+          "event": "PostToolUse",
+          "entry": "[[hooks.PostToolUse]]\nmatcher = \"search_replace\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"prettier --write .\"\n"
+        }
+      ]
+    },
+    {
+      "name": "edit command",
+      "file": "[models]\ndefault = \"grok-4.7\"\n\n# the Grok App's own hooks\n[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"say done\"\n\n[[hooks.PostToolUse]]\nmatcher = \"run_terminal_command\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"my-log\"\n\n[[hooks.PostToolUse]]\nmatcher = \"search_replace\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"prettier --write .\"\n\n[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"curl -s https://api.day.app/KEY/again\"\n  timeout = 10\n",
+      "applied": [
+        {
+          "name": "fmt",
+          "event": "PostToolUse",
+          "entry": "[[hooks.PostToolUse]]\nmatcher = \"search_replace\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"prettier --write .\"\n"
+        },
+        {
+          "name": "bark",
+          "event": "Stop",
+          "entry": "[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"curl -s https://api.day.app/KEY/again\"\n  timeout = 10\n"
+        }
+      ]
+    },
+    {
+      "name": "untick first",
+      "file": "[models]\ndefault = \"grok-4.7\"\n\n# the Grok App's own hooks\n[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"say done\"\n\n[[hooks.PostToolUse]]\nmatcher = \"run_terminal_command\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"my-log\"\n\n[[hooks.PostToolUse]]\nmatcher = \"search_replace\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"prettier --write .\"\n\n[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"say after\"\n",
+      "applied": [
+        {
+          "name": "fmt",
+          "event": "PostToolUse",
+          "entry": "[[hooks.PostToolUse]]\nmatcher = \"search_replace\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"prettier --write .\"\n"
+        }
+      ]
+    },
+    {
+      "name": "untick user-edited",
+      "file": "[models]\ndefault = \"grok-4.7\"\n\n# the Grok App's own hooks\n[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"say done\"\n\n[[hooks.PostToolUse]]\nmatcher = \"run_terminal_command\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"my-log\"\n\n[[hooks.PostToolUse]]\nmatcher = \"search_replace\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"prettier --write ./src\"\n\n[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"say after\"\n",
+      "applied": []
+    },
+    {
+      "name": "import found",
+      "file": "[models]\ndefault = \"grok-4.7\"\n\n# the Grok App's own hooks\n[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"say done\"\n\n[[hooks.PostToolUse]]\nmatcher = \"run_terminal_command\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"my-log\"\n\n[[hooks.PostToolUse]]\nmatcher = \"search_replace\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"prettier --write ./src\"\n\n[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"say after\"\n",
+      "applied": [
+        {
+          "name": "my-log",
+          "event": "PostToolUse",
+          "entry": "[[hooks.PostToolUse]]\nmatcher = \"run_terminal_command\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"my-log\"\n"
+        }
+      ]
+    },
+    {
+      "name": "remove found",
+      "file": "[models]\ndefault = \"grok-4.7\"\n\n# the Grok App's own hooks\n\n[[hooks.PostToolUse]]\nmatcher = \"run_terminal_command\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"my-log\"\n\n[[hooks.PostToolUse]]\nmatcher = \"search_replace\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"prettier --write ./src\"\n\n[[hooks.Stop]]\n  [[hooks.Stop.hooks]]\n  type = \"command\"\n  command = \"say after\"\n",
+      "applied": [
+        {
+          "name": "my-log",
+          "event": "PostToolUse",
+          "entry": "[[hooks.PostToolUse]]\nmatcher = \"run_terminal_command\"\n  [[hooks.PostToolUse.hooks]]\n  type = \"command\"\n  command = \"my-log\"\n"
+        }
+      ]
+    }
+  ]
+}

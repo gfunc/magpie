@@ -170,6 +170,68 @@ func SetTOMLArrayTables(path, name, key, value string, blocks []string) error {
 
 type tomlArraySpan struct{ from, to int }
 
+// TOMLArraySpan is one exact array table of a TOML file: the lines from its
+// header to the end of its last key's value, child tables excluded.
+type TOMLArraySpan struct {
+	From, To int       // line indices into SplitLines' result, [From, To)
+	Keys     []TOMLKey // the scalar keys the table declares, in file order
+}
+
+// TOMLKey is one key an array table declares, its value as TOML decodes it.
+type TOMLKey struct {
+	Name, Value string // Value decoded; a non-scalar key has Value "" and IsScalar false
+	IsScalar    bool
+}
+
+// TOMLArraySpans lists every [[name]] array table of the file at path, in
+// file order. name is dotted ("hooks", "providers.x"). A missing file is an
+// empty list. Invalid TOML is an error. name being an inline value or an
+// ordinary table is an error.
+//
+// The file is validated whole first, as the editors that splice over these
+// spans are: the parser alone accepts a definition conflict (hooks = []
+// above a [[hooks]]), which no TOML reader takes.
+func TOMLArraySpans(path, name string) ([]TOMLArraySpan, error) {
+	want := tomlHeaderParts(name)
+	if len(want) == 0 {
+		return nil, fmt.Errorf("invalid table name %q", name)
+	}
+	raw, err := Read(path)
+	if err != nil {
+		return nil, err
+	}
+	if err := validateTOML(raw); err != nil {
+		return nil, fmt.Errorf("%s: %w", path, err)
+	}
+	lines := splitLines(string(raw))
+	doc, err := parseTOMLFile(lines)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", path, err)
+	}
+	for _, kv := range doc.root.keys {
+		if slices.Equal(tomlHeaderParts(kv.name), want) {
+			return nil, fmt.Errorf("%s: %s is an inline value, not an array table", path, name)
+		}
+	}
+	var out []TOMLArraySpan
+	for _, table := range doc.tables {
+		if !slices.Equal(tomlHeaderParts(table.name), want) {
+			continue
+		}
+		if !table.array {
+			return nil, fmt.Errorf("%s: %s is not an array table", path, name)
+		}
+		// nil, not an empty slice, for a block with no keys: it compares
+		// equal to a TOMLArraySpan built by hand with none.
+		var keys []TOMLKey
+		for _, kv := range table.keys {
+			keys = append(keys, TOMLKey{Name: kv.name, Value: kv.value, IsScalar: kv.scalar})
+		}
+		out = append(out, TOMLArraySpan{From: table.from, To: tomlContentEnd(table), Keys: keys})
+	}
+	return out, nil
+}
+
 // namedTOMLArray are the line spans of the entries of the array table name
 // whose key is value, each followed by its child tables'; more than one such
 // entry is an error unless all is set.

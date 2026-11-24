@@ -116,6 +116,12 @@ var startSpecs = map[string]*startSpec{
 	"agy":      {sources: []string{"startup"}},
 	"grok":     {sources: []string{"startup", "resume", "clear"}, groups: grokStarts},
 	"grok-app": {sources: []string{"startup", "resume", "clear"}, groups: grokStarts},
+	// Kimi Code 2.7.2 (its bundle, triggerSessionStart): SessionStart's
+	// matcher is a regular expression tested on the session's source, which
+	// is "startup" for a new session or "resume" for one resumed. A forked
+	// or reclaimed session fires no SessionStart, and /clear is no start.
+	// Several are named as a regex names them, "startup|resume"
+	"kimi": {sources: []string{"startup", "resume"}},
 }
 
 var grokStarts = map[string][]string{"new": {"startup", "clear"}, "load": {"resume"}}
@@ -202,26 +208,10 @@ type hookSpec struct {
 	native []string          // every event the agent has
 	tools  map[string]string // shell, edit → the agent's matcher for them
 	agent  string            // whose: the agent's id, for its session start's matcher
-	flat   bool              // Cursor: an entry is the command itself, not a group of them
-	ms     bool              // Gemini: timeouts in milliseconds
-	toml   bool              // Grok: hooks are [[hooks.<Event>]] tables in config.toml, not JSON
-	// root is the object the events' lists are in: "hooks" for most
-	// agents; "magpie" in Antigravity's hooks.json, whose top-level keys
-	// are named hooks, so magpie's are one named hook of its own there
-	// and the user's are never written in (agyHookSpec).
-	root string
+	// format is how its hooks file is laid out: everything about the
+	// file's shape is behind it (hooks_format.go)
+	format hookFormat
 }
-
-// rootKey is the object in the file the events' lists are in.
-func (sp *hookSpec) rootKey() string {
-	if sp.root != "" {
-		return sp.root
-	}
-	return "hooks"
-}
-
-// listPath is where in the file event ev's list is.
-func (sp *hookSpec) listPath(ev string) string { return sp.rootKey() + "." + ev }
 
 // agyHookSpec is how Antigravity keeps hooks (agy 1.5.14's built-in
 // "Lifecycle Hooks (hooks.json)" doc, the same file for its CLI,
@@ -249,12 +239,12 @@ func agyHookSpec(path string) *hookSpec {
 		native: []string{"SessionStart", "PreToolUse", "PostToolUse", "PreInvocation", "PostInvocation", "Stop"},
 		tools:  map[string]string{"shell": "run_command"},
 		agent:  "agy",
-		root:   "magpie",
+		format: jsonFormat{root: "magpie"},
 	}
 }
 
 // hookAgents are the agents magpie can give hooks to.
-var hookAgents = []string{"claude", "codex", "cursor", "dsh", "gemini", "grok", "grok-app"}
+var hookAgents = []string{"claude", "codex", "cursor", "dsh", "gemini", "grok", "grok-app", "kimi"}
 
 // grokHookEvents are the events the Grok CLI fires (docs/user-guide/10-hooks.md),
 // shared by Grok Build and the Grok App that runs it. Only the ones magpie
@@ -285,7 +275,7 @@ func grokHookSpec(path string) *hookSpec {
 		},
 		native: grokHookEvents,
 		tools:  grokHookTools,
-		toml:   true,
+		format: grokFormat{},
 	}
 }
 
@@ -321,6 +311,7 @@ func claudeHookSpec(path string) *hookSpec {
 		native: claudeHookEvents,
 		tools:  map[string]string{"shell": "Bash", "edit": "Edit|Write|MultiEdit"},
 		agent:  "claude",
+		format: jsonFormat{},
 	}
 }
 
@@ -334,8 +325,9 @@ func codexHookSpec(path string) *hookSpec {
 			"prompt": "UserPromptSubmit", "session-start": "SessionStart"},
 		native: []string{"PreToolUse", "PermissionRequest", "PostToolUse", "PreCompact", "PostCompact", "SessionStart", "SessionEnd",
 			"UserPromptSubmit", "SubagentStart", "SubagentStop", "Stop", "Interrupt"},
-		tools: map[string]string{"shell": "Bash", "edit": "apply_patch"},
-		agent: "codex",
+		tools:  map[string]string{"shell": "Bash", "edit": "apply_patch"},
+		agent:  "codex",
+		format: jsonFormat{},
 	}
 }
 
@@ -357,8 +349,8 @@ func hookSpecFor(t *Target) (*hookSpec, string) {
 				"prompt": "BeforeAgent", "session-start": "SessionStart"},
 			native: []string{"BeforeTool", "AfterTool", "BeforeAgent", "AfterAgent", "Notification", "SessionStart", "SessionEnd",
 				"PreCompress", "BeforeModel", "AfterModel", "BeforeToolSelection"},
-			tools: map[string]string{"shell": "run_shell_command", "edit": "write_file|replace"},
-			ms:    true,
+			tools:  map[string]string{"shell": "run_shell_command", "edit": "write_file|replace"},
+			format: jsonFormat{ms: true},
 		}, ""
 	case "cursor":
 		return &hookSpec{
@@ -368,8 +360,8 @@ func hookSpecFor(t *Target) (*hookSpec, string) {
 			native: []string{"beforeShellExecution", "afterShellExecution", "beforeMCPExecution", "afterMCPExecution", "beforeReadFile",
 				"afterFileEdit", "beforeSubmitPrompt", "stop", "afterAgentResponse", "afterAgentThought", "sessionStart", "sessionEnd",
 				"preToolUse", "postToolUse", "postToolUseFailure", "subagentStart", "subagentStop", "preCompact"},
-			tools: map[string]string{"shell": "Shell", "edit": "Write"},
-			flat:  true,
+			tools:  map[string]string{"shell": "Shell", "edit": "Write"},
+			format: jsonFormat{flat: true},
 		}, ""
 	case "grok":
 		// Grok Build: [[hooks.<Event>]] tables in ~/.grok/config.toml
@@ -380,8 +372,35 @@ func hookSpecFor(t *Target) (*hookSpec, string) {
 		return grokHookSpec(t.MCP.Path), ""
 	case "dsh":
 		return dshHookSpec(t)
+	case "kimi":
+		return kimiHookSpec(t)
 	}
 	return nil, fmt.Sprintf("%s has no hooks magpie can write", t.Agent.Name)
+}
+
+// kimiHookSpec is how Kimi Code keeps hooks: [[hooks]] array tables in its
+// config.toml, each one rule. The old Python kimi-cli shares the id and has
+// no hooks, so it is refused by name of what it is. The blocks are read and
+// written by flatTOML; what a block means is kimiFormat's (hooks_kimi.go).
+func kimiHookSpec(t *Target) (*hookSpec, string) {
+	dir, legacy := agent.KimiDir(home())
+	if legacy {
+		return nil, fmt.Sprintf("the old kimi-cli in %s has no hooks; Kimi Code has, in ~/.kimi-code", dir)
+	}
+	native := make([]string, len(kimiHookEvents))
+	for i, ev := range kimiHookEvents {
+		native[i] = string(ev)
+	}
+	return &hookSpec{
+		path:   filepath.Join(dir, "config.toml"),
+		format: kimiFormat,
+		events: map[string]string{
+			"turn-end": "Stop", "after-tool": "PostToolUse", "before-tool": "PreToolUse",
+			"prompt": "UserPromptSubmit", "session-start": "SessionStart",
+		},
+		native: native,
+		tools:  map[string]string{"shell": "Bash", "edit": "Write|Edit"},
+	}, ""
 }
 
 // event is the agent's own name for h's event, or why it has none.
@@ -401,73 +420,31 @@ func (sp *hookSpec) event(agent string, h *Hook) (string, error) {
 	return "", fmt.Errorf("no event called %s", h.Event)
 }
 
-// entry is h as the agent's file holds it, under its event ev.
-func (sp *hookSpec) entry(h *Hook, ev string) json.RawMessage {
-	m := h.Matcher
+// matcher is h's own matcher for the agent, under its event ev: one a
+// session start can be narrowed to (one it can't take is never written,
+// syncHooks), the agent's tool name for a portable tool event, "" for none
+// and for an event that takes no matcher.
+func (sp *hookSpec) matcher(h *Hook) string {
 	switch {
 	case h.Event == "session-start":
-		m, _ = startMatcher(sp.agent, h.Matcher) // one it can't take is never written (syncHooks)
+		m, _ := startMatcher(sp.agent, h.Matcher)
+		return m
 	case !strings.Contains(h.Event, ":"):
-		m = sp.tools[h.Matcher] // "" for none, and for an event that takes no matcher
+		return sp.tools[h.Matcher]
 	}
-	timeout := h.Timeout
-	if sp.ms {
-		timeout *= 1000
-	}
-	if sp.toml {
-		// Grok: a [[hooks.<Event>]] table with a [[hooks.<Event>.hooks]]
-		// child. The block text is what goes in the file and what is
-		// recorded (as a JSON string) so an entry the user changed is
-		// theirs, exactly as with a JSON agent's.
-		return json.RawMessage(grokHookBlock(ev, m, h.Command, timeout))
-	}
-	if sp.root != "" {
-		// Antigravity's: flat handlers, grouped under a matcher for a tool's
-		type cmd struct {
-			Type    string `json:"type"`
-			Command string `json:"command"`
-			Timeout int    `json:"timeout,omitempty"`
-		}
-		c := cmd{"command", h.Command, timeout}
-		var v any = c
-		if ev == "PreToolUse" || ev == "PostToolUse" {
-			if m == "" {
-				m = "*"
-			}
-			v = struct {
-				Matcher string `json:"matcher"`
-				Hooks   []cmd  `json:"hooks"`
-			}{m, []cmd{c}}
-		}
-		b, _ := json.Marshal(v)
-		return b
-	}
-	command, shell := h.Command, ""
+	return h.Matcher
+}
+
+// entry is h as the agent's file holds it, under its event ev, or why the
+// agent refuses it. Which matcher and shell it carries is settled here; how
+// the file spells it is the format's.
+func (sp *hookSpec) entry(h *Hook, ev string) (json.RawMessage, error) {
+	in := hookInput{Event: ev, Matcher: sp.matcher(h), Command: h.Command, Timeout: h.Timeout}
 	if sp.agent == "claude" && h.Bundle != "" {
 		// a plugin's hook, run with the variables Claude Code gives its own
-		command, shell = pluginHookEnv(command, h.Bundle)
+		in.Command, in.Shell = pluginHookEnv(in.Command, h.Bundle)
 	}
-	var v any
-	if sp.flat {
-		v = struct {
-			Command string `json:"command"`
-			Timeout int    `json:"timeout,omitempty"`
-			Matcher string `json:"matcher,omitempty"`
-		}{command, timeout, m}
-	} else {
-		type cmd struct {
-			Type    string `json:"type"`
-			Command string `json:"command"`
-			Timeout int    `json:"timeout,omitempty"`
-			Shell   string `json:"shell,omitempty"`
-		}
-		v = struct {
-			Matcher string `json:"matcher,omitempty"`
-			Hooks   []cmd  `json:"hooks"`
-		}{m, []cmd{{"command", command, timeout, shell}}}
-	}
-	b, _ := json.Marshal(v)
-	return b
+	return sp.format.Entry(in)
 }
 
 // maxHookDescription is how long a hook's description can be, in
@@ -865,27 +842,17 @@ func (w *hookWrite) run() (recs []HookEntry, changed, ok bool) {
 		return w.keep(path)
 	}
 	id, gone := w.id, w.gone
-	var doc []byte
-	if !sp.toml {
-		d, err := readHooksFile(sp.path)
-		if err != nil {
-			failAll(err)
-			return nil, false, false
-		}
-		doc = d
+	file, err := sp.format.Open(sp.path)
+	if err != nil {
+		failAll(err)
+		return nil, false, false
 	}
 	lists := map[string][]json.RawMessage{}
 	listOf := func(ev string) ([]json.RawMessage, error) {
 		if x, ok := lists[ev]; ok {
 			return x, nil
 		}
-		var x []json.RawMessage
-		var err error
-		if sp.toml {
-			x, err = grokHookBlocks(sp.path, ev)
-		} else {
-			x, err = hookListAt(doc, sp.path, sp.listPath(ev))
-		}
+		x, err := file.List(ev)
 		if err == nil {
 			lists[ev] = x
 		}
@@ -911,13 +878,17 @@ func (w *hookWrite) run() (recs []HookEntry, changed, ok bool) {
 			w.fail("hook:"+h.Name, err)
 			continue
 		}
-		ws = append(ws, &wanted{h: h, ev: ev, entry: sp.entry(h, ev)})
+		entry, err := sp.entry(h, ev)
+		if err != nil {
+			w.fail("hook:"+h.Name, err)
+			continue
+		}
+		ws = append(ws, &wanted{h: h, ev: ev, entry: entry})
 	}
 	claimed := map[string]map[int]bool{} // event → the entries magpie's records found
 	find := func(ev string, entry json.RawMessage) int {
-		c := canonical(entry)
 		for i, e := range lists[ev] {
-			if !claimed[ev][i] && canonical(e) == c {
+			if !claimed[ev][i] && sp.format.Same(e, entry) {
 				return i
 			}
 		}
@@ -944,7 +915,7 @@ func (w *hookWrite) run() (recs []HookEntry, changed, ok bool) {
 		}
 		claim(rec.Event, i)
 		if j := slices.IndexFunc(ws, func(w *wanted) bool {
-			return !w.done && w.h.Name == rec.Name && w.ev == rec.Event && canonical(w.entry) == canonical(rec.Entry)
+			return !w.done && w.h.Name == rec.Name && w.ev == rec.Event && sp.format.Same(w.entry, rec.Entry)
 		}); j >= 0 {
 			ws[j].done = true
 			kept = append(kept, rec)
@@ -961,11 +932,12 @@ func (w *hookWrite) run() (recs []HookEntry, changed, ok bool) {
 			continue
 		}
 		// the same entry of the user's own already runs: it isn't written
-		// twice, nor taken as magpie's
+		// twice, nor taken as magpie's. In a named hooks file (Antigravity's)
+		// it is one already under a hook of the user's
 		if i := find(w.ev, w.entry); i >= 0 {
 			continue
 		}
-		if sp.root != "" && namedHas(doc, sp.root, w.ev, w.entry) {
+		if named, ok := file.(namedHooksFile); ok && named.namedHas(w.ev, w.entry) {
 			continue
 		}
 		add[w.ev] = append(add[w.ev], w.entry)
@@ -974,30 +946,15 @@ func (w *hookWrite) run() (recs []HookEntry, changed, ok bool) {
 	if len(drop) == 0 && len(add) == 0 {
 		return append(kept, unread...), false, true
 	}
-	if sp.toml {
-		if err := keep(sp.path); err != nil {
-			failAll(err)
-			return nil, false, false
-		}
+	if err := keep(sp.path); err != nil {
+		failAll(err)
+		return nil, false, false
+	}
+	jf, isJSON := file.(*jsonFile)
+	if !isJSON {
 		err := os.MkdirAll(filepath.Dir(sp.path), 0o755)
 		if err == nil {
-			var drops, adds [][]byte
-			// the dropped blocks: the entry text each index in lists holds
-			for ev, idxs := range drop {
-				for _, i := range idxs {
-					if blk, ok := grokBlockText(lists[ev][i]); ok {
-						drops = append(drops, []byte(blk))
-					}
-				}
-			}
-			for _, es := range add {
-				for _, e := range es {
-					if blk, ok := grokBlockText(e); ok {
-						adds = append(adds, []byte(blk))
-					}
-				}
-			}
-			err = writeGrokHooks(sp.path, drops, adds)
+			err = file.Write(sp.path, drop, add, lists)
 		}
 		if err != nil {
 			failAll(fmt.Errorf("%s: %w", sp.path, err))
@@ -1038,14 +995,10 @@ func (w *hookWrite) run() (recs []HookEntry, changed, ok bool) {
 		next = append(next, add[ev]...)
 		moved[ev] = m
 		if len(next) == 0 {
-			del = append(del, sp.listPath(ev))
+			del = append(del, jf.listPath(ev))
 		} else {
-			set = append(set, edit.KV{Path: sp.listPath(ev), Value: next})
+			set = append(set, edit.KV{Path: jf.listPath(ev), Value: next})
 		}
-	}
-	if err := keep(sp.path); err != nil {
-		failAll(err)
-		return nil, false, false
 	}
 	// Codex trusts a hook by where it is (codex-rs/hooks: hook_key, the
 	// file's path, the event, the group's and the handler's index): an
@@ -1067,20 +1020,20 @@ func (w *hookWrite) run() (recs []HookEntry, changed, ok bool) {
 			rekey = f
 		}
 	}
-	raw := doc
+	raw := jf.doc
 	if raw == nil {
 		raw = []byte("{}\n")
 	} else if orig, err := edit.Read(sp.path); err == nil {
 		raw = orig // its comments and spacing, as the user has them
 	}
-	if sp.flat && !gjson.GetBytes(jsonc.ToJSON(edit.TrimBOM(raw)), "version").Exists() {
+	if jf.wantsVersion() && !gjson.GetBytes(jsonc.ToJSON(edit.TrimBOM(raw)), "version").Exists() {
 		set = append(set, edit.KV{Path: "version", Value: 1})
 	}
 	out, err := edit.PatchJSON(raw, set, del)
 	if err == nil && len(del) > 0 && len(set) == 0 {
 		// a hooks object left empty by magpie goes with what it held
-		if h := gjson.GetBytes(jsonc.ToJSON(edit.TrimBOM(out)), sp.rootKey()); h.IsObject() && len(h.Map()) == 0 {
-			out, err = edit.PatchJSON(out, nil, []string{sp.rootKey()})
+		if h := gjson.GetBytes(jsonc.ToJSON(edit.TrimBOM(out)), jf.rootKey()); h.IsObject() && len(h.Map()) == 0 {
+			out, err = edit.PatchJSON(out, nil, []string{jf.rootKey()})
 		}
 	}
 	if err == nil {
@@ -1343,7 +1296,9 @@ func HookAgents(name string, agents []string) (*Result, error) {
 
 // SomeHooksAgents gives the hooks named to the agents, or takes them from
 // them, each to the agents that can take it: an agent's own event stays
-// that agent's alone.
+// that agent's alone, and a hook an agent refuses (HookView.Blocked says
+// why) is not given to it. An agent not here is still set, or unset: a
+// library synced from another computer can hold a tick for it.
 func SomeHooksAgents(names, agents []string, on bool) (*Result, error) {
 	if len(names) == 0 {
 		return nil, errors.New("no hooks to give the agents")
@@ -1357,13 +1312,14 @@ func SomeHooksAgents(names, agents []string, on bool) (*Result, error) {
 				return fmt.Errorf("no hook called %s", name)
 			}
 		}
+		specs := hookSpecsOf(agents)
 		for _, h := range l.Hooks {
 			if !slices.Contains(names, h.Name) {
 				continue
 			}
 			list := slices.Clone(h.Agents)
 			for _, a := range agents {
-				if on && !hookTakes(h, a) {
+				if on && hookTakesWhy(h, a, specs[a]) != nil {
 					continue
 				}
 				list = set(list, a, on)
@@ -1374,18 +1330,63 @@ func SomeHooksAgents(names, agents []string, on bool) (*Result, error) {
 	})
 }
 
-// hookTakes is whether agent a can be given h.
-func hookTakes(h *Hook, a string) bool {
-	if x, _, ok := strings.Cut(h.Event, ":"); ok {
-		// Antigravity's own events go to a project's hooks.json alone
-		return sameHookFamily(x, a) && slices.Contains(hookAgents, a)
+// hookSpecsOf is how each of ids keeps its hooks, the agent's own spec for
+// each one that is here and has one: what a hook is asked of before it is
+// given to it. One not here, or with no hooks magpie can write, has no
+// entry, and is asked only what needs no spec.
+func hookSpecsOf(ids []string) map[string]*hookSpec {
+	want := map[string]bool{}
+	for _, a := range ids {
+		want[a] = true
 	}
-	if h.Event == "session-start" {
-		if _, err := startMatcher(a, h.Matcher); err != nil {
-			return false
+	specs := map[string]*hookSpec{}
+	for _, t := range Targets() {
+		if want[t.Agent.ID] {
+			if sp, _ := hookSpecOf(t); sp != nil {
+				specs[t.Agent.ID] = sp
+			}
 		}
 	}
-	return slices.Contains(hookAgents, a)
+	return specs
+}
+
+// hookTakes is whether agent a can ever be given h: what its family and its
+// session start say. The callers that ask what the agent itself refuses
+// (SomeHooksAgents, hooksView) go to hookTakesWhy with its spec.
+func hookTakes(h *Hook, a string) bool { return hookTakesWhy(h, a, nil) == nil }
+
+// hookTakesWhy is why agent a can't be given h, nil when it can. First what
+// needs no spec: an own event of another agent's family, the session start's
+// narrowing, an agent magpie writes no hooks for. Then, given sp (the
+// agent's own spec, nil to stop before it), the entry itself through sp's
+// event and sp's format, which is where an agent's own refusal comes from
+// without a branch here. A hook that gets past here can still be refused for
+// a start it can't be narrowed to beyond what startMatcher asks, which
+// depends on what the user picked. The reason is the page's, on the agent's
+// chip (HookView.Blocked).
+func hookTakesWhy(h *Hook, a string, sp *hookSpec) error {
+	if x, _, ok := strings.Cut(h.Event, ":"); ok {
+		// Antigravity's own events go to a project's hooks.json alone
+		if !sameHookFamily(x, a) {
+			return fmt.Errorf("%s is an event of another agent's", h.Event)
+		}
+	} else if h.Event == "session-start" {
+		if _, err := startMatcher(a, h.Matcher); err != nil {
+			return err
+		}
+	}
+	if !slices.Contains(hookAgents, a) {
+		return fmt.Errorf("%s has no hooks magpie can write", a)
+	}
+	if sp == nil {
+		return nil
+	}
+	ev, err := sp.event(a, h)
+	if err != nil {
+		return err
+	}
+	_, err = sp.entry(h, ev)
+	return err
 }
 
 // RemoveHooks takes the hooks named out of the library, and what magpie
@@ -1435,6 +1436,9 @@ type HookView struct {
 	// ProjectNo is, for each agent magpie gives hooks only in a project
 	// (Antigravity), why it can't be given this one there: "" when it can
 	ProjectNo map[string]string `json:"projectNo,omitempty"`
+	// Blocked is, for each agent the page lists a chip for, why it can't
+	// be given this one whatever is ticked: "" when it can
+	Blocked map[string]string `json:"blocked,omitempty"`
 }
 
 // HookAgentView is an agent the Hooks tab lists.
@@ -1499,6 +1503,17 @@ func (l *Library) hooksView(targets []*Target, asleep []*agent.Agent, of func(st
 		for id, sp := range specs {
 			if ev, err := sp.event(id, h); err == nil {
 				hv.Native[id] = ev
+			}
+		}
+		// an agent that has a spec and can't be given it says why before the
+		// click, the reason its chip greys with. One with no spec is the
+		// page's to say (HookAgentView.No), and so is one Problems says
+		for id, sp := range specs {
+			if err := hookTakesWhy(h, id, sp); err != nil && hv.Problems[id] == "" {
+				if hv.Blocked == nil {
+					hv.Blocked = map[string]string{}
+				}
+				hv.Blocked[id] = err.Error()
 			}
 		}
 		// an agent ticked that can't take it says why, before any change
