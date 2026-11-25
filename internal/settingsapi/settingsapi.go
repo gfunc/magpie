@@ -35,7 +35,7 @@ var Keys = []string{
 	// the menu bar's allowance cards
 	"trayUsages", "trayUsage", "trayUsageEvery", "trayNoLogos", "trayAnthropicMark", "trayNoBird", "trayNoNumber", "trayPace", "trayNoCost", "trayWindows",
 	// usage and alerts
-	"currency", "totalCurrency", "trayCurrency", "chineseUnits", "dayStart", "usageAlert", "balanceAlert", "resetReminder", "turnDoneAlert", "maskAlert",
+	"currency", "totalCurrency", "trayCurrency", "chineseUnits", "inUncached", "dayStart", "usageAlert", "balanceAlert", "resetReminder", "turnDoneAlert", "maskAlert",
 	// network
 	"proxy", "pluginProxy", "updateProxy", "updateSource",
 	// the model registry (GET /api.json): whether it is served, the
@@ -328,6 +328,11 @@ func Merge(body []byte, cur settings.Settings, web bool) (settings.Settings, err
 	// or sent null — is the one the user has, as a list that isn't sent is.
 	if in.RegistryGroups == nil {
 		in.RegistryGroups = cur.RegistryGroups
+	}
+	// nor whether Requests' In leaves the cache out where its columns are
+	// left out (JonahFu on X)
+	if _, sent := fields["inUncached"]; !sent {
+		in.InUncached = cur.InUncached
 	}
 	in.AgentOrder, in.AgentsHidden, in.AgentsShown, in.AgentsHere = cur.AgentOrder, cur.AgentsHidden, cur.AgentsShown, cur.AgentsHere
 	in.Window, in.WindowMaximised, in.WindowAt = cur.Window, cur.WindowMaximised, cur.WindowAt // the window's own, as it was last resized and moved
