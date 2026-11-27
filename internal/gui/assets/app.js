@@ -502,6 +502,7 @@ function renderAgents() {
   list.replaceChildren();
   homeAgentPrefRows(); // an opened row's, back in the page (ysm119)
   agentsLead(list);
+  list.append(effortPinLine());
   self.gatewaySkewLine?.(list);
   if (!state.agents.length) {
     const e = el("div", "empty-state");
@@ -2009,6 +2010,20 @@ const desktopLongestLine = () => agSwitchLine("ag-longest", !!state.settings?.de
   state.settings = prefs;
   status(t("Saved — quit and reopen Claude Desktop to see it"), "ok");
 });
+
+// effortPinLine: the pin that starts every model at its own highest
+// effort, whatever the agent or the user picked for it. It holds for every
+// agent magpie has taken over, not for one of them, and it is saved
+// through the Settings page's own save, so the setting and the agents'
+// files follow it at once. The Settings page need not have been opened:
+// its settings are read first, the same lazy read the agent rows do.
+const effortPinLine = () => {
+  const pinned = state.settings?.effortPin === "highest";
+  return agSwitchLine("ag-pin", pinned, t("Every agent magpie has taken over starts its models at the highest effort"), pinned ? t("Each model starts at its own highest effort, whatever was picked for it.") : t("Each model starts at its own default, the one its vendor gives it."), async (on) => {
+    if (!prefs) await loadSettings();
+    await savePrefs({ ...prefsKeep(prefs), effortPin: on ? "highest" : "" });
+  });
+};
 
 // daemonRestart: the button that restarts Codex's background app-server
 // left on the old list, then shows the row as it is after

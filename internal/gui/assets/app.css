@@ -5555,8 +5555,10 @@ body.window .row + .row.agent.conn > .who { min-height: 41px; } /* the line abov
 .ag-menu-cap > .ag-dot { margin-top: calc(0.8em - 3px); }
 .ag-menu-cap > span:last-child { flex: 1; min-width: 0; }
 /* Claude Desktop's "largest window only" switch (#1272): its words beside it, the hint after them */
-.ag-longest, .ag-isolated, .ag-iso-claude { cursor: pointer; }
-.ag-longest-say, .ag-isolated-say, .ag-iso-claude-say { color: var(--fg-2); }
+.ag-longest, .ag-isolated, .ag-iso-claude, .ag-pin { cursor: pointer; }
+.ag-longest-say, .ag-isolated-say, .ag-iso-claude-say, .ag-pin-say { color: var(--fg-2); }
+/* the effort pin's switch, above the agent list: the lead's own margin */
+#agents > .ag-pin { margin: 0 2px 12px; }
 /* the Claude Magpie app's own Claude Code folder (#6459), folded under Advanced */
 .ag-iso-more > summary, .prefs-more > summary { font-size: 12px; line-height: 18px; color: var(--fg-2); list-style: none; display: inline-flex; align-items: center; gap: 5px; padding: 3px 0; border-radius: 4px; cursor: pointer; transition: color .12s ease; }
 .ag-iso-more > summary::-webkit-details-marker, .prefs-more > summary::-webkit-details-marker { display: none; }
