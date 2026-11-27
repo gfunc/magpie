@@ -2947,3 +2947,16 @@ older assets folder, where the wheel leaves the page at 0.
 ```sh
 node --test internal/gui/tests/view-slow-frames.test.cjs
 ```
+
+## The effort pin's switch on the Agents page
+
+`effort-pin-switch.test.cjs` checks the switch above the agent list that
+pins every model an agent magpie has taken over to its own highest
+effort: it shows the setting as it is, says which rule is in force, and
+saves through the Settings page's own save, so nothing else changes and no
+route is added. The Settings page was never opened. English and Chinese,
+1100 and 640 wide, Chromium and WebKit; the API is faked.
+
+```sh
+node --test internal/gui/tests/effort-pin-switch.test.cjs
+```

@@ -1234,7 +1234,9 @@ type Settings struct {
 	// pick to stand (agent.effortPinned). The write paths are the takeover
 	// ones alone — a model picked on the Agents page and a level set by
 	// hand in the agent's own file both land at the model's highest while
-	// it is on — so it is a fork setting, off by default.
+	// it is on — so it is a fork setting, off by default. The Agents page
+	// has a switch for it, and a save that changes it tells the agents to
+	// write their files again (settingsapi.Apply).
 	EffortPin string `json:"effortPin,omitempty"`
 	// OrderedModels is the order an agent's lists put its models in, by
 	// agent id and then entry id, as the user dragged them on the Agents
