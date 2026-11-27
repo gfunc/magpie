@@ -2016,7 +2016,10 @@ const desktopLongestLine = () => agSwitchLine("ag-longest", !!state.settings?.de
 // agent magpie has taken over, not for one of them, and it is saved
 // through the Settings page's own save, so the setting and the agents'
 // files follow it at once. The Settings page need not have been opened:
-// its settings are read first, the same lazy read the agent rows do.
+// its settings are read first, the same lazy read the agent rows do. With
+// the pin off Kimi Code's lead session starts at the Agents-page pick,
+// ahead of every table's default, and its subagents at
+// [secondary_model].default_effort, which magpie keeps at the pick.
 const effortPinLine = () => {
   const pinned = state.settings?.effortPin === "highest";
   return agSwitchLine("ag-pin", pinned, t("Every agent magpie has taken over starts its models at the highest effort"), pinned ? t("Each model starts at its own highest effort, whatever was picked for it.") : t("Each model starts at its own default, the one its vendor gives it."), async (on) => {

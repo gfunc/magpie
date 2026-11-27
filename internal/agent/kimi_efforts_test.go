@@ -276,8 +276,9 @@ max_attempts_per_step = 10
 // The rule in one place: a table holds the model's own default where the
 // model offers it, else high where the model offers that, else no key, so
 // Kimi Code starts on the middle level. With the pin on every table is at
-// its own strongest level. The Agents-page pick is not an input: Kimi Code
-// resolves it ahead of every table's own default.
+// its own strongest level. The Agents-page pick is not an input: the lead
+// session resolves it ahead of every table's own default, and a subagent
+// reads it from [secondary_model].default_effort.
 func TestKimiDefaultEffort(t *testing.T) {
 	effortSettingsHome(t)
 	deep := []string{"none", "low", "high", "max"}     // glm's shape: a max on top
@@ -358,12 +359,15 @@ func TestKimiHighestEffort(t *testing.T) {
 	}
 }
 
-// The Agents-page pick is Kimi Code's own: it resolves the pick ahead of
-// every model's default_effort, so a table that holds the model's own
-// default follows the pick without magpie copying it into the table.
-// While the agent is wired the tables keep the model's own default, and
-// the pick lands in [thinking] alone. A hand-set value keeps its standing
-// (kimiOwn), and one the model does not offer gives way to magpie's own.
+// The Agents-page pick is the lead session's own: Kimi Code resolves it
+// ahead of every model's default_effort, so a table that holds the
+// model's own default follows the pick without magpie copying it into the
+// table. While the agent is wired the tables keep the model's own
+// default, and the pick lands in [thinking] alone; a subagent reads it
+// from [secondary_model].default_effort instead
+// (TestKimiSubagentEffortFollowsThePick). A hand-set value keeps its
+// standing (kimiOwn), and one the model does not offer gives way to
+// magpie's own.
 func TestKimiPickStaysOutOfTheModelTables(t *testing.T) {
 	home := keptEffortHome(t)
 	// a second provider for the shapes the default helper lacks: glm
@@ -540,8 +544,8 @@ func TestKimiUnrecordedVendorDefaultIsMagpiesOwn(t *testing.T) {
 
 // A table rests at the model's own default: the vendor's where the model
 // offers it, else high where the model offers that, else no key at all, so
-// Kimi Code starts on the middle level. The pick is Kimi Code's own: it
-// lands in [thinking] and moves nothing in the tables.
+// Kimi Code starts on the middle level. The pick is the lead session's
+// own: it lands in [thinking] and moves nothing in the tables.
 func TestKimiTablesRestAtTheModelsOwnDefault(t *testing.T) {
 	home := keptEffortHome(t)
 	if err := provider.Save(provider.Provider{ID: "rest", Name: "Rest", Chat: "https://example.test/v1", Key: "k", Models: []string{"plain", "top", "mid", "bare"}}); err != nil {

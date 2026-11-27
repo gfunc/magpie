@@ -37,9 +37,10 @@ var kimiModelTable = `models."` + magpieID + "/"
 const kimiContext = 128000
 
 // kimiHeld holds the Notice writeMagpie found on its last run: a
-// section-wide [secondary_model].default_effort, which Kimi Code resolves
-// ahead of every per-table default so the ones magpie writes are inert
-// until it is taken out. Atomic so the Notice hook reads it without a lock.
+// section-wide [secondary_model].default_effort that is not magpie's own,
+// which Kimi Code resolves ahead of every per-table default, so the
+// subagents run at it and not at the pick. Atomic so the Notice hook reads
+// it without a lock.
 var kimiHeld satomic.Value
 
 func init() {
@@ -48,6 +49,20 @@ func init() {
 
 // kimiNoticeText is the Notice above as a string, "" when unset.
 func kimiNoticeText(v *satomic.Value) string { return v.Load().(string) }
+
+// kimiThinkingEffort is the Agents-page pick, `[thinking]`'s effort key in
+// Kimi Code's config: "" with no error when the table or key is absent,
+// and the read error (an array table named thinking among them) so a
+// caller can tell unreadable from unset. The one reader of the pick for
+// the write path: the subagents' effort goes through it, so what the
+// subagents run at and what the page shows can't drift apart.
+func kimiThinkingEffort(path string) (string, error) {
+	t, err := edit.GetTOMLTable(path, "thinking")
+	if err != nil {
+		return "", err
+	}
+	return t["effort"], nil
+}
 
 // KimiDir is the folder Kimi Code keeps its config.toml in, and whether it is
 // the old kimi-cli's. kimi-cli (1.50 on) hands over to the new Kimi Code,
@@ -81,8 +96,10 @@ func kimiDir(at place) (dir string, legacy bool) {
 // what magpie wrote in them last (kimiOwn), and the tables come back with
 // what this write puts there. Each table's default_effort is the model's
 // own default (kimiDefaultEffort), or its strongest level while the pin is
-// on: the Agents-page pick is Kimi Code's own to resolve, ahead of every
-// table's default, so magpie does not copy it into the tables.
+// on. The pick is the lead session's own: Kimi Code resolves it ahead of
+// every table's default, and a subagent never reads it (it reads
+// [secondary_model].default_effort), so magpie does not copy it into the
+// tables.
 func kimiModelTables(path string, legacy bool, wrote map[string]map[string]string) ([]edit.Table, map[string]map[string]string) {
 	var out []edit.Table
 	now := map[string]map[string]string{}
@@ -236,6 +253,97 @@ func kimiSignInEffort(path string, wrote map[string]map[string]string) (kvs []ed
 	return kvs, now
 }
 
+// kimiSubagentEffort is the [secondary_model].default_effort magpie writes
+// for Kimi Code's subagents: the Agents-page pick, brought down to a level
+// every model of the pool takes (Kimi refuses a section whose effort one of
+// them can't take), or with the pin on the pool's own ceiling. A value the
+// user set by hand, or that Kimi Code itself wrote, stays: magpie writes
+// only what it wrote last, as it does for the model tables (kimiOwn), and
+// the record of it is the same one, under the section's own name.
+//
+// With no pool there is nothing to write: a subagent runs on the lead's
+// model and effort then. now is the record of what magpie wrote, advice the
+// Notice to show: a value the user set by hand keeps the subagents off the
+// pick, and the user should know that.
+func kimiSubagentEffort(path string, wrote map[string]map[string]string, pick string) (now map[string]map[string]string, advice string, err error) {
+	sec, models, ok := kimiDoc(path)
+	if !ok {
+		return nil, "", nil
+	}
+	levels := kimiPoolLevels(sec.pool(), models)
+	if levels == nil {
+		// no pool: a subagent runs on the lead's model and effort, and the
+		// section's effort says nothing
+		return nil, "", nil
+	}
+	want := kimiPoolEffort(pick, levels)
+	record := wrote[kimiSecondary]["default_effort"]
+	if sec.Effort != "" && sec.Effort != record {
+		// the user's own value, or Kimi Code's: it stands, and magpie owns
+		// none of it
+		if sec.Effort != want {
+			advice = noticeKimiSectionEffort.say("effort", sec.Effort)
+		}
+		return nil, advice, nil
+	}
+	if want == sec.Effort {
+		// what magpie would write is there: the record says it is
+		// magpie's to change
+		if record == "" {
+			return nil, "", nil
+		}
+		return map[string]map[string]string{kimiSecondary: {"default_effort": record}}, "", nil
+	}
+	next := sec
+	next.Effort = want
+	if err := kimiSecWrite(path, sec, next); err != nil {
+		return nil, "", err
+	}
+	if want == "" {
+		// the value magpie wrote is gone: it owns none of the section
+		return nil, "", nil
+	}
+	return map[string]map[string]string{kimiSecondary: {"default_effort": want}}, "", nil
+}
+
+// kimiPoolEffort is the level magpie writes in [secondary_model].default_effort
+// for Kimi Code's subagents: with the pin on the pool's own ceiling, else
+// the Agents-page pick brought down to a level every model of the pool
+// takes: the pick itself where the pool takes it, else the highest level
+// the pool takes that does not exceed the pick, else the lowest the pool
+// takes. "" when there is nothing to write: no pick, or no level the pool
+// takes.
+func kimiPoolEffort(pick string, levels []string) string {
+	if effortPinned() {
+		return kimiHighestEffort(levels)
+	}
+	if pick == "" {
+		return ""
+	}
+	if slices.Contains(levels, pick) {
+		return pick
+	}
+	want := kimiEffortRank(pick)
+	best, at := "", -1
+	lowest, lowestAt := "", 0
+	for _, l := range levels {
+		i := kimiEffortRank(l)
+		if i < 0 {
+			continue
+		}
+		if lowest == "" || i < lowestAt {
+			lowest, lowestAt = l, i
+		}
+		if i <= want && i > at {
+			best, at = l, i
+		}
+	}
+	if best != "" {
+		return best
+	}
+	return lowest
+}
+
 // providerKimiManaged is the provider table the kimi CLI gives its own
 // Kimi Code sign-in.
 const providerKimiManaged = "managed:kimi-code"
@@ -264,6 +372,19 @@ func setWrote(m map[string]map[string]string, table, key, v string) {
 	m[table][key] = v
 }
 
+// mergeWrote folds what another writer recorded into the record magpie
+// keeps of the file.
+func mergeWrote(wrote map[string]map[string]string, more map[string]map[string]string) {
+	for t, m := range more {
+		if wrote[t] == nil {
+			wrote[t] = map[string]string{}
+		}
+		for k, v := range m {
+			wrote[t][k] = v
+		}
+	}
+}
+
 // kimiWroteKey is where the stash keeps what magpie last wrote in its model
 // tables of the config at path, as JSON: {table: {key: value}}.
 func kimiWroteKey(path string) string { return "kimi:" + path + ":wrote" }
@@ -281,8 +402,9 @@ func kimiWrote(path string) map[string]map[string]string {
 // own strongest level (pinnedEffort); else the model's vendor default where
 // the model offers it, else high where the model offers it, else no key, so
 // Kimi Code starts on the middle level. The Agents-page pick is not an
-// input: Kimi Code resolves it ahead of every table's own default, so a
-// table that holds the vendor's default follows it.
+// input: the lead session resolves it ahead of every table's own default,
+// and a subagent reads it from [secondary_model].default_effort, which
+// magpie keeps in step with it (kimiSubagentEffort).
 func kimiDefaultEffort(vendor string, efforts []string) string {
 	if p := pinnedEffort(efforts); p != "" {
 		return p
@@ -306,7 +428,7 @@ func kimiHighestEffort(levels []string) string {
 		if l == "none" {
 			continue
 		}
-		i := slices.Index(catalog.EffortRank, catalog.EffortLevel(l))
+		i := kimiEffortRank(l)
 		if i < 0 {
 			continue
 		}
@@ -317,6 +439,12 @@ func kimiHighestEffort(levels []string) string {
 		}
 	}
 	return best
+}
+
+// kimiEffortRank is the level's place in catalog.EffortRank's order, -1
+// when it names no level EffortRank knows.
+func kimiEffortRank(e string) int {
+	return slices.Index(catalog.EffortRank, catalog.EffortLevel(e))
 }
 
 // kimiEfforts are a thinking model's levels for the new Kimi Code's
@@ -407,11 +535,6 @@ func kimiIn(at place) *Agent {
 		// the sign-in's own, each re-derived from the file and this
 		// record
 		old := kimiWrote(path)
-		if sec, err := edit.GetTOMLTable(path, "secondary_model"); err == nil && sec["default_effort"] != "" {
-			kimiHeld.Store(noticeKimiSectionEffort.say("effort", sec["default_effort"]))
-		} else {
-			kimiHeld.Store("")
-		}
 		if err := kimiProvider(path, providerTable,
 			edit.KV{Path: "type", Value: "kimi"},
 			edit.KV{Path: "base_url", Value: at.v1()},
@@ -435,21 +558,23 @@ func kimiIn(at place) *Agent {
 			if err := kimiPruneSecondary(path, func(k string) bool { return names[k] }, kimiSecStashed(path)); err != nil {
 				return err
 			}
-		}
-		if !legacy {
 			kvs, more := kimiSignInEffort(path, old)
 			for _, kv := range kvs {
 				if err := edit.SetTOMLKey(path, kv.Path, "default_effort", kv.Value); err != nil {
 					return err
 				}
 			}
-			for t, m := range more {
-				if wrote[t] == nil {
-					wrote[t] = map[string]string{}
+			mergeWrote(wrote, more)
+			// the subagents' own level: the pick, brought down to a level
+			// every model of the pool takes
+			pick, perr := kimiThinkingEffort(path)
+			if perr == nil || effortPinned() {
+				more, advice, err := kimiSubagentEffort(path, old, pick)
+				if err != nil {
+					return err
 				}
-				for k, v := range m {
-					wrote[t][k] = v
-				}
+				mergeWrote(wrote, more)
+				kimiHeld.Store(advice)
 			}
 		}
 		b, err := json.Marshal(wrote)
@@ -645,11 +770,12 @@ func kimiThinkingField(path string, legacy, cold bool, wired func() bool, follow
 		},
 		Set: func(v string) error {
 			// while magpie's models are what the agent runs, the tables
-			// are written again (writeMagpie): the pick is Kimi Code's
-			// own to resolve, and each table keeps the model's own
-			// default. Not wired, there is nothing to write (Disconnect
-			// clears the model first, so its pass over the fields finds
-			// usesMagpie false here and recreates nothing)
+			// are written again (writeMagpie): each table keeps the
+			// model's own default, and the subagents' own key follows
+			// the pick (kimiSubagentEffort). Not wired, there is nothing
+			// to write (Disconnect clears the model first, so its pass
+			// over the fields finds usesMagpie false here and recreates
+			// nothing)
 			write := func() error {
 				if !wired() {
 					return nil

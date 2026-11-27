@@ -45,10 +45,11 @@ func kimiSignInDefault(t *testing.T, path string) string {
 // provider, written by the kimi CLI from Kimi's list) are Kimi Code's own:
 // magpie writes nothing in them and records nothing, so the vendor's
 // default stands until Kimi Code's own start-up puts it back. The Agents-
-// page pick does not reach them either: Kimi Code resolves the pick ahead
-// of every table's own default. The pin is the one thing that reaches
-// them: with it on every one of them is at its own highest level, as a
-// model run through magpie is.
+// page pick does not reach them either: magpie writes no pick into a
+// table, and a subagent's level comes from [secondary_model].default_effort
+// (TestKimiSubagentEffortFollowsThePick). The pin is the one thing that
+// reaches them: with it on every one of them is at its own highest level,
+// as a model run through magpie is.
 func TestKimiSignInTablesFollowOnlyThePin(t *testing.T) {
 	home := keptEffortHome(t)
 	path := filepath.Join(home, ".kimi-code", "config.toml")

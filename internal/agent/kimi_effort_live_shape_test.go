@@ -127,8 +127,8 @@ func TestKimiPinOverridesDifferingRecord(t *testing.T) {
 // The trigger the live box actually had, now the other way round:
 // [thinking] effort = max already on disk, a differing record (low), and
 // no Apply in this process, only a Sync, as SyncCatalog runs it. The
-// pick is Kimi Code's own to resolve, ahead of every table's default, so
-// the table rests at the model's own default.
+// pick is the lead session's own, ahead of every table's default, so the
+// table rests at the model's own default.
 func TestKimiSyncAloneIgnoresTheOnDiskPick(t *testing.T) {
 	home := kimiMaxHome(t)
 	path := filepath.Join(home, ".kimi-code", "config.toml")
