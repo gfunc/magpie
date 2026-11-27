@@ -1,10 +1,23 @@
 package agent
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/yetone/magpie/internal/settings"
 )
+
+// effortSettingsHome is a HOME of its own with no settings in it, so the
+// pin reads off until a test turns it on.
+func effortSettingsHome(t *testing.T) string {
+	t.Helper()
+	home := t.TempDir()
+	t.Setenv("HOME", home)
+	t.Setenv("USERPROFILE", home)
+	t.Setenv("XDG_CONFIG_HOME", filepath.Join(home, ".config"))
+	t.Setenv("XDG_CACHE_HOME", filepath.Join(home, ".cache"))
+	return home
+}
 
 // pinOn saves the pin on for the test and off after it, so no other test's
 // settings say it.

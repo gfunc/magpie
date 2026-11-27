@@ -150,15 +150,16 @@ func TestKimiCodePlanCapabilities(t *testing.T) {
 // with no record that magpie wrote it: it becomes the vendor's max. One
 // the user picked after a record was kept stays (TestKimiCodePlanCapabilities).
 func TestKimiCodeOldHighBecomesTheVendorsDefault(t *testing.T) {
-	kvs, def := kimiEfforts([]string{"none", "low", "high", "max"}, "max", "max", "high", map[string]string{"display_name": "K2.8 Preview"})
+	levels := []string{"none", "low", "high", "max"}
+	kvs, def := kimiEfforts(levels, kimiDefaultEffort("max", levels), "max", "high", map[string]string{"display_name": "K2.8 Preview"})
 	if def != "max" || kvs[len(kvs)-1].Value != "max" {
 		t.Errorf("unrecorded high: %v, %q", kvs, def)
 	}
-	kvs, def = kimiEfforts([]string{"none", "low", "high", "max"}, "max", "max", "high", map[string]string{"default_effort": "max"})
+	kvs, def = kimiEfforts(levels, kimiDefaultEffort("max", levels), "max", "high", map[string]string{"default_effort": "max"})
 	if def != "" || kvs[len(kvs)-1].Value != "high" {
 		t.Errorf("the user's high: %v, %q", kvs, def)
 	}
-	kvs, def = kimiEfforts([]string{"low", "high"}, "max", "max", "", nil)
+	kvs, def = kimiEfforts([]string{"low", "high"}, kimiDefaultEffort("max", []string{"low", "high"}), "max", "", nil)
 	if def != "high" || kvs[len(kvs)-1].Value != "high" {
 		t.Errorf("a default the model hasn't: %v, %q", kvs, def)
 	}

@@ -273,42 +273,54 @@ force = true
 max_attempts_per_step = 10
 `
 
-// The fork's registry of effort-picking behavior: the Agents-page pick
-// drives every magpie-owned default_effort while the agent is wired.
-// drives every magpie-owned default_effort while the agent is wired.
+// The rule in one place: a table holds the model's own default where the
+// model offers it, else high where the model offers that, else no key, so
+// Kimi Code starts on the middle level. With the pin on every table is at
+// its own strongest level. The Agents-page pick is not an input: Kimi Code
+// resolves it ahead of every table's own default.
 func TestKimiDefaultEffort(t *testing.T) {
-	deep := []string{"none", "low", "high", "max"}     // glm's shape: no pick high, max clamps nothing
-	wide := []string{"low", "medium", "high"}          // wide's medium: a vendor default a pick replaces
-	grok := []string{"low", "medium", "high", "xhigh"} // grok's: no max, a max pick clamps to xhigh
-	ultra := []string{"low", "high", "ultra"}          // gpt-6.1-sol's: a pick beats the vendor default
+	effortSettingsHome(t)
+	deep := []string{"none", "low", "high", "max"}     // glm's shape: a max on top
+	wide := []string{"low", "medium", "high"}          // wide's medium: a vendor default
+	grok := []string{"low", "medium", "high", "xhigh"} // grok's: no max, xhigh on top
+	ultra := []string{"low", "high", "ultra"}          // gpt-6.1-sol's: a level past max
 	odd := []string{"turbo", "ludicrous"}              // words EffortRank doesn't know
 	for _, tc := range []struct {
-		name         string
-		want, vendor string
-		efforts      []string
-		out          string
+		name    string
+		vendor  string
+		efforts []string
+		out     string
 	}{
-		{"no pick, vendor offered", "", "medium", wide, "medium"},
-		{"no pick, vendor offered", "", "medium", wide, "medium"},
-		{"no pick, vendor offered among more", "", "max", deep, "max"},
-		{"no pick, vendor not offered, high is", "", "max", []string{"low", "medium", "high"}, "high"},
-		{"no pick, neither offered", "", "max", []string{"low", "medium"}, ""},
-		{"pick offered as is", "max", "high", deep, "max"},
-		{"pick beats vendor default", "high", "ultra", ultra, "high"},
-		{"below-floor pick clamps to strongest", "max", "xhigh", grok, "xhigh"},
-		{"pick above everything clamps to the model's top", "max", "high", ultra, "ultra"},
-		{"pick offered, no vendor default", "low", "", []string{"low", "high"}, "low"},
-		{"a model with no default gains one with a pick", "medium", "", []string{"low", "medium"}, "medium"},
-		{"none is never a level", "none", "medium", wide, "medium"},
-		{"unrankable pick falls to vendor", "max", "ludicrous", odd, "ludicrous"},
-		{"unrankable pick, no vendor, high is", "max", "", []string{"high", "turbo"}, "high"},
-		{"unrankable pick, nothing to fall to", "max", "", odd, ""},
-		{"unrankable vendor, rankable pick", "low", "turbo", []string{"low", "turbo"}, "low"},
-		{"no pick, unrankable vendor, high is", "", "turbo", []string{"high", "turbo"}, "turbo"},
-		{"empty efforts", "max", "high", nil, ""},
+		{"vendor offered", "medium", wide, "medium"},
+		{"vendor offered among more", "max", deep, "max"},
+		{"vendor not offered, high is", "max", []string{"low", "medium", "high"}, "high"},
+		{"neither offered", "max", []string{"low", "medium"}, ""},
+		{"no vendor default, high is", "", []string{"low", "high"}, "high"},
+		{"no vendor default, no high", "", []string{"low", "medium"}, ""},
+		{"a vendor word nothing ranks is taken as it is", "turbo", []string{"high", "turbo"}, "turbo"},
+		{"empty efforts", "high", nil, ""},
 	} {
-		if got := kimiDefaultEffort(tc.want, tc.vendor, tc.efforts); got != tc.out {
-			t.Errorf("%s: kimiDefaultEffort(%q, %q, %v) = %q, want %q", tc.name, tc.want, tc.vendor, tc.efforts, got, tc.out)
+		if got := kimiDefaultEffort(tc.vendor, tc.efforts); got != tc.out {
+			t.Errorf("%s: kimiDefaultEffort(%q, %v) = %q, want %q", tc.name, tc.vendor, tc.efforts, got, tc.out)
+		}
+	}
+	// the pin on: every table at its own strongest level, whatever the
+	// vendor's default is
+	pinOn(t)
+	for _, tc := range []struct {
+		name    string
+		efforts []string
+		out     string
+	}{
+		{"deep", deep, "max"},
+		{"wide", wide, "high"},
+		{"grok", grok, "xhigh"},
+		{"ultra", ultra, "ultra"},
+		{"none is never a level", []string{"none"}, ""},
+		{"words nothing ranks", odd, ""},
+	} {
+		if got := kimiDefaultEffort("medium", tc.efforts); got != tc.out {
+			t.Errorf("pin on, %s: kimiDefaultEffort = %q, want %q", tc.name, got, tc.out)
 		}
 	}
 }
@@ -346,14 +358,13 @@ func TestKimiHighestEffort(t *testing.T) {
 	}
 }
 
-// While the agent is wired, an Agents-page effort pick (kimiThinkingEffort,
-// [thinking].effort) drives every magpie-owned default_effort: the pick
-// where the model offers it, else its strongest level (a grok with no max
-// stays at xhigh), and hand-set values keep their standing (kimiOwn).
-// Picking default ("") restores the vendor-default/high fallback. On the
-// pre-change code this fails: deep stayed high and grok-shaped wide kept
-// its vendor default instead of both following max.
-func TestKimiEffortPickDrivesModelTables(t *testing.T) {
+// The Agents-page pick is Kimi Code's own: it resolves the pick ahead of
+// every model's default_effort, so a table that holds the model's own
+// default follows the pick without magpie copying it into the table.
+// While the agent is wired the tables keep the model's own default, and
+// the pick lands in [thinking] alone. A hand-set value keeps its standing
+// (kimiOwn), and one the model does not offer gives way to magpie's own.
+func TestKimiPickStaysOutOfTheModelTables(t *testing.T) {
 	home := keptEffortHome(t)
 	// a second provider for the shapes the default helper lacks: glm
 	// (deep, max under high) and grok (wide, xhigh with no max)
@@ -387,33 +398,37 @@ func TestKimiEffortPickDrivesModelTables(t *testing.T) {
 		}
 		return out
 	}
-	// no pick yet: the vendor/high fallback, as before (glm none → high,
-	// grok its vendor xhigh)
+	// no pick yet: the model's own default (glm none → high, grok its
+	// vendor xhigh)
 	if got := efforts(); got["magpie/brain/glm"] != "high" || got["magpie/brain/grok"] != "xhigh" {
 		t.Fatalf("no pick: %v", got)
 	}
+	// a pick does not move the tables
 	if err := a.Apply("effort", "max"); err != nil {
 		t.Fatal(err)
 	}
-	// glm takes max as offered; grok, with none, clamps to xhigh
-	if got := efforts(); got["magpie/brain/glm"] != "max" || got["magpie/brain/grok"] != "xhigh" {
-		t.Fatalf("pick max: %v", got)
+	if got := efforts(); got["magpie/brain/glm"] != "high" || got["magpie/brain/grok"] != "xhigh" {
+		t.Fatalf("pick max reached the tables: %v", got)
+	}
+	// the pick itself is Kimi Code's own, in [thinking]
+	if v, _ := edit.GetTOMLTable(path, "thinking"); v["effort"] != "max" {
+		t.Fatalf("the pick was not kept as picked: %v", v)
 	}
 	if err := a.Apply("effort", "low"); err != nil {
 		t.Fatal(err)
 	}
-	if got := efforts(); got["magpie/brain/glm"] != "low" || got["magpie/brain/grok"] != "low" {
-		t.Fatalf("pick low: %v", got)
+	if got := efforts(); got["magpie/brain/glm"] != "high" || got["magpie/brain/grok"] != "xhigh" {
+		t.Fatalf("pick low reached the tables: %v", got)
 	}
-	// back to default: the vendor/high fallback is restored
+	// back to default: the tables are as they were
 	if err := a.Pick("effort", ""); err != nil {
 		t.Fatal(err)
 	}
 	if got := efforts(); got["magpie/brain/glm"] != "high" || got["magpie/brain/grok"] != "xhigh" {
 		t.Fatalf("pick cleared: %v", got)
 	}
-	// a hand-set default stays while the model offers it, and a magpie
-	// table's value follows the pick again once it isn't
+	// a hand-set default stays while the model offers it, and one the
+	// model does not offer gives way to magpie's own
 	a = kimi(home)
 	if err := edit.SetTOMLKey(path, `models."magpie/brain/grok"`, "default_effort", "medium"); err != nil {
 		t.Fatal(err)
@@ -433,32 +448,15 @@ func TestKimiEffortPickDrivesModelTables(t *testing.T) {
 	if got := efforts(); got["magpie/brain/grok"] != "xhigh" {
 		t.Fatalf("hand-set out-of-levels default kept: %v", got)
 	}
-	// an unrecorded legacy high (a magpie from before records kept left
-	// none) is re-owned and migrates to the pick on the next sync; a
-	// recorded magpie value moves with the pick on its own (checked above
-	// with each Apply)
-	edit.SetTOMLKey(path, `models."magpie/brain/glm"`, "default_effort", "high")
-	wrote := kimiWrote(path)
-	delete(wrote, `models."magpie/brain/glm"`)
-	b, err := json.Marshal(wrote)
-	if err != nil {
-		t.Fatal(err)
-	}
-	stash(map[string]string{kimiWroteKey(path): string(b)})
-	if err := a.Sync(); err != nil {
-		t.Fatal(err)
-	}
-	if got := efforts(); got["magpie/brain/glm"] != "max" || got["magpie/brain/grok"] != "xhigh" {
-		t.Fatalf("unrecorded legacy high migrated: %v", got)
-	}
 }
 
-// The same re-own covers a table holding the model's vendor default with
-// no record of it (dev's gpt-6.1-sol kept ultra through a wired max sync:
-// magpie wrote that ultra before it kept records, and the record-less
-// read mistook it for the user's hand-set). A value that is neither high
-// nor the vendor default is the user's and stays.
-func TestKimiUnrecordedVendorDefaultFollowsThePick(t *testing.T) {
+// A table holding the model's vendor default with no record of it (dev's
+// gpt-6.1-sol kept ultra through a sync: magpie wrote that ultra before it
+// kept records, and the record-less read mistook it for the user's
+// hand-set) is magpie's own again: the record is kept and the vendor's
+// default is written. A value that is neither high nor the vendor default
+// is the user's and stays.
+func TestKimiUnrecordedVendorDefaultIsMagpiesOwn(t *testing.T) {
 	home := keptEffortHome(t)
 	if err := provider.Save(provider.Provider{ID: "uco", Name: "UCO", Chat: "https://example.test/v1", Key: "k", Models: []string{"gpt-6.1-sol", "gpt-6.1-terra"}}); err != nil {
 		t.Fatal(err)
@@ -473,9 +471,6 @@ func TestKimiUnrecordedVendorDefaultFollowsThePick(t *testing.T) {
 	writeFile(t, path, "")
 	a := kimi(home)
 	if err := a.Pick("model", "magpie/uco/gpt-6.1-sol"); err != nil {
-		t.Fatal(err)
-	}
-	if err := a.Apply("effort", "max"); err != nil {
 		t.Fatal(err)
 	}
 	efforts := func() map[string]string {
@@ -493,12 +488,14 @@ func TestKimiUnrecordedVendorDefaultFollowsThePick(t *testing.T) {
 		}
 		return out
 	}
-	if got := efforts(); got["magpie/uco/gpt-6.1-sol"] != "max" {
-		t.Fatalf("pick max: %v", got)
+	// the vendor's default is what a table holds
+	if got := efforts(); got["magpie/uco/gpt-6.1-sol"] != "ultra" {
+		t.Fatalf("the vendor's default: %v", got)
 	}
-	// a table the record was lost from (a magpie from before records
-	// kept), holding the vendor default, follows the pick again
-	edit.SetTOMLKey(path, `models."magpie/uco/gpt-6.1-sol"`, "default_effort", "ultra")
+	// a table whose record was lost (a magpie from before records kept),
+	// holding a value the rule would write, is magpie's own again: the
+	// vendor's default is written and the record is kept
+	edit.SetTOMLKey(path, `models."magpie/uco/gpt-6.1-sol"`, "default_effort", "high")
 	wrote := kimiWrote(path)
 	delete(wrote, `models."magpie/uco/gpt-6.1-sol"`)
 	b, err := json.Marshal(wrote)
@@ -509,8 +506,11 @@ func TestKimiUnrecordedVendorDefaultFollowsThePick(t *testing.T) {
 	if err := a.Sync(); err != nil {
 		t.Fatal(err)
 	}
-	if got := efforts(); got["magpie/uco/gpt-6.1-sol"] != "max" {
-		t.Fatalf("unrecorded vendor default followed: %v", got)
+	if got := efforts(); got["magpie/uco/gpt-6.1-sol"] != "ultra" {
+		t.Fatalf("unrecorded value the rule writes: %v", got)
+	}
+	if r := kimiWrote(path)[`models."magpie/uco/gpt-6.1-sol"`]["default_effort"]; r != "ultra" {
+		t.Fatalf("the re-owned table was not recorded: %v", kimiWrote(path))
 	}
 	// a hand-set value that is neither high nor the vendor default is the
 	// user's, record or none, and stays while the model has it
@@ -528,13 +528,72 @@ func TestKimiUnrecordedVendorDefaultFollowsThePick(t *testing.T) {
 	if got := efforts(); got["magpie/uco/gpt-6.1-terra"] != "low" {
 		t.Fatalf("hand-set value with no record replaced: %v", got)
 	}
-	// and with the record kept, today's semantics stand
+	// and with the record kept, the value the record names is magpie's own
 	edit.SetTOMLKey(path, `models."magpie/uco/gpt-6.1-sol"`, "default_effort", "ultra")
 	if err := a.Sync(); err != nil {
 		t.Fatal(err)
 	}
 	if got := efforts(); got["magpie/uco/gpt-6.1-sol"] != "ultra" {
-		t.Fatalf("recorded hand-set replaced: %v", got)
+		t.Fatalf("recorded value replaced: %v", got)
+	}
+}
+
+// A table rests at the model's own default: the vendor's where the model
+// offers it, else high where the model offers that, else no key at all, so
+// Kimi Code starts on the middle level. The pick is Kimi Code's own: it
+// lands in [thinking] and moves nothing in the tables.
+func TestKimiTablesRestAtTheModelsOwnDefault(t *testing.T) {
+	home := keptEffortHome(t)
+	if err := provider.Save(provider.Provider{ID: "rest", Name: "Rest", Chat: "https://example.test/v1", Key: "k", Models: []string{"plain", "top", "mid", "bare"}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := catalog.SaveLive("rest", "https://example.test/v1", []catalog.Model{
+		{ID: "plain", Efforts: []string{"low", "high", "max"}, DefaultEffort: "high"},
+		{ID: "top", Efforts: []string{"low", "high", "max"}, DefaultEffort: "max"},
+		{ID: "mid", Efforts: []string{"low", "medium", "high"}},
+		{ID: "bare", Efforts: []string{"low", "medium"}},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(home, ".kimi-code", "config.toml")
+	writeFile(t, path, "")
+	a := kimi(home)
+	if err := a.Pick("model", "magpie/rest/plain"); err != nil {
+		t.Fatal(err)
+	}
+	efforts := func() map[string]string {
+		t.Helper()
+		ms := readKimiTOML(t, path)["models"].(map[string]any)
+		out := map[string]string{}
+		for k, v := range ms {
+			m, ok := v.(map[string]any)
+			if !ok {
+				continue
+			}
+			if e, ok := m["default_effort"].(string); ok {
+				out[k] = e
+			}
+		}
+		return out
+	}
+	// the vendor's own default, high where the model has it, and no key
+	// where it has neither
+	if got := efforts(); got["magpie/rest/plain"] != "high" || got["magpie/rest/top"] != "max" || got["magpie/rest/mid"] != "high" {
+		t.Fatalf("the model's own default: %v", got)
+	}
+	if _, ok := efforts()["magpie/rest/bare"]; ok {
+		t.Fatalf("a model with no high got a default: %v", efforts())
+	}
+	// the pick is Kimi Code's own: it lands in [thinking] and moves
+	// nothing in the tables
+	if err := a.Apply("effort", "max"); err != nil {
+		t.Fatal(err)
+	}
+	if got := efforts(); got["magpie/rest/plain"] != "high" || got["magpie/rest/top"] != "max" || got["magpie/rest/mid"] != "high" {
+		t.Fatalf("the pick moved the tables: %v", got)
+	}
+	if v, _ := edit.GetTOMLTable(path, "thinking"); v["effort"] != "max" {
+		t.Fatalf("the pick was not kept as picked: %v", v)
 	}
 }
 
@@ -636,34 +695,6 @@ func TestKimiFailedStashWriteRollsBack(t *testing.T) {
 	}
 	if now := readFile(path); now != was {
 		t.Fatalf("a failed stash write changed config.toml:\n%s", now)
-	}
-}
-
-// A [thinking] that can't be read as a table (an array table, valid TOML
-// that syncs fine) degrades to the pre-change write: the takeover still
-// happens, the defaults keep the vendor/high fallback, and a Notice names
-// the unreadable table. Unknown is not unset.
-func TestKimiUnreadableThinkingDegrades(t *testing.T) {
-	home := keptEffortHome(t)
-	path := filepath.Join(home, ".kimi-code", "config.toml")
-	writeFile(t, path, "[[thinking]]\neffort = \"max\"\n")
-	a := kimi(home)
-	if err := a.Pick("model", "magpie/think/deep"); err != nil {
-		t.Fatal(err)
-	}
-	ms := readKimiTOML(t, path)["models"].(map[string]any)
-	deep := ms["magpie/think/deep"].(map[string]any)
-	if deep["default_effort"] != "high" {
-		t.Fatalf("degraded write followed the pick anyway: %v", deep["default_effort"])
-	}
-	if n := a.Notice(); !strings.Contains(n, "[thinking]") {
-		t.Fatalf("no notice of the unreadable [thinking]: %q", n)
-	}
-	// the effort field's Set, which writes the key it is asked for, is
-	// refused on a [thinking] that isn't a table — the writer's degrade
-	// doesn't reach it — and leaves the file as it is
-	if err := a.Apply("effort", "low"); err == nil || !strings.Contains(err.Error(), "array table") {
-		t.Fatalf("effort set on an unreadable [thinking]: %v", err)
 	}
 }
 
