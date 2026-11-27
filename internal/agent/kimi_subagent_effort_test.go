@@ -319,3 +319,78 @@ func TestKimiSubagentEffortRecordGoesWithATakenOutLevel(t *testing.T) {
 		t.Fatalf("a sync kept a record of a level that is not there: %q", r)
 	}
 }
+
+// kimiUserPoolHome is kimiPoolHome with a model of the user's own in the
+// config, a sign-in table that stays when magpie is taken out.
+func kimiUserPoolHome(t *testing.T) (home, path string) {
+	home, path = kimiPoolHome(t)
+	writeFile(t, path, strings.Replace(kimiSignInConfig, `"low", "high", "max"`, `"low", "high", "max"`, 1))
+	return home, path
+}
+
+// Taking magpie out of Kimi Code takes out the level magpie wrote for its
+// subagents, as it takes out its model tables, and not a value the user set
+// by hand. A pool model of the user's own stays and still takes a level, so
+// the pool alone does not take magpie's with it.
+func TestKimiSubagentEffortGoesWithMagpie(t *testing.T) {
+	home, path := kimiUserPoolHome(t)
+	a := kimi(home)
+	if err := a.Pick("model", "magpie/think/deep"); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.Field("subagent_pool").Set("magpie/think/deep\nkimi-code/k3.1-pro"); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.Apply("effort", "low"); err != nil {
+		t.Fatal(err)
+	}
+	if got := kimiSecEffort(t, path); got != "low" {
+		t.Fatalf("wired: the subagents' level %q, want the pick's low", got)
+	}
+	// default: Kimi Code as it was, magpie out
+	if err := a.Pick("model", ""); err != nil {
+		t.Fatal(err)
+	}
+	sec, _, ok := kimiDoc(path)
+	if !ok || len(sec.Pool) != 1 || !hasKey(sec.Pool, "kimi-code/k3.1-pro") {
+		t.Fatalf("the user's own pool model went with magpie: %+v", sec.Pool)
+	}
+	if got := kimiSecEffort(t, path); got != "" {
+		t.Fatalf("magpie's level stayed behind: %q", got)
+	}
+	// back on magpie: the subagents follow the pick again
+	if err := a.Pick("model", "magpie/think/deep"); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.Apply("effort", "high"); err != nil {
+		t.Fatal(err)
+	}
+	if got := kimiSecEffort(t, path); got != "high" {
+		t.Fatalf("reconnected: the subagents' level %q, want the pick's high", got)
+	}
+}
+
+// A level the user set by hand for the subagents is theirs to keep when
+// magpie is taken out: only the one magpie wrote goes.
+func TestKimiSubagentEffortHandSetStaysWhenMagpieGoes(t *testing.T) {
+	home, path := kimiUserPoolHome(t)
+	a := kimi(home)
+	if err := a.Pick("model", "magpie/think/deep"); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.Field("subagent_pool").Set("magpie/think/deep\nkimi-code/k3.1-pro"); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.Field("subagent_effort").Set("medium"); err == nil {
+		t.Fatal("medium: the pool does not take it")
+	}
+	if err := a.Field("subagent_effort").Set("low"); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.Pick("model", ""); err != nil {
+		t.Fatal(err)
+	}
+	if got := kimiSecEffort(t, path); got != "low" {
+		t.Fatalf("the user's level went with magpie: %q", got)
+	}
+}

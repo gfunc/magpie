@@ -602,6 +602,9 @@ func kimiIn(at place) *Agent {
 		return stashWrite(m)
 	}
 	dropMagpie := func() error {
+		// what magpie wrote in the tables and for the subagents, read
+		// before its record goes
+		wrote := kimiWrote(path)
 		if !legacy {
 			// magpie's models out of the subagents' first, the model they
 			// had back
@@ -609,6 +612,18 @@ func kimiIn(at place) *Agent {
 				return err
 			}
 			forget(kimiSecStashKey(path))
+			// the level magpie wrote for the subagents goes with its
+			// models, as its model tables do; a pool model of the user's
+			// own may still take one, so the pool does not take it along
+			if r := wrote[kimiSecondary]["default_effort"]; r != "" {
+				if sec, _, ok := kimiDoc(path); ok && sec.Effort == r {
+					next := sec
+					next.Effort = ""
+					if err := kimiSecWrite(path, sec, next); err != nil {
+						return err
+					}
+				}
+			}
 		}
 		if err := edit.SetTOMLTables(path, []string{kimiModelTable}, nil); err != nil {
 			return err
