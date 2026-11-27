@@ -2011,18 +2011,16 @@ const desktopLongestLine = () => agSwitchLine("ag-longest", !!state.settings?.de
   status(t("Saved — quit and reopen Claude Desktop to see it"), "ok");
 });
 
-// effortPinLine: the pin that starts every model at its own highest
-// effort, whatever the agent or the user picked for it. It holds for every
-// agent magpie has taken over, not for one of them, and it is saved
-// through the Settings page's own save, so the setting and the agents'
-// files follow it at once. The Settings page need not have been opened:
-// its settings are read first, the same lazy read the agent rows do. With
-// the pin off Kimi Code's lead session starts at the Agents-page pick,
-// ahead of every table's default, and its subagents at
-// [secondary_model].default_effort, which magpie keeps at the pick.
+// effortPinLine: the pin that writes every model's own effort at its
+// highest level, in every agent magpie has taken over. It is saved through
+// the Settings page's own save, so the agents' files are written again
+// after it. The Settings page need not have been opened: its settings are
+// read first, the same lazy read the agent rows do. What the words say is
+// what magpie writes, and no more: an agent's own pick stands for its new
+// sessions, and Kimi Code's lead session starts at the Agents-page pick.
 const effortPinLine = () => {
   const pinned = state.settings?.effortPin === "highest";
-  return agSwitchLine("ag-pin", pinned, t("Every agent magpie has taken over starts its models at the highest effort"), pinned ? t("Each model starts at its own highest effort, whatever was picked for it.") : t("Each model starts at its own default, the one its vendor gives it."), async (on) => {
+  return agSwitchLine("ag-pin", pinned, t("Every model's own effort is its highest"), pinned ? t("magpie writes each model's own effort at its highest level, in every agent it has taken over. The level you pick for an agent still stands for its new sessions.") : t("Each model keeps the effort it comes with, and the level you pick for an agent stands."), async (on) => {
     if (!prefs) await loadSettings();
     await savePrefs({ ...prefsKeep(prefs), effortPin: on ? "highest" : "" });
   });

@@ -1,9 +1,10 @@
 // Run with Node's test runner and Playwright on the module path; see README.md.
-// The effort pin: every model an agent magpie has taken over starts at its
-// own highest effort. Its switch is on the Agents page, above the agent
-// list: it shows the setting as it is, says which rule is in force, and
-// saves through the Settings page's own save, so nothing else changes. The
-// Settings page was never opened. In English and Chinese, wide and narrow.
+// The effort pin: every model's own effort is written at its highest
+// level, in every agent magpie has taken over. Its switch is on the Agents
+// page, above the agent list: it shows the setting as it is, says which
+// rule is in force, and saves through the Settings page's own save, so
+// nothing else changes. The Settings page was never opened. In English and
+// Chinese, wide and narrow.
 const assert = require("node:assert/strict");
 const fs = require("node:fs/promises");
 const path = require("node:path");
@@ -52,14 +53,14 @@ function fixture(lang) {
 
 const W = {
   en: {
-    say: "Every agent magpie has taken over starts its models at the highest effort",
-    off: "Each model starts at its own default, the one its vendor gives it.",
-    on: "Each model starts at its own highest effort, whatever was picked for it.",
+    say: "Every model's own effort is its highest",
+    off: "Each model keeps the effort it comes with, and the level you pick for an agent stands.",
+    on: "magpie writes each model's own effort at its highest level, in every agent it has taken over. The level you pick for an agent still stands for its new sessions.",
   },
   zh: {
-    say: "magpie 接管的每个代理，其模型都以最高思考力度启动",
-    off: "每个模型都以自己的默认力度启动，即供应商给出的那一档。",
-    on: "每个模型都以自己的最高思考力度启动，不管为它选了什么。",
+    say: "每个模型自身的思考力度固定为最高",
+    off: "每个模型保留它自带的思考力度，你为代理选的档位照常生效。",
+    on: "magpie 把它接管的每个代理里的每个模型，自身思考力度都写成最高档。你为某个代理选的档位对它的新会话依然有效。",
   },
 };
 const line = "#agents > .ag-pin";
