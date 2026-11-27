@@ -27,6 +27,7 @@ import (
 // model lists, the quotas and the accounts behind them, and the routing.
 var keyModelRoutes = map[string]bool{
 	"GET /v1/models": true, "GET /models": true, "GET /v1/models/{id...}": true, "GET /muse-code/models": true,
+	"GET /api.json":  true, // the registry, the model list in models.dev's shape
 	"GET /api/hello": true, "GET /api/version": true, "GET /api/tags": true,
 	"POST /api/show": true, "POST /api/chat": true, "POST /api/generate": true,
 	"GET /v1/magpie/quotas": true, "GET /v1/magpie/quotas/history": true, "GET " + AccountsPath: true,
