@@ -3,6 +3,7 @@ package agent
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/pelletier/go-toml/v2"
@@ -146,5 +147,33 @@ func TestKimiSignInHandSetSurvivesOnlyOnceRecorded(t *testing.T) {
 	}
 	if got := kimiWrote(path)[table]["default_effort"]; got != "max" {
 		t.Fatalf("the record names the user's value: %v", kimiWrote(path))
+	}
+}
+
+// A sign-in table already at its ceiling when the pin first reaches it is
+// written to by no one, and is still magpie's: the record is kept for it
+// all the same, so a value the user sets by hand afterwards is known for
+// theirs and not overwritten by the next sync.
+func TestKimiSignInTableAtItsCeilingIsRecorded(t *testing.T) {
+	home := keptEffortHome(t)
+	path := filepath.Join(home, ".kimi-code", "config.toml")
+	// its levels stop at high, which the pin writes: nothing to write
+	writeFile(t, path, strings.Replace(kimiSignInConfig, `"low", "high", "max"`, `"low", "high"`, 1))
+	a := kimi(home)
+	pinOn(t)
+	if err := a.Connect(); err != nil {
+		t.Fatal(err)
+	}
+	if got := kimiSignInDefault(t, path); got != "high" {
+		t.Fatalf("the pin on: the sign-in default %q, want its ceiling high", got)
+	}
+	if err := edit.SetTOMLKey(path, `models."kimi-code/k3.1-pro"`, "default_effort", "low"); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.Sync(); err != nil {
+		t.Fatal(err)
+	}
+	if got := kimiSignInDefault(t, path); got != "low" {
+		t.Fatalf("a hand-set value after a sync that wrote nothing: %q, want the user's low", got)
 	}
 }

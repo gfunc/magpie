@@ -241,11 +241,13 @@ func kimiSignInEffort(path string, wrote map[string]map[string]string) (kvs []ed
 		}
 		v, by := kimiOwn(was, wrote[table], "default_effort", mine)
 		if v == "" || v == m.DefaultEffort {
-			// the record of a table magpie owns is kept even when
-			// nothing is written: it says the value on disk is
-			// magpie's to change, and a hand-set value made later is
-			// protected by it
-			if r, ok := wrote[table]["default_effort"]; ok {
+			// nothing to write. The value there is magpie's when kimiOwn
+			// says so, and it was magpie's when a record says it: the
+			// record is kept either way, since it is what tells a value
+			// the user sets by hand later from the one magpie put there
+			if by {
+				setWrote(now, table, "default_effort", v)
+			} else if r, ok := wrote[table]["default_effort"]; ok {
 				setWrote(now, table, "default_effort", r)
 			}
 			continue
