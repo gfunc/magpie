@@ -728,6 +728,65 @@ func TestKimiSectionWideEffortNotice(t *testing.T) {
 	}
 }
 
+// A table magpie wrote under the old rule holds the copied pick. With
+// the pin off the first sync writes the model's own default over it and
+// keeps the record in step, and a value the user set by hand is theirs
+// and stays.
+func TestKimiPinOffRevertsWhatThePickCopied(t *testing.T) {
+	home := keptEffortHome(t)
+	// a model whose vendor default is high and whose own top is max
+	if err := provider.Save(provider.Provider{ID: "old", Name: "Old", Chat: "https://example.test/v1", Key: "k", Models: []string{"k31"}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := catalog.SaveLive("old", "https://example.test/v1", []catalog.Model{
+		{ID: "k31", Efforts: []string{"low", "high", "max"}, DefaultEffort: "high"},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(home, ".kimi-code", "config.toml")
+	writeFile(t, path, "")
+	a := kimi(home)
+	if err := a.Pick("model", "magpie/old/k31"); err != nil {
+		t.Fatal(err)
+	}
+	table := `models."magpie/old/k31"`
+	// the old rule's bytes: the pick copied into the table, the record
+	// of it, and the pick itself in [thinking]
+	if err := edit.SetTOMLKey(path, table, "default_effort", "max"); err != nil {
+		t.Fatal(err)
+	}
+	if err := edit.SetTOMLKey(path, "thinking", "effort", "max"); err != nil {
+		t.Fatal(err)
+	}
+	wrote, _ := json.Marshal(map[string]map[string]string{table: {"default_effort": "max"}})
+	stash(map[string]string{kimiWroteKey(path): string(wrote)})
+	// the first sync with the pin off: the model's own default is written
+	// over the copied pick, and the record follows it
+	if err := a.Sync(); err != nil {
+		t.Fatal(err)
+	}
+	if got := kimiTableEffort(t, path, "magpie/old/k31"); got != "high" {
+		t.Fatalf("the copied pick was not reverted: %q", got)
+	}
+	if got := kimiWrote(path)[table]["default_effort"]; got != "high" {
+		t.Fatalf("the record was not updated: %v", kimiWrote(path))
+	}
+	// the pick itself is Kimi Code's own and is left as it is
+	if v, _ := edit.GetTOMLTable(path, "thinking"); v["effort"] != "max" {
+		t.Fatalf("the pick was changed: %v", v)
+	}
+	// a value the user set by hand is theirs and stays
+	if err := edit.SetTOMLKey(path, table, "default_effort", "low"); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.Sync(); err != nil {
+		t.Fatal(err)
+	}
+	if got := kimiTableEffort(t, path, "magpie/old/k31"); got != "low" {
+		t.Fatalf("the hand-set value was replaced: %q", got)
+	}
+}
+
 func readKimiTOML(t *testing.T, path string) map[string]any {
 	t.Helper()
 	b, err := os.ReadFile(path)
@@ -739,4 +798,17 @@ func readKimiTOML(t *testing.T, path string) map[string]any {
 		t.Fatalf("%v\n%s", err, b)
 	}
 	return c
+}
+
+// kimiTableEffort reads the default_effort of one model table in the
+// config at path, "" when it holds none.
+func kimiTableEffort(t *testing.T, path, model string) string {
+	t.Helper()
+	ms := readKimiTOML(t, path)["models"].(map[string]any)
+	m, ok := ms[model].(map[string]any)
+	if !ok {
+		t.Fatalf("no table for %s in %s", model, path)
+	}
+	e, _ := m["default_effort"].(string)
+	return e
 }

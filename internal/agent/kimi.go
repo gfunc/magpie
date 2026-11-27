@@ -177,11 +177,12 @@ func kimiModelTables(path string, legacy bool, wrote map[string]map[string]strin
 // magpie writes nothing and records nothing: the tables are Kimi Code's
 // own, and its next start puts the vendor's default back. A hand-set value
 // is the user's, told by the same wrote-record the magpie tables use, keyed
-// by its table name.
+// by its table name. wrote is what magpie wrote in them last.
 func kimiSignInEffort(path string, wrote map[string]map[string]string) (kvs []edit.KV, now map[string]map[string]string) {
 	if !effortPinned() {
 		return nil, nil
 	}
+	now = map[string]map[string]string{}
 	// the whole file once, arrays and all, as kimiThinkingOptions reads it
 	type levels struct {
 		Provider       string   `toml:"provider"`
@@ -218,13 +219,17 @@ func kimiSignInEffort(path string, wrote map[string]map[string]string) (kvs []ed
 		}
 		v, by := kimiOwn(was, wrote[table], "default_effort", mine)
 		if v == "" || v == m.DefaultEffort {
+			// the record of a table magpie owns is kept even when
+			// nothing is written: it says the value on disk is
+			// magpie's to change, and a hand-set value made later is
+			// protected by it
+			if r, ok := wrote[table]["default_effort"]; ok {
+				setWrote(now, table, "default_effort", r)
+			}
 			continue
 		}
 		kvs = append(kvs, edit.KV{Path: table, Value: v})
 		if by {
-			if now == nil {
-				now = map[string]map[string]string{}
-			}
 			setWrote(now, table, "default_effort", v)
 		}
 	}
@@ -398,6 +403,10 @@ func kimiIn(at place) *Agent {
 	get := func() string { v, _ := edit.GetTOMLTop(path, "default_model"); return v }
 	providerTable := "providers." + magpieID
 	writeMagpie := func() error {
+		// what magpie wrote in the tables last: the magpie tables and
+		// the sign-in's own, each re-derived from the file and this
+		// record
+		old := kimiWrote(path)
 		if sec, err := edit.GetTOMLTable(path, "secondary_model"); err == nil && sec["default_effort"] != "" {
 			kimiHeld.Store(noticeKimiSectionEffort.say("effort", sec["default_effort"]))
 		} else {
@@ -410,7 +419,7 @@ func kimiIn(at place) *Agent {
 		); err != nil {
 			return err
 		}
-		tables, wrote := kimiModelTables(path, legacy, kimiWrote(path))
+		tables, wrote := kimiModelTables(path, legacy, old)
 		if err := edit.SetTOMLTables(path, []string{kimiModelTable}, tables); err != nil {
 			return err
 		}
@@ -428,7 +437,7 @@ func kimiIn(at place) *Agent {
 			}
 		}
 		if !legacy {
-			kvs, more := kimiSignInEffort(path, wrote)
+			kvs, more := kimiSignInEffort(path, old)
 			for _, kv := range kvs {
 				if err := edit.SetTOMLKey(path, kv.Path, "default_effort", kv.Value); err != nil {
 					return err
