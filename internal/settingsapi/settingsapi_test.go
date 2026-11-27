@@ -11,6 +11,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/pelletier/go-toml/v2"
+
+	"github.com/yetone/magpie/internal/agent"
+	"github.com/yetone/magpie/internal/catalog"
 	"github.com/yetone/magpie/internal/provider"
 	"github.com/yetone/magpie/internal/settings"
 	"github.com/yetone/magpie/internal/testenv"
@@ -577,6 +581,89 @@ func TestEffortPinSavedAndKept(t *testing.T) {
 	if got := set(`{"effortPin":""}`); got.EffortPin != "" {
 		t.Fatalf("empty saved as %q", got.EffortPin)
 	}
+}
+
+// The effort pin is what every model an agent runs starts at, and it is
+// written into the agents' own files. A save that changes it tells the
+// agents to write them again, so the level reaches them at once: before,
+// the pin was saved and no agent's file changed until the next sync.
+func TestEffortPinSaveSyncsTheAgents(t *testing.T) {
+	home(t)
+	// a provider with a model that has levels of its own
+	if err := provider.Save(provider.Provider{ID: "think", Name: "Think", Chat: "https://example.test/v1", Key: "k", Models: []string{"k31"}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := catalog.SaveLive("think", "https://example.test/v1", []catalog.Model{
+		{ID: "k31", Efforts: []string{"low", "high", "max"}, DefaultEffort: "high"},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	// a Kimi Code agent, with a config of its own
+	path := filepath.Join(os.Getenv("HOME"), ".kimi-code", "config.toml")
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(path, []byte(""), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	var kimi *agent.Agent
+	for _, a := range agent.All() {
+		if a.ID == "kimi" {
+			kimi = a
+		}
+	}
+	if kimi == nil {
+		t.Fatal("no Kimi Code agent")
+	}
+	if err := kimi.Pick("model", "magpie/think/k31"); err != nil {
+		t.Fatal(err)
+	}
+	// the agents' files are written when the catalog is told
+	told := 0
+	was := catalog.Changed
+	catalog.Changed = func() { told++; agent.SyncCatalogSoon() }
+	t.Cleanup(func() { catalog.Changed = was })
+	// the table holds the model's own default before the pin is saved
+	if got := kimiTableEffort(t, path, "magpie/think/k31"); got != "high" {
+		t.Fatalf("the model's own default: %q", got)
+	}
+	if _, _, err := Apply([]byte(`{"effortPin":"highest"}`), false); err != nil {
+		t.Fatal(err)
+	}
+	agent.SyncCatalogSettled()
+	if told != 1 {
+		t.Fatalf("the agents were told %d times, want 1", told)
+	}
+	if got := kimiTableEffort(t, path, "magpie/think/k31"); got != "max" {
+		t.Fatalf("the table after the pin was saved: %q", got)
+	}
+	// a save that doesn't change the pin tells nothing
+	if _, _, err := Apply([]byte(`{"effortPin":"highest"}`), false); err != nil {
+		t.Fatal(err)
+	}
+	agent.SyncCatalogSettled()
+	if told != 1 {
+		t.Fatalf("a save that didn't change the pin told the agents %d times", told)
+	}
+}
+
+// kimiTableEffort reads the default_effort of one model table in the
+// Kimi Code config at path.
+func kimiTableEffort(t *testing.T, path, model string) string {
+	t.Helper()
+	b, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var c struct {
+		Models map[string]struct {
+			DefaultEffort string `toml:"default_effort"`
+		} `toml:"models"`
+	}
+	if err := toml.Unmarshal(b, &c); err != nil {
+		t.Fatalf("%v\n%s", err, b)
+	}
+	return c.Models[model].DefaultEffort
 }
 
 // The models folder is set by Move… on the redaction page, never by a

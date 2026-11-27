@@ -166,8 +166,10 @@ func Apply(body []byte, web bool) (in, cur settings.Settings, err error) {
 		return in, cur, err
 	}
 	// whether agents are told every model takes images follows Vision
-	// (provider.Described)
-	if strings.TrimSpace(in.Vision) != strings.TrimSpace(cur.Vision) {
+	// (provider.Described), and what every model an agent runs starts at
+	// follows the effort pin: both are written into the agents' own
+	// files, so a change to either has to reach them at once
+	if strings.TrimSpace(in.Vision) != strings.TrimSpace(cur.Vision) || in.EffortPin != cur.EffortPin {
 		catalog.Touched()
 	}
 	return in, cur, nil
