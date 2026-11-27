@@ -283,3 +283,39 @@ func TestKimiSubagentEffortFollowsThinkingOff(t *testing.T) {
 		t.Fatalf("back on: the subagents' level %q, want the pool's high", got)
 	}
 }
+
+// A level the pool made magpie take out is not magpie's any more. A pool
+// model that cannot take it goes in while it is magpie's, and the pool
+// takes it out; with no pick there is nothing to write in its place, and
+// the record goes with the value, so the stash does not claim a level
+// that is not there.
+func TestKimiSubagentEffortRecordGoesWithATakenOutLevel(t *testing.T) {
+	home, path := kimiPoolHome(t)
+	a := kimiPooled(t, home, "magpie/think/deep")
+	if err := a.Apply("effort", "max"); err != nil {
+		t.Fatal(err)
+	}
+	if got := kimiSecEffort(t, path); got != "max" {
+		t.Fatalf("one model in the pool: the subagents' level %q, want max", got)
+	}
+	// wide takes no max: the pool takes the level out
+	if err := a.Field("subagent_pool").Set("magpie/think/deep\nmagpie/think/wide"); err != nil {
+		t.Fatal(err)
+	}
+	if got := kimiSecEffort(t, path); got != "" {
+		t.Fatalf("a level the pool cannot take stayed: %q", got)
+	}
+	// no pick: nothing is written in its place, and no record claims one
+	if err := a.Apply("effort", ""); err != nil {
+		t.Fatal(err)
+	}
+	if r := kimiWrote(path)[kimiSecondary]["default_effort"]; r != "" {
+		t.Fatalf("the record claims a level that is not there: %q", r)
+	}
+	if err := a.Sync(); err != nil {
+		t.Fatal(err)
+	}
+	if r := kimiWrote(path)[kimiSecondary]["default_effort"]; r != "" {
+		t.Fatalf("a sync kept a record of a level that is not there: %q", r)
+	}
+}

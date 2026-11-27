@@ -294,8 +294,12 @@ func kimiSubagentEffort(path string, wrote map[string]map[string]string, pick st
 		return nil, advice, nil
 	}
 	if want == sec.Effort {
-		// what magpie would write is there: the record says it is
-		// magpie's to change
+		// what magpie would write is there. Nothing is, and the record of
+		// a value the pool made magpie take out goes with it
+		if want == "" {
+			return nil, "", nil
+		}
+		// the record says the value is magpie's to change
 		if record == "" {
 			return nil, "", nil
 		}
