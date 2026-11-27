@@ -30,12 +30,12 @@ var Keys = []string{
 	// Appearance
 	"theme", "accent", "colorblind", "reduceMotion", "noBird", "lang", "uiFont", "codeFont",
 	// the tray, the Dock and this computer
-	"tray", "dock", "dockWindow", "dockNever", "lightweight", "keepAwake", "keepAwakeDisplay",
+	"tray", "dock", "dockWindow", "dockNever", "lightweight", "gpuRendering", "keepAwake", "keepAwakeDisplay",
 	"noWSLAgents", "sessionTerminal", "signInLinkOnly", "quitNoAsk", "restoreOnQuit", "name",
 	// the menu bar's allowance cards
 	"trayUsages", "trayUsage", "trayUsageEvery", "trayNoLogos", "trayAnthropicMark", "trayNoBird", "trayNoNumber", "trayPace", "trayNoCost", "trayWindows",
 	// usage and alerts
-	"currency", "totalCurrency", "trayCurrency", "chineseUnits", "inUncached", "dayStart", "usageAlert", "balanceAlert", "resetReminder", "turnDoneAlert", "maskAlert",
+	"currency", "totalCurrency", "trayCurrency", "chineseUnits", "inUncached", "dayStart", "timeZone", "usageAlert", "balanceAlert", "resetReminder", "turnDoneAlert", "maskAlert",
 	// network
 	"proxy", "pluginProxy", "updateProxy", "updateSource",
 	// the model registry (GET /api.json): whether it is served, the
@@ -45,12 +45,12 @@ var Keys = []string{
 	"registryOn", "registryEffort", "registryBuckets", "registryGroups", "registrySync",
 	// privacy
 	"redact", "redactPersonal", "redactKinds", "redactWords", "redactWordsAnyCase", "redactWordsWhole", "redactShape",
-	"noStats", "noUsageStats", "otel",
+	"hideRequestText", "noStats", "noUsageStats", "otel",
 	// warm-ups and check-ins
 	"codexWarmup", "claudeWarmup", "agyWarmup", "codexWarmAt", "claudeWarmAt", "codexWarmAts", "claudeWarmAts",
 	"workbuddyCheckin", "traeCheckin", "minimaxCheckin", "qoderCheckin", "checkinAt",
 	// models: replies, vision, images, search
-	"replyModel", "noLoopGuard", "claudeLeanPrompt", "claudeNoExtraUsage", "claudeRegionHold", "claudePrintMode", "refusalRetries", "retryAfterCap",
+	"replyModel", "noLoopGuard", "claudeLeanPrompt", "claudeNoExtraUsage", "claudeRegionHold", "claudeWaysOut", "claudePrintMode", "refusalRetries", "retryAfterCap",
 	"vision", "visionEffort", "imageGen", "videoGen", "imageTimeout", "imageResolution", "classifyTimeout",
 	// and whether every model an agent runs is pinned to its highest
 	// thinking level while the agent is on magpie (effortPin)
@@ -210,6 +210,10 @@ func Merge(body []byte, cur settings.Settings, web bool) (settings.Settings, err
 	if _, sent := fields["noAutoDownload"]; !sent {
 		in.NoAutoDownload = cur.NoAutoDownload
 	}
+	// nor the time zone, saved by its own row (JackyFill on X)
+	if _, sent := fields["timeZone"]; !sent {
+		in.TimeZone = cur.TimeZone
+	}
 	// nor the update channel (ssharpcc on X)
 	if _, sent := fields["updateChannel"]; !sent {
 		in.UpdateChannel = cur.UpdateChannel
@@ -221,6 +225,10 @@ func Merge(body []byte, cur settings.Settings, web bool) (settings.Settings, err
 	// nor whether they match only as whole words
 	if _, sent := fields["redactWordsWhole"]; !sent {
 		in.RedactWordsWhole = cur.RedactWordsWhole
+	}
+	// nor whether request content is shown (llxth1 on X)
+	if _, sent := fields["hideRequestText"]; !sent {
+		in.HideRequestText = cur.HideRequestText
 	}
 	// nor whether a key goes as a made-up one of its form
 	if _, sent := fields["redactShape"]; !sent {
@@ -274,6 +282,11 @@ func Merge(body []byte, cur settings.Settings, web bool) (settings.Settings, err
 	// (zhujiu on Discord), which the Quit question sets too
 	if _, sent := fields["quitNoAsk"]; !sent {
 		in.QuitNoAsk = cur.QuitNoAsk
+	}
+	// nor whether the pages are drawn on the GPU (Linux), set from its
+	// own row
+	if _, sent := fields["gpuRendering"]; !sent {
+		in.GPURendering = cur.GPURendering
 	}
 	// nor whether a quit puts the agents back as they were
 	if _, sent := fields["restoreOnQuit"]; !sent {
@@ -427,6 +440,8 @@ func Merge(body []byte, cur settings.Settings, web bool) (settings.Settings, err
 	in.FullContext = cur.FullContext     // set on its own (full-context)
 	in.CompactAt = cur.CompactAt         // and so is the threshold
 	in.AgentCompacts = cur.AgentCompacts // and each agent's own (agent-compact)
+	// and where in its window each compacts (agent-compact-pct)
+	in.AgentCompactPcts = cur.AgentCompactPcts
 	in.AgentContexts = cur.AgentContexts // and the windows each is told (agent-contexts)
 	in.ContextCap = cur.ContextCap       // and the longest window of every model (context-cap)
 	in.ContextCapAll = cur.ContextCapAll // and whether it holds the user's own windows
@@ -469,6 +484,8 @@ func Merge(body []byte, cur settings.Settings, web bool) (settings.Settings, err
 	in.CodexAutoReset = cur.CodexAutoReset
 	in.CodexAutoResetOnly = cur.CodexAutoResetOnly // and at which of the two times
 	in.CodexResetLead = cur.CodexResetLead         // and how early before one expires (codex-reset-lead)
+	// and which resets, by the days they have left (codex-reset-days)
+	in.CodexResetDaysLeast, in.CodexResetDaysMost = cur.CodexResetDaysLeast, cur.CodexResetDaysMost
 	// and which of them spend their credits, set there too
 	in.CodexNoCredits = cur.CodexNoCredits
 	in.CodexCreditsLast = cur.CodexCreditsLast   // and which only after everything else

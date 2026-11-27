@@ -539,6 +539,15 @@ func kimiIn(at place) *Agent {
 		t, err := kimiModelTableForKey(path, k)
 		return err == nil && t != nil
 	}
+	// joined: magpie's provider is in the config, whichever model the
+	// sessions start on. Kimi Code's /model lists the user's own models
+	// beside magpie's, so a lead of their own (kimi-code/k3.1-pro), picked
+	// there or on the Agents page, leaves Kimi Code connected, as Hermes
+	// (yingxianyu on X: the pick turned its switch off by itself)
+	joined := func() bool {
+		t, err := edit.GetTOMLTable(path, providerTable)
+		return err == nil && t != nil
+	}
 	return atomic(&Agent{
 		Telemetry: kimiTelemetry(at, path),
 		ID:        "kimi", Name: "Kimi Code", Icon: "kimi", Aliases: []string{"kimi-code", "kimi-cli"}, Spelled: prefixed,
@@ -553,6 +562,15 @@ func kimiIn(at place) *Agent {
 				return err
 			}
 			return writeMagpie()
+		},
+		Joined: joined,
+		// Disconnect on a lead of the user's own takes magpie out and
+		// leaves the lead; one of magpie's goes back by the model field
+		Unwire: func() error {
+			if !joined() || usesMagpie(get()) {
+				return nil
+			}
+			return dropMagpie()
 		},
 		Notice: func() string {
 			var advice []string
@@ -605,11 +623,21 @@ func kimiIn(at place) *Agent {
 					}
 					return setDefault(v)
 				}
-				if v == "" && usesMagpie(cur) {
+				if v != "" {
+					// one of the user's own: the lead alone moves, magpie's
+					// models stay in /model beside it (joined)
+					return setDefault(v)
+				}
+				// Default: Kimi Code as installed, magpie out
+				was := unstash(key)
+				if usesMagpie(cur) {
 					// back to the default the user had, if Kimi still has it
-					if was := unstash(key); was != "" && !usesMagpie(was) && ownModel(was) {
+					if was != "" && !usesMagpie(was) && ownModel(was) {
 						v = was
 					}
+				} else if ownModel(cur) {
+					// on a lead of the user's own (Disconnect too): it stays
+					v = cur
 				}
 				if err := setDefault(v); err != nil {
 					return err
@@ -619,11 +647,7 @@ func kimiIn(at place) *Agent {
 			Options: func(cur map[string]string) []Option {
 				return withVia(kimiOwnOptions(path, cur["model"]), "kimi", magpieID+"/")
 			},
-		}, kimiThinkingField(path, legacy, at.cold, func() bool { return usesMagpie(get()) }, writeMagpie)},
-			kimiSubagents(path, legacy, at.cold, func() bool {
-				t, err := edit.GetTOMLTable(path, providerTable)
-				return err == nil && t != nil
-			})...),
+		}, kimiThinkingField(path, legacy, at.cold, func() bool { return usesMagpie(get()) }, writeMagpie)}, kimiSubagents(path, legacy, at.cold, joined, writeMagpie)...),
 	}, path)
 }
 
