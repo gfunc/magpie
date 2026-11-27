@@ -339,12 +339,13 @@ func kimiPoolEffort(pick string, levels []string) string {
 		}
 		pick = "none" // under every level: the pool's lowest
 	}
-	if slices.Contains(levels, pick) {
-		return pick
-	}
+	// a word no level is known by is no pick, though a pool model lists it
 	want := kimiEffortRank(pick)
 	if want < 0 {
 		return ""
+	}
+	if slices.Contains(levels, pick) {
+		return pick
 	}
 	best, at := "", -1
 	lowest, lowestAt := "", 0

@@ -383,32 +383,30 @@ func TestKimiSubagentEffortIgnoresAPickOfNoKnownLevel(t *testing.T) {
 	}
 }
 
-// kimiAlwaysHome is kimiPoolHome with a third model that always thinks: a
-// pool holding it takes no off.
-func kimiAlwaysHome(t *testing.T) (home, path string) {
-	home, path = kimiPoolHome(t)
+// A pool model may list a level of its own that EffortRank knows nothing
+// of. A pick of that word is still no level to magpie, and is not written
+// into the subagents' key for its being in the pool's list.
+func TestKimiSubagentEffortIgnoresAnUnknownPickThePoolLists(t *testing.T) {
+	home, path := kimiPoolHome(t)
 	if err := catalog.SaveLive("think", "https://example.test/v1", []catalog.Model{
-		{ID: "deep", Efforts: []string{"low", "high", "max"}},
+		{ID: "deep", Efforts: []string{"low", "high", "ludicrous"}},
 		{ID: "wide", Efforts: []string{"low", "high"}},
-		{ID: "always", Efforts: []string{"low", "high"}, AlwaysThinks: true},
 	}); err != nil {
 		t.Fatal(err)
 	}
-	if err := provider.Save(provider.Provider{ID: "think", Name: "Think", Chat: "https://example.test/v1", Key: "k", Models: []string{"deep", "wide", "always"}}); err != nil {
+	// deep alone in the pool: its own word is a level the pool takes
+	a := kimiPooled(t, home, "magpie/think/deep")
+	if err := a.Apply("effort", "ludicrous"); err != nil {
 		t.Fatal(err)
 	}
-	return home, path
-}
-
-// Thinking off, for a pool with a model that always thinks: Kimi Code
-// refuses off there, so the subagents get the pool's lowest level.
-func TestKimiSubagentEffortOffWhereAPoolModelAlwaysThinks(t *testing.T) {
-	home, path := kimiAlwaysHome(t)
-	a := kimiPooled(t, home, "magpie/think/deep", "magpie/think/always")
-	if err := a.Apply("effort", "off"); err != nil {
+	if got := kimiSecEffort(t, path); got != "" {
+		t.Fatalf("a pick no level is known by, though the pool lists it: the subagents' level %q, want none written", got)
+	}
+	// a level EffortRank knows is written as before
+	if err := a.Apply("effort", "high"); err != nil {
 		t.Fatal(err)
 	}
-	if got := kimiSecEffort(t, path); got != "low" {
-		t.Fatalf("off, a model that always thinks in the pool: the subagents' level %q, want the pool's lowest, low", got)
+	if got := kimiSecEffort(t, path); got != "high" {
+		t.Fatalf("a known pick: the subagents' level %q, want high", got)
 	}
 }
