@@ -248,3 +248,38 @@ func TestKimiSubagentEffortNoticeOnlyForAHandSetValue(t *testing.T) {
 		t.Fatalf("a hand-set level was not announced: %q", n)
 	}
 }
+
+// Thinking off is a pick too: the Agents page shows off while [thinking]
+// says enabled = false, and Kimi Code starts the lead session with thinking
+// off. The subagents take the pick through their own key, so they take off
+// the same way, and not the level the off left standing in [thinking] for
+// the next on.
+func TestKimiSubagentEffortFollowsThinkingOff(t *testing.T) {
+	home, path := kimiPoolHome(t)
+	a := kimiPooled(t, home, "magpie/think/deep", "magpie/think/wide")
+	if err := a.Apply("effort", "max"); err != nil {
+		t.Fatal(err)
+	}
+	if got := kimiSecEffort(t, path); got != "high" {
+		t.Fatalf("pick max: the subagents' level %q, want the pool's high", got)
+	}
+	if got := a.Field("effort").Get(); got != "max" {
+		t.Fatalf("the page shows %q, want max", got)
+	}
+	if err := a.Apply("effort", "off"); err != nil {
+		t.Fatal(err)
+	}
+	if got := a.Field("effort").Get(); got != "off" {
+		t.Fatalf("the page shows %q, want off", got)
+	}
+	if got := kimiSecEffort(t, path); got != "off" {
+		t.Fatalf("thinking off: the subagents' level %q, want off", got)
+	}
+	// on again at the level the off left standing
+	if err := a.Apply("effort", "max"); err != nil {
+		t.Fatal(err)
+	}
+	if got := kimiSecEffort(t, path); got != "high" {
+		t.Fatalf("back on: the subagents' level %q, want the pool's high", got)
+	}
+}

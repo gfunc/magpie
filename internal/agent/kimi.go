@@ -50,16 +50,21 @@ func init() {
 // kimiNoticeText is the Notice above as a string, "" when unset.
 func kimiNoticeText(v *satomic.Value) string { return v.Load().(string) }
 
-// kimiThinkingEffort is the Agents-page pick, `[thinking]`'s effort key in
-// Kimi Code's config: "" with no error when the table or key is absent,
-// and the read error (an array table named thinking among them) so a
-// caller can tell unreadable from unset. The one reader of the pick for
-// the write path: the subagents' effort goes through it, so what the
+// kimiThinkingEffort is the Agents-page pick, `[thinking]` in Kimi Code's
+// config, as the page shows it: "off" while it says enabled = false, which
+// is Kimi Code's own off (the level left standing there is for the next
+// on), else its effort key. "" with no error when the table or key is
+// absent, and the read error (an array table named thinking among them) so
+// a caller can tell unreadable from unset. The one reader of the pick: the
+// field's Get and the subagents' effort both go through it, so what the
 // subagents run at and what the page shows can't drift apart.
 func kimiThinkingEffort(path string) (string, error) {
 	t, err := edit.GetTOMLTable(path, "thinking")
 	if err != nil {
 		return "", err
+	}
+	if t["enabled"] == "false" {
+		return "off", nil
 	}
 	return t["effort"], nil
 }
@@ -762,11 +767,8 @@ func kimiThinkingField(path string, legacy, cold bool, wired func() bool, follow
 	return Field{
 		Key: "effort", Label: "thinking",
 		Get: func() string {
-			t, _ := edit.GetTOMLTable(path, "thinking")
-			if t["enabled"] == "false" {
-				return "off"
-			}
-			return t["effort"]
+			v, _ := kimiThinkingEffort(path)
+			return v
 		},
 		Set: func(v string) error {
 			// while magpie's models are what the agent runs, the tables
