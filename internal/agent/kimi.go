@@ -939,7 +939,7 @@ var (
 	noticeWSLKimi     = newNotice("{agent} in WSL {distro} reads its settings at start-up — restart open kimi sessions to use this.")
 	noticeWSLKimiCode = newNotice("{agent} in WSL {distro} reads this as it runs; in its web or desktop app, reopen Settings › Providers or reload the page to see new models.")
 	// what writeMagpie reports through the Notice when it went on anyway
-	noticeKimiSectionEffort = newNotice("Kimi Code's [secondary_model] default_effort (config.toml, now {effort}) comes before every model's own default, so the per-model defaults magpie writes don't reach its subagents until it is taken out.")
+	noticeKimiSectionEffort = newNotice("Kimi Code's [secondary_model] default_effort (config.toml, now {effort}) was set by hand, so its subagents run at it and not at the thinking level picked here. Clear the subagent effort to let it follow the pick.")
 )
 
 // kimiNotice is the advice after a change for kimi-cli (legacy) or Kimi
