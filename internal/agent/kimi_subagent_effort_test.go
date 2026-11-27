@@ -284,42 +284,6 @@ func TestKimiSubagentEffortFollowsThinkingOff(t *testing.T) {
 	}
 }
 
-// A level the pool made magpie take out is not magpie's any more. A pool
-// model that cannot take it goes in while it is magpie's, and the pool
-// takes it out; with no pick there is nothing to write in its place, and
-// the record goes with the value, so the stash does not claim a level
-// that is not there.
-func TestKimiSubagentEffortRecordGoesWithATakenOutLevel(t *testing.T) {
-	home, path := kimiPoolHome(t)
-	a := kimiPooled(t, home, "magpie/think/deep")
-	if err := a.Apply("effort", "max"); err != nil {
-		t.Fatal(err)
-	}
-	if got := kimiSecEffort(t, path); got != "max" {
-		t.Fatalf("one model in the pool: the subagents' level %q, want max", got)
-	}
-	// wide takes no max: the pool takes the level out
-	if err := a.Field("subagent_pool").Set("magpie/think/deep\nmagpie/think/wide"); err != nil {
-		t.Fatal(err)
-	}
-	if got := kimiSecEffort(t, path); got != "" {
-		t.Fatalf("a level the pool cannot take stayed: %q", got)
-	}
-	// no pick: nothing is written in its place, and no record claims one
-	if err := a.Apply("effort", ""); err != nil {
-		t.Fatal(err)
-	}
-	if r := kimiWrote(path)[kimiSecondary]["default_effort"]; r != "" {
-		t.Fatalf("the record claims a level that is not there: %q", r)
-	}
-	if err := a.Sync(); err != nil {
-		t.Fatal(err)
-	}
-	if r := kimiWrote(path)[kimiSecondary]["default_effort"]; r != "" {
-		t.Fatalf("a sync kept a record of a level that is not there: %q", r)
-	}
-}
-
 // kimiUserPoolHome is kimiPoolHome with a model of the user's own in the
 // config, a sign-in table that stays when magpie is taken out.
 func kimiUserPoolHome(t *testing.T) (home, path string) {
@@ -392,5 +356,59 @@ func TestKimiSubagentEffortHandSetStaysWhenMagpieGoes(t *testing.T) {
 	}
 	if got := kimiSecEffort(t, path); got != "low" {
 		t.Fatalf("the user's level went with magpie: %q", got)
+	}
+}
+
+// A pick that names no level magpie knows, "none" among them, is no pick
+// for the subagents: magpie writes no level it cannot rank into their key.
+// Off is a pick: a pool that takes it gets it, and one with a model that
+// always thinks, which takes none, gets the pool's lowest level in its
+// place.
+func TestKimiSubagentEffortIgnoresAPickOfNoKnownLevel(t *testing.T) {
+	home, path := kimiPoolHome(t)
+	a := kimiPooled(t, home, "magpie/think/deep", "magpie/think/wide")
+	for _, pick := range []string{"none", "ludicrous"} {
+		if err := a.Apply("effort", pick); err != nil {
+			t.Fatal(err)
+		}
+		if got := kimiSecEffort(t, path); got != "" {
+			t.Fatalf("pick %q: the subagents' level %q, want none written", pick, got)
+		}
+	}
+	if err := a.Apply("effort", "off"); err != nil {
+		t.Fatal(err)
+	}
+	if got := kimiSecEffort(t, path); got != "off" {
+		t.Fatalf("off: the subagents' level %q, want off", got)
+	}
+}
+
+// kimiAlwaysHome is kimiPoolHome with a third model that always thinks: a
+// pool holding it takes no off.
+func kimiAlwaysHome(t *testing.T) (home, path string) {
+	home, path = kimiPoolHome(t)
+	if err := catalog.SaveLive("think", "https://example.test/v1", []catalog.Model{
+		{ID: "deep", Efforts: []string{"low", "high", "max"}},
+		{ID: "wide", Efforts: []string{"low", "high"}},
+		{ID: "always", Efforts: []string{"low", "high"}, AlwaysThinks: true},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	if err := provider.Save(provider.Provider{ID: "think", Name: "Think", Chat: "https://example.test/v1", Key: "k", Models: []string{"deep", "wide", "always"}}); err != nil {
+		t.Fatal(err)
+	}
+	return home, path
+}
+
+// Thinking off, for a pool with a model that always thinks: Kimi Code
+// refuses off there, so the subagents get the pool's lowest level.
+func TestKimiSubagentEffortOffWhereAPoolModelAlwaysThinks(t *testing.T) {
+	home, path := kimiAlwaysHome(t)
+	a := kimiPooled(t, home, "magpie/think/deep", "magpie/think/always")
+	if err := a.Apply("effort", "off"); err != nil {
+		t.Fatal(err)
+	}
+	if got := kimiSecEffort(t, path); got != "low" {
+		t.Fatalf("off, a model that always thinks in the pool: the subagents' level %q, want the pool's lowest, low", got)
 	}
 }

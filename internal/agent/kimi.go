@@ -322,19 +322,30 @@ func kimiSubagentEffort(path string, wrote map[string]map[string]string, pick st
 // the Agents-page pick brought down to a level every model of the pool
 // takes: the pick itself where the pool takes it, else the highest level
 // the pool takes that does not exceed the pick, else the lowest the pool
-// takes. "" when there is nothing to write: no pick, or no level the pool
-// takes.
+// takes. "" when there is nothing to write: no pick, a pick that names no
+// level EffortRank knows ("none" among them, which is no level) or no
+// level the pool takes. Off is no level either, and is the lowest of them:
+// the pool takes it or it gets the pool's lowest.
 func kimiPoolEffort(pick string, levels []string) string {
 	if effortPinned() {
 		return kimiHighestEffort(levels)
 	}
-	if pick == "" {
+	if pick == "" || pick == "none" {
 		return ""
+	}
+	if pick == "off" {
+		if slices.Contains(levels, "off") {
+			return "off"
+		}
+		pick = "none" // under every level: the pool's lowest
 	}
 	if slices.Contains(levels, pick) {
 		return pick
 	}
 	want := kimiEffortRank(pick)
+	if want < 0 {
+		return ""
+	}
 	best, at := "", -1
 	lowest, lowestAt := "", 0
 	for _, l := range levels {
