@@ -55,12 +55,12 @@ const W = {
   en: {
     say: "Every model's own effort is its highest",
     off: "Each model keeps the effort it comes with, and the level you pick for an agent stands.",
-    on: "magpie writes each model's own effort at its highest level, in every agent it has taken over. The level you pick for an agent still stands for its new sessions.",
+    on: "magpie writes each model's own effort at its highest level, in every agent it has taken over.",
   },
   zh: {
     say: "每个模型自身的思考力度固定为最高",
     off: "每个模型保留它自带的思考力度，你为代理选的档位照常生效。",
-    on: "magpie 把它接管的每个代理里的每个模型，自身思考力度都写成最高档。你为某个代理选的档位对它的新会话依然有效。",
+    on: "magpie 把它接管的每个代理里的每个模型，自身思考力度都写成最高档。",
   },
 };
 const line = "#agents > .ag-pin";

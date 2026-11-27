@@ -2016,11 +2016,12 @@ const desktopLongestLine = () => agSwitchLine("ag-longest", !!state.settings?.de
 // the Settings page's own save, so the agents' files are written again
 // after it. The Settings page need not have been opened: its settings are
 // read first, the same lazy read the agent rows do. What the words say is
-// what magpie writes, and no more: an agent's own pick stands for its new
-// sessions, and Kimi Code's lead session starts at the Agents-page pick.
+// what magpie writes, and no more: the pin writes over an agent's own
+// pick in Codex and Claude Code, and Kimi Code's lead session starts at
+// the Agents-page pick.
 const effortPinLine = () => {
   const pinned = state.settings?.effortPin === "highest";
-  return agSwitchLine("ag-pin", pinned, t("Every model's own effort is its highest"), pinned ? t("magpie writes each model's own effort at its highest level, in every agent it has taken over. The level you pick for an agent still stands for its new sessions.") : t("Each model keeps the effort it comes with, and the level you pick for an agent stands."), async (on) => {
+  return agSwitchLine("ag-pin", pinned, t("Every model's own effort is its highest"), pinned ? t("magpie writes each model's own effort at its highest level, in every agent it has taken over.") : t("Each model keeps the effort it comes with, and the level you pick for an agent stands."), async (on) => {
     if (!prefs) await loadSettings();
     await savePrefs({ ...prefsKeep(prefs), effortPin: on ? "highest" : "" });
   });
