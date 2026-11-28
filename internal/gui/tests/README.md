@@ -2948,11 +2948,26 @@ older assets folder, where the wheel leaves the page at 0.
 node --test internal/gui/tests/view-slow-frames.test.cjs
 ```
 
+## Controls laid out whole
+
+`button-text-center.test.cjs` walks Plugins, Library, Usage (its cards
+both ways and Requests' speed table by provider), Providers and Settings in
+all five languages, Chromium and WebKit, and holds every control's one line
+of words within 0.5px of its box's middle, against the same words centred
+in a box of that height in the same font (`btn-align.cjs`). Its third test
+reads app.css: no rule for a class given beside `text` comes before
+`.text`'s own, which would win over it. `control-overlap.test.cjs` walks
+the same pages (`app-pages.cjs`) at 1180px and 420px and fails when two
+controls a pointer can reach cross, opacity 0 included, or when a control's
+middle is under something else (`control-room.cjs`). `MAGPIE_ASSETS`
+selects older assets for the failing comparison; `BTN_LOG=1` prints every
+measurement. The API is faked.
+
 ## The effort pin's switch on the Agents page
 
 `effort-pin-switch.test.cjs` checks the switch above the agent list that
-pins every model an agent magpie has taken over to its own highest
-effort: it shows the setting as it is, says which rule is in force, and
+writes every model's own effort at its highest level, in every agent magpie
+has taken over: it shows the setting as it is, says what magpie writes, and
 saves through the Settings page's own save, so nothing else changes and no
 route is added. The Settings page was never opened. English and Chinese,
 1100 and 640 wide, Chromium and WebKit; the API is faked.

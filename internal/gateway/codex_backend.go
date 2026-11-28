@@ -120,6 +120,9 @@ func (s *Server) codexBackend(w http.ResponseWriter, r *http.Request) {
 		// it, as handle's and gemini's do (Jason on Discord: a held Codex
 		// turn showed as no model, "magpie · 0 on")
 		noteAsked(r.Context(), model)
+		// normalize Codex's "fast" word before the configured tier override,
+		// as /v1/responses does (gateway.go)
+		body = fastTier(body)
 		// the service tier set for Codex, in place of the one it asked
 		body = codexTiered(r, body, model)
 		body = keyTiered(r, body, model)
@@ -1078,6 +1081,11 @@ func (s *Server) codexUpstreamOn(w http.ResponseWriter, r *http.Request, rest st
 		// url_citation) as Codex stored it, turned them away alike
 		// (#4921)
 		body = withoutOffsetlessCitations(body)
+		// a client-written service_tier the ChatGPT backend refuses (such
+		// as "flex", an OpenAI API billing tier) would 400 every turn of
+		// the thread (#7793); keep only the tiers the backend takes,
+		// matching provider.codexBody on /v1/responses
+		body = codexTierTakenOut(body)
 	}
 	u := base + rest
 	if r.URL.RawQuery != "" {
@@ -3467,6 +3475,9 @@ func callItemIDs(body []byte) []byte {
 // too long. Expected a string with maximum length 64, but got a string
 // with length 428 instead." — and, the tail being the character
 // refusal's alone, every turn of the session after it the same way.
+// A call_id over the 64 is refused in the same words under
+// 'input[n].call_id' ("got a string with length 87", IotXws97689 on X),
+// which boundCallIDs mends as plainItemIDs mends an id.
 // It is the tail within 1000 characters of the head: the regexp
 // .{0,1000}? it was unrolled to 88kB of program, held from start to exit.
 func itemIDRefusal(b []byte) bool {
@@ -3485,12 +3496,13 @@ func itemIDRefusal(b []byte) bool {
 	return false
 }
 
-var itemIDRefusalHead = lazyre.New(`Invalid 'input\[\d+\]\.id'`)
+var itemIDRefusalHead = lazyre.New(`Invalid 'input\[\d+\]\.(?:call_)?id'`)
 
 // itemIDRefusalTails are the tails an item id refusal words itself in:
 // the id had a character OpenAI's don't have, or was longer than they
 // take. The length tail is OpenAI's own for a string over its schema's
-// bound, which the head's input[n].id holds to item ids alone.
+// bound, which the head's input[n].id and input[n].call_id hold to ids
+// alone.
 var itemIDRefusalTails = [][]byte{
 	[]byte("Expected an ID that contains letters, numbers, underscores, or dashes"),
 	[]byte("Expected a string with maximum length"),
